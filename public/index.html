@@ -6,104 +6,432 @@
 <title>Stick N' Trade Casino</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f0f14;
-  color: white;
-}
+  :root{
+    --bg0:#060810;
+    --bg1:#0a1230;
+    --panel: rgba(14, 20, 45, 0.72);
+    --panel2: rgba(18, 26, 58, 0.78);
+    --stroke: rgba(255,255,255,0.10);
+    --stroke2: rgba(120,170,255,0.22);
+    --txt: rgba(255,255,255,0.92);
+    --muted: rgba(255,255,255,0.65);
+    --blue:#3aa0ff;
+    --blue2:#2b6bff;
+    --cyan:#35e5ff;
+    --good:#47ff9a;
+    --bad:#ff5c7a;
+    --shadow: 0 18px 60px rgba(0,0,0,0.45);
+    --radius: 18px;
+  }
 
-.hidden { display: none; }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    color:var(--txt);
+    background:
+      radial-gradient(1200px 600px at 20% 15%, rgba(58,160,255,0.35), transparent 60%),
+      radial-gradient(900px 600px at 85% 25%, rgba(53,229,255,0.20), transparent 60%),
+      radial-gradient(900px 700px at 40% 90%, rgba(43,107,255,0.25), transparent 60%),
+      linear-gradient(180deg, var(--bg1), var(--bg0) 60%);
+    overflow-x:hidden;
+  }
 
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-  background: #181824;
-  align-items: center;
-}
+  .hidden{ display:none !important; }
 
-button {
-  padding: 8px 14px;
-  background: #6c4cff;
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-radius: 6px;
-}
+  /* Top header */
+  .topbar{
+    position: sticky;
+    top:0;
+    z-index: 50;
+    padding: 14px 18px;
+    backdrop-filter: blur(14px);
+    background: linear-gradient(180deg, rgba(10,18,48,0.70), rgba(10,18,48,0.40));
+    border-bottom: 1px solid var(--stroke);
+  }
+  .topbar-inner{
+    max-width: 1100px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
 
-button:hover {
-  opacity: 0.85;
-}
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-weight:800; letter-spacing:0.6px;
+  }
+  .badge{
+    width:34px; height:34px; border-radius:12px;
+    background: radial-gradient(circle at 30% 30%, rgba(53,229,255,0.8), rgba(43,107,255,0.9));
+    box-shadow: 0 10px 30px rgba(58,160,255,0.25);
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .brand small{ display:block; font-weight:600; color:var(--muted); letter-spacing:0.2px; }
 
-.auth-container {
-  position: fixed;
-  inset: 0;
-  background: #0f0f14;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  .rightbox{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    justify-content:flex-end;
+  }
 
-.auth-box {
-  background: #181824;
-  padding: 30px;
-  border-radius: 10px;
-  width: 320px;
-}
+  .statpill{
+    display:flex; align-items:center; gap:8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--stroke);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    font-weight:700;
+  }
+  .statpill span{ color:var(--muted); font-weight:700; }
+  .dot{
+    width:10px; height:10px; border-radius:50%;
+    background: var(--good);
+    box-shadow: 0 0 0 6px rgba(71,255,154,0.12);
+  }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  background: #222232;
-  border: 1px solid #333;
-  color: white;
-  border-radius: 6px;
-}
+  /* PS-like buttons */
+  .btn{
+    border:none;
+    cursor:pointer;
+    user-select:none;
+    font-weight:900;
+    letter-spacing:0.4px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    color: var(--txt);
+    background: linear-gradient(180deg, rgba(58,160,255,0.85), rgba(43,107,255,0.85));
+    box-shadow: 0 16px 40px rgba(43,107,255,0.22);
+    border: 1px solid rgba(255,255,255,0.16);
+    transition: transform .12s ease, filter .12s ease;
+  }
+  .btn:hover{ filter: brightness(1.06); transform: translateY(-1px); }
+  .btn:active{ transform: translateY(0px) scale(0.99); }
 
-.section {
-  padding: 30px;
-}
+  .btn-ghost{
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--stroke);
+    box-shadow:none;
+  }
+
+  .btn-danger{
+    background: linear-gradient(180deg, rgba(255,92,122,0.90), rgba(210,35,70,0.90));
+    box-shadow: 0 16px 40px rgba(255,92,122,0.16);
+  }
+
+  /* Layout */
+  .container{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 18px;
+  }
+
+  .panel{
+    background: linear-gradient(180deg, var(--panel), rgba(14,20,45,0.55));
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 900px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+
+  .section-head{
+    padding: 16px 16px 10px;
+    border-bottom: 1px solid var(--stroke);
+  }
+  .section-head h2{
+    margin:0;
+    font-size: 18px;
+    letter-spacing:0.4px;
+  }
+  .section-head p{
+    margin:6px 0 0;
+    color: var(--muted);
+    font-weight:700;
+    font-size: 13px;
+  }
+
+  .section-body{
+    padding: 16px;
+  }
+
+  .menu{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  .tile{
+    flex: 1 1 160px;
+    min-width: 160px;
+    padding: 14px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    border: 1px solid var(--stroke);
+    cursor:pointer;
+    transition: transform .12s ease, filter .12s ease, border-color .12s ease;
+  }
+  .tile:hover{
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    border-color: rgba(120,170,255,0.35);
+  }
+  .tile h3{
+    margin:0 0 6px;
+    font-size: 15px;
+    font-weight:900;
+  }
+  .tile p{
+    margin:0;
+    color: var(--muted);
+    font-weight:700;
+    font-size: 12px;
+    line-height:1.35;
+  }
+
+  .row{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  }
+
+  .input{
+    width: 100%;
+    padding: 12px 12px;
+    border-radius: 14px;
+    background: rgba(0,0,0,0.22);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: var(--txt);
+    font-weight:800;
+    outline:none;
+  }
+  .input:focus{
+    border-color: rgba(53,229,255,0.45);
+    box-shadow: 0 0 0 6px rgba(53,229,255,0.10);
+  }
+
+  .hint{
+    color: var(--muted);
+    font-weight:700;
+    font-size: 12px;
+  }
+
+  .error{
+    color: var(--bad);
+    font-weight:900;
+    margin-top: 8px;
+  }
+
+  /* Auth modal */
+  .auth-wrap{
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding: 18px;
+    background:
+      radial-gradient(800px 500px at 35% 25%, rgba(58,160,255,0.35), transparent 60%),
+      radial-gradient(700px 500px at 70% 40%, rgba(53,229,255,0.18), transparent 60%),
+      rgba(0,0,0,0.45);
+    backdrop-filter: blur(10px);
+  }
+
+  .auth-card{
+    width: min(420px, 100%);
+    border-radius: 22px;
+    padding: 18px;
+    background: linear-gradient(180deg, rgba(14,20,45,0.92), rgba(14,20,45,0.78));
+    border: 1px solid rgba(255,255,255,0.14);
+    box-shadow: 0 30px 90px rgba(0,0,0,0.55);
+  }
+  .auth-title{
+    display:flex; align-items:center; justify-content:space-between;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+    margin-bottom: 12px;
+  }
+  .auth-title h1{
+    font-size: 18px;
+    margin:0;
+    letter-spacing:0.5px;
+  }
+  .auth-title .mini{
+    color: var(--muted);
+    font-weight:800;
+    font-size: 12px;
+  }
+  .auth-actions{
+    display:flex; gap:10px; margin-top: 8px;
+  }
+
+  .feed{
+    margin-top: 10px;
+    max-height: 220px;
+    overflow:auto;
+    padding-right: 6px;
+  }
+  .feed p{
+    margin: 8px 0;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.86);
+    font-weight:800;
+    font-size: 13px;
+  }
+
+  .pilltag{
+    display:inline-flex; gap:8px; align-items:center;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(53,229,255,0.10);
+    border: 1px solid rgba(53,229,255,0.22);
+    color: rgba(255,255,255,0.9);
+    font-weight:900;
+    font-size: 12px;
+  }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="authScreen" class="auth-container">
-  <div class="auth-box">
-    <h2 id="authTitle">Login</h2>
-    <input id="username" placeholder="Username" />
-    <input id="password" type="password" placeholder="Password" />
-    <button onclick="submitAuth()">Continue</button>
-    <p id="authError" style="color:red;"></p>
-    <p style="text-align:center; margin-top:10px;">
-      <span id="toggleAuth" style="cursor:pointer; color:#6c4cff;">Switch to Register</span>
-    </p>
+<!-- AUTH OVERLAY (login required immediately) -->
+<div id="authOverlay" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-title">
+      <div>
+        <h1 id="authModeTitle">Login</h1>
+        <div class="mini">PlayStation-style lobby • Secure backend</div>
+      </div>
+      <span class="pilltag"><span style="opacity:.9;">🔒</span> Auth Required</span>
+    </div>
+
+    <div style="display:grid; gap:10px;">
+      <input id="authUser" class="input" placeholder="Username" autocomplete="username" />
+      <input id="authPass" class="input" placeholder="Password" type="password" autocomplete="current-password" />
+      <div class="auth-actions">
+        <button id="authSubmitBtn" class="btn" style="flex:1;">Continue</button>
+        <button id="authToggleBtn" class="btn btn-ghost" style="flex:1;">Switch to Register</button>
+      </div>
+      <div class="hint" id="authHint">Enter your username and password to continue.</div>
+      <div id="authErr" class="error"></div>
+    </div>
   </div>
 </div>
 
-<!-- MAIN APP -->
-<div id="app" class="hidden">
+<!-- APP -->
+<div id="appRoot" class="hidden">
 
   <div class="topbar">
-    <div>
-      👤 <span id="usernameDisplay"></span> |
-      💰 <span id="creditsDisplay"></span>
-    </div>
-    <div>
-      <button id="adminBtn" class="hidden" onclick="showAdmin()">Admin</button>
-      <button onclick="logout()">Logout</button>
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="badge"></div>
+        <div>
+          Stick N' Trade <small>CASINO</small>
+        </div>
+      </div>
+
+      <div class="rightbox">
+        <div class="statpill"><span>USER</span> <b id="meUser">—</b></div>
+        <div class="statpill"><span>CREDITS</span> <b id="meCredits">0</b></div>
+        <button id="btnAdmin" class="btn btn-ghost hidden">Admin</button>
+        <button id="btnLogout" class="btn btn-danger">Logout</button>
+      </div>
     </div>
   </div>
 
-  <div class="section">
-    <h2>Shared Table</h2>
-    <input id="betAmount" type="number" placeholder="Bet amount"/>
-    <button onclick="placeBet('heads')">Bet Heads</button>
-    <button onclick="placeBet('tails')">Bet Tails</button>
-    <div id="liveFeed"></div>
+  <div class="container">
+    <div class="grid">
+      <!-- LEFT: Lobby/Menu -->
+      <div class="panel">
+        <div class="section-head">
+          <h2>Games Lobby</h2>
+          <p>Single-page navigation. Your backend controls credits & multiplayer logic.</p>
+        </div>
+        <div class="section-body">
+          <div class="menu">
+            <div class="tile" data-nav="lobby">
+              <h3>🏠 Lobby</h3>
+              <p>Main hub & active players (add later).</p>
+            </div>
+            <div class="tile" data-nav="solo">
+              <h3>🎮 Solo Play</h3>
+              <p>Local games (server-authoritative credits).</p>
+            </div>
+            <div class="tile" data-nav="shared">
+              <h3>🧑‍🤝‍🧑 Shared Tables</h3>
+              <p>Real-time multiplayer bets via WebSockets.</p>
+            </div>
+            <div class="tile" data-nav="cashier">
+              <h3>💳 Cashier</h3>
+              <p>Deposit/Withdraw requests (admin approves).</p>
+            </div>
+            <div class="tile" data-nav="history">
+              <h3>📜 History</h3>
+              <p>Recent bets & transactions (server logs).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Views -->
+      <div class="panel">
+        <div class="section-head">
+          <h2 id="viewTitle">Lobby</h2>
+          <p id="viewDesc">Welcome to the casino.</p>
+        </div>
+
+        <div class="section-body">
+          <!-- Lobby View -->
+          <div data-view="lobby">
+            <div class="hint">You're logged in. Pick a mode from the lobby.</div>
+          </div>
+
+          <!-- Shared Tables View -->
+          <div data-view="shared" class="hidden">
+            <div class="row" style="margin-bottom:10px;">
+              <input id="betAmount" class="input" style="max-width: 220px;" type="number" min="1" placeholder="Bet amount" />
+              <button class="btn" id="btnBetHeads">Bet HEADS</button>
+              <button class="btn btn-ghost" id="btnBetTails">Bet TAILS</button>
+            </div>
+            <div class="hint">Bets are validated server-side. If you try to rig frontend, backend rejects.</div>
+            <div id="liveFeed" class="feed"></div>
+          </div>
+
+          <!-- Solo View (placeholder) -->
+          <div data-view="solo" class="hidden">
+            <div class="hint">Solo games UI goes here (still single-page).</div>
+          </div>
+
+          <!-- Cashier View (placeholder) -->
+          <div data-view="cashier" class="hidden">
+            <div class="hint">Cashier UI goes here (requests should be server-stored).</div>
+          </div>
+
+          <!-- History View (placeholder) -->
+          <div data-view="history" class="hidden">
+            <div class="hint">History UI goes here (server logs).</div>
+          </div>
+
+          <!-- Admin View (placeholder) -->
+          <div data-view="admin" class="hidden">
+            <div class="hint">Admin view inside the same page. Only visible if role=admin.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -111,100 +439,224 @@ input {
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
-let isLogin = true;
-let socket = null;
-let currentUser = null;
+  // ===== STATE =====
+  let authMode = "login"; // "login" | "register"
+  let me = null;
+  let socket = null;
 
-document.getElementById("toggleAuth").onclick = () => {
-  isLogin = !isLogin;
-  document.getElementById("authTitle").innerText = isLogin ? "Login" : "Register";
-  document.getElementById("toggleAuth").innerText = isLogin ? "Switch to Register" : "Switch to Login";
-};
+  // ===== HELPERS =====
+  const $ = (id) => document.getElementById(id);
+  const viewEls = () => Array.from(document.querySelectorAll("[data-view]"));
 
-async function submitAuth() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  const endpoint = isLogin ? "/api/login" : "/api/register";
-
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ username, password })
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    document.getElementById("authError").innerText = data.error || "Error";
-    return;
+  function setAuthError(msg){
+    $("authErr").textContent = msg || "";
   }
 
-  if (!isLogin) {
-    isLogin = true;
-    document.getElementById("authTitle").innerText = "Login";
-    document.getElementById("authError").innerText = "Registered! Now login.";
-    return;
+  function setAuthHint(msg){
+    $("authHint").textContent = msg || "";
   }
 
-  await loadUser();
-}
-
-async function loadUser() {
-  const res = await fetch("/api/me", { credentials: "include" });
-  if (!res.ok) return;
-
-  currentUser = await res.json();
-
-  document.getElementById("authScreen").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-
-  document.getElementById("usernameDisplay").innerText = currentUser.username;
-  document.getElementById("creditsDisplay").innerText = currentUser.credits;
-
-  if (currentUser.role === "admin") {
-    document.getElementById("adminBtn").classList.remove("hidden");
+  function setAuthMode(mode){
+    authMode = mode;
+    $("authModeTitle").textContent = mode === "login" ? "Login" : "Register";
+    $("authToggleBtn").textContent = mode === "login" ? "Switch to Register" : "Switch to Login";
+    setAuthError("");
+    setAuthHint(mode === "login"
+      ? "Enter your username and password to continue."
+      : "Create your account. After registering, you’ll be logged in automatically.");
   }
 
-  connectSocket();
-}
+  async function api(path, { method="GET", body=null } = {}){
+    const res = await fetch(path, {
+      method,
+      headers: body ? { "Content-Type":"application/json" } : undefined,
+      credentials: "include",
+      body: body ? JSON.stringify(body) : null
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  }
 
-function connectSocket() {
-  socket = io({
-    withCredentials: true
+  function showApp(){
+    $("authOverlay").classList.add("hidden");
+    $("appRoot").classList.remove("hidden");
+  }
+
+  function showAuth(){
+    $("appRoot").classList.add("hidden");
+    $("authOverlay").classList.remove("hidden");
+  }
+
+  function setMeUI(){
+    $("meUser").textContent = me?.username || "—";
+    $("meCredits").textContent = me?.credits ?? 0;
+    if (me?.role === "admin") $("btnAdmin").classList.remove("hidden");
+    else $("btnAdmin").classList.add("hidden");
+  }
+
+  function setView(view){
+    viewEls().forEach(v => v.classList.add("hidden"));
+    const el = document.querySelector(`[data-view="${view}"]`);
+    if (el) el.classList.remove("hidden");
+
+    const titles = {
+      lobby: ["Lobby", "Welcome to the casino."],
+      solo: ["Solo Play", "Single-player games (server-authoritative credits)."],
+      shared: ["Shared Tables", "Real-time bets (WebSocket)."],
+      cashier: ["Cashier", "Deposit/withdraw requests."],
+      history: ["History", "Server-stored logs."],
+      admin: ["Admin", "Control panel (admin only)."]
+    };
+    const t = titles[view] || ["Lobby", "Welcome to the casino."];
+    $("viewTitle").textContent = t[0];
+    $("viewDesc").textContent = t[1];
+  }
+
+  function connectSocket(){
+    if (socket) return;
+
+    socket = io({ withCredentials: true });
+
+    socket.on("connect", () => {
+      // optional: console.log("socket connected", socket.id);
+    });
+
+    socket.on("table:update", (data) => {
+      const feed = $("liveFeed");
+      const line = document.createElement("p");
+      line.textContent = `${data.player} bet ${data.amount} on ${data.choice}`;
+      feed.prepend(line);
+    });
+
+    socket.on("bet:accepted", (data) => {
+      if (typeof data.newCredits !== "undefined") {
+        $("meCredits").textContent = data.newCredits;
+      }
+    });
+
+    socket.on("bet:rejected", (data) => {
+      alert(data?.reason || "Bet rejected.");
+    });
+  }
+
+  async function loadMe(){
+    const r = await api("/api/me");
+    if (!r.ok) return false;
+    me = r.data;
+    return true;
+  }
+
+  // ===== AUTH =====
+  async function submitAuth(){
+    const username = $("authUser").value.trim();
+    const password = $("authPass").value;
+
+    if (!username || !password){
+      setAuthError("Please enter username and password.");
+      return;
+    }
+
+    setAuthError("");
+    $("authSubmitBtn").disabled = true;
+    $("authSubmitBtn").textContent = "Please wait...";
+
+    try{
+      if (authMode === "register"){
+        // Register then login automatically
+        const reg = await api("/api/register", { method:"POST", body:{ username, password } });
+        if (!reg.ok){
+          setAuthError(reg.data?.error || "Register failed.");
+          return;
+        }
+        const log = await api("/api/login", { method:"POST", body:{ username, password } });
+        if (!log.ok){
+          setAuthError(log.data?.error || "Login failed.");
+          return;
+        }
+      } else {
+        const log = await api("/api/login", { method:"POST", body:{ username, password } });
+        if (!log.ok){
+          setAuthError(log.data?.error || "Login failed.");
+          return;
+        }
+      }
+
+      const ok = await loadMe();
+      if (!ok){
+        setAuthError("Logged in, but cannot load profile. Check server /api/me.");
+        return;
+      }
+
+      setMeUI();
+      showApp();
+      setView("lobby");
+      connectSocket();
+
+    } finally {
+      $("authSubmitBtn").disabled = false;
+      $("authSubmitBtn").textContent = "Continue";
+    }
+  }
+
+  // Enter key support
+  function bindEnter(){
+    ["authUser","authPass"].forEach(id => {
+      $(id).addEventListener("keydown", (e) => {
+        if (e.key === "Enter") submitAuth();
+      });
+    });
+  }
+
+  // ===== EVENTS =====
+  $("authSubmitBtn").addEventListener("click", submitAuth);
+  $("authToggleBtn").addEventListener("click", () => {
+    setAuthMode(authMode === "login" ? "register" : "login");
   });
 
-  socket.on("table:update", data => {
-    const feed = document.getElementById("liveFeed");
-    feed.innerHTML += `<p>${data.player} bet ${data.amount} on ${data.choice}</p>`;
+  // Nav tiles
+  document.querySelectorAll(".tile[data-nav]").forEach(tile => {
+    tile.addEventListener("click", () => {
+      const v = tile.getAttribute("data-nav");
+      setView(v);
+    });
   });
 
-  socket.on("bet:accepted", data => {
-    document.getElementById("creditsDisplay").innerText = data.newCredits;
+  // Bets
+  $("btnBetHeads").addEventListener("click", () => placeBet("heads"));
+  $("btnBetTails").addEventListener("click", () => placeBet("tails"));
+
+  function placeBet(choice){
+    const amount = parseInt($("betAmount").value, 10);
+    if (!amount || amount <= 0) return alert("Enter a valid bet amount.");
+    if (!socket) return alert("Socket not connected yet.");
+    socket.emit("bet:place", { choice, amount });
+  }
+
+  // Admin
+  $("btnAdmin").addEventListener("click", () => setView("admin"));
+
+  // Logout
+  $("btnLogout").addEventListener("click", async () => {
+    await api("/api/logout", { method:"POST" });
+    location.reload();
   });
 
-  socket.on("bet:rejected", data => {
-    alert(data.reason);
-  });
-}
+  // ===== BOOT =====
+  bindEnter();
+  setAuthMode("login");
 
-function placeBet(choice) {
-  const amount = parseInt(document.getElementById("betAmount").value);
-  if (!amount) return alert("Enter bet amount");
-  socket.emit("bet:place", { choice, amount });
-}
-
-async function logout() {
-  await fetch("/api/logout", { method: "POST", credentials: "include" });
-  location.reload();
-}
-
-function showAdmin() {
-  alert("Admin panel placeholder.");
-}
-
-// Auto-check session on load
-loadUser();
+  (async () => {
+    // If already logged in (cookie exists), go straight into app
+    const ok = await loadMe();
+    if (ok){
+      setMeUI();
+      showApp();
+      setView("lobby");
+      connectSocket();
+    } else {
+      showAuth();
+    }
+  })();
 </script>
 
 </body>
