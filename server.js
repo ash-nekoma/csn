@@ -167,14 +167,14 @@ setInterval(() => {
             gameStats.sicbo.total++;
             gameStats.sicbo[sbWin]++;
 
-            // Color Game (Perya)
+            // Color Game (Perya) - Format sent as array string for 2D dice logic
             const cols = ['Yellow','White','Pink','Blue','Red','Green'];
             let pyR = [
                 cols[Math.floor(Math.random() * 6)], 
                 cols[Math.floor(Math.random() * 6)], 
                 cols[Math.floor(Math.random() * 6)]
             ];
-            logGlobalResult('perya', pyR.join(',')); // Send as comma separated for 2D dice logic
+            logGlobalResult('perya', pyR.join(','));
             gameStats.perya.total++; 
             pyR.forEach(color => gameStats.perya[color]++);
 
@@ -238,7 +238,8 @@ setInterval(() => {
                     if (matches > 0) payout = b.amount + (b.amount * matches);
                 }
                 else if (b.room === 'baccarat' && b.choice === bacWin) {
-                    payout = b.amount * (bacWin === 'Tie' ? 8 : (bacWin === 'Banker' ? 1.95 : 2));
+                    // Banker and Player both pay 2x
+                    payout = b.amount * (bacWin === 'Tie' ? 8 : 2);
                 }
 
                 if (payout > 0) {
@@ -253,7 +254,7 @@ setInterval(() => {
             // C. BROADCAST RESULTS & DELAY PAYOUT
             // ------------------------------------
             
-            // Send outcomes to frontend immediately so specific card/dice animations start playing
+            // Send outcomes to frontend immediately so animations start playing
             io.to('dt').emit('sharedResults', { room: 'dt', dCard: dtD, tCard: dtT, winner: dtWin });
             io.to('sicbo').emit('sharedResults', { room: 'sicbo', roll: sbR, sum: sbSum, winner: sbWin });
             io.to('perya').emit('sharedResults', { room: 'perya', roll: pyR });
@@ -310,6 +311,7 @@ io.on('connection', (socket) => {
             await user.save();
             socket.user = user;
             
+            // Daily Reward Logic & Timers
             let now = new Date();
             let canClaim = true;
             let day = 1;
@@ -463,7 +465,7 @@ io.on('connection', (socket) => {
                     dHand: [drawCard(), drawCard()] 
                 };
                 
-                // Natural Blackjack Check using real dynamic scoring
+                // Natural Blackjack Check
                 let pS = getBJScore(socket.bjState.pHand);
                 if (pS === 21) {
                     let dS = getBJScore(socket.bjState.dHand);
