@@ -1,547 +1,486 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stick N' Trade | Master Admin</title>
+require('dotenv').config();
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const mongoose = require('mongoose');
+const path = require('path');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ==========================================
+// 1. MONGODB DATABASE SETUP
+// ==========================================
+const MONGO_URI = process.env.MONGO_URL || 'mongodb://localhost:27017/stickntrade';
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('✅ Connected to MongoDB Database'))
+    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+
+// ==========================================
+// 2. DATABASE SCHEMAS
+// ==========================================
+const userSchema = new mongoose.Schema({
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, default: 'Player' },
+    credits: { type: Number, default: 0 }, 
+    status: { type: String, default: 'Offline' },
+    joinDate: { type: Date, default: Date.now },
+    dailyReward: {
+        lastClaim: { type: Date, default: null },
+        streak: { type: Number, default: 0 }
+    }
+});
+const User = mongoose.model('User', userSchema);
+
+const txSchema = new mongoose.Schema({
+    username: String,
+    type: String, 
+    amount: Number,
+    ref: String,
+    status: { type: String, default: 'Pending' },
+    date: { type: Date, default: Date.now }
+});
+const Transaction = mongoose.model('Transaction', txSchema);
+
+const codeSchema = new mongoose.Schema({
+    batchId: String,
+    amount: Number,
+    code: String,
+    redeemedBy: { type: String, default: null },
+    date: { type: Date, default: Date.now }
+});
+const GiftCode = mongoose.model('GiftCode', codeSchema);
+
+
+// ==========================================
+// 3. CASINO ENGINE & GLOBAL HISTORY / STATS
+// ==========================================
+let rooms = { baccarat: 0, perya: 0, dt: 0, sicbo: 0 };
+let sharedTables = { time: 15, status: 'BETTING', bets: [] };
+
+let globalResults = { 
+    dice: [], coinflip: [], blackjack: [], 
+    baccarat: [], perya: [], dt: [], sicbo: [] 
+};
+
+let gameStats = {
+    baccarat: { total: 0, Player: 0, Banker: 0, Tie: 0 },
+    dt: { total: 0, Dragon: 0, Tiger: 0, Tie: 0 },
+    sicbo: { total: 0, Big: 0, Small: 0, Triple: 0 },
+    perya: { total: 0, Yellow: 0, White: 0, Pink: 0, Blue: 0, Red: 0, Green: 0 },
+    coinflip: { total: 0, Heads: 0, Tails: 0 },
+    dice: { total: 0, Win: 0, Lose: 0 },
+    blackjack: { total: 0, Win: 0, Lose: 0, Push: 0 }
+};
+
+function logGlobalResult(game, resultStr) {
+    globalResults[game].unshift({ result: resultStr, time: new Date() });
+    if (globalResults[game].length > 25) globalResults[game].pop();
+}
+
+function drawCard() {
+    const vs = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+    const ss = ['♠','♣','♥','♦'];
+    let v = vs[Math.floor(Math.random() * vs.length)];
+    let s = ss[Math.floor(Math.random() * ss.length)];
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    let bac = isNaN(parseInt(v)) ? (v === 'A' ? 1 : 0) : (v === '10' ? 0 : parseInt(v));
+    let bj = isNaN(parseInt(v)) ? (v === 'A' ? 11 : 10) : parseInt(v);
     
-    <script src="/socket.io/socket.io.js"></script>
+    let dt = 0;
+    if (v === 'A') dt = 14;
+    else if (v === 'K') dt = 13;
+    else if (v === 'Q') dt = 12;
+    else if (v === 'J') dt = 11;
+    else dt = parseInt(v);
 
-    <style>
-        /* ================= CSS VARIABLES ================= */
-        :root { 
-            --ps-bg: #000814; 
-            --ps-blue: #00439c; 
-            --ps-glow: #00a2ff; 
-            --glass-bg: rgba(0, 15, 35, 0.85); 
-            --glass-border: rgba(255, 255, 255, 0.15); 
-            --danger: #ff3366; 
-            --success: #00e676; 
-            --credits: #ffb400; 
-            --text-main: #f8fafc; 
-            --text-muted: #8c9eb5; 
-        }
+    let suitHtml = (s === '♥' || s === '♦') ? `<span class="card-red">${s}</span>` : s;
+    return { val: v, suit: s, bacVal: bac, bjVal: bj, dtVal: dt, raw: v, suitHtml: suitHtml };
+}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; }
-        
-        body { 
-            background: linear-gradient(135deg, #000a1f 0%, #00122e 100%); 
-            color: var(--text-main); 
-            min-height: 100vh; 
-            width: 100vw;
-            display: flex; 
-            overflow: hidden;
-        }
+function getBJScore(hand) {
+    let score = 0, aces = 0;
+    for (let card of hand) { score += card.bjVal; if (card.val === 'A') aces += 1; }
+    while (score > 21 && aces > 0) { score -= 10; aces -= 1; }
+    return score;
+}
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+// ==========================================
+// 4. SHARED TABLES REAL-TIME LOOP
+// ==========================================
+setInterval(() => {
+    if (sharedTables.status === 'BETTING') {
+        sharedTables.time--;
+        io.emit('timerUpdate', sharedTables.time);
 
-        .hidden { display: none !important; opacity: 0; pointer-events: none; }
+        if (sharedTables.time <= 0) {
+            sharedTables.status = 'RESOLVING';
+            io.emit('lockBets');
 
-        /* ================= AUTHENTICATION ================= */
-        #auth-container { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            display: flex; justify-content: center; align-items: center; 
-            z-index: 999999; background: #00050d; 
-        }
-        
-        .auth-box { 
-            width: 420px; background: var(--glass-bg); padding: 3rem; 
-            border-radius: 16px; border: 1px solid var(--glass-border); 
-            text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.8); 
-            position: relative; z-index: 10; 
-        }
-        
-        .auth-title { font-size: 2.2rem; font-weight: 900; color: white; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;}
-        .auth-sub { color: var(--danger); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
-        
-        .input-group { margin-bottom: 15px; text-align: left; width: 100%; }
-        .input-group label { display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
-        
-        .input-control { 
-            width: 100%; padding: 15px; background: rgba(0,0,0,0.5); 
-            border: 1px solid var(--glass-border); color: white; 
-            border-radius: 8px; font-size: 1.1rem; font-weight: 600; 
-            transition: 0.2s; pointer-events: auto; cursor: text;
-        }
-        .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
-        
-        .btn-primary { 
-            background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); 
-            padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; 
-            cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; pointer-events: auto;
-        }
-        .btn-primary:hover { background: var(--ps-glow); color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 162, 255, 0.4); }
-        
-        .auth-msg { font-size: 0.95rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; color: var(--danger); }
-
-        /* ================= DASHBOARD LAYOUT ================= */
-        #admin-app { display: none; width: 100%; height: 100vh; position: relative; z-index: 1;}
-        
-        /* SIDEBAR */
-        .sidebar { width: 280px; background: rgba(0, 5, 15, 0.95); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; flex-shrink: 0;}
-        .sidebar-header { padding: 30px 25px; border-bottom: 1px solid var(--glass-border); text-align: center; }
-        .sidebar-header h2 { font-weight: 900; font-size: 1.6rem; color: white; letter-spacing: 1px; line-height: 1.1;}
-        .sidebar-header span { color: var(--danger); font-weight: 800; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; }
-        
-        .nav-menu { padding: 20px 0; display: flex; flex-direction: column; gap: 5px; flex: 1; }
-        .nav-item { padding: 18px 25px; color: var(--text-muted); font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 15px; border-left: 4px solid transparent; }
-        .nav-item i { width: 25px; text-align: center; font-size: 1.2rem; }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-item.active { background: rgba(0, 162, 255, 0.1); color: var(--ps-glow); border-left-color: var(--ps-glow); }
-        
-        .logout-btn { padding: 20px; text-align: center; border-top: 1px solid var(--glass-border); cursor: pointer; color: var(--danger); font-weight: 800; transition: 0.2s; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;}
-        .logout-btn:hover { background: rgba(255, 51, 102, 0.1); }
-
-        /* MAIN CONTENT */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: transparent; }
-        .topbar { padding: 25px 40px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
-        .topbar h1 { font-weight: 900; font-size: 2rem; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
-        
-        .content-area { padding: 40px; overflow-y: auto; flex: 1; }
-
-        /* STATS CARDS */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .stat-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 30px; border-radius: 12px; display: flex; align-items: center; gap: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .stat-icon { width: 70px; height: 70px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; background: rgba(255,255,255,0.05); }
-        .stat-info h3 { color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px;}
-        .stat-info .value { font-size: 2.5rem; font-weight: 900; color: white; line-height: 1; }
-
-        /* DATA TABLES */
-        .panel { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .panel-header { padding: 20px 30px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); }
-        .panel-header h3 { font-weight: 900; font-size: 1.3rem; text-transform: uppercase; margin: 0; letter-spacing: 1px;}
-        
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 18px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        th { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; background: rgba(0,0,0,0.3); letter-spacing: 1px; }
-        td { font-weight: 600; font-size: 1.05rem; color: white; }
-        tr:hover { background: rgba(255,255,255,0.03); }
-
-        .badge { padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: inline-block; }
-        .badge.pending { background: rgba(255, 180, 0, 0.15); color: var(--credits); border: 1px solid rgba(255, 180, 0, 0.3); }
-        .badge.approved, .badge.active { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
-        .badge.rejected, .badge.banned { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
-        .badge.offline { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); border: 1px solid rgba(255, 255, 255, 0.2); }
-
-        /* ACTION BUTTONS IN TABLES */
-        .action-btns { display: flex; gap: 10px; }
-        .btn-sm { padding: 10px 15px; border: none; border-radius: 6px; font-weight: 800; font-size: 0.85rem; cursor: pointer; text-transform: uppercase; transition: 0.2s; color: white; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;}
-        .btn-edit { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid rgba(0, 162, 255, 0.3); } .btn-edit:hover { background: var(--ps-glow); color: black; }
-        .btn-approve { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); } .btn-approve:hover { background: var(--success); color: black; }
-        .btn-reject { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); } .btn-reject:hover { background: var(--danger); color: white; }
-
-        /* MODALS */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .modal-content { background: var(--glass-bg); width: 450px; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); position: relative; box-shadow: 0 25px 80px rgba(0,0,0,0.9); pointer-events: auto; }
-        .modal-close { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; background: none; border: none; transition: 0.2s; outline: none; }
-        .modal-close:hover { color: var(--danger); transform: scale(1.1); }
-        .modal-title { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-align: center; }
-
-    </style>
-</head>
-<body>
-
-    <div id="auth-container">
-        <div class="auth-box">
-            <div class="auth-title">STICK N' TRADE</div>
-            <div class="auth-sub">Master Control</div>
-            <div class="input-group">
-                <label>Admin Username</label>
-                <input type="text" id="admin-user" class="input-control" placeholder="Enter username">
-            </div>
-            <div class="input-group" style="margin-bottom: 25px;">
-                <label>Master Password</label>
-                <input type="password" id="admin-pass" class="input-control" placeholder="Enter password">
-            </div>
-            <div id="auth-msg" class="auth-msg auth-error"></div>
-            <button class="btn-primary" onclick="loginAdmin()">ACCESS DASHBOARD</button>
-        </div>
-    </div>
-
-    <div id="admin-app">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h2>STICK N' TRADE</h2>
-                <span>Master Admin</span>
-            </div>
-            <div class="nav-menu">
-                <div class="nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard Overview</div>
-                <div class="nav-item" onclick="switchTab('users')"><i class="fas fa-users"></i> Player Management</div>
-                <div class="nav-item" onclick="switchTab('cashier')"><i class="fas fa-money-bill-transfer"></i> Cashier & Banking</div>
-                <div class="nav-item" onclick="switchTab('promos')"><i class="fas fa-gift"></i> Promo Codes</div>
-            </div>
-            <div class="logout-btn" onclick="location.reload()">
-                <i class="fas fa-sign-out-alt"></i> Secure Logout
-            </div>
-        </div>
-
-        <div class="main-content">
-            <div class="topbar">
-                <h1 id="page-title">Dashboard Overview</h1>
-                <div style="font-weight: 800; color: var(--ps-glow); display: flex; align-items: center; gap: 10px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">
-                    <i class="fas fa-shield-alt"></i> Admin Terminal Connected
-                </div>
-            </div>
-
-            <div class="content-area custom-scroll">
-                
-                <div id="view-dashboard" class="tab-view">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon" style="color: var(--credits);"><i class="fas fa-coins"></i></div>
-                            <div class="stat-info"><h3>Total Economy</h3><div class="value" id="stat-economy">0 TC</div></div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon" style="color: var(--ps-glow);"><i class="fas fa-users"></i></div>
-                            <div class="stat-info"><h3>Registered Players</h3><div class="value" id="stat-users">0</div></div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon" style="color: var(--danger);"><i class="fas fa-clock"></i></div>
-                            <div class="stat-info"><h3>Pending Requests</h3><div class="value" id="stat-pending">0</div></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="view-users" class="tab-view hidden">
-                    <div class="panel">
-                        <div class="panel-header"><h3>Player Database</h3></div>
-                        <div class="custom-scroll" style="max-height: 65vh; overflow-y: auto;">
-                            <table>
-                                <thead style="position: sticky; top: 0; z-index: 10;">
-                                    <tr><th>Username</th><th>Credits (TC)</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
-                                </thead>
-                                <tbody id="users-tbody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="view-cashier" class="tab-view hidden">
-                    <div class="panel">
-                        <div class="panel-header"><h3 style="color: var(--credits);">Pending Transactions</h3></div>
-                        <div class="custom-scroll" style="max-height: 40vh; overflow-y: auto;">
-                            <table>
-                                <thead style="position: sticky; top: 0; z-index: 10;">
-                                    <tr><th>Date</th><th>Player</th><th>Type</th><th>Amount</th><th>Details / Proof</th><th>Actions</th></tr>
-                                </thead>
-                                <tbody id="tx-pending-tbody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <div class="panel">
-                        <div class="panel-header"><h3>Transaction History</h3></div>
-                        <div class="custom-scroll" style="max-height: 35vh; overflow-y: auto;">
-                            <table>
-                                <thead style="position: sticky; top: 0; z-index: 10;">
-                                    <tr><th>Date</th><th>Player</th><th>Type</th><th>Amount</th><th>Status</th></tr>
-                                </thead>
-                                <tbody id="tx-history-tbody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="view-promos" class="tab-view hidden">
-                    <div class="panel">
-                        <div class="panel-header">
-                            <h3>Active Gift Codes</h3>
-                            <button class="btn-sm btn-approve" onclick="openModal('create-promo-modal')"><i class="fas fa-plus"></i> Generate Codes</button>
-                        </div>
-                        <div class="custom-scroll" style="max-height: 65vh; overflow-y: auto;">
-                            <table>
-                                <thead style="position: sticky; top: 0; z-index: 10;">
-                                    <tr><th>Created Date</th><th>Batch ID</th><th>Code</th><th>Value</th><th>Status</th><th>Actions</th></tr>
-                                </thead>
-                                <tbody id="promos-tbody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <div id="edit-user-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('edit-user-modal')"><i class="fas fa-times"></i></button>
-            <h3 class="modal-title">Edit Player</h3>
-            <input type="hidden" id="edit-u-id">
+            let dtD = drawCard(), dtT = drawCard();
+            let dtWin = dtD.dtVal > dtT.dtVal ? 'Dragon' : (dtT.dtVal > dtD.dtVal ? 'Tiger' : 'Tie');
+            logGlobalResult('dt', `${dtWin} Win`);
+            gameStats.dt.total++; gameStats.dt[dtWin]++;
             
-            <div class="input-group">
-                <label>Username (Read Only)</label>
-                <input type="text" id="edit-u-name" class="input-control" disabled style="opacity: 0.5;">
-            </div>
-            <div class="input-group">
-                <label>Account Balance (TC)</label>
-                <input type="number" id="edit-u-credits" class="input-control">
-            </div>
-            <div class="input-group" style="margin-bottom: 25px;">
-                <label>Account Role</label>
-                <select id="edit-u-role" class="input-control" style="appearance: auto; cursor: pointer;">
-                    <option value="Player">Player</option>
-                    <option value="VIP">VIP</option>
-                    <option value="Admin">Admin</option>
-                </select>
-            </div>
-            <button class="btn-primary" onclick="saveUserEdit()">SAVE CHANGES</button>
-        </div>
-    </div>
+            let sbR = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1];
+            let sbSum = sbR[0] + sbR[1] + sbR[2];
+            let sbTrip = (sbR[0] === sbR[1] && sbR[1] === sbR[2]);
+            let sbWin = sbTrip ? 'Triple' : (sbSum <= 10 ? 'Small' : 'Big');
+            logGlobalResult('sicbo', sbTrip ? `Triple ${sbR[0]}` : `${sbWin} (${sbSum})`);
+            gameStats.sicbo.total++; gameStats.sicbo[sbWin]++;
 
-    <div id="create-promo-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('create-promo-modal')"><i class="fas fa-times"></i></button>
-            <h3 class="modal-title">Generate Gift Codes</h3>
-            
-            <div class="input-group">
-                <label>TC Value Per Code</label>
-                <input type="number" id="promo-amount" class="input-control" placeholder="e.g. 500">
-            </div>
-            <div class="input-group" style="margin-bottom: 25px;">
-                <label>Quantity of Codes to Generate</label>
-                <input type="number" id="promo-count" class="input-control" placeholder="e.g. 10">
-            </div>
-            <button class="btn-primary" onclick="generatePromo()">CREATE BATCH</button>
-        </div>
-    </div>
+            const cols = ['Yellow','White','Pink','Blue','Red','Green'];
+            let pyR = [cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)]];
+            logGlobalResult('perya', pyR.join(','));
+            gameStats.perya.total++; pyR.forEach(c => gameStats.perya[c]++);
 
-    <script>
-        const socket = io();
+            let pC = [drawCard(), drawCard()], bC = [drawCard(), drawCard()];
+            let pS = (pC[0].bacVal + pC[1].bacVal) % 10;
+            let bS = (bC[0].bacVal + bC[1].bacVal) % 10;
+            let p3Drawn = false, b3Drawn = false;
 
-        // Data Stores
-        let gUsers = [];
-        let gTxs = [];
-        let gPromos = [];
-
-        // ENTER Key Login Support
-        document.getElementById('admin-pass').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') loginAdmin();
-        });
-
-        // --- AUTHENTICATION ---
-        function loginAdmin() {
-            const u = document.getElementById('admin-user').value.trim();
-            const p = document.getElementById('admin-pass').value.trim();
-            const msgBox = document.getElementById('auth-msg');
-
-            if (!u || !p) {
-                msgBox.innerText = "Please fill in all fields.";
-                msgBox.className = "auth-msg auth-error";
-                return;
+            if (pS < 8 && bS < 8) {
+                let p3Val = -1;
+                if (pS <= 5) { pC.push(drawCard()); p3Val = pC[2].bacVal; pS = (pS + p3Val) % 10; p3Drawn = true; }
+                let bDraws = false;
+                if (pC.length === 2) { if (bS <= 5) bDraws = true; } 
+                else {
+                    if (bS <= 2) bDraws = true;
+                    else if (bS === 3 && p3Val !== 8) bDraws = true;
+                    else if (bS === 4 && p3Val >= 2 && p3Val <= 7) bDraws = true;
+                    else if (bS === 5 && p3Val >= 4 && p3Val <= 7) bDraws = true;
+                    else if (bS === 6 && (p3Val === 6 || p3Val === 7)) bDraws = true;
+                }
+                if (bDraws) { bC.push(drawCard()); bS = (bS + bC[bC.length-1].bacVal) % 10; b3Drawn = true; }
             }
+            let bacWin = pS > bS ? 'Player' : (bS > pS ? 'Banker' : 'Tie');
+            logGlobalResult('baccarat', `${bacWin} (${pS} to ${bS})`);
+            gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
-            msgBox.innerText = "Authenticating...";
-            msgBox.style.color = "white";
+            let playerPayouts = {}; 
+            sharedTables.bets.forEach(b => {
+                let payout = 0;
+                if (b.room === 'dt' && b.choice === dtWin) payout = b.amount * (dtWin === 'Tie' ? 8 : 2);
+                else if (b.room === 'sicbo' && b.choice === (sbWin === 'Triple' ? 'None' : sbWin)) payout = b.amount * 2;
+                else if (b.room === 'perya') {
+                    let matches = pyR.filter(c => c === b.choice).length;
+                    if (matches > 0) payout = b.amount + (b.amount * matches);
+                }
+                else if (b.room === 'baccarat' && b.choice === bacWin) payout = b.amount * (bacWin === 'Tie' ? 8 : 2);
 
-            socket.emit('adminLogin', { username: u, password: p });
-        }
-
-        socket.on('authError', msg => {
-            const msgBox = document.getElementById('auth-msg');
-            msgBox.innerText = msg;
-            msgBox.className = "auth-msg auth-error";
-            msgBox.style.color = "var(--danger)";
-        });
-
-        socket.on('adminLoginSuccess', data => {
-            // Completely hide the auth wrapper so it doesn't block clicks
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('admin-app').style.display = 'flex';
-        });
-
-        // --- NAVIGATION ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            
-            document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
-            document.getElementById('view-' + tabId).classList.remove('hidden');
-
-            const titles = { 'dashboard': 'Dashboard Overview', 'users': 'Player Management', 'cashier': 'Cashier & Banking', 'promos': 'Promo Codes' };
-            document.getElementById('page-title').innerText = titles[tabId];
-        }
-
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        // --- DATA SYNCHRONIZATION ---
-        socket.on('adminDataSync', data => {
-            gUsers = data.users;
-            gTxs = data.transactions;
-            gPromos = data.giftBatches;
-            
-            // 1. Update Dashboard Stats
-            document.getElementById('stat-economy').innerText = data.stats.economy.toLocaleString() + ' TC';
-            document.getElementById('stat-users').innerText = gUsers.length;
-            
-            let pendingCount = gTxs.filter(t => t.status === 'Pending').length;
-            document.getElementById('stat-pending').innerText = pendingCount;
-
-            // 2. Render UI
-            renderUsers();
-            renderTransactions();
-            renderPromos();
-        });
-
-        // --- RENDERING FUNCTIONS ---
-        function renderUsers() {
-            const tbody = document.getElementById('users-tbody');
-            tbody.innerHTML = '';
-            
-            gUsers.forEach(u => {
-                let statClass = u.status === 'Active' ? 'active' : (u.status === 'Banned' ? 'banned' : 'offline');
-                
-                let actionBtn = u.status === 'Banned' 
-                    ? `<button class="btn-sm btn-approve" onclick="actionUser('unban', '${u._id}')"><i class="fas fa-unlock"></i> Unban</button>`
-                    : `<button class="btn-sm btn-reject" onclick="actionUser('ban', '${u._id}')"><i class="fas fa-ban"></i> Ban</button>`;
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td><div style="font-weight:900; color:var(--ps-glow); font-size:1.1rem;">${u.username}</div></td>
-                        <td style="color:var(--credits); font-weight: 800;">${u.credits.toLocaleString()} TC</td>
-                        <td>${u.role}</td>
-                        <td><span class="badge ${statClass}">${u.status}</span></td>
-                        <td><span style="color:var(--text-muted); font-size:0.9rem;">${new Date(u.joinDate).toLocaleDateString()}</span></td>
-                        <td class="action-btns">
-                            <button class="btn-sm btn-edit" onclick="openEditUser('${u._id}')"><i class="fas fa-pen"></i> Edit</button>
-                            ${actionBtn}
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function renderTransactions() {
-            const pBody = document.getElementById('tx-pending-tbody');
-            const hBody = document.getElementById('tx-history-tbody');
-            pBody.innerHTML = ''; hBody.innerHTML = '';
-
-            gTxs.forEach(t => {
-                let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
-                let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-                
-                if (t.status === 'Pending') {
-                    pBody.innerHTML += `
-                        <tr>
-                            <td style="color:var(--text-muted); font-size:0.95rem;">${dStr}</td>
-                            <td style="font-weight:900; color:var(--ps-glow); font-size: 1.1rem;">${t.username}</td>
-                            <td style="text-transform:uppercase; font-weight:800;">${t.type}</td>
-                            <td style="color:${color}; font-weight: 800;">${t.amount.toLocaleString()} TC</td>
-                            <td style="font-family: monospace; color: var(--text-muted);">${t.ref}</td>
-                            <td class="action-btns">
-                                <button class="btn-sm btn-approve" onclick="resolveTx('${t._id}', 'Approved')"><i class="fas fa-check"></i> Approve</button>
-                                <button class="btn-sm btn-reject" onclick="resolveTx('${t._id}', 'Rejected')"><i class="fas fa-times"></i> Reject</button>
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    let statClass = t.status === 'Approved' ? 'approved' : 'rejected';
-                    hBody.innerHTML += `
-                        <tr>
-                            <td style="color:var(--text-muted); font-size:0.95rem;">${dStr}</td>
-                            <td style="font-weight:900; font-size: 1.1rem;">${t.username}</td>
-                            <td style="text-transform:uppercase; font-weight: 800;">${t.type}</td>
-                            <td style="color:${color}; font-weight: 800;">${t.amount.toLocaleString()} TC</td>
-                            <td><span class="badge ${statClass}">${t.status}</span></td>
-                        </tr>
-                    `;
+                if (payout > 0) {
+                    if (!playerPayouts[b.userId]) playerPayouts[b.userId] = { socketId: b.socketId, username: b.username, amount: 0 };
+                    playerPayouts[b.userId].amount += payout;
                 }
             });
-            if(pBody.innerHTML === '') pBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); font-style: italic; padding: 30px;">No pending cashier requests.</td></tr>`;
-        }
 
-        function renderPromos() {
-            const tbody = document.getElementById('promos-tbody');
-            tbody.innerHTML = '';
+            Object.keys(playerPayouts).forEach(async (userId) => {
+                let user = await User.findById(userId);
+                if (user) {
+                    user.credits += playerPayouts[userId].amount;
+                    await user.save();
+                }
+            });
+
+            io.to('dt').emit('sharedResults', { room: 'dt', dCard: dtD, tCard: dtT, winner: dtWin });
+            io.to('sicbo').emit('sharedResults', { room: 'sicbo', roll: sbR, sum: sbSum, winner: sbWin });
+            io.to('perya').emit('sharedResults', { room: 'perya', roll: pyR });
+            io.to('baccarat').emit('sharedResults', { room: 'baccarat', pCards: pC, bCards: bC, pScore: pS, bScore: bS, winner: bacWin, p3Drawn: p3Drawn, b3Drawn: b3Drawn });
+
+            setTimeout(() => {
+                sharedTables.time = 15;
+                sharedTables.status = 'BETTING';
+                sharedTables.bets = [];
+                io.emit('newRound'); 
+                pushAdminData(); // Refresh admin stats
+            }, 8000); 
+        }
+    }
+}, 1000);
+
+// ==========================================
+// 5. HELPER: PUSH ADMIN DATA
+// ==========================================
+async function pushAdminData(target = io.to('admin_room')) {
+    try {
+        const users = await User.find(); 
+        const txs = await Transaction.find().sort({ date: -1 }); 
+        const gcs = await GiftCode.find().sort({ date: -1 });
+        let totalEconomy = users.reduce((a, b) => a + (b.credits || 0), 0);
+        target.emit('adminDataSync', { users, transactions: txs, giftBatches: gcs, stats: { economy: totalEconomy } });
+    } catch(e) { console.error(e); }
+}
+
+// ==========================================
+// 6. CLIENT SOCKET COMMUNICATION
+// ==========================================
+io.on('connection', (socket) => {
+    socket.emit('timerUpdate', sharedTables.time);
+
+    // --- ADMIN MODULE ---
+    socket.on('adminLogin', async (data) => {
+        if (data.username === 'admin' && data.password === 'admin') {
+            socket.join('admin_room'); // Lock admin into secure room
+            socket.emit('adminLoginSuccess', { username: 'Admin Boss', role: 'Head Admin' });
+            await pushAdminData(socket);
+        } else { 
+            socket.emit('authError', 'Invalid Admin Credentials.'); 
+        }
+    });
+
+    socket.on('adminAction', async (data) => {
+        if (!socket.rooms.has('admin_room')) return; // Block non-admins
+
+        try {
+            if (data.type === 'editUser') {
+                await User.findByIdAndUpdate(data.id, { credits: data.credits, role: data.role });
+            }
+            else if (data.type === 'ban') {
+                await User.findByIdAndUpdate(data.id, { status: 'Banned' });
+            }
+            else if (data.type === 'unban') {
+                await User.findByIdAndUpdate(data.id, { status: 'Active' });
+            }
+            else if (data.type === 'resolveTx') {
+                let tx = await Transaction.findById(data.id);
+                if (tx && tx.status === 'Pending') {
+                    tx.status = data.status; 
+                    await tx.save();
+                    
+                    // Add funds to player if deposit approved
+                    if (tx.type === 'Deposit' && data.status === 'Approved') {
+                        let u = await User.findOne({ username: tx.username });
+                        if (u) {
+                            u.credits += tx.amount;
+                            await u.save();
+                            io.emit('balanceUpdateForUser', { username: u.username, newBalance: u.credits, action: "Deposit Approved" });
+                        }
+                    }
+                    // Refund player if withdrawal rejected
+                    if (tx.type === 'Withdrawal' && data.status === 'Rejected') {
+                        let u = await User.findOne({ username: tx.username });
+                        if (u) {
+                            u.credits += tx.amount;
+                            await u.save();
+                            io.emit('balanceUpdateForUser', { username: u.username, newBalance: u.credits, action: "Withdrawal Rejected" });
+                        }
+                    }
+                }
+            }
+            else if (data.type === 'createBatch') {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let batchId = 'B-' + Math.floor(Math.random() * 10000);
+                for(let i=0; i<data.count; i++) {
+                    let code = '';
+                    for(let j=0; j<10; j++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+                    await new GiftCode({ batchId, amount: data.amount, code }).save();
+                }
+            }
+            else if (data.type === 'deleteBatch') {
+                await GiftCode.findByIdAndDelete(data.id);
+            }
             
-            gPromos.forEach(b => {
-                let dStr = new Date(b.date).toLocaleDateString();
-                let statHtml = b.redeemedBy 
-                    ? `<span class="badge offline">Used by ${b.redeemedBy}</span>` 
-                    : `<span class="badge active">Active Code</span>`;
+            // Sync all connected admin panels live
+            await pushAdminData();
+
+        } catch(e) { console.error("Admin Action Error:", e); }
+    });
+
+    // --- AUTHENTICATION ---
+    socket.on('login', async (data) => {
+        try {
+            const user = await User.findOne({ username: data.username, password: data.password });
+            if (!user) return socket.emit('authError', 'Invalid login credentials.');
+            if (user.status === 'Banned') return socket.emit('authError', 'This account has been banned.');
+
+            user.status = 'Active'; await user.save(); socket.user = user;
+            pushAdminData(); // Update admin live
+            
+            let now = new Date(), canClaim = true, day = 1, nextClaim = null;
+            if (user.dailyReward.lastClaim) {
+                let diffHours = (now - user.dailyReward.lastClaim) / (1000 * 60 * 60);
+                if (diffHours < 24) { canClaim = false; nextClaim = new Date(user.dailyReward.lastClaim.getTime() + 24 * 60 * 60 * 1000); } 
+                else if (diffHours > 48) { user.dailyReward.streak = 0; }
+                day = (user.dailyReward.streak % 7) + 1;
+            }
+
+            socket.emit('loginSuccess', { username: user.username, credits: user.credits, daily: { canClaim, day, nextClaim } });
+        } catch(e) { socket.emit('authError', 'Server Error.'); }
+    });
+
+    socket.on('register', async (data) => {
+        try {
+            const exists = await User.findOne({ username: data.username });
+            if (exists) return socket.emit('authError', 'Username is already taken.');
+            await new User({ username: data.username, password: data.password }).save();
+            pushAdminData();
+            socket.emit('registerSuccess', 'Account created! You may now login.');
+        } catch(e) { socket.emit('authError', 'Server Error.'); }
+    });
+
+    // --- DAILY REWARD ---
+    socket.on('claimDaily', async () => {
+        if (!socket.user) return;
+        const user = await User.findById(socket.user._id);
+        let now = new Date();
+        if (user.dailyReward.lastClaim && (now - user.dailyReward.lastClaim) / (1000 * 60 * 60) < 24) return; 
+
+        let day = (user.dailyReward.streak % 7) + 1;
+        const rewards = [25, 50, 100, 200, 500, 750, 1000];
+        let amt = rewards[day - 1];
+
+        user.credits += amt; user.dailyReward.lastClaim = now; user.dailyReward.streak += 1;
+        await user.save();
+        pushAdminData();
+        socket.emit('dailyClaimed', { amt, newBalance: user.credits, nextClaim: new Date(now.getTime() + 24 * 60 * 60 * 1000) });
+    });
+
+    // --- PROMO CODES ---
+    socket.on('redeemPromo', async (code) => {
+        if (!socket.user) return;
+        try {
+            const gc = await GiftCode.findOne({ code: code });
+            if (!gc) return socket.emit('promoResult', { success: false, msg: 'Invalid Code' });
+            if (gc.redeemedBy) return socket.emit('promoResult', { success: false, msg: 'Code already used' });
+
+            gc.redeemedBy = socket.user.username; await gc.save();
+            const user = await User.findById(socket.user._id);
+            user.credits += gc.amount; await user.save();
+            pushAdminData();
+            socket.emit('promoResult', { success: true, amt: gc.amount });
+            socket.emit('balanceUpdateData', user.credits);
+        } catch(e) { socket.emit('promoResult', { success: false, msg: 'Server error' }); }
+    });
+
+    // --- GLOBAL RESULTS ---
+    socket.on('getGlobalResults', (game) => {
+        socket.emit('globalResultsData', { game: game, results: globalResults[game] || [], stats: gameStats[game] || { total: 0 } });
+    });
+
+    // --- SOLO GAMES ENGINE ---
+    socket.on('playSolo', async (data) => {
+        if (!socket.user) return;
+        const user = await User.findById(socket.user._id);
+        if (user.credits < data.bet) return socket.emit('toast', { msg: 'Insufficient TC', type: 'error' });
+        
+        user.credits -= data.bet; 
+        let payout = 0;
+
+        if (data.game === 'dice') {
+            gameStats.dice.total++;
+            let roll = Math.floor(Math.random() * 100) + 1;
+            if (roll > 50) { payout = data.bet * 2; gameStats.dice.Win++; } 
+            else { gameStats.dice.Lose++; }
+            user.credits += payout; await user.save();
+            logGlobalResult('dice', `Rolled ${roll}`);
+            pushAdminData();
+            socket.emit('diceResult', { roll, payout, bet: data.bet, newBalance: user.credits });
+        } 
+        else if (data.game === 'coinflip') {
+            gameStats.coinflip.total++;
+            let result = Math.random() < 0.5 ? 'Heads' : 'Tails';
+            gameStats.coinflip[result]++;
+            if (data.choice === result) payout = data.bet * 2;
+            user.credits += payout; await user.save();
+            logGlobalResult('coinflip', result);
+            pushAdminData();
+            socket.emit('coinResult', { result, payout, bet: data.bet, newBalance: user.credits });
+        }
+        else if (data.game === 'blackjack') {
+            if (data.action === 'start') {
+                gameStats.blackjack.total++; await user.save(); 
+                socket.bjState = { bet: data.bet, pHand: [drawCard(), drawCard()], dHand: [drawCard(), drawCard()] };
                 
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="color:var(--text-muted); font-size:0.95rem;">${dStr}</td>
-                        <td style="font-size: 0.9rem; color: var(--text-muted);">#${b.batchId}</td>
-                        <td style="font-family:monospace; font-size:1.2rem; letter-spacing:2px; font-weight: 900; color: white;">${b.code}</td>
-                        <td style="color:var(--ps-glow); font-weight: 800;">${b.amount.toLocaleString()} TC</td>
-                        <td>${statHtml}</td>
-                        <td class="action-btns">
-                            <button class="btn-sm btn-reject" onclick="deleteBatch('${b._id}')"><i class="fas fa-trash"></i> Delete</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        // --- ACTION HANDLERS ---
-        function resolveTx(id, status) {
-            if(confirm(`Are you sure you want to officially mark this transaction as ${status}?`)) {
-                socket.emit('adminAction', { type: 'resolveTx', id: id, status: status });
+                let pS = getBJScore(socket.bjState.pHand);
+                let dS = getBJScore(socket.bjState.dHand);
+                
+                if (pS === 21) {
+                    let msg = dS === 21 ? 'Push' : 'Blackjack!';
+                    payout = dS === 21 ? data.bet : data.bet * 2.5;
+                    if(msg === 'Blackjack!') gameStats.blackjack.Win++; else gameStats.blackjack.Push++;
+                    user.credits += payout; await user.save();
+                    logGlobalResult('blackjack', `${msg.toUpperCase()} (${pS} TO ${dS})`);
+                    pushAdminData();
+                    socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, bet: data.bet, newBalance: user.credits });
+                    socket.bjState = null;
+                } else {
+                    socket.emit('bjUpdate', { event: 'deal', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand });
+                }
+            }
+            else if (data.action === 'hit' && socket.bjState) {
+                socket.bjState.pHand.push(drawCard());
+                let pS = getBJScore(socket.bjState.pHand);
+                let dS = getBJScore(socket.bjState.dHand);
+                
+                if (pS > 21) {
+                    gameStats.blackjack.Lose++;
+                    logGlobalResult('blackjack', `BUST! (${pS} TO ${dS})`);
+                    socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', bet: socket.bjState.bet, newBalance: user.credits });
+                    socket.bjState = null;
+                } else {
+                    socket.emit('bjUpdate', { event: 'hit', pHand: socket.bjState.pHand });
+                }
+            }
+            else if (data.action === 'stand' && socket.bjState) {
+                let pS = getBJScore(socket.bjState.pHand);
+                while (getBJScore(socket.bjState.dHand) < 17) { socket.bjState.dHand.push(drawCard()); }
+                
+                let dS = getBJScore(socket.bjState.dHand);
+                let msg = '';
+                if (dS > 21 || pS > dS) { payout = socket.bjState.bet * 2; msg = 'You Win!'; gameStats.blackjack.Win++; } 
+                else if (pS === dS) { payout = socket.bjState.bet; msg = 'Push'; gameStats.blackjack.Push++; } 
+                else { msg = 'Dealer Wins'; gameStats.blackjack.Lose++; }
+                
+                user.credits += payout; await user.save();
+                let logMsg = (dS > 21) ? 'DEALER BUSTS!' : msg.toUpperCase();
+                logGlobalResult('blackjack', `${logMsg} (${pS} TO ${dS})`);
+                pushAdminData();
+                socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, bet: socket.bjState.bet, newBalance: user.credits });
+                socket.bjState = null;
             }
         }
+    });
 
-        function actionUser(type, id) {
-            let msg = type === 'ban' ? "Are you sure you want to BAN this player?" : "Are you sure you want to UNBAN this player?";
-            if(confirm(msg)) socket.emit('adminAction', { type: type, id: id });
+    // --- SHARED TABLES NETWORKING ---
+    socket.on('joinRoom', (room) => { socket.join(room); rooms[room]++; io.emit('playerCount', rooms); });
+    socket.on('leaveRoom', (room) => { socket.leave(room); if (rooms[room] > 0) rooms[room]--; io.emit('playerCount', rooms); });
+    socket.on('sendChat', (data) => { if (socket.user) { io.to(data.room).emit('chatMessage', { user: socket.user.username, text: data.msg, sys: false }); } });
+    
+    socket.on('placeSharedBet', async (data) => {
+        if (!socket.user || sharedTables.status !== 'BETTING') return;
+        const user = await User.findById(socket.user._id);
+        if (user.credits < data.amount) return;
+        user.credits -= data.amount; await user.save();
+        sharedTables.bets.push({ userId: user._id, socketId: socket.id, username: user.username, room: data.room, choice: data.choice, amount: data.amount });
+    });
+
+    // --- CASHIER ACTIONS ---
+    socket.on('submitTransaction', async (data) => { 
+        if (socket.user) {
+            await new Transaction({ username: socket.user.username, type: data.type, amount: data.amount, ref: data.ref }).save(); 
+            const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
+            socket.emit('transactionsData', txs);
+            pushAdminData(); // Alert admin of new transaction live
         }
-
-        function openEditUser(id) {
-            const u = gUsers.find(x => x._id === id);
-            if(!u) return;
-            document.getElementById('edit-u-id').value = u._id;
-            document.getElementById('edit-u-name').value = u.username;
-            document.getElementById('edit-u-credits').value = u.credits;
-            document.getElementById('edit-u-role').value = u.role;
-            openModal('edit-user-modal');
+    });
+    socket.on('getTransactions', async () => { 
+        if (socket.user) {
+            const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
+            socket.emit('transactionsData', txs);
         }
+    });
 
-        function saveUserEdit() {
-            socket.emit('adminAction', {
-                type: 'editUser',
-                id: document.getElementById('edit-u-id').value,
-                credits: parseInt(document.getElementById('edit-u-credits').value),
-                role: document.getElementById('edit-u-role').value
-            });
-            closeModal('edit-user-modal');
+    socket.on('disconnect', async () => {
+        if (socket.user) { 
+            await User.findByIdAndUpdate(socket.user._id, { status: 'Offline' }); 
+            pushAdminData();
         }
+    });
+});
 
-        function generatePromo() {
-            let amt = parseInt(document.getElementById('promo-amount').value);
-            let cnt = parseInt(document.getElementById('promo-count').value);
-            if(!amt || !cnt) return alert("Please fill out both the TC amount and quantity.");
-            
-            socket.emit('adminAction', { type: 'createBatch', amount: amt, count: cnt });
-            closeModal('create-promo-modal');
-            document.getElementById('promo-amount').value = '';
-            document.getElementById('promo-count').value = '';
-        }
-
-        function deleteBatch(id) {
-            if(confirm("Permanently delete this promo code?")) {
-                socket.emit('adminAction', { type: 'deleteBatch', id: id });
-            }
-        }
-
-        // Anti-snoop Security
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        document.onkeydown = function(e) {
-            if(e.keyCode === 123) return false; 
-            if(e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) return false; 
-            if(e.ctrlKey && e.shiftKey && e.keyCode === 'C'.charCodeAt(0)) return false; 
-            if(e.ctrlKey && e.shiftKey && e.keyCode === 'J'.charCodeAt(0)) return false; 
-            if(e.ctrlKey && e.keyCode === 'U'.charCodeAt(0)) return false; 
-        };
-    </script>
-</body>
-</html>
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => console.log(`🚀 Master Backend running on port ${PORT}`));
