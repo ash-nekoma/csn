@@ -45,7 +45,7 @@ const txSchema = new mongoose.Schema({
     username: String,
     type: String, 
     amount: Number,
-    ref: String, 
+    ref: String, // Proof of Payment (filename) or Account Details (Name)
     status: { type: String, default: 'Pending' },
     date: { type: Date, default: Date.now }
 });
@@ -86,7 +86,7 @@ let gameStats = {
     blackjack: { total: 0, Win: 0, Lose: 0, Push: 0 }
 };
 
-// Helper: Logs results and trims the array to max 25 items
+// Helper: Logs results and trims the array to max 25 items (No Time string needed here anymore, frontend formats it)
 function logGlobalResult(game, resultStr) {
     globalResults[game].unshift({ result: resultStr, time: new Date() });
     if (globalResults[game].length > 25) {
@@ -165,7 +165,7 @@ setInterval(() => {
             gameStats.sicbo.total++;
             gameStats.sicbo[sbWin]++;
 
-            // Color Game (Perya) - Format sent as comma string so frontend can split it into dice
+            // Color Game (Perya) - Format sent as array so frontend can render 2D Dice easily
             const cols = ['Yellow','White','Pink','Blue','Red','Green'];
             let pyR = [
                 cols[Math.floor(Math.random() * 6)], 
@@ -193,7 +193,7 @@ setInterval(() => {
                     p3Drawn = true;
                 }
                 
-                // Banker draws based on Player's 3rd card
+                // Banker draws based on Player's 3rd card rules
                 let bDraws = false;
                 if (pC.length === 2) { 
                     if (bS <= 5) bDraws = true; 
@@ -251,7 +251,7 @@ setInterval(() => {
             // C. BROADCAST RESULTS & DELAY PAYOUT
             // ------------------------------------
             
-            // Send outcomes to frontend immediately so animations start playing
+            // Send outcomes to frontend immediately so specific card/dice animations start playing
             io.to('dt').emit('sharedResults', { room: 'dt', dCard: dtD, tCard: dtT, winner: dtWin });
             io.to('sicbo').emit('sharedResults', { room: 'sicbo', roll: sbR, sum: sbSum, winner: sbWin });
             io.to('perya').emit('sharedResults', { room: 'perya', roll: pyR });
@@ -263,25 +263,25 @@ setInterval(() => {
                 p3Drawn: p3Drawn, b3Drawn: b3Drawn
             });
 
-            // WAIT 5 SECONDS (Allows animations to finish and result box to flash)
+            // WAIT 5 SECONDS (Allows visual animations to finish BEFORE adding money)
             setTimeout(() => {
                 Object.keys(playerPayouts).forEach(async (userId) => {
                     let user = await User.findById(userId);
                     if (user) {
                         user.credits += playerPayouts[userId].amount;
                         await user.save();
-                        // Send official updated balance
+                        // Tell player to officially update their nav-bar balance
                         io.to(playerPayouts[userId].socketId).emit('balanceUpdateData', user.credits);
                     }
                 });
             }, 5000);
 
-            // WAIT 8 SECONDS total to fully clear the table and start a new round
+            // WAIT 8 SECONDS total to fully clear the table (reset cards to '?', reset bets) and restart timer
             setTimeout(() => {
                 sharedTables.time = 15;
                 sharedTables.status = 'BETTING';
                 sharedTables.bets = [];
-                io.emit('newRound'); // Tells frontend to visually clear chips/cards
+                io.emit('newRound'); 
             }, 8000); 
         }
     }
@@ -294,6 +294,7 @@ setInterval(() => {
 
 io.on('connection', (socket) => {
     
+    // Sync clock immediately on connect
     socket.emit('timerUpdate', sharedTables.time);
 
     // --- AUTHENTICATION ---
@@ -307,6 +308,7 @@ io.on('connection', (socket) => {
             await user.save();
             socket.user = user;
             
+            // Daily Reward Logic & Timers
             let now = new Date();
             let canClaim = true;
             let day = 1;
@@ -318,7 +320,7 @@ io.on('connection', (socket) => {
                     canClaim = false;
                     nextClaim = new Date(user.dailyReward.lastClaim.getTime() + 24 * 60 * 60 * 1000);
                 } else if (diffHours > 48) {
-                    user.dailyReward.streak = 0; 
+                    user.dailyReward.streak = 0; // Streak broken, reset to Day 1
                 }
                 day = (user.dailyReward.streak % 7) + 1;
             }
@@ -410,11 +412,12 @@ io.on('connection', (socket) => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
         
+        // Strict balance check before game starts
         if (user.credits < data.bet) {
             return socket.emit('toast', { msg: 'Insufficient TC', type: 'error' });
         }
         
-        // Deduct upfront
+        // Deduct upfront locally in DB
         user.credits -= data.bet; 
         let payout = 0;
 
@@ -459,7 +462,7 @@ io.on('connection', (socket) => {
                     dHand: [drawCard(), drawCard()] 
                 };
                 
-                // Natural Blackjack Check using correct Scoring
+                // Natural Blackjack Check
                 let pS = getBJScore(socket.bjState.pHand);
                 if (pS === 21) {
                     let dS = getBJScore(socket.bjState.dHand);
@@ -568,7 +571,7 @@ io.on('connection', (socket) => {
                 ref: data.ref 
             }).save(); 
             
-            // Instantly refresh modal data
+            // Instantly refresh modal data for the user
             const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
             socket.emit('transactionsData', txs);
         }
@@ -578,25 +581,6 @@ io.on('connection', (socket) => {
         if (socket.user) {
             const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
             socket.emit('transactionsData', txs);
-        }
-    });
-
-
-    // --- ADMIN ACTIONS ---
-    socket.on('adminLogin', async (data) => {
-        if (data.username === 'admin' && data.password === 'admin') {
-            socket.emit('adminLoginSuccess', { username: 'Admin Boss', role: 'Head Admin' });
-            
-            const users = await User.find(); 
-            const txs = await Transaction.find().sort({ date: -1 }); 
-            const gcs = await GiftCode.find().sort({ date: -1 });
-            let totalEconomy = users.reduce((a, b) => a + b.credits, 0);
-            
-            socket.emit('adminDataSync', { 
-                users, transactions: txs, giftBatches: gcs, stats: { economy: totalEconomy } 
-            });
-        } else { 
-            socket.emit('authError', 'Invalid Admin Credentials.'); 
         }
     });
 
