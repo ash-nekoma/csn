@@ -33,6 +33,7 @@
             background: linear-gradient(135deg, #000a1f 0%, #00122e 100%); 
             color: var(--text-main); 
             min-height: 100vh; 
+            width: 100vw;
             display: flex; 
             overflow: hidden;
         }
@@ -42,25 +43,47 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
 
-        .hidden { display: none !important; }
+        .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
         /* ================= AUTHENTICATION ================= */
-        #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999; background: #00050d; }
-        .auth-box { width: 420px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.8); }
+        #auth-container { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            display: flex; justify-content: center; align-items: center; 
+            z-index: 999999; background: #00050d; 
+        }
+        
+        .auth-box { 
+            width: 420px; background: var(--glass-bg); padding: 3rem; 
+            border-radius: 16px; border: 1px solid var(--glass-border); 
+            text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.8); 
+            position: relative; z-index: 10; /* Ensures box is strictly clickable */
+        }
+        
         .auth-title { font-size: 2.2rem; font-weight: 900; color: white; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;}
         .auth-sub { color: var(--danger); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
         
-        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group { margin-bottom: 15px; text-align: left; width: 100%; }
         .input-group label { display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
-        .input-control { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1.1rem; font-weight: 600; transition: 0.2s;}
+        
+        .input-control { 
+            width: 100%; padding: 15px; background: rgba(0,0,0,0.5); 
+            border: 1px solid var(--glass-border); color: white; 
+            border-radius: 8px; font-size: 1.1rem; font-weight: 600; 
+            transition: 0.2s; pointer-events: auto; cursor: text;
+        }
         .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
         
-        .btn-primary { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-primary { 
+            background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); 
+            padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; 
+            cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; pointer-events: auto;
+        }
         .btn-primary:hover { background: var(--ps-glow); color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 162, 255, 0.4); }
+        
         .auth-msg { font-size: 0.95rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; color: var(--danger); }
 
         /* ================= DASHBOARD LAYOUT ================= */
-        #admin-app { display: none; width: 100%; height: 100vh; }
+        #admin-app { display: none; width: 100%; height: 100vh; position: relative; z-index: 1;}
         
         /* SIDEBAR */
         .sidebar { width: 280px; background: rgba(0, 5, 15, 0.95); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; flex-shrink: 0;}
@@ -117,7 +140,7 @@
 
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .modal-content { background: var(--glass-bg); width: 450px; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); position: relative; box-shadow: 0 25px 80px rgba(0,0,0,0.9); }
+        .modal-content { background: var(--glass-bg); width: 450px; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); position: relative; box-shadow: 0 25px 80px rgba(0,0,0,0.9); pointer-events: auto; }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; background: none; border: none; transition: 0.2s; outline: none; }
         .modal-close:hover { color: var(--danger); transform: scale(1.1); }
         .modal-title { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-align: center; }
@@ -129,7 +152,7 @@
     <div id="auth-container">
         <div class="auth-box">
             <div class="auth-title">STICK N' TRADE</div>
-            <div class="auth-sub">Admin Control</div>
+            <div class="auth-sub">Master Control</div>
             <div class="input-group">
                 <label>Admin Username</label>
                 <input type="text" id="admin-user" class="input-control" placeholder="Enter username">
@@ -299,15 +322,34 @@
         let gTxs = [];
         let gPromos = [];
 
+        // ENTER Key Login Support
+        document.getElementById('admin-pass').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') loginAdmin();
+        });
+
         // --- AUTHENTICATION ---
         function loginAdmin() {
-            const u = document.getElementById('admin-user').value;
-            const p = document.getElementById('admin-pass').value;
+            const u = document.getElementById('admin-user').value.trim();
+            const p = document.getElementById('admin-pass').value.trim();
+            const msgBox = document.getElementById('auth-msg');
+
+            if (!u || !p) {
+                msgBox.innerText = "Please fill in all fields.";
+                msgBox.className = "auth-msg auth-error";
+                return;
+            }
+
+            msgBox.innerText = "Authenticating...";
+            msgBox.style.color = "white";
+
             socket.emit('adminLogin', { username: u, password: p });
         }
 
         socket.on('authError', msg => {
-            document.getElementById('auth-msg').innerText = msg;
+            const msgBox = document.getElementById('auth-msg');
+            msgBox.innerText = msg;
+            msgBox.className = "auth-msg auth-error";
+            msgBox.style.color = "var(--danger)";
         });
 
         socket.on('adminLoginSuccess', data => {
