@@ -21,6 +21,7 @@
             --ps-glow: #00a2ff; 
             --glass-bg: rgba(0, 15, 35, 0.65); 
             --glass-border: rgba(255, 255, 255, 0.15); 
+            --glass-hover: rgba(255, 255, 255, 0.9); 
             --danger: #ff3366; 
             --success: #00e676; 
             --credits: #ffb400; 
@@ -28,15 +29,8 @@
             --text-muted: #8c9eb5; 
         }
         
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'Outfit', sans-serif; 
-            outline: none; 
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; -webkit-tap-highlight-color: transparent; }
+        
         body { 
             background: linear-gradient(135deg, #000a1f 0%, #001f4d 50%, #000000 100%); 
             background-size: 200% 200%; 
@@ -108,7 +102,7 @@
         .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; } 
         .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.1); }
 
-        /* ================= PERFECT 1-ROW HUD ================= */
+        /* ================= 1-ROW HUD TOPBAR ================= */
         #app-container { display: none; }
         .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 99999; background: rgba(0,0,0,0.6); border-bottom: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(16px); padding: 12px 25px; }
         .topbar-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
@@ -119,23 +113,24 @@
         .brand-title { font-weight: 900; letter-spacing: 2px; text-transform: uppercase; font-size: 1.5rem; color: var(--text-main); line-height: 1; text-shadow: 0 0 10px rgba(0, 162, 255, 0.5); }
         .brand-sub { color: var(--ps-glow); font-weight: 800; font-size: 0.9rem; letter-spacing: 3px; margin-top: 2px; text-transform: uppercase; }
 
-        /* Exactly 1 row for HUD elements */
         .topbar-right { display: flex; flex-direction: row; align-items: center; gap: 20px; }
         
         .player-profile { display: flex; align-items: center; gap: 8px; font-weight: 800; color: white; font-size: 1rem; text-transform: uppercase; }
         .player-profile i { color: var(--ps-glow); font-size: 1.4rem; }
 
-        .wallet-pill { background: rgba(0,0,0,0.8); border: 1px solid rgba(255,180,0,0.4); padding: 6px 6px 6px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 10px rgba(255,180,0,0.1); }
+        .wallet-pill { background: rgba(0,0,0,0.8); border: 1px solid rgba(255,180,0,0.4); padding: 6px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 10px rgba(255,180,0,0.1); }
         .wallet-pill:hover { border-color: var(--credits); transform: translateY(-2px); box-shadow: 0 0 15px rgba(255,180,0,0.3); }
         .wallet-pill i { color: var(--credits); font-size: 1.2rem; }
         #nav-credits { color: var(--credits); font-weight: 900; font-size: 1.1rem; }
-        .wallet-unit { color: var(--text-muted); font-size: 0.8rem; font-weight: 800; margin-right: 5px; }
-        .wallet-add { background: var(--credits); color: black; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 900; }
+        .wallet-unit { color: var(--text-muted); font-size: 0.8rem; font-weight: 800; }
 
         .topbar-actions { display: flex; flex-direction: row; align-items: center; gap: 18px; background: rgba(0,0,0,0.8); padding: 8px 25px; border-radius: 50px; border: 1px solid var(--glass-border); }
-        .top-icon-btn { position: relative; cursor: pointer; background: transparent; border: none; font-size: 1.15rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: white; }
+        .top-icon-btn { position: relative; cursor: pointer; background: transparent; border: none; font-size: 1.15rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: white; width: 24px; }
+        .top-icon-btn i { width: 100%; text-align: center; }
         .top-icon-btn:hover { transform: scale(1.1); }
-        .notif-badge { position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); }
+        
+        .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); }
+        .notif-badge.active { display: block; }
 
         /* ================= MAIN LOBBY & CARDS ================= */
         .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; padding-top: 80px; }
@@ -212,15 +207,17 @@
             color: #fff !important; text-shadow: 0 0 10px var(--tile-color, var(--ps-glow)); transform: translateY(-3px); 
         }
 
-        /* ================= MODALS & TOASTS ================= */
+        /* ================= MODALS ================= */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .modal-content { background: var(--glass-bg); width: 600px; max-width: 95vw; padding: 2.5rem; border-radius: 12px; border: 1px solid var(--glass-border); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9); position: relative; display: flex; flex-direction: column; height: auto; min-height: fit-content; }
+        
+        /* Clean padding added so Close Button doesn't overlap text */
+        .modal-content { background: var(--glass-bg); width: 600px; max-width: 95vw; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9); position: relative; display: flex; flex-direction: column; height: auto; min-height: fit-content; }
         
         /* Clean Close Icon (No circle/border) */
-        .modal-close-icon { position: absolute; top: 20px; right: 25px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 100; background: none; border: none; padding: 0; outline: none; }
+        .modal-close-icon { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 100; background: none; border: none; padding: 0; outline: none; }
         .modal-close-icon:hover { color: var(--danger); transform: scale(1.1); }
         
-        .modal-content h3 { font-size: 2rem; font-weight: 900; margin-bottom: 1.5rem; margin-top: 10px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-align: center; flex-shrink: 0; }
+        .modal-content h3 { font-size: 2rem; font-weight: 900; margin-bottom: 1.5rem; margin-top: 5px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-align: center; flex-shrink: 0; }
 
         .bank-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; flex-shrink: 0; }
         .bank-tab { flex: 1; background: transparent; border: none; border-bottom: 4px solid transparent; color: var(--text-muted); font-weight: 900; padding: 12px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1.1rem; letter-spacing: 1px; }
@@ -238,15 +235,14 @@
         @keyframes rotateBurst { 100% { transform: rotate(360deg); } }
         .dr-day > * { position: relative; z-index: 1; }
 
-        .dr-day.claimed { filter: grayscale(1); opacity: 0.7; border-color: var(--glass-border); box-shadow: none; }
+        .dr-day.claimed { filter: grayscale(1); opacity: 0.6; border-color: var(--glass-border); box-shadow: none; }
         
-        /* Active (Current Day) logic -> Massive */
+        /* Current Day is Massive */
         .dr-day.active { background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%); border: 2px solid #fff; transform: scale(1.15); opacity: 1; z-index: 5; box-shadow: 0 10px 25px rgba(255, 204, 0, 0.4); height: 150px; color: black; }
-        .dr-day.active::before { background: repeating-conic-gradient(rgba(255,255,255,0.3) 0 15deg, transparent 15deg 30deg); opacity: 0.6; }
+        .dr-day.active::before { background: repeating-conic-gradient(rgba(255,255,255,0.3) 0 15deg, transparent 15deg 30deg); opacity: 0.6; display: block;}
         .dr-day.active .dr-title, .dr-day.active .dr-coin { color: #000; text-shadow: none; }
         
-        /* Active BUT Claimed logic -> Keeps massive size and animation, but greyed out */
-        .dr-day.active.active-claimed { background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); filter: grayscale(1); color: white; opacity: 0.9; }
+        .dr-day.active.active-claimed { background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); filter: grayscale(1); opacity: 0.9; color: white; }
         .dr-day.active.active-claimed .dr-title, .dr-day.active.active-claimed .dr-coin { color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 
         .dr-title { font-size: 0.9rem; text-transform: uppercase; font-weight: 900; margin-top: 5px; text-align: center; }
@@ -260,9 +256,8 @@
         .dr-status-text { font-size: 1.2rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
         .dr-timer { font-size: 1.5rem; font-weight: 900; color: var(--ps-glow); font-family: 'Rajdhani', sans-serif; }
 
-        /* IN-GAME TOAST NOTIFICATIONS (Positioned perfectly in bottom right of active board) */
-        .in-game-notif-container { position: absolute; bottom: 90px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 150; pointer-events: none; }
-        .in-game-toast { background: rgba(0,0,0,0.85); border: 1px solid var(--glass-border); border-left: 3px solid white; color: white; padding: 10px 20px; border-radius: 6px; display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* IN-GAME ACTION TEXT (Below Board) */
+        #bac-action-text { height: 24px; color: var(--ps-glow); font-weight: 800; text-align: center; margin-top: 10px; letter-spacing: 1px; text-transform: uppercase; font-size: 0.95rem; }
 
         /* GLOBAL TOAST NOTIFICATIONS (Top Right Screen) */
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
@@ -382,13 +377,12 @@
                 <i class="fas fa-coins"></i>
                 <span id="nav-credits">0</span>
                 <span class="wallet-unit">TC</span>
-                <div class="wallet-add"><i class="fas fa-plus"></i></div>
             </div>
             
             <div class="topbar-actions">
-                <button class="top-icon-btn" onclick="showToast('No new notifications.', 'success')" title="Notifications">
+                <button class="top-icon-btn" onclick="openModal('notif-modal')" title="Notifications">
                     <i class="fas fa-bell"></i>
-                    <div class="notif-badge">3</div>
+                    <div class="notif-badge" id="notif-badge-display">0</div>
                 </button>
                 <button class="top-icon-btn" onclick="openModal('daily-reward-modal')" title="Daily Reward" style="color:var(--credits);">
                     <i class="fas fa-calendar-check"></i>
@@ -621,7 +615,7 @@
   </div>
 
   <div id="current-bets-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 400px; padding: 2rem;">
+    <div class="modal-content" style="width: 400px; padding: 40px 30px 30px;">
         <button class="modal-close-icon" onclick="closeModal('current-bets-modal')"><i class="fas fa-times"></i></button>
         <h3 style="margin-top:0;">My Current Bets</h3>
         <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Active wagers for this round</p>
@@ -632,7 +626,7 @@
   </div>
 
   <div id="promo-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 400px; height: auto; min-height: fit-content; padding: 2rem;">
+    <div class="modal-content" style="width: 400px; height: auto; min-height: fit-content; padding: 40px 30px 30px;">
         <button class="modal-close-icon" onclick="closeModal('promo-modal')"><i class="fas fa-times"></i></button>
         <h3 style="margin-top:0;">REDEEM CODE</h3>
         <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Enter your gift code below to claim free TC.</p>
@@ -645,7 +639,7 @@
   </div>
 
   <div id="daily-reward-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 800px; height: auto; min-height: fit-content; padding: 2.5rem; max-width: 95vw;">
+    <div class="modal-content" style="width: 800px; height: auto; min-height: fit-content; padding: 40px 30px 30px; max-width: 95vw;">
       <button class="modal-close-icon" onclick="closeModal('daily-reward-modal')"><i class="fas fa-times"></i></button>
       <h3 style="font-size: 2.2rem; color: var(--credits); margin-bottom: 5px; border: none; padding-bottom: 0;">Daily Reward</h3>
       <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px;">Claim credits every 24 hours!</p>
@@ -659,7 +653,7 @@
   </div>
 
   <div id="support-center-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 550px; height: 550px; padding: 2rem;">
+    <div class="modal-content" style="width: 550px; height: 550px; padding: 40px 30px 30px;">
       <button class="modal-close-icon" onclick="closeModal('support-center-modal')"><i class="fas fa-times"></i></button>
       <h3>CASHIER</h3>
 
@@ -683,14 +677,14 @@
       </div>
 
       <div id="sc-tab-withdraw" class="bank-section hidden">
-        <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem; text-align:center;">Withdraw your TC to real world currency.</p>
+        <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem; text-align:center;">Withdraw your credits to TC</p>
         <div class="input-group" style="margin-bottom:15px;">
             <label>Withdraw Amount (TC)</label>
             <input type="number" id="wit-amount" class="input-control" placeholder="e.g. 10000">
         </div>
         <div class="input-group" style="margin-bottom:25px;">
-            <label>Account Details (Name)</label>
-            <input type="text" id="wit-info" class="input-control" placeholder="e.g. John Doe / GCash">
+            <label>Username</label>
+            <input type="text" id="wit-info" class="input-control" placeholder="e.g. AshleyChan">
         </div>
         <button class="btn-play" style="width:100%;" onclick="submitWithdrawal()"><i class="fas fa-arrow-up"></i> Request Withdrawal</button>
       </div>
@@ -703,7 +697,7 @@
   </div>
 
   <div id="game-history-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 550px; height: auto; min-height: fit-content; max-height: 80vh;">
+     <div class="modal-content" style="width: 550px; height: auto; min-height: fit-content; max-height: 80vh; padding: 40px 30px 30px;">
         <button class="modal-close-icon" onclick="closeModal('game-history-modal')"><i class="fas fa-times"></i></button>
         <h3 id="gh-title" style="margin-top:0;">My History</h3>
         
@@ -717,7 +711,7 @@
   </div>
 
   <div id="global-results-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 450px; height: auto; min-height: fit-content; max-height: 80vh;">
+     <div class="modal-content" style="width: 450px; height: auto; min-height: fit-content; max-height: 80vh; padding: 40px 30px 30px;">
         <button class="modal-close-icon" onclick="closeModal('global-results-modal')"><i class="fas fa-times"></i></button>
         <h3 id="gr-title" style="margin-top:0;">Recent Results</h3>
         
@@ -734,11 +728,21 @@
   </div>
 
   <div id="rules-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; padding: 2rem;">
+     <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; padding: 40px 30px 30px;">
         <button class="modal-close-icon" onclick="closeModal('rules-modal')"><i class="fas fa-times"></i></button>
         <h3 id="rules-title" style="margin-top:0;">How to Play</h3>
         <div id="rules-body" style="color:var(--text-muted); font-size:1.05rem; line-height:1.6; margin-left: 20px;">
            </div>
+     </div>
+  </div>
+
+  <div id="notif-modal" class="modal-overlay hidden">
+     <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; max-height: 80vh; padding: 40px 30px 30px;">
+        <button class="modal-close-icon" onclick="closeModal('notif-modal')"><i class="fas fa-times"></i></button>
+        <h3 style="margin-top:0;">Notifications</h3>
+        <div id="notif-list" class="custom-scroll" style="overflow-y:auto; display:flex; flex-direction:column; gap:10px; max-height: 400px; padding-right:5px;">
+            <div style="text-align:center; color:var(--text-muted); padding:20px;">No new notifications.</div>
+        </div>
      </div>
   </div>
 
@@ -788,33 +792,6 @@
             toast.classList.remove('show'); 
             setTimeout(() => toast.remove(), 300); 
         }, 3000);
-    }
-
-    // Dynamic In-Game Toast Notifs (inside active game board bottom right)
-    function sendInGameNotif(msg) {
-        sfx.notif();
-        const activeView = document.querySelector('.view-container:not(.hidden) .game-display');
-        if (!activeView) return;
-        
-        let container = activeView.querySelector('.in-game-notif-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.className = 'in-game-notif-container';
-            activeView.appendChild(container);
-        }
-
-        const toast = document.createElement('div');
-        toast.className = `in-game-toast show`;
-        toast.innerHTML = `<i class="fas fa-info-circle" style="color:white"></i> <span>${msg}</span>`;
-        
-        container.appendChild(toast);
-        
-        setTimeout(() => { 
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateX(50px)';
-            toast.style.transition = 'all 0.3s';
-            setTimeout(() => toast.remove(), 300); 
-        }, 2500);
     }
 
     // --- AUDIO API ---
@@ -1102,6 +1079,7 @@
         
         data.results.forEach(r => {
             let content = '';
+            // Render actual 2D colored dice for Perya
             if (data.game === 'perya') {
                 let colors = r.result.split(','); 
                 let diceHtml = colors.map(c => `<div class="color-die c-${c.toLowerCase().trim()}" style="width:25px; height:25px; border-radius:4px; display:inline-block; border:1px solid rgba(255,255,255,0.2);"></div>`).join('');
@@ -1174,7 +1152,7 @@
     function openGame(id) { 
       switchView('game-' + id); 
       
-      // Clean Reset for Solo Games upon entering (Don't erase bet amount)
+      // Clean Reset for Solo Games upon entering
       document.querySelectorAll('.result-box').forEach(b => b.style.display = 'none'); 
       if(id === 'dice') {
           document.getElementById('dice-icon').className = 'fas fa-dice-d20 dice-icon';
@@ -1227,7 +1205,6 @@
       btn.disabled = true; mb.style.display = 'none'; icn.style.display = 'block'; nd.style.display = 'none'; 
       icn.className = `fas fa-dice-d20 dice-icon anim-shake`;
       
-      // Deduct bet instantly locally
       myCredits -= bet; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
       socket.emit('playSolo', { game: 'dice', bet: bet });
     }
@@ -1325,6 +1302,7 @@
         return score;
     }
 
+    // Appends cards one by one so CSS animations work properly per card
     async function appendCard(containerId, scoreId, card, fullHandArr, isHidden = false) {
         let container = document.getElementById(containerId);
         let ir = (card.suit === '♥' || card.suit === '♦'); 
@@ -1381,7 +1359,6 @@
             if (data.dHand.length > 2) {
                 for(let i = 2; i < data.dHand.length; i++) {
                     await delay(400); 
-                    sendInGameNotif("Dealer hits...");
                     await appendCard('bj-d-hand', 'bj-d-score', data.dHand[i], data.dHand.slice(0, i+1));
                 }
             }
@@ -1389,7 +1366,6 @@
             showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.msg);
             logHistory('blackjack', bjSt.bet, data.payout, data.msg);
             updateMyBalance(data.newBalance, data.payout > 0);
-            if (data.payout > data.bet) sendInGameNotif(`You won +${data.payout - data.bet} TC`);
             
             document.getElementById('btn-bj-deal').disabled = false;
         }
@@ -1478,6 +1454,7 @@
                     <div id="bac-b-hand" style="display:flex; gap:5px; justify-content:center; min-height:100px; width:210px;"></div>
                 </div>
             </div>
+            <div id="bac-action-text"></div>
             <div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
           
           let cg = document.getElementById('sg-controls-container'); 
@@ -1491,6 +1468,7 @@
         animateResult: async function(data) {
             let pHand = document.getElementById('bac-p-hand'), bHand = document.getElementById('bac-b-hand');
             let pScoreEl = document.getElementById('bac-p-score'), bScoreEl = document.getElementById('bac-b-score');
+            let acText = document.getElementById('bac-action-text');
             pHand.innerHTML = ''; bHand.innerHTML = ''; pScoreEl.innerText = '0'; bScoreEl.innerText = '0';
 
             let pC = [], bC = [];
@@ -1508,13 +1486,14 @@
             await dealTo(bHand, bScoreEl, bC, data.bCards[1]);
 
             if (data.p3Drawn) {
-                sendInGameNotif("Player draws 3rd card...");
+                if(acText) acText.innerText = "Player draws 3rd card...";
                 await dealTo(pHand, pScoreEl, pC, data.pCards[2]);
             }
             if (data.b3Drawn) {
-                sendInGameNotif("Banker draws 3rd card...");
+                if(acText) acText.innerText = "Banker draws 3rd card...";
                 await dealTo(bHand, bScoreEl, bC, data.bCards[2]);
             }
+            if(acText) acText.innerText = ""; // Clear text
 
             await delay(500);
             let totBet = 0, totWon = 0;
@@ -1673,6 +1652,7 @@
         }
     });
 
+    // Wipes out table visually between rounds
     socket.on('newRound', () => { 
         sState.status = 'BETTING'; 
         let r = document.getElementById('sg-timer-box'); 
@@ -1685,6 +1665,7 @@
         if (activeSharedGame) sConf[activeSharedGame].setupUI(); 
         mySBets = {}; 
         let m = document.getElementById('sg-my-bet'); if (m) m.innerHTML = '0 TC'; 
+        document.querySelectorAll('#sg-bet-grid .bet-btn').forEach(b => b.classList.remove('has-bet'));
     });
 
     function processSharedPayout(gid, totWon, totBet, msg) { 
@@ -1697,12 +1678,10 @@
           if(profit > 0) { 
               b.innerHTML = `<span style="color:var(--success)">WON +${profit}</span>`; 
               o.className = "result-box win show"; 
-              sendInGameNotif(`You won +${profit} TC!`);
           }
           else if(profit === 0 && totWon > 0) { 
               b.innerHTML = `<span style="color:white">PUSH</span>`; 
               o.className = "result-box push show"; 
-              sendInGameNotif(`Bet pushed. Returned ${totWon} TC.`);
           }
           else { 
               sfx.lose(); 
