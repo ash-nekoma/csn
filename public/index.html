@@ -29,15 +29,8 @@
             --text-muted: #8c9eb5; 
         }
         
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'Outfit', sans-serif; 
-            outline: none; 
-            -webkit-tap-highlight-color: transparent; 
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; -webkit-tap-highlight-color: transparent; }
+        
         body { 
             background: linear-gradient(135deg, #000a1f 0%, #001f4d 50%, #000000 100%); 
             background-size: 200% 200%; 
@@ -65,13 +58,7 @@
 
         /* Custom Scrollbars */
         ::-webkit-scrollbar { display: none; }
-        .custom-scroll { 
-            overflow-y: auto; 
-            scrollbar-width: thin; 
-            scrollbar-color: rgba(255,255,255,0.2) transparent; 
-            min-height: 0; 
-            padding-right: 5px;
-        }
+        .custom-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent; padding-right: 5px; }
         .custom-scroll::-webkit-scrollbar { width: 6px; display: block; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
@@ -109,7 +96,7 @@
         .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; } 
         .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.1); }
 
-        /* ================= PERFECT 1-ROW HUD ================= */
+        /* ================= 1-ROW HUD TOPBAR ================= */
         #app-container { display: none; }
         .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 99999; background: rgba(0,0,0,0.6); border-bottom: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(16px); padding: 12px 25px; }
         .topbar-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
@@ -120,7 +107,6 @@
         .brand-title { font-weight: 900; letter-spacing: 2px; text-transform: uppercase; font-size: 1.5rem; color: var(--text-main); line-height: 1; text-shadow: 0 0 10px rgba(0, 162, 255, 0.5); }
         .brand-sub { color: var(--ps-glow); font-weight: 800; font-size: 0.9rem; letter-spacing: 3px; margin-top: 2px; text-transform: uppercase; }
 
-        /* Exactly 1 row for HUD elements */
         .topbar-right { display: flex; flex-direction: row; align-items: center; gap: 20px; }
         
         .player-profile { display: flex; align-items: center; gap: 8px; font-weight: 800; color: white; font-size: 1rem; text-transform: uppercase; }
@@ -132,9 +118,9 @@
         #nav-credits { color: var(--credits); font-weight: 900; font-size: 1.1rem; }
         .wallet-unit { color: var(--text-muted); font-size: 0.8rem; font-weight: 800; }
 
-        .topbar-actions { display: flex; flex-direction: row; align-items: center; gap: 18px; background: rgba(0,0,0,0.8); padding: 8px 25px; border-radius: 50px; border: 1px solid var(--glass-border); }
+        /* The dark actions pill */
+        .topbar-actions { display: flex; flex-direction: row; align-items: center; gap: 15px; background: rgba(0,0,0,0.8); padding: 6px 20px; border-radius: 50px; border: 1px solid var(--glass-border); }
         .top-icon-btn { position: relative; cursor: pointer; background: transparent; border: none; font-size: 1.15rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: white; width: 24px; }
-        .top-icon-btn i { width: 100%; text-align: center; }
         .top-icon-btn:hover { transform: scale(1.1); }
         
         .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); }
@@ -238,7 +224,6 @@
         .dr-days { display: flex; gap: 10px; justify-content: center; align-items: flex-end; margin-bottom: 25px; height: 160px; }
         .dr-day { flex: 1; background: linear-gradient(180deg, #1a2a6c 0%, #001f4d 100%); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 10px 5px; height: 130px; transition: 0.3s; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         
-        /* EVERY box has the spinning animation */
         .dr-day::before { content: ''; position: absolute; inset: -50%; background: repeating-conic-gradient(rgba(255,255,255,0.08) 0 15deg, transparent 15deg 30deg); z-index: 0; opacity: 0.8; animation: rotateBurst 20s linear infinite; display: block; }
         @keyframes rotateBurst { 100% { transform: rotate(360deg); } }
         .dr-day > * { position: relative; z-index: 1; }
@@ -250,7 +235,6 @@
         .dr-day.active::before { background: repeating-conic-gradient(rgba(255,255,255,0.3) 0 15deg, transparent 15deg 30deg); opacity: 0.6; display: block;}
         .dr-day.active .dr-title, .dr-day.active .dr-coin { color: #000; text-shadow: none; }
         
-        /* Active BUT Claimed logic -> Keeps massive size and animation, but greyed out */
         .dr-day.active.active-claimed { background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); filter: grayscale(1); opacity: 0.9; color: white; }
         .dr-day.active.active-claimed .dr-title, .dr-day.active.active-claimed .dr-coin { color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 
@@ -265,8 +249,19 @@
         .dr-status-text { font-size: 1.2rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
         .dr-timer { font-size: 1.5rem; font-weight: 900; color: var(--ps-glow); font-family: 'Rajdhani', sans-serif; }
 
-        /* IN-GAME ACTION TEXT (Below Board) */
+        /* IN-GAME ACTION TEXT (Below Board for Baccarat) */
         #bac-action-text { height: 24px; color: var(--ps-glow); font-weight: 800; text-align: center; margin-top: 10px; letter-spacing: 1px; text-transform: uppercase; font-size: 0.95rem; }
+
+        /* IN-GAME TOAST NOTIFICATIONS (Positioned just above the Result Box) */
+        .in-game-notif-container { position: absolute; bottom: 100px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 150; pointer-events: none; }
+        .in-game-toast { background: rgba(0,0,0,0.85); border: 1px solid var(--glass-border); border-left: 3px solid white; color: white; padding: 10px 20px; border-radius: 6px; display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        /* GLOBAL TOAST NOTIFICATIONS */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: rgba(5, 10, 25, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0, 162, 255, 0.4); color: white; padding: 15px 25px; border-radius: 8px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0, 162, 255, 0.25); text-transform: uppercase; }
+        .toast.show { transform: translateX(0); }
+        .toast-success { border-left: 5px solid var(--ps-glow); } .toast-success i { color: var(--ps-glow); font-size: 1.3rem; }
+        .toast-error { border-left: 5px solid var(--danger); border-color: rgba(255, 51, 102, 0.4); box-shadow: 0 10px 30px rgba(255, 51, 102, 0.25); } .toast-error i { color: var(--danger); font-size: 1.3rem; }
 
         /* CASHIER LOGS */
         .ticket-log-item { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
@@ -278,6 +273,7 @@
         .ticket-log-status.rejected { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
 
         /* ================= GAME ASSETS & RESULTS OVERLAYS ================= */
+        /* EXACT GREEN/RED RESULT BOXES FOR BOTH SOLO AND SHARED */
         .result-box { position: absolute; bottom: 20px; right: 20px; text-align: right; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; display: none; z-index: 100; min-width: 250px; text-transform: uppercase; backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
         .result-box.win { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.4); border-right: 4px solid var(--success); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
         .result-box.lose { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.4); border-right: 4px solid var(--danger); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
@@ -313,6 +309,8 @@
 </head>
 <body>
   
+  <div id="toast-container"></div>
+
   <div id="auth-container">
       <div class="auth-box">
           <div class="auth-title">STICK N' TRADE</div>
@@ -377,7 +375,6 @@
                 <i class="fas fa-coins"></i>
                 <span id="nav-credits">0</span>
                 <span class="wallet-unit">TC</span>
-                <div class="wallet-add"><i class="fas fa-plus"></i></div>
             </div>
             
             <div class="topbar-actions">
@@ -781,6 +778,47 @@
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
+    function showToast(msg, type='success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type} show`;
+        if(type === 'error') toast.classList.add('toast-error');
+        let icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        toast.innerHTML = `<i class="fas ${icon}"></i> <span>${msg}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => { 
+            toast.classList.remove('show'); 
+            setTimeout(() => toast.remove(), 300); 
+        }, 3000);
+    }
+
+    // Dynamic In-Game Toast Notifs (inside active game board bottom right, above result box)
+    function sendInGameNotif(msg) {
+        sfx.notif();
+        const activeView = document.querySelector('.view-container:not(.hidden) .game-display');
+        if (!activeView) return;
+        
+        let container = activeView.querySelector('.in-game-notif-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'in-game-notif-container';
+            activeView.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `in-game-toast show`;
+        toast.innerHTML = `<i class="fas fa-info-circle" style="color:white"></i> <span>${msg}</span>`;
+        
+        container.appendChild(toast);
+        
+        setTimeout(() => { 
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(50px)';
+            toast.style.transition = 'all 0.3s';
+            setTimeout(() => toast.remove(), 300); 
+        }, 2500);
+    }
+
     // --- AUDIO API ---
     function toggleAudio() {
         audioMuted = !audioMuted;
@@ -827,7 +865,8 @@
       coin: () => { for(let i=0; i<10; i++) setTimeout(() => playTone(1500 + i * 100, 'square', 0.02, 0.05), i * 30); }, 
       win: () => { playTone(440, 'sine', 0.1, 0.1); setTimeout(() => playTone(660, 'sine', 0.15, 0.1), 100); setTimeout(() => playTone(880, 'sine', 0.3, 0.1), 250); }, 
       lose: () => { playTone(200, 'sawtooth', 0.4, 0.1); setTimeout(() => playTone(150, 'sawtooth', 0.6, 0.1), 200); }, 
-      lock: () => { playTone(400, 'square', 0.1, 0.1); setTimeout(() => playTone(300, 'square', 0.1, 0.1), 100); }
+      lock: () => { playTone(400, 'square', 0.1, 0.1); setTimeout(() => playTone(300, 'square', 0.1, 0.1), 100); },
+      notif: () => playTone(500, 'sine', 0.1, 0.05)
     };
 
     document.addEventListener('mousedown', (e) => {
@@ -887,6 +926,7 @@
         document.getElementById('auth-container').style.display = 'none';
         document.getElementById('app-container').style.display = 'block';
         if (audioCtx.state === 'suspended') audioCtx.resume();
+        showToast(`Welcome, ${myUsername}!`, "success");
     });
 
     // Handle delayed balances from server
@@ -894,8 +934,8 @@
         updateMyBalance(newBalance);
     });
 
-    function updateMyBalance(newBalance) {
-        if(newBalance > myCredits) { 
+    function updateMyBalance(newBalance, didWin = false) {
+        if(newBalance > myCredits || didWin) { 
             let p1 = document.getElementById('pill-credits');
             p1.classList.remove('anim-pop'); void p1.offsetWidth; p1.classList.add('anim-pop'); sfx.win(); 
         }
@@ -946,6 +986,7 @@
         }
         
         startDailyTimer(data.nextClaim);
+        showToast(`Reward Claimed: +${data.amt} TC!`);
     });
 
     function startDailyTimer(nextClaimDate) {
@@ -1063,6 +1104,7 @@
         
         data.results.forEach(r => {
             let content = '';
+            // Render actual 2D colored dice for Perya
             if (data.game === 'perya') {
                 let colors = r.result.split(','); 
                 let diceHtml = colors.map(c => `<div class="color-die c-${c.toLowerCase().trim()}" style="width:25px; height:25px; border-radius:4px; display:inline-block; border:1px solid rgba(255,255,255,0.2);"></div>`).join('');
@@ -1171,18 +1213,34 @@
     }
 
     // --- SOLO GAMES ENGINE ---
+    // Perfect Green/Red Result Box format applied everywhere!
     function showEndBox(box, bet, payout, msg) {
-        let pft = payout - bet; let h = `<div class="res-title">${msg}</div>`; 
-        if (payout > bet) { h += `<div class="res-payout" style="color:var(--success)">+${payout} TC</div>`; box.className = "result-box win"; } 
-        else if (payout === bet) { h += `<div class="res-payout" style="color:white">Push</div>`; box.className = "result-box push"; } 
-        else { sfx.lose(); h += `<div class="res-payout" style="color:var(--danger)">Lost -${Math.abs(pft)}</div>`; box.className = "result-box lose"; } 
-        box.innerHTML = h; box.style.display = 'block'; 
+        let pft = payout - bet; 
+        let h = `<div class="res-title" style="color:white;">${msg}</div>`; 
+        
+        if (payout > bet) { 
+            h += `<div class="res-payout" style="color:var(--success)">+${payout} TC</div>`; 
+            box.className = "result-box win"; 
+        } 
+        else if (payout === bet) { 
+            h += `<div class="res-payout" style="color:white">Push</div>`; 
+            box.className = "result-box push"; 
+        } 
+        else { 
+            sfx.lose(); 
+            h += `<div class="res-payout" style="color:var(--danger)">Lost -${Math.abs(pft)}</div>`; 
+            box.className = "result-box lose"; 
+        } 
+        
+        box.innerHTML = h; 
+        box.style.display = 'block'; 
+        setTimeout(() => { box.classList.add('show'); }, 10);
     }
 
     // Dice
     function playDice() {
       let bet = parseInt(document.getElementById('dice-bet').value);
-      if (isNaN(bet) || bet <= 0 || bet > myCredits) return;
+      if (isNaN(bet) || bet <= 0 || bet > myCredits) return showToast("Invalid bet.", "error");
       
       const btn = document.getElementById('btn-dice'), icn = document.getElementById('dice-icon'), nd = document.getElementById('dice-num'), mb = document.getElementById('dice-msg');
       btn.disabled = true; mb.style.display = 'none'; icn.style.display = 'block'; nd.style.display = 'none'; 
@@ -1213,7 +1271,7 @@
                    btn.disabled = false;
                 }, 3000);
 
-                updateMyBalance(data.newBalance);
+                updateMyBalance(data.newBalance, data.payout > 0);
             }
         }, 80);
     });
@@ -1222,7 +1280,7 @@
     let coinFlips = 0;
     function playCoin(choice) {
       let bet = parseInt(document.getElementById('coin-bet').value);
-      if (isNaN(bet) || bet <= 0 || bet > myCredits) return;
+      if (isNaN(bet) || bet <= 0 || bet > myCredits) return showToast("Invalid bet.", "error");
       
       document.getElementById('btn-heads').disabled = true; document.getElementById('btn-tails').disabled = true; 
       document.getElementById('coin-msg').style.display = 'none'; 
@@ -1243,7 +1301,7 @@
             showEndBox(mb, data.bet, data.payout, `Landed on ${data.result}`);
             logHistory('coinflip', data.bet, data.payout, data.result);
             
-            updateMyBalance(data.newBalance);
+            updateMyBalance(data.newBalance, data.payout > 0);
             
             document.getElementById('btn-heads').disabled = false; 
             document.getElementById('btn-tails').disabled = false;
@@ -1257,7 +1315,7 @@
     function startBlackjack() {
       if (bjSt.active) return; 
       let bet = parseInt(document.getElementById('bj-bet').value);
-      if (isNaN(bet) || bet <= 0 || bet > myCredits) return;
+      if (isNaN(bet) || bet <= 0 || bet > myCredits) return showToast("Invalid bet.", "error");
       
       bjSt.bet = bet; bjSt.active = true; 
       document.getElementById('btn-bj-deal').disabled = true;
@@ -1312,8 +1370,8 @@
         if(data.event === 'deal') {
             await appendCard('bj-p-hand', 'bj-p-score', data.pHand[0], data.pHand.slice(0,1));
             await appendCard('bj-d-hand', 'bj-d-score', data.dHand[0], data.dHand.slice(0,1));
-            await appendCard('bj-p-hand', 'bj-p-score', data.pHand[1], data.pHand);
-            await appendCard('bj-d-hand', 'bj-d-score', data.dHand[1], data.dHand, true); 
+            await appendCard('bj-p-hand', 'bj-p-score', data.pHand[1], data.pHand.slice(0,2));
+            await appendCard('bj-d-hand', 'bj-d-score', data.dHand[1], data.dHand.slice(0,2), true); 
             
             document.getElementById('bj-action-controls').classList.remove('hidden');
             document.getElementById('btn-bj-hit').disabled = false;
@@ -1327,6 +1385,13 @@
             bjSt.active = false;
             document.getElementById('bj-action-controls').classList.add('hidden');
             document.getElementById('bj-start-controls').classList.remove('hidden');
+            
+            // Critical Bug Fix: Ensure the card that caused the bust is visually appended BEFORE showing "Bust!"
+            let pHandEl = document.getElementById('bj-p-hand');
+            if (pHandEl && pHandEl.children.length < data.pHand.length) {
+                let lastCard = data.pHand[data.pHand.length - 1];
+                await appendCard('bj-p-hand', 'bj-p-score', lastCard, data.pHand);
+            }
             
             let hidden = document.getElementById('hidden-card');
             if (hidden) {
@@ -1342,13 +1407,14 @@
             if (data.dHand.length > 2) {
                 for(let i = 2; i < data.dHand.length; i++) {
                     await delay(400); 
+                    sendInGameNotif("Dealer hits...");
                     await appendCard('bj-d-hand', 'bj-d-score', data.dHand[i], data.dHand.slice(0, i+1));
                 }
             }
             
             showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.msg);
             logHistory('blackjack', bjSt.bet, data.payout, data.msg);
-            updateMyBalance(data.newBalance);
+            updateMyBalance(data.newBalance, data.payout > 0);
             
             document.getElementById('btn-bj-deal').disabled = false;
         }
@@ -1589,7 +1655,7 @@
     }
 
     function placeSharedBet(c) { 
-      if (sState.status !== 'BETTING') return; 
+      if (sState.status !== 'BETTING') return showToast("Bets are closed! Wait for next round.", "error"); 
       let i = document.getElementById('sg-bet-input'); if (!i) return; 
       let a = parseInt(i.value); 
       if (isNaN(a) || a <= 0) return showToast("Invalid bet.", "error"); 
@@ -1597,6 +1663,7 @@
       
       socket.emit('placeSharedBet', { room: activeSharedGame, choice: c, amount: a });
       
+      // Deduct visually instantly
       myCredits -= a; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
       if (!mySBets[c]) mySBets[c] = 0; mySBets[c] += a; 
       
@@ -1642,12 +1709,11 @@
         if (o) { o.classList.remove('show'); o.className = "result-box"; } 
         
         if (activeSharedGame) {
-            sConf[activeSharedGame].setupUI(); // Physically redraws cards/dice to default idle state
+            sConf[activeSharedGame].setupUI(); // Restores board to face-down (?) cards
             mySBets = {}; 
             let m = document.getElementById('sg-my-bet'); 
             if (m) m.innerHTML = '0 TC'; 
             
-            // Safety clear of borders
             document.querySelectorAll('#sg-bet-grid .bet-btn').forEach(b => b.classList.remove('has-bet'));
         }
     }
@@ -1656,13 +1722,13 @@
         resetSharedTable();
     });
 
-    // Visual Result processing (lower right box)
+    // Uses the exact same visual HTML structure as the Solo Game boxes
     function processSharedPayout(gid, totWon, totBet, msg) { 
       const box = document.getElementById('sg-overlay'); 
       if (!box) return;
 
       let pft = totWon - totBet;
-      let h = `<div class="res-title">${msg}</div>`; 
+      let h = `<div class="res-title" style="color:white;">${msg}</div>`; 
 
       if (totBet > 0) {
           if (pft > 0) {
@@ -1673,7 +1739,7 @@
               box.className = "result-box push";
           } else {
               sfx.lose();
-              h += `<div class="res-payout" style="color:var(--danger)">Lost -${totBet} TC</div>`;
+              h += `<div class="res-payout" style="color:var(--danger)">Lost -${totBet}</div>`;
               box.className = "result-box lose";
           }
           logHistory(gid, totBet, totWon, msg);
@@ -1683,8 +1749,6 @@
       
       box.innerHTML = h;
       box.style.display = 'block';
-      
-      // Delay add class to trigger animation properly
       setTimeout(() => { box.classList.add('show'); }, 10);
     }
 
