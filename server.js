@@ -45,7 +45,7 @@ const txSchema = new mongoose.Schema({
     username: String,
     type: String, // "Deposit" or "Withdrawal"
     amount: Number,
-    ref: String, // Acts as Proof of Payment for Deposits or Account Name for Withdrawals
+    ref: String, // Proof of Payment (filename) or Account Details
     status: { type: String, default: 'Pending' },
     date: { type: Date, default: Date.now }
 });
@@ -63,7 +63,7 @@ const GiftCode = mongoose.model('GiftCode', codeSchema);
 
 
 // ==========================================
-// 3. CASINO ENGINE & GLOBAL HISTORY
+// 3. CASINO ENGINE & GLOBAL HISTORY / STATS
 // ==========================================
 
 let rooms = { baccarat: 0, perya: 0, dt: 0, sicbo: 0 };
@@ -73,6 +73,17 @@ let sharedTables = { time: 15, status: 'BETTING', bets: [] };
 let globalResults = { 
     dice: [], coinflip: [], blackjack: [], 
     baccarat: [], perya: [], dt: [], sicbo: [] 
+};
+
+// Global Stats Tracker (For the percentage UI in the feed)
+let gameStats = {
+    baccarat: { total: 0, Player: 0, Banker: 0, Tie: 0 },
+    dt: { total: 0, Dragon: 0, Tiger: 0, Tie: 0 },
+    sicbo: { total: 0, Big: 0, Small: 0, Triple: 0 },
+    perya: { total: 0, Yellow: 0, White: 0, Pink: 0, Blue: 0, Red: 0, Green: 0 },
+    coinflip: { total: 0, Heads: 0, Tails: 0 },
+    dice: { total: 0, Win: 0, Lose: 0 },
+    blackjack: { total: 0, Win: 0, Lose: 0, Push: 0 }
 };
 
 // Helper: Logs results and trims the array to max 25 items
@@ -116,13 +127,15 @@ setInterval(() => {
             io.emit('lockBets');
 
             // ------------------------------------
-            // A. GENERATE GAME OUTCOMES
+            // A. GENERATE GAME OUTCOMES & TRACK STATS
             // ------------------------------------
             
             // Dragon Tiger
             let dtD = drawCard(), dtT = drawCard();
             let dtWin = dtD.bjVal > dtT.bjVal ? 'Dragon' : (dtT.bjVal > dtD.bjVal ? 'Tiger' : 'Tie');
             logGlobalResult('dt', `${dtWin} Win`);
+            gameStats.dt.total++;
+            gameStats.dt[dtWin]++;
             
             // Sic Bo
             let sbR = [
@@ -132,8 +145,10 @@ setInterval(() => {
             ];
             let sbSum = sbR[0] + sbR[1] + sbR[2];
             let sbTrip = (sbR[0] === sbR[1] && sbR[1] === sbR[2]);
-            let sbWin = sbTrip ? 'None' : (sbSum <= 10 ? 'Small' : 'Big');
+            let sbWin = sbTrip ? 'Triple' : (sbSum <= 10 ? 'Small' : 'Big');
             logGlobalResult('sicbo', sbTrip ? `Triple ${sbR[0]}` : `${sbWin} (${sbSum})`);
+            gameStats.sicbo.total++;
+            gameStats.sicbo[sbWin]++;
 
             // Color Game (Perya)
             const cols = ['Yellow','White','Pink','Blue','Red','Green'];
@@ -143,20 +158,24 @@ setInterval(() => {
                 cols[Math.floor(Math.random() * 6)]
             ];
             logGlobalResult('perya', pyR.join(', '));
+            gameStats.perya.total++; // 1 round played
+            pyR.forEach(color => gameStats.perya[color]++); // Track individual hits
 
-            // Baccarat (With strict 3rd Card Logic)
+            // Baccarat
             let pC = [drawCard(), drawCard()], bC = [drawCard(), drawCard()];
             let pS = (pC[0].bacVal + pC[1].bacVal) % 10;
             let bS = (bC[0].bacVal + bC[1].bacVal) % 10;
             
+            let p3Drawn = false, b3Drawn = false;
+
             if (pS < 8 && bS < 8) {
                 let p3Val = -1;
-                
                 // Player draws on 0-5
                 if (pS <= 5) { 
                     pC.push(drawCard()); 
                     p3Val = pC[2].bacVal; 
                     pS = (pS + p3Val) % 10; 
+                    p3Drawn = true;
                 }
                 
                 // Banker draws based on Player's 3rd card
@@ -174,17 +193,18 @@ setInterval(() => {
                 if (bDraws) { 
                     bC.push(drawCard()); 
                     bS = (bS + bC[bC.length-1].bacVal) % 10; 
+                    b3Drawn = true;
                 }
             }
             let bacWin = pS > bS ? 'Player' : (bS > pS ? 'Banker' : 'Tie');
             logGlobalResult('baccarat', `${bacWin} (${pS} to ${bS})`);
+            gameStats.baccarat.total++;
+            gameStats.baccarat[bacWin]++;
 
 
             // ------------------------------------
             // B. CALCULATE WINNINGS & UPDATE DB
             // ------------------------------------
-            
-            // Group payouts by user to limit database writes
             let playerPayouts = {}; 
             
             sharedTables.bets.forEach(b => {
@@ -193,7 +213,7 @@ setInterval(() => {
                 if (b.room === 'dt' && b.choice === dtWin) {
                     payout = b.amount * (dtWin === 'Tie' ? 8 : 2);
                 }
-                else if (b.room === 'sicbo' && b.choice === sbWin) {
+                else if (b.room === 'sicbo' && b.choice === (sbWin === 'Triple' ? 'None' : sbWin)) {
                     payout = b.amount * 2;
                 }
                 else if (b.room === 'perya') {
@@ -213,29 +233,36 @@ setInterval(() => {
             });
 
             // ------------------------------------
-            // C. BROADCAST RESULTS & DELAY PAYOUT
+            // C. BROADCAST RESULTS & PAYOUTS
             // ------------------------------------
+            // The frontend dictates the visual delays now! We just send the payload.
             
-            // Send outcomes to frontend immediately so animations start playing
             io.to('dt').emit('sharedResults', { room: 'dt', dCard: dtD, tCard: dtT, winner: dtWin });
             io.to('sicbo').emit('sharedResults', { room: 'sicbo', roll: sbR, sum: sbSum, winner: sbWin });
             io.to('perya').emit('sharedResults', { room: 'perya', roll: pyR });
-            io.to('baccarat').emit('sharedResults', { room: 'baccarat', pCards: pC, bCards: bC, winner: bacWin });
+            io.to('baccarat').emit('sharedResults', { 
+                room: 'baccarat', 
+                pCards: pC, 
+                bCards: bC, 
+                pScore: pS,
+                bScore: bS,
+                winner: bacWin,
+                p3Drawn: p3Drawn,
+                b3Drawn: b3Drawn
+            });
 
-            // WAIT 5 SECONDS before adding funds to balance, allowing animations to visually finish
-            setTimeout(() => {
-                Object.keys(playerPayouts).forEach(async (userId) => {
-                    let user = await User.findById(userId);
-                    if (user) {
-                        user.credits += playerPayouts[userId].amount;
-                        await user.save();
-                        // Tell player to officially update their nav-bar balance
-                        io.to(playerPayouts[userId].socketId).emit('balanceUpdate', user.credits);
-                    }
-                });
-            }, 5000);
+            // Process DB updates silently in the background
+            Object.keys(playerPayouts).forEach(async (userId) => {
+                let user = await User.findById(userId);
+                if (user) {
+                    user.credits += playerPayouts[userId].amount;
+                    await user.save();
+                    // We send the new balance, but the index.html logic will WAIT to display it
+                    io.to(playerPayouts[userId].socketId).emit('balanceUpdateData', user.credits);
+                }
+            });
 
-            // WAIT 6 SECONDS to fully reset the board for the next betting round
+            // Reset Server Loop Data (Frontend handles its own clear)
             setTimeout(() => {
                 sharedTables.time = 15;
                 sharedTables.status = 'BETTING';
@@ -290,7 +317,6 @@ io.on('connection', (socket) => {
                 daily: { canClaim, day, nextClaim } 
             });
             
-            io.emit('chatMessage', { user: 'System', text: `${user.username} entered the casino.`, sys: true });
         } catch(e) { 
             socket.emit('authError', 'Server Error.'); 
         }
@@ -316,7 +342,6 @@ io.on('connection', (socket) => {
         const user = await User.findById(socket.user._id);
         let now = new Date();
 
-        // Anti-spam check: prevent claiming multiple times in 24 hrs
         if (user.dailyReward.lastClaim) {
             let diffHours = (now - user.dailyReward.lastClaim) / (1000 * 60 * 60);
             if (diffHours < 24) return; 
@@ -334,13 +359,12 @@ io.on('connection', (socket) => {
         let nextClaim = new Date(now.getTime() + 24 * 60 * 60 * 1000);
         
         socket.emit('dailyClaimed', { amt, newBalance: user.credits, nextClaim });
-        socket.emit('balanceUpdate', user.credits);
+        socket.emit('balanceUpdateData', user.credits);
     });
 
     // --- PROMO CODES ---
     socket.on('redeemPromo', async (code) => {
         if (!socket.user) return;
-        
         try {
             const gc = await GiftCode.findOne({ code: code });
             if (!gc) return socket.emit('promoResult', { success: false, msg: 'Invalid Code' });
@@ -354,15 +378,19 @@ io.on('connection', (socket) => {
             await user.save();
             
             socket.emit('promoResult', { success: true, amt: gc.amount });
-            socket.emit('balanceUpdate', user.credits);
+            socket.emit('balanceUpdateData', user.credits);
         } catch(e) { 
             socket.emit('promoResult', { success: false, msg: 'Server error' }); 
         }
     });
 
-    // --- GLOBAL RESULTS FETCH ---
+    // --- GLOBAL RESULTS FETCH WITH STATS ---
     socket.on('getGlobalResults', (game) => {
-        socket.emit('globalResultsData', { game: game, results: globalResults[game] || [] });
+        socket.emit('globalResultsData', { 
+            game: game, 
+            results: globalResults[game] || [],
+            stats: gameStats[game] || { total: 0 }
+        });
     });
 
     // --- SOLO GAMES ENGINE ---
@@ -370,17 +398,24 @@ io.on('connection', (socket) => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
         
-        // Strict balance check
+        // Strict balance check before game starts
         if (user.credits < data.bet) {
             return socket.emit('toast', { msg: 'Insufficient TC', type: 'error' });
         }
         
-        user.credits -= data.bet; // Deduct bet instantly to prevent spam
+        user.credits -= data.bet; 
         let payout = 0;
 
         if (data.game === 'dice') {
+            gameStats.dice.total++;
             let roll = Math.floor(Math.random() * 100) + 1;
-            if (roll > 50) payout = data.bet * 2;
+            
+            if (roll > 50) {
+                payout = data.bet * 2;
+                gameStats.dice.Win++;
+            } else {
+                gameStats.dice.Lose++;
+            }
             
             user.credits += payout; 
             await user.save();
@@ -389,7 +424,10 @@ io.on('connection', (socket) => {
             socket.emit('diceResult', { roll, payout, bet: data.bet, newBalance: user.credits });
         } 
         else if (data.game === 'coinflip') {
+            gameStats.coinflip.total++;
             let result = Math.random() < 0.5 ? 'Heads' : 'Tails';
+            gameStats.coinflip[result]++;
+
             if (data.choice === result) payout = data.bet * 2;
             
             user.credits += payout; 
@@ -399,9 +437,9 @@ io.on('connection', (socket) => {
             socket.emit('coinResult', { result, payout, bet: data.bet, newBalance: user.credits });
         }
         else if (data.game === 'blackjack') {
-            
             if (data.action === 'start') {
-                await user.save(); // Save deducted bet to DB
+                gameStats.blackjack.total++;
+                await user.save(); 
                 
                 socket.bjState = { 
                     bet: data.bet, 
@@ -409,13 +447,16 @@ io.on('connection', (socket) => {
                     dHand: [drawCard(), drawCard()] 
                 };
                 
-                // Instant Blackjack logic
+                // Check initial blackjack
                 let pS = socket.bjState.pHand.reduce((a,b) => a + b.bjVal, 0);
                 if (pS === 21) {
                     let dS = socket.bjState.dHand.reduce((a,b) => a + b.bjVal, 0);
                     let msg = dS === 21 ? 'Push' : 'Blackjack!';
                     payout = dS === 21 ? data.bet : data.bet * 2.5;
                     
+                    if(msg === 'Blackjack!') gameStats.blackjack.Win++;
+                    else gameStats.blackjack.Push++;
+
                     user.credits += payout; 
                     await user.save();
                     
@@ -426,12 +467,12 @@ io.on('connection', (socket) => {
                     socket.emit('bjUpdate', { event: 'deal', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand });
                 }
             }
-            
             else if (data.action === 'hit' && socket.bjState) {
                 socket.bjState.pHand.push(drawCard());
                 let pS = socket.bjState.pHand.reduce((a,b) => a + b.bjVal, 0);
                 
                 if (pS > 21) {
+                    gameStats.blackjack.Lose++;
                     logGlobalResult('blackjack', 'Bust!');
                     socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', bet: socket.bjState.bet, newBalance: user.credits });
                     socket.bjState = null;
@@ -439,11 +480,9 @@ io.on('connection', (socket) => {
                     socket.emit('bjUpdate', { event: 'hit', pHand: socket.bjState.pHand });
                 }
             }
-            
             else if (data.action === 'stand' && socket.bjState) {
                 let pS = socket.bjState.pHand.reduce((a,b) => a + b.bjVal, 0);
                 
-                // Dealer must hit until >= 17
                 while (socket.bjState.dHand.reduce((a,b) => a + b.bjVal, 0) < 17) {
                     socket.bjState.dHand.push(drawCard());
                 }
@@ -454,11 +493,14 @@ io.on('connection', (socket) => {
                 if (dS > 21 || pS > dS) { 
                     payout = socket.bjState.bet * 2; 
                     msg = 'You Win!'; 
+                    gameStats.blackjack.Win++;
                 } else if (pS === dS) { 
                     payout = socket.bjState.bet; 
                     msg = 'Push'; 
+                    gameStats.blackjack.Push++;
                 } else {
                     msg = 'Dealer Wins';
+                    gameStats.blackjack.Lose++;
                 }
                 
                 user.credits += payout; 
@@ -470,7 +512,6 @@ io.on('connection', (socket) => {
             }
         }
     });
-
 
     // --- SHARED TABLES NETWORKING ---
     socket.on('joinRoom', (room) => { 
@@ -513,6 +554,10 @@ io.on('connection', (socket) => {
                 amount: data.amount, 
                 ref: data.ref 
             }).save(); 
+            
+            // Immediately send back updated list so the modal refreshes live
+            const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
+            socket.emit('transactionsData', txs);
         }
     });
     
@@ -526,7 +571,6 @@ io.on('connection', (socket) => {
 
     // --- ADMIN ACTIONS ---
     socket.on('adminLogin', async (data) => {
-        // Simple hardcoded Master Admin credentials for the backend
         if (data.username === 'admin' && data.password === 'admin') {
             socket.emit('adminLoginSuccess', { username: 'Admin Boss', role: 'Head Admin' });
             
@@ -541,46 +585,6 @@ io.on('connection', (socket) => {
         } else { 
             socket.emit('authError', 'Invalid Admin Credentials.'); 
         }
-    });
-
-    socket.on('adminAction', async (data) => {
-        if (data.type === 'editUser') await User.findByIdAndUpdate(data.id, { credits: data.credits, role: data.role });
-        else if (data.type === 'ban') await User.findByIdAndUpdate(data.id, { status: 'Banned' });
-        else if (data.type === 'unban') await User.findByIdAndUpdate(data.id, { status: 'Offline' });
-        
-        else if (data.type === 'resolveTx') {
-            let tx = await Transaction.findById(data.id);
-            if (tx && tx.status === 'Pending') {
-                tx.status = data.status;
-                await tx.save();
-                if (data.status === 'Approved' && tx.type === 'Deposit') {
-                    let u = await User.findOne({ username: tx.username });
-                    if(u) { u.credits += tx.amount; await u.save(); }
-                }
-            }
-        }
-        
-        else if (data.type === 'createBatch') {
-            let batchId = 'BATCH-' + Math.floor(Math.random() * 90000 + 10000);
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let codesArray = [];
-            
-            for (let i = 0; i < data.count; i++) {
-                let codeStr = '';
-                for (let j = 0; j < 8; j++) codeStr += chars.charAt(Math.floor(Math.random() * chars.length));
-                codesArray.push({ code: codeStr, redeemedBy: null });
-            }
-            await new GiftCode({ batchId: batchId, amount: data.amount, codes: codesArray }).save();
-        }
-        else if (data.type === 'deleteBatch') await GiftCode.findByIdAndDelete(data.id);
-
-        // Sync fresh data back to Admin Panel
-        const users = await User.find(); 
-        const txs = await Transaction.find().sort({ date: -1 }); 
-        const gcs = await GiftCode.find().sort({ date: -1 });
-        let totalEconomy = users.reduce((a, b) => a + b.credits, 0);
-        
-        io.emit('adminDataSync', { users, transactions: txs, giftBatches: gcs, stats: { economy: totalEconomy } });
     });
 
     // Cleanup Disconnects
