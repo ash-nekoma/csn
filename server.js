@@ -93,10 +93,23 @@ function drawCard() {
     const ss = ['♠','♣','♥','♦'];
     let v = vs[Math.floor(Math.random() * vs.length)];
     let s = ss[Math.floor(Math.random() * ss.length)];
+    
+    // Baccarat Values
     let bac = isNaN(parseInt(v)) ? (v === 'A' ? 1 : 0) : (v === '10' ? 0 : parseInt(v));
+    
+    // Blackjack Values
     let bj = isNaN(parseInt(v)) ? (v === 'A' ? 11 : 10) : parseInt(v);
+    
+    // Dragon Tiger Values (Strict Ranking: 2 to 14)
+    let dt = 0;
+    if (v === 'A') dt = 14;
+    else if (v === 'K') dt = 13;
+    else if (v === 'Q') dt = 12;
+    else if (v === 'J') dt = 11;
+    else dt = parseInt(v);
+
     let suitHtml = (s === '♥' || s === '♦') ? `<span class="card-red">${s}</span>` : s;
-    return { val: v, suit: s, bacVal: bac, bjVal: bj, raw: v, suitHtml: suitHtml };
+    return { val: v, suit: s, bacVal: bac, bjVal: bj, dtVal: dt, raw: v, suitHtml: suitHtml };
 }
 
 function getBJScore(hand) {
@@ -126,9 +139,9 @@ setInterval(() => {
             sharedTables.status = 'RESOLVING';
             io.emit('lockBets');
 
-            // 1. Dragon Tiger
+            // 1. Dragon Tiger (Now uses strict dtVal for comparisons)
             let dtD = drawCard(), dtT = drawCard();
-            let dtWin = dtD.bjVal > dtT.bjVal ? 'Dragon' : (dtT.bjVal > dtD.bjVal ? 'Tiger' : 'Tie');
+            let dtWin = dtD.dtVal > dtT.dtVal ? 'Dragon' : (dtT.dtVal > dtD.dtVal ? 'Tiger' : 'Tie');
             logGlobalResult('dt', `${dtWin} Win`);
             gameStats.dt.total++; gameStats.dt[dtWin]++;
             
