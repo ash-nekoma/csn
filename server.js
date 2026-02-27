@@ -86,7 +86,7 @@ let gameStats = {
     blackjack: { total: 0, Win: 0, Lose: 0, Push: 0 }
 };
 
-// Helper: Logs results and trims the array to max 25 items (No Time string needed here anymore, frontend formats it)
+// Helper: Logs results and trims the array to max 25 items
 function logGlobalResult(game, resultStr) {
     globalResults[game].unshift({ result: resultStr, time: new Date() });
     if (globalResults[game].length > 25) {
@@ -107,7 +107,9 @@ function drawCard() {
     // Blackjack Base Values (Face cards = 10, Ace = 11 initially)
     let bj = isNaN(parseInt(v)) ? (v === 'A' ? 11 : 10) : parseInt(v);
     
-    return { val: v, suit: s, bacVal: bac, bjVal: bj };
+    let suitHtml = (s === '♥' || s === '♦') ? `<span class="card-red">${s}</span>` : s;
+
+    return { val: v, suit: s, bacVal: bac, bjVal: bj, raw: v, suitHtml: suitHtml };
 }
 
 // REAL BLACKJACK SCORING (Handles Aces dynamically switching from 11 to 1)
@@ -165,14 +167,14 @@ setInterval(() => {
             gameStats.sicbo.total++;
             gameStats.sicbo[sbWin]++;
 
-            // Color Game (Perya) - Format sent as array so frontend can render 2D Dice easily
+            // Color Game (Perya)
             const cols = ['Yellow','White','Pink','Blue','Red','Green'];
             let pyR = [
                 cols[Math.floor(Math.random() * 6)], 
                 cols[Math.floor(Math.random() * 6)], 
                 cols[Math.floor(Math.random() * 6)]
             ];
-            logGlobalResult('perya', pyR.join(','));
+            logGlobalResult('perya', pyR.join(',')); // Send as comma separated for 2D dice logic
             gameStats.perya.total++; 
             pyR.forEach(color => gameStats.perya[color]++);
 
@@ -276,7 +278,7 @@ setInterval(() => {
                 });
             }, 5000);
 
-            // WAIT 8 SECONDS total to fully clear the table (reset cards to '?', reset bets) and restart timer
+            // WAIT 8 SECONDS total to fully clear the table (reset cards, reset bets) and restart timer
             setTimeout(() => {
                 sharedTables.time = 15;
                 sharedTables.status = 'BETTING';
@@ -308,7 +310,6 @@ io.on('connection', (socket) => {
             await user.save();
             socket.user = user;
             
-            // Daily Reward Logic & Timers
             let now = new Date();
             let canClaim = true;
             let day = 1;
@@ -320,7 +321,7 @@ io.on('connection', (socket) => {
                     canClaim = false;
                     nextClaim = new Date(user.dailyReward.lastClaim.getTime() + 24 * 60 * 60 * 1000);
                 } else if (diffHours > 48) {
-                    user.dailyReward.streak = 0; // Streak broken, reset to Day 1
+                    user.dailyReward.streak = 0; 
                 }
                 day = (user.dailyReward.streak % 7) + 1;
             }
@@ -412,12 +413,12 @@ io.on('connection', (socket) => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
         
-        // Strict balance check before game starts
+        // Validation check
         if (user.credits < data.bet) {
             return socket.emit('toast', { msg: 'Insufficient TC', type: 'error' });
         }
         
-        // Deduct upfront locally in DB
+        // Deduct instantly locally
         user.credits -= data.bet; 
         let payout = 0;
 
@@ -462,7 +463,6 @@ io.on('connection', (socket) => {
                     dHand: [drawCard(), drawCard()] 
                 };
                 
-                // Natural Blackjack Check
                 let pS = getBJScore(socket.bjState.pHand);
                 if (pS === 21) {
                     let dS = getBJScore(socket.bjState.dHand);
@@ -498,7 +498,6 @@ io.on('connection', (socket) => {
             else if (data.action === 'stand' && socket.bjState) {
                 let pS = getBJScore(socket.bjState.pHand);
                 
-                // Dealer draws until 17
                 while (getBJScore(socket.bjState.dHand) < 17) {
                     socket.bjState.dHand.push(drawCard());
                 }
@@ -581,6 +580,24 @@ io.on('connection', (socket) => {
         if (socket.user) {
             const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
             socket.emit('transactionsData', txs);
+        }
+    });
+
+    // --- ADMIN ACTIONS ---
+    socket.on('adminLogin', async (data) => {
+        if (data.username === 'admin' && data.password === 'admin') {
+            socket.emit('adminLoginSuccess', { username: 'Admin Boss', role: 'Head Admin' });
+            
+            const users = await User.find(); 
+            const txs = await Transaction.find().sort({ date: -1 }); 
+            const gcs = await GiftCode.find().sort({ date: -1 });
+            let totalEconomy = users.reduce((a, b) => a + b.credits, 0);
+            
+            socket.emit('adminDataSync', { 
+                users, transactions: txs, giftBatches: gcs, stats: { economy: totalEconomy } 
+            });
+        } else { 
+            socket.emit('authError', 'Invalid Admin Credentials.'); 
         }
     });
 
