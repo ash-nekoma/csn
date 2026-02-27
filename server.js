@@ -73,23 +73,19 @@ setInterval(() => {
             io.emit('lockBets');
 
             // --- GENERATE RNG OUTCOMES ---
-            // 1. Dragon Tiger
             let dtD = drawCard(), dtT = drawCard();
             let dtWin = dtD.bjVal > dtT.bjVal ? 'Dragon' : (dtT.bjVal > dtD.bjVal ? 'Tiger' : 'Tie');
             logGlobalResult('dt', `${dtWin} Win (${dtD.val} vs ${dtT.val})`);
             
-            // 2. Sic Bo
             let sbR = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1];
             let sbSum = sbR[0] + sbR[1] + sbR[2], sbTrip = (sbR[0] === sbR[1] && sbR[1] === sbR[2]);
             let sbWin = sbTrip ? 'None' : (sbSum <= 10 ? 'Small' : 'Big');
             logGlobalResult('sicbo', sbTrip ? `Triple ${sbR[0]}` : `${sbWin} (${sbSum})`);
 
-            // 3. Color Game
             const cols = ['Yellow','White','Pink','Blue','Red','Green'];
             let pyR = [cols[Math.floor(Math.random()*6)], cols[Math.floor(Math.random()*6)], cols[Math.floor(Math.random()*6)]];
             logGlobalResult('perya', pyR.join(', '));
 
-            // 4. Baccarat
             let pC = [drawCard(), drawCard()], bC = [drawCard(), drawCard()];
             let pS = (pC[0].bacVal + pC[1].bacVal) % 10, bS = (bC[0].bacVal + bC[1].bacVal) % 10;
             if (pS < 8 && bS < 8) {
@@ -138,7 +134,7 @@ setInterval(() => {
                 }
             });
 
-            // --- BROADCAST RESULTS FOR ANIMATION ---
+            // --- BROADCAST RESULTS ---
             io.to('dt').emit('sharedResults', { room: 'dt', dCard: dtD, tCard: dtT, winner: dtWin });
             io.to('sicbo').emit('sharedResults', { room: 'sicbo', roll: sbR, sum: sbSum, winner: sbWin });
             io.to('perya').emit('sharedResults', { room: 'perya', roll: pyR });
@@ -187,9 +183,7 @@ io.on('connection', (socket) => {
                 day = (user.dailyReward.streak % 7) + 1;
             }
 
-            socket.emit('loginSuccess', { 
-                username: user.username, credits: user.credits, daily: { canClaim, day, nextClaim } 
-            });
+            socket.emit('loginSuccess', { username: user.username, credits: user.credits, daily: { canClaim, day, nextClaim } });
             io.emit('chatMessage', { user: 'System', text: `${user.username} entered the casino.`, sys: true });
         } catch(e) { socket.emit('authError', 'Server Error.'); }
     });
@@ -253,7 +247,7 @@ io.on('connection', (socket) => {
         socket.emit('transactionsData', txs);
     });
 
-    // History
+    // History Feed Request
     socket.on('getGlobalResults', (game) => {
         socket.emit('globalResultsData', { game: game, results: globalResults[game] });
     });
@@ -284,7 +278,6 @@ io.on('connection', (socket) => {
         else if(data.game === 'blackjack') {
             if(data.action === 'start') {
                 await user.save();
-                socket.emit('balanceUpdate', user.credits); // Deduct immediately
                 socket.bjState = { bet: data.bet, pHand: [drawCard(), drawCard()], dHand: [drawCard(), drawCard()] };
                 socket.emit('bjUpdate', { event: 'deal', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand });
             }
@@ -324,6 +317,14 @@ io.on('connection', (socket) => {
         user.credits -= data.amount; 
         await user.save();
         sharedTables.bets.push({ userId: user._id, socketId: socket.id, room: data.room, choice: data.choice, amount: data.amount });
+    });
+
+    socket.on('adminLogin', async (data) => {
+        if (data.username === 'admin' && data.password === 'admin') {
+            socket.emit('adminLoginSuccess', { username: 'Admin Boss', role: 'Head Admin' });
+            const users = await User.find(); const txs = await Transaction.find(); const gcs = await GiftCode.find();
+            socket.emit('adminDataSync', { users, transactions: txs, giftBatches: gcs, stats: { economy: users.reduce((a,b)=>a+b.credits,0) } });
+        } else { socket.emit('authError', 'Invalid Admin Credentials.'); }
     });
 
     socket.on('disconnect', async () => {
