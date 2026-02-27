@@ -353,6 +353,7 @@
         });
 
         socket.on('adminLoginSuccess', data => {
+            // Completely hide the auth wrapper so it doesn't block clicks
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('admin-app').style.display = 'flex';
         });
