@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, default: 'Player' },
-    credits: { type: Number, default: 0 }, // Strictly starts at 0 for real economy
+    credits: { type: Number, default: 0 }, 
     status: { type: String, default: 'Offline' },
     joinDate: { type: Date, default: Date.now },
     dailyReward: {
@@ -43,9 +43,9 @@ const User = mongoose.model('User', userSchema);
 // Cashier Requests (Deposits & Withdrawals)
 const txSchema = new mongoose.Schema({
     username: String,
-    type: String, // "Deposit" or "Withdrawal"
+    type: String, 
     amount: Number,
-    ref: String, // Proof of Payment (filename) or Account Details
+    ref: String, 
     status: { type: String, default: 'Pending' },
     date: { type: Date, default: Date.now }
 });
@@ -94,7 +94,7 @@ function logGlobalResult(game, resultStr) {
     }
 }
 
-// Helper: Generates a random card with Baccarat and Blackjack values attached
+// Helper: Generates a random card with Baccarat and Blackjack base values attached
 function drawCard() {
     const vs = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
     const ss = ['♠','♣','♥','♦'];
@@ -104,10 +104,25 @@ function drawCard() {
     // Baccarat Values (Face cards = 0, Ace = 1)
     let bac = isNaN(parseInt(v)) ? (v === 'A' ? 1 : 0) : (v === '10' ? 0 : parseInt(v));
     
-    // Blackjack Values (Face cards = 10, Ace = 11)
+    // Blackjack Base Values (Face cards = 10, Ace = 11 initially)
     let bj = isNaN(parseInt(v)) ? (v === 'A' ? 11 : 10) : parseInt(v);
     
     return { val: v, suit: s, bacVal: bac, bjVal: bj };
+}
+
+// REAL BLACKJACK SCORING (Handles Aces dynamically switching from 11 to 1)
+function getBJScore(hand) {
+    let score = 0;
+    let aces = 0;
+    for (let card of hand) {
+        score += card.bjVal;
+        if (card.val === 'A') aces += 1;
+    }
+    while (score > 21 && aces > 0) {
+        score -= 10;
+        aces -= 1;
+    }
+    return score;
 }
 
 
@@ -150,16 +165,16 @@ setInterval(() => {
             gameStats.sicbo.total++;
             gameStats.sicbo[sbWin]++;
 
-            // Color Game (Perya)
+            // Color Game (Perya) - Format sent as comma string so frontend can split it into dice
             const cols = ['Yellow','White','Pink','Blue','Red','Green'];
             let pyR = [
                 cols[Math.floor(Math.random() * 6)], 
                 cols[Math.floor(Math.random() * 6)], 
                 cols[Math.floor(Math.random() * 6)]
             ];
-            logGlobalResult('perya', pyR.join(', '));
-            gameStats.perya.total++; // 1 round played
-            pyR.forEach(color => gameStats.perya[color]++); // Track individual hits
+            logGlobalResult('perya', pyR.join(','));
+            gameStats.perya.total++; 
+            pyR.forEach(color => gameStats.perya[color]++);
 
             // Baccarat
             let pC = [drawCard(), drawCard()], bC = [drawCard(), drawCard()];
@@ -203,7 +218,7 @@ setInterval(() => {
 
 
             // ------------------------------------
-            // B. CALCULATE WINNINGS & UPDATE DB
+            // B. CALCULATE WINNINGS 
             // ------------------------------------
             let playerPayouts = {}; 
             
@@ -233,42 +248,41 @@ setInterval(() => {
             });
 
             // ------------------------------------
-            // C. BROADCAST RESULTS & PAYOUTS
+            // C. BROADCAST RESULTS & DELAY PAYOUT
             // ------------------------------------
-            // The frontend dictates the visual delays now! We just send the payload.
             
+            // Send outcomes to frontend immediately so animations start playing
             io.to('dt').emit('sharedResults', { room: 'dt', dCard: dtD, tCard: dtT, winner: dtWin });
             io.to('sicbo').emit('sharedResults', { room: 'sicbo', roll: sbR, sum: sbSum, winner: sbWin });
             io.to('perya').emit('sharedResults', { room: 'perya', roll: pyR });
             io.to('baccarat').emit('sharedResults', { 
                 room: 'baccarat', 
-                pCards: pC, 
-                bCards: bC, 
-                pScore: pS,
-                bScore: bS,
+                pCards: pC, bCards: bC, 
+                pScore: pS, bScore: bS,
                 winner: bacWin,
-                p3Drawn: p3Drawn,
-                b3Drawn: b3Drawn
+                p3Drawn: p3Drawn, b3Drawn: b3Drawn
             });
 
-            // Process DB updates silently in the background
-            Object.keys(playerPayouts).forEach(async (userId) => {
-                let user = await User.findById(userId);
-                if (user) {
-                    user.credits += playerPayouts[userId].amount;
-                    await user.save();
-                    // We send the new balance, but the index.html logic will WAIT to display it
-                    io.to(playerPayouts[userId].socketId).emit('balanceUpdateData', user.credits);
-                }
-            });
+            // WAIT 5 SECONDS (Allows animations to finish and result box to flash)
+            setTimeout(() => {
+                Object.keys(playerPayouts).forEach(async (userId) => {
+                    let user = await User.findById(userId);
+                    if (user) {
+                        user.credits += playerPayouts[userId].amount;
+                        await user.save();
+                        // Send official updated balance
+                        io.to(playerPayouts[userId].socketId).emit('balanceUpdateData', user.credits);
+                    }
+                });
+            }, 5000);
 
-            // Reset Server Loop Data (Frontend handles its own clear)
+            // WAIT 8 SECONDS total to fully clear the table and start a new round
             setTimeout(() => {
                 sharedTables.time = 15;
                 sharedTables.status = 'BETTING';
                 sharedTables.bets = [];
-                io.emit('newRound');
-            }, 6000); 
+                io.emit('newRound'); // Tells frontend to visually clear chips/cards
+            }, 8000); 
         }
     }
 }, 1000);
@@ -280,7 +294,6 @@ setInterval(() => {
 
 io.on('connection', (socket) => {
     
-    // Sync clock immediately on connect
     socket.emit('timerUpdate', sharedTables.time);
 
     // --- AUTHENTICATION ---
@@ -294,7 +307,6 @@ io.on('connection', (socket) => {
             await user.save();
             socket.user = user;
             
-            // Daily Reward Logic & Timers
             let now = new Date();
             let canClaim = true;
             let day = 1;
@@ -306,7 +318,7 @@ io.on('connection', (socket) => {
                     canClaim = false;
                     nextClaim = new Date(user.dailyReward.lastClaim.getTime() + 24 * 60 * 60 * 1000);
                 } else if (diffHours > 48) {
-                    user.dailyReward.streak = 0; // Streak broken, reset to Day 1
+                    user.dailyReward.streak = 0; 
                 }
                 day = (user.dailyReward.streak % 7) + 1;
             }
@@ -398,11 +410,11 @@ io.on('connection', (socket) => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
         
-        // Strict balance check before game starts
         if (user.credits < data.bet) {
             return socket.emit('toast', { msg: 'Insufficient TC', type: 'error' });
         }
         
+        // Deduct upfront
         user.credits -= data.bet; 
         let payout = 0;
 
@@ -447,10 +459,10 @@ io.on('connection', (socket) => {
                     dHand: [drawCard(), drawCard()] 
                 };
                 
-                // Check initial blackjack
-                let pS = socket.bjState.pHand.reduce((a,b) => a + b.bjVal, 0);
+                // Natural Blackjack Check using correct Scoring
+                let pS = getBJScore(socket.bjState.pHand);
                 if (pS === 21) {
-                    let dS = socket.bjState.dHand.reduce((a,b) => a + b.bjVal, 0);
+                    let dS = getBJScore(socket.bjState.dHand);
                     let msg = dS === 21 ? 'Push' : 'Blackjack!';
                     payout = dS === 21 ? data.bet : data.bet * 2.5;
                     
@@ -469,7 +481,7 @@ io.on('connection', (socket) => {
             }
             else if (data.action === 'hit' && socket.bjState) {
                 socket.bjState.pHand.push(drawCard());
-                let pS = socket.bjState.pHand.reduce((a,b) => a + b.bjVal, 0);
+                let pS = getBJScore(socket.bjState.pHand);
                 
                 if (pS > 21) {
                     gameStats.blackjack.Lose++;
@@ -481,13 +493,14 @@ io.on('connection', (socket) => {
                 }
             }
             else if (data.action === 'stand' && socket.bjState) {
-                let pS = socket.bjState.pHand.reduce((a,b) => a + b.bjVal, 0);
+                let pS = getBJScore(socket.bjState.pHand);
                 
-                while (socket.bjState.dHand.reduce((a,b) => a + b.bjVal, 0) < 17) {
+                // Dealer draws until 17
+                while (getBJScore(socket.bjState.dHand) < 17) {
                     socket.bjState.dHand.push(drawCard());
                 }
                 
-                let dS = socket.bjState.dHand.reduce((a,b) => a + b.bjVal, 0);
+                let dS = getBJScore(socket.bjState.dHand);
                 let msg = '';
                 
                 if (dS > 21 || pS > dS) { 
@@ -555,7 +568,7 @@ io.on('connection', (socket) => {
                 ref: data.ref 
             }).save(); 
             
-            // Immediately send back updated list so the modal refreshes live
+            // Instantly refresh modal data
             const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
             socket.emit('transactionsData', txs);
         }
