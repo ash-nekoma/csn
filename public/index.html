@@ -1,314 +1,648 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Stick N' Trade | Casino</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="/socket.io/socket.io.js"></script>
-<style>
-/* CSS VARIABLES & RESET */
-:root { --ps-bg: #000814; --ps-blue: #00439c; --ps-light-blue: #0070cc; --ps-glow: #00a2ff; --glass-bg: rgba(0, 15, 35, 0.65); --glass-border: rgba(255, 255, 255, 0.15); --glass-hover: rgba(255, 255, 255, 0.9); --danger: #ff3366; --success: #00e676; --credits: #ffb400; --text-main: #f8fafc; --text-muted: #8c9eb5; --radius: 12px; }
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; -webkit-tap-highlight-color: transparent;}
-body { background: linear-gradient(135deg, #000a1f 0%, #001f4d 50%, #000000 100%); background-size: 200% 200%; animation: AmbientBG 15s ease infinite; color: var(--text-main); min-height: 100vh; overflow-x: hidden; overflow-y: auto;}
-@keyframes AmbientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-button i { pointer-events: none; }
-::-webkit-scrollbar { display: none; }
-.custom-scroll::-webkit-scrollbar { width: 6px; display: block; } .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.hidden { display: none !important; opacity: 0; pointer-events: none; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stick N' Trade | Casino</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <style>
+        /* ================= CSS VARIABLES & RESET ================= */
+        :root { 
+            --ps-bg: #000814; 
+            --ps-blue: #00439c; 
+            --ps-light-blue: #0070cc; 
+            --ps-glow: #00a2ff; 
+            --glass-bg: rgba(0, 15, 35, 0.65); 
+            --glass-border: rgba(255, 255, 255, 0.15); 
+            --glass-hover: rgba(255, 255, 255, 0.9); 
+            --danger: #ff3366; 
+            --success: #00e676; 
+            --credits: #ffb400; 
+            --text-main: #f8fafc; 
+            --text-muted: #8c9eb5; 
+            --radius: 12px; 
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Outfit', sans-serif; 
+            outline: none; 
+            -webkit-tap-highlight-color: transparent;
+        }
 
-/* SHARED UI ELEMENTS */
-.btn-play { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--glass-border); padding: 15px 20px; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
-.btn-play:hover:not(:disabled) { background: white; color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,255,255,0.2); }
-.btn-play:disabled { background: rgba(0,0,0,0.5) !important; color: var(--text-muted) !important; cursor: not-allowed !important; border-color: transparent !important; box-shadow:none !important; transform:none !important;}
-.input-control { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1.1rem; font-weight: 600; text-align: center;}
-.input-control:focus { border-color: var(--ps-glow); }
-.input-group label { display: block; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; text-align: left;}
+        body { 
+            background: linear-gradient(135deg, #000a1f 0%, #001f4d 50%, #000000 100%); 
+            background-size: 200% 200%; 
+            animation: AmbientBG 15s ease infinite; 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            width: 100vw; 
+            overflow-x: hidden; 
+            overflow-y: auto; 
+        }
+        
+        @keyframes AmbientBG { 
+            0% { background-position: 0% 50%; } 
+            50% { background-position: 100% 50%; } 
+            100% { background-position: 0% 50%; } 
+        }
 
-/* AUTHENTICATION MODAL */
-#auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
-.auth-box { width: 450px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); text-align: center; }
-.auth-title { font-size: 2.8rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
-.auth-sub { color: var(--ps-glow); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
-.auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;}
-.auth-tab { flex: 1; background: transparent; border: none; color: var(--text-muted); font-weight: 900; padding: 10px; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; }
-.auth-tab.active { border-bottom: 3px solid var(--ps-glow); color: var(--ps-glow); }
-.auth-msg { font-size: 0.9rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; } .auth-error { color: var(--danger); } .auth-success { color: var(--success); }
-.pwd-input-wrapper { position: relative; display: flex; align-items: center;} .pwd-input-wrapper input { padding-right: 40px; } .pwd-input-wrapper i { position: absolute; right: 15px; cursor: pointer; color: var(--text-muted); }
+        .chip, .anim-deal, .play-card, .wheelPanel, canvas, .flying-obj, .coin, .dice-icon, .mode-card, .game-card { 
+            will-change: transform, opacity; 
+            transform: translateZ(0); 
+            backface-visibility: hidden; 
+        }
 
-/* TOPBAR */
-#app-container { display: none; }
-.topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 99999; background: rgba(0,0,0,0.6); border-bottom: 1px solid var(--glass-border); backdrop-filter: blur(16px); padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; }
-.brand { display: flex; align-items: center; gap: 15px; cursor: pointer; } .brand-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--ps-glow); box-shadow: 0 0 20px var(--ps-glow); }
-.brand-title { font-weight: 900; letter-spacing: 2px; font-size: 1.5rem; text-shadow: 0 0 10px rgba(0, 162, 255, 0.5);} .brand-sub { color: var(--ps-glow); font-weight: 800; font-size: 0.8rem; letter-spacing: 3px; }
-.topbar-right { display: flex; align-items: center; gap: 20px; }
-.player-profile { display: flex; align-items: center; gap: 8px; font-weight: 800; text-transform: uppercase; } .player-profile i { color: var(--ps-glow); font-size: 1.3rem; }
-.wallet-pill { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,180,0,0.3); padding: 8px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.1rem; color: var(--credits); cursor: pointer; transition: 0.3s; }
-.wallet-pill:hover { transform: translateY(-2px); border-color: var(--credits); }
-.topbar-actions { display: flex; gap: 4px; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 50px; border: 1px solid var(--glass-border); }
-.top-icon-btn { position: relative; cursor: pointer; color: white; width: 34px; height: 34px; border-radius: 50%; background: transparent; border: none; font-size: 1.15rem; transition: 0.2s;} .top-icon-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); }
+        button i { pointer-events: none; }
 
-/* LOBBY & CARDS */
-.main-wrapper { padding-top: 100px; display: flex; flex-direction: column; align-items: center; width: 100%; padding-bottom: 50px;}
-.casino-title { font-size: 4rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 3rem 0; color: white; text-shadow: 0 0 20px rgba(255,255,255,0.2); text-align: center;}
-.lobby-modes-container { display: flex; gap: 40px; justify-content: center; width: 100%; max-width: 900px; }
-.mode-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative;}
-.mode-card { width: 320px; height: 400px; padding: 20px;} .mode-card:hover { border-color: var(--ps-glow); transform: translateY(-10px); background: rgba(0, 30, 60, 0.8);}
-.mode-icon { font-size: 6rem; margin-bottom: 2rem; color: var(--ps-light-blue); transition: 0.3s;} .mode-card:hover .mode-icon { color: white; transform: scale(1.1); text-shadow: 0 0 20px var(--ps-glow);}
-.mode-title { font-size: 1.9rem; font-weight: 900; margin-bottom: 12px; } .mode-desc { color: var(--text-muted); font-size: 1.05rem; font-weight: 600; line-height: 1.6;}
-.casino-grid { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; max-width: 1300px;}
-.game-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; width: 280px; height: 380px; overflow: hidden;} 
-.game-card:hover { border-color: white; transform: translateY(-8px); }
-.game-img { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; font-size: 6rem; background: rgba(0,0,0,0.5); color: var(--ps-light-blue); transition: 0.3s;} .game-card:hover .game-img { color: white; text-shadow: 0 0 25px var(--ps-glow); }
-.game-info { height: 110px; width: 100%; background: rgba(0,0,0,0.85); border-top: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 900; text-transform: uppercase;}
-.active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 1rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; }
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { display: none; }
+        .custom-scroll { 
+            overflow-y: auto; 
+            scrollbar-width: thin; 
+            scrollbar-color: rgba(255,255,255,0.2) transparent; 
+            min-height: 0; 
+        }
+        .custom-scroll::-webkit-scrollbar { width: 6px; display: block; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
 
-/* IN-GAME PANELS */
-.game-box, .shared-layout { display: flex; gap: 20px; height: 650px; width: 100%; max-width: 900px; margin: 0 auto; } .shared-layout { max-width: 1100px; }
-.glass-panel { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; display: flex; flex-direction: column; flex: 1; overflow: hidden; backdrop-filter: blur(20px);}
-.glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 1.5rem; text-transform: uppercase;}
-.game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 20px;}
-.controls-grid { padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 15px;}
-.bet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
-.bet-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; padding: 15px; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
-.bet-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
-.bet-btn.has-bet { border-color: var(--tile-color); box-shadow: inset 0 0 10px rgba(255,255,255,0.1), 0 0 15px var(--tile-color); transform: translateY(-3px); }
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; margin: 0; 
+        }
+        input[type="number"] { -moz-appearance: textfield; }
+        .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
-/* CHAT & TIMER */
-.chat-panel { width: 320px; display: flex; flex-direction: column; }
-.chat-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-.chat-msg { background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 8px; border-left: 3px solid var(--ps-light-blue); animation: popIn 0.2s ease-out; } .chat-user { font-weight: 900; color: var(--ps-glow); font-size: 0.85rem; margin-bottom: 5px;} .chat-sys { border-left-color: var(--success); color: var(--success); font-style: italic; font-weight: 600; }
-.timer-box { background: rgba(0,0,0,0.8); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 8px; font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; font-family: 'Rajdhani', monospace; transition: 0.3s;} 
-.timer-box.closing { border-color: var(--danger); color: var(--danger); box-shadow: 0 0 20px rgba(255,51,102,0.4); animation: shake 0.5s infinite;}
+        /* ================= AUTHENTICATION GATEWAY ================= */
+        #auth-container { 
+            position: fixed; inset: 0; 
+            display: flex; justify-content: center; align-items: center; 
+            z-index: 9999999; 
+            background: rgba(0,0,0,0.85); 
+            backdrop-filter: blur(15px); 
+        }
+        
+        .auth-box { 
+            width: 520px; 
+            background: var(--glass-bg); 
+            padding: 3rem; 
+            border-radius: 16px; 
+            border: 1px solid var(--glass-border); 
+            box-shadow: 0 25px 80px rgba(0,0,0,0.9); 
+            text-align: center; 
+        }
+        
+        .auth-title { font-size: 2.8rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
+        .auth-sub { color: var(--ps-glow); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
+        
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
+        .auth-tab { flex: 1; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--text-muted); font-weight: 900; padding: 10px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1.1rem; }
+        .auth-tab.active { border-bottom-color: var(--ps-glow); color: var(--ps-glow); }
+        
+        .auth-msg { font-size: 0.9rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; }
+        .auth-error { color: var(--danger); }
+        .auth-success { color: var(--success); }
+        
+        .pwd-input-wrapper { position: relative; width: 100%; display: flex; align-items: center;}
+        .pwd-input-wrapper input { width: 100%; padding-right: 40px; }
+        .pwd-input-wrapper i { position: absolute; right: 15px; cursor: pointer; color: var(--text-muted); font-size: 1.1rem; transition: 0.2s;}
+        .pwd-input-wrapper i:hover { color: white; }
 
-/* ANIMATIONS & ASSETS */
-.dice-icon { font-size: 7rem; text-shadow: 0 10px 30px rgba(0,0,0,0.8); } #dice-num { font-size: 6rem; font-weight: 900; }
-.anim-shake { animation: shake 0.3s infinite; } @keyframes shake { 0%,100%{transform:rotate(0deg);} 25%{transform:rotate(-15deg);} 75%{transform:rotate(15deg);} }
-.coin-wrapper { width: 200px; height: 200px; perspective: 1000px; } .coin-inner { width: 100%; height: 100%; transition: transform 2.5s cubic-bezier(0.25,1,0.2,1); transform-style: preserve-3d; position: relative; }
-.coin-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 5rem; border-radius: 50%; border: 8px solid; }
-.coin-heads { background: radial-gradient(circle, #fde047, #b45309); color: #78350f; border-color: #f59e0b; } .coin-tails { background: radial-gradient(circle, #e2e8f0, #475569); color: #0f172a; border-color: #94a3b8; transform: rotateY(180deg); }
-.tossing { animation: toss 2.5s cubic-bezier(0.25,1,0.2,1); } @keyframes toss { 0%,100%{transform:scale(1) translateY(0);} 50%{transform:scale(1.5) translateY(-50px);} }
-.play-card { background: white; color: black; width: 65px; height: 95px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; font-size: 1.6rem; border: 1px solid #ccc; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-.card-red { color: #e60000; } .card-back { background: repeating-linear-gradient(45deg, #001f4d, #000a1f 10px); color: transparent; border: 2px solid white; }
-.anim-deal { animation: deal 0.4s ease-out; } @keyframes deal { 0%{opacity:0; transform:translateY(-100px) rotateY(180deg);} 100%{opacity:1; transform:translateY(0) rotateY(0deg);} }
-.color-dice-container { display: flex; gap: 30px; font-size: 6rem; } .color-die { width: 130px; height: 130px; border-radius: 16px; border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; background: #111; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); } .c-grey{background:#333;} .c-yellow{background:#ffcc00;} .c-white{background:#fff;} .c-pink{background:#ff66b2;} .c-blue{background:#00a2ff;} .c-red{background:#ff3366;} .c-green{background:#00e676;}
-.dt-arena { display: flex; gap: 80px; align-items: center; } .dt-side { display: flex; flex-direction: column; align-items: center; gap: 10px; } .dt-label { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+        /* ================= TOPBAR & NAVIGATION ================= */
+        #app-container { display: none; }
+        .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 99999; background: rgba(0,0,0,0.6); border-bottom: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(16px); }
+        .topbar-inner { max-width: 1400px; margin: 0 auto; padding: 12px 25px; display: flex; align-items: center; justify-content: space-between; gap: 20px;}
+        
+        .brand { display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; padding: 5px; border-radius: 8px;}
+        .brand:hover { background: rgba(255,255,255,0.05); transform: scale(1.02); }
+        .brand-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--ps-glow); box-shadow: 0 0 20px var(--ps-glow); }
+        .brand-title { font-weight: 900; letter-spacing: 2px; text-transform: uppercase; font-size: 1.5rem; color: var(--text-main); line-height: 1; text-shadow: 0 0 10px rgba(0, 162, 255, 0.5);}
+        .brand-sub { color: var(--ps-glow); font-weight: 800; font-size: 0.9rem; letter-spacing: 3px; margin-top: 2px; text-transform: uppercase;}
 
-/* DAILY REWARD */
-.dr-days { display: flex; gap: 10px; justify-content: center; align-items: flex-end; margin-bottom: 25px; height: 160px; }
-.dr-day { flex: 1; background: linear-gradient(180deg, #1a2a6c, #001f4d); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 10px 5px; height: 130px; position: relative; overflow: hidden; transition: 0.3s; }
-.dr-day::before { content: ''; position: absolute; inset: -50%; background: repeating-conic-gradient(rgba(255,255,255,0.08) 0 15deg, transparent 15deg 30deg); opacity: 0.8; animation: spin 20s linear infinite; z-index: 0; }
-@keyframes spin { 100% { transform: rotate(360deg); } }
-.dr-day > * { position: relative; z-index: 1; }
-.dr-day.claimed { filter: grayscale(1); opacity: 0.6; } .dr-day.claimed::before { display: none; }
-.dr-day.active { background: linear-gradient(180deg, #ffcc00, #ff9900); border-color: white; transform: scale(1.1); height: 150px; color: black; z-index: 5; }
-.dr-day.active::before { background: repeating-conic-gradient(rgba(255,255,255,0.3) 0 15deg, transparent 15deg 30deg); opacity: 0.6; display: block;}
-.dr-day.active .dr-title, .dr-day.active .dr-coin { color: black; text-shadow: none; }
-.dr-day.active.active-claimed { background: rgba(255,255,255,0.1); border-color: var(--glass-border); filter: grayscale(1); color: white; opacity: 0.8;}
-.dr-day.active.active-claimed .dr-title, .dr-day.active.active-claimed .dr-coin { color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .topbar-right { display: flex; align-items: center; gap: 20px; }
+        .player-profile { display: flex; align-items: center; gap: 8px; font-weight: 800; color: white; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;}
+        .player-profile i { color: var(--ps-glow); font-size: 1.3rem; }
 
-.dr-title { font-size: 0.9rem; font-weight: 900; text-transform: uppercase; margin-top: 5px; text-align: center;}
-.dr-coin { font-size: 1rem; font-weight: 900; text-align: center; margin-bottom: 5px;}
-#dr-status-container { text-align: center; margin-top: 10px; }
-.dr-status-text { font-size: 1.2rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;}
-.dr-timer { font-size: 1.5rem; font-weight: 900; color: var(--ps-glow); font-family: 'Rajdhani', sans-serif;}
+        .wallet-pill { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,180,0,0.3); padding: 8px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.1rem; color: var(--credits); box-shadow: inset 0 0 10px rgba(255,180,0,0.1); cursor: pointer; transition: 0.3s; }
+        .wallet-pill:hover { background: rgba(255,180,0,0.1); border-color: var(--credits); box-shadow: 0 0 15px rgba(255,180,0,0.3); transform: translateY(-2px); }
+        .wallet-unit { font-size: 0.8rem; color: var(--text-muted); font-weight: 800; }
+        
+        .topbar-actions { display: flex; gap: 4px; align-items: center; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 50px; border: 1px solid var(--glass-border); }
+        .top-icon-btn { position: relative; cursor: pointer; color: white; transition: 0.3s; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; border-radius: 50%; background: transparent; border: none; font-size: 1.15rem;}
+        .top-icon-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); }
+        .notif-badge { position: absolute; top: -2px; right: -2px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50%; border: 2px solid var(--ps-bg); }
 
-/* TOAST & RESULTS */
-.toast { position: fixed; top: 20px; right: 20px; background: rgba(5,10,25,0.95); padding: 15px 25px; border-radius: 8px; border-left: 5px solid var(--ps-glow); color: white; font-weight: 800; transform: translateX(120%); transition: 0.4s; z-index: 9999999; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
-.toast.show { transform: translateX(0); } .toast-error { border-color: var(--danger); }
-.result-box { position: absolute; bottom: 20px; right: 20px; padding: 15px 30px; border-radius: 8px; text-align: right; font-weight: 900; text-transform: uppercase; display: none; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);}
-.result-box.win { background: rgba(0,230,118,0.15); border: 1px solid var(--success); color: var(--success); border-right: 4px solid var(--success); }
-.result-box.lose { background: rgba(255,51,102,0.15); border: 1px solid var(--danger); color: var(--danger); border-right: 4px solid var(--danger); }
-.result-box.push { background: rgba(255,255,255,0.1); border: 1px solid white; color: white; border-right: 4px solid white; }
-@keyframes popIn { 0%{transform: scale(0.8) translateX(50px); opacity:0;} 100%{transform: scale(1) translateX(0); opacity:1;} }
-.anim-pop { animation: popBal 0.5s ease-out; } @keyframes popBal { 50%{transform: scale(1.1); background: rgba(0,230,118,0.3); border-color: var(--success);} }
+        /* ================= MAIN CONTENT & LOBBIES ================= */
+        .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; padding-top: 80px;}
+        .content { width: 100%; max-width: 1400px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;}
+        .view-container { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; }
+        
+        .header-title { font-size: 3rem; font-weight: 900; margin: 0 0 2rem 0; text-transform: uppercase; letter-spacing: 2px; color: white; text-shadow: 0 2px 15px rgba(0,0,0,0.8); text-align: center; }
+        
+        .global-back { position: fixed; top: 100px; left: max(20px, calc(50% - 680px)); z-index: 50; background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .global-back:hover { background: white; color: black; transform: translateX(-5px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
-/* MODALS */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-.modal-content { background: var(--glass-bg); width: 500px; padding: 2.5rem; border-radius: 12px; border: 1px solid var(--glass-border); position: relative; display: flex; flex-direction: column; }
-.modal-close-icon { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); transition: 0.2s;} .modal-close-icon:hover { color: var(--danger); }
-.modal-content h3 { font-size: 2rem; font-weight: 900; margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-transform: uppercase; text-align: center; }
-.bank-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;}
-.bank-tab { flex: 1; background: transparent; border: none; border-bottom: 4px solid transparent; color: var(--text-muted); font-weight: 900; padding: 12px; cursor: pointer; text-transform: uppercase; font-size: 1.1rem;}
-.bank-tab.active { border-bottom: 4px solid var(--ps-glow); color: var(--ps-glow); }
-.bank-section { display: none; flex: 1; } .bank-section.active { display: block; }
-.btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: center;} .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; }
-</style>
+        .casino-title { font-size: 4rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 3rem 0; line-height: 1.1; color: white; text-shadow: 0 0 20px rgba(255,255,255,0.2); text-align: center;}
+        
+        .lobby-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .lobby-modes-container { display: flex; gap: 40px; justify-content: center; width: 100%; max-width: 900px; flex-wrap: wrap;}
+        
+        .mode-card { flex: 1; min-width: 300px; max-width: 340px; height: 440px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s;}
+        .mode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); z-index: 1; }
+        .mode-card:hover { transform: translateY(-10px); border-color: var(--ps-glow); box-shadow: 0 15px 40px rgba(0, 162, 255, 0.2); background: rgba(0, 30, 60, 0.8); }
+        .mode-icon { font-size: 6rem; margin-bottom: 2rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; z-index: 2; }
+        .mode-card:hover .mode-icon { transform: scale(1.1); color: white; text-shadow: 0 0 20px var(--ps-glow); }
+        .mode-title { font-size: 1.9rem; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 12px; position: relative; z-index: 2; letter-spacing: 1px; white-space: nowrap;}
+        .mode-desc { color: var(--text-muted); font-size: 1.05rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.6;}
+
+        .casino-grid { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; align-items: center; margin: 0 auto; max-width: 1300px;}
+        .casino-grid.solo-grid { max-width: 1000px; } 
+
+        .game-card { width: 280px; height: 400px; cursor: pointer; display: flex; flex-direction: column; position: relative; border-radius: 16px; overflow: hidden; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s;}
+        .game-card:hover { transform: translateY(-8px); border-color: var(--glass-hover); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.1); }
+        .game-img { flex: 1; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 6rem; color: var(--ps-light-blue); transition: 0.3s; position: relative;}
+        .game-card:hover .game-img { color: white; text-shadow: 0 0 25px var(--ps-glow); background: rgba(0,30,70,0.6); }
+        .game-info { padding: 20px; text-align: center; background: rgba(0,0,0,0.85); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 6px; height: 110px; justify-content: center;}
+        .game-title { font-size: 1.4rem; font-weight: 900; color: white; text-transform:uppercase; letter-spacing: 1px; margin: 0;} 
+        .game-desc { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; line-height: 1.3;}
+
+        .badge-live { position: absolute; top: 15px; right: 15px; background: var(--danger); color: white; font-size: 0.8rem; font-weight: 900; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; animation: blink 2s infinite; box-shadow: 0 0 10px var(--danger); z-index: 10;}
+        .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 1rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+
+        /* ================= IN-GAME UI & PANELS ================= */
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
+        .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
+        .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1;}
+
+        .game-box { display: flex; gap: 20px; height: 650px; width: 100%; max-width: 850px; align-items: stretch; justify-content: center; margin: 0 auto; } 
+        .main-panel { flex: 1; display: flex; flex-direction: column; position: relative; height: 100%; }
+        .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 20px; min-height:0;}
+        
+        .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); flex-shrink: 0; } 
+        .controls-full { grid-column: span 2; display: flex; gap: 15px; justify-content: center; }
+
+        .shared-layout { display: flex; gap: 20px; height: 650px; width: 100%; max-width: 1100px; align-items: stretch; margin: 0 auto; }
+        .chat-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; }
+        .chat-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .chat-msg { background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 8px; border-left: 3px solid var(--ps-light-blue); animation: popIn 0.2s ease-out; flex-shrink: 0;}
+        .chat-user { font-weight: 900; color: var(--ps-glow); margin-bottom: 5px; text-transform: uppercase; font-size: 0.85rem;}
+        .chat-sys { border-left-color: var(--success); color: var(--success); font-style: italic; font-weight: 600;}
+
+        /* TIMER */
+        .timer-box { background: rgba(0,0,0,0.8); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 8px; color: white; font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); transition: 0.3s; font-family: 'Rajdhani', monospace;} 
+        .timer-box.closing { border-color: var(--danger); color: var(--danger); box-shadow: 0 0 20px rgba(255, 51, 102, 0.4); animation: shake 0.5s infinite;}
+        .timer-sec { font-size: 0.7em; margin-left: 2px; font-weight: 600; color: var(--text-muted); }
+
+        /* BUTTONS & INPUTS */
+        .input-group { margin-bottom: 15px; width: 100%; text-align: left; }
+        .input-group label { display: block; color: var(--text-muted); margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; text-align: left; }
+        .input-control { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; outline: none; font-size: 1.1rem; font-weight: 600; transition: 0.2s;} 
+        .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
+        .bet-input { text-align: center !important; }
+        .bet-input::placeholder { text-align: center; color: rgba(255,255,255,0.4); }
+
+        .btn-play { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--glass-border); padding: 15px 20px; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        .btn-play:hover:not(:disabled) { background: white; color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,255,255,0.2); border-color: white;} 
+        .btn-play:disabled { background: rgba(0,0,0,0.5) !important; color: var(--text-muted) !important; cursor: not-allowed !important; border-color: transparent !important; opacity: 0.5 !important; box-shadow:none !important; transform:none !important;}
+
+        .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;} 
+        .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.1);}
+
+        /* SHARED BET BUTTONS & ACTIVE BET OUTLINE */
+        .bet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; }
+        .bet-grid.perya-grid { grid-template-columns: repeat(3, 1fr); }
+        .bet-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; padding: 15px 10px; border-radius: 8px; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;}
+        .bet-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+
+        .bet-btn.has-bet { 
+            border-top: 2px solid var(--tile-color, var(--ps-glow)) !important;
+            border-left: 2px solid var(--tile-color, var(--ps-glow)) !important;
+            border-right: 2px solid var(--tile-color, var(--ps-glow)) !important;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.1), 0 -5px 20px rgba(0,0,0,0.6); 
+            color: #fff !important; 
+            text-shadow: 0 0 10px var(--tile-color, var(--ps-glow)); 
+            transform: translateY(-3px); 
+        }
+
+        /* ================= MODALS & TOASTS ================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--glass-bg); width: 600px; max-width: 95vw; padding: 2.5rem; border-radius: 12px; border: 1px solid var(--glass-border); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9); position: relative; display: flex; flex-direction: column; height: auto; min-height: fit-content;}
+        .modal-close-icon { position: absolute; top: 25px; right: 25px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 10;}
+        .modal-close-icon:hover { color: var(--danger); transform: scale(1.1); }
+        .modal-content h3 { font-size: 2rem; font-weight: 900; margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-align: center; flex-shrink: 0;}
+
+        .bank-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; flex-shrink: 0;}
+        .bank-tab { flex: 1; background: transparent; border: none; border-bottom: 4px solid transparent; color: var(--text-muted); font-weight: 900; padding: 12px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1.1rem; letter-spacing: 1px;}
+        .bank-tab:hover { color: white; }
+        .bank-tab.active { border-bottom: 4px solid var(--ps-glow); color: var(--ps-glow); }
+        .bank-section { display: none; flex: 1; padding-right: 15px;}
+        .bank-section.active { display: block; }
+
+        /* DAILY REWARD MODAL SPECIFICS */
+        .dr-days { display: flex; gap: 10px; justify-content: center; align-items: flex-end; margin-bottom: 25px; height: 160px; }
+        .dr-day { flex: 1; background: linear-gradient(180deg, #1a2a6c 0%, #001f4d 100%); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 10px 5px; height: 130px; transition: 0.3s; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .dr-day::before { content: ''; position: absolute; inset: -50%; background: repeating-conic-gradient(rgba(255,255,255,0.08) 0 15deg, transparent 15deg 30deg); z-index: 0; opacity: 0.8; animation: rotateBurst 20s linear infinite; }
+        @keyframes rotateBurst { 100% { transform: rotate(360deg); } }
+
+        .dr-day > * { position: relative; z-index: 1; }
+        .dr-day.claimed { background: rgba(255,255,255,0.05); filter: grayscale(1); opacity: 0.6; border-color: var(--glass-border); box-shadow: none;}
+        .dr-day.claimed::before { display: none; }
+
+        /* Active Day */
+        .dr-day.active { background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%); border: 2px solid #fff; transform: scale(1.1); opacity: 1; z-index: 5; box-shadow: 0 10px 25px rgba(255, 204, 0, 0.4); height: 150px; color: black; }
+        .dr-day.active::before { background: repeating-conic-gradient(rgba(255,255,255,0.3) 0 15deg, transparent 15deg 30deg); opacity: 0.6; display: block;}
+        .dr-day.active .dr-title, .dr-day.active .dr-coin { color: #000; text-shadow: none; }
+
+        /* Active-Claimed: Keeps Huge Size, Keeps Animation, Grays Out */
+        .dr-day.active.active-claimed { background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); filter: grayscale(1); opacity: 0.8; box-shadow: none; color: white;}
+        .dr-day.active.active-claimed .dr-title, .dr-day.active.active-claimed .dr-coin { color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .dr-day.active.active-claimed::before { display: block; opacity: 0.3;}
+
+        .dr-title { font-size: 0.9rem; text-transform: uppercase; font-weight: 900; margin-top: 5px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); text-align: center;}
+        .dr-coin { font-size: 1rem; font-weight: 900; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); text-align: center; margin-bottom: 5px;}
+
+        .dr-claim-btn { width: 100%; max-width: 250px; margin: 0 auto; background: #ffcc00; color: #000; font-size: 1.2rem; border: 2px solid #fff; box-shadow: 0 5px 15px rgba(255,204,0,0.4); }
+        .dr-claim-btn:hover:not(:disabled) { background: #ff9900; color: #000; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,204,0,0.6);}
+        .dr-claim-btn:disabled { background: rgba(255,255,255,0.1) !important; border-color: transparent !important; color: var(--text-muted) !important; box-shadow: none !important; cursor: not-allowed !important; transform: none !important;}
+
+        #dr-status-container { text-align: center; margin-top: 10px; }
+        .dr-status-text { font-size: 1.2rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;}
+        .dr-timer { font-size: 1.5rem; font-weight: 900; color: var(--ps-glow); font-family: 'Rajdhani', sans-serif;}
+
+        /* TOAST NOTIFICATIONS */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: rgba(5, 10, 25, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0, 162, 255, 0.4); color: white; padding: 15px 25px; border-radius: 8px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0, 162, 255, 0.25); text-transform: uppercase;}
+        .toast.show { transform: translateX(0); }
+        .toast-success { border-left: 5px solid var(--success); border-color: var(--success); box-shadow: 0 10px 30px rgba(0, 230, 118, 0.25); }
+        .toast-success i { color: var(--success); font-size: 1.3rem;}
+        .toast-error { border-left: 5px solid var(--danger); border-color: rgba(255, 51, 102, 0.4); box-shadow: 0 10px 30px rgba(255, 51, 102, 0.25); }
+        .toast-error i { color: var(--danger); font-size: 1.3rem;}
+
+        .ticket-log-item { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;}
+        .ticket-log-header { display: flex; justify-content: space-between; align-items: center; font-size: 1rem;}
+        .ticket-log-id { font-family: monospace; color: var(--text-muted); font-weight: 600;}
+        .ticket-log-status { font-weight: 900; text-transform: uppercase; font-size: 0.8rem; padding: 5px 10px; border-radius: 4px; letter-spacing: 1px;}
+        .ticket-log-status.pending { background: rgba(255, 180, 0, 0.15); color: var(--credits); border: 1px solid rgba(255, 180, 0, 0.3); }
+        .ticket-log-status.approved { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .ticket-log-status.rejected { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
+
+        /* ================= GAME ASSETS & RESULTS ================= */
+        .result-box, .result-overlay-shared { position: absolute; bottom: 20px; right: 20px; left: auto; top: auto; transform: none; text-align: right; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; display: none; z-index: 100; min-width: 250px; text-transform: uppercase; backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
+        .result-box.win { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.4); border-right: 4px solid var(--success); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
+        .result-box.lose { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.4); border-right: 4px solid var(--danger); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
+        .result-box.push { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); border-right: 4px solid var(--text-muted); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .result-overlay-shared { display: flex; flex-direction: column; opacity: 0; pointer-events: none; background: rgba(0, 10, 30, 0.85); border: 1px solid rgba(0, 162, 255, 0.4); border-right: 4px solid var(--ps-glow); transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } .result-overlay-shared.show { opacity: 1; pointer-events: all; transform: translateX(0); }
+        .res-title { font-size: 1.2rem; font-weight: 900; color: white; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; text-align: right; width: 100%; } 
+        .res-payout { font-size: 1.4rem; font-weight: 800; text-align: right; width: 100%; }
+
+        @keyframes slideInToast { 0% { opacity: 0; transform: translateX(50px) scale(0.95); } 100% { opacity: 1; transform: translateX(0) scale(1); } }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes popBalance { 0% { transform: scale(1); } 50% { transform: scale(1.1); background: rgba(0, 230, 118, 0.3); border-color: var(--success); } 100% { transform: scale(1); } } .anim-pop { animation: popBalance 0.6s ease-out; }
+        @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } 75% { transform: rotate(-15deg); } 100% { transform: rotate(0deg); } } .anim-shake { animation: shake 0.3s infinite; }
+
+        /* SOLO GAMES SPECIFICS */
+        .blackjack-scores { display: flex; justify-content: center; gap: 40px; width: 100%; align-items: flex-start; } .card-area { min-width: 250px; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 240px; } .bj-title { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; } .bj-score { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 15px; line-height: 1; } .card-hand { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; width: 100%; } .play-card { background: white; color: black; border-radius: 6px; width: 65px; height: 95px; border: 1px solid #ccc; box-shadow: 2px 5px 15px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; } .play-card .val { font-size: 1.6rem; line-height: 1; margin-bottom: 2px; } .play-card .suit { font-size: 1.8rem; line-height: 1; } .card-red { color: #e60000; } .card-back { background: repeating-linear-gradient(45deg, #001f4d, #001f4d 10px, #000a1f 10px, #000a1f 20px); border: 2px solid rgba(255,255,255,0.8); color: transparent; }
+        .anim-deal { animation: dealCard 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: center; } @keyframes dealCard { 0% { opacity: 0; transform: translate(0, -200px) scale(0.5) rotateY(180deg); } 100% { opacity: 1; transform: translate(0, 0) scale(1) rotateY(0deg); } } .anim-flip { animation: flipCard 0.4s ease-in-out forwards; } @keyframes flipCard { 0% { transform: rotateY(180deg); } 50% { transform: rotateY(90deg); color: transparent; } 51% { color: inherit; background: white; } 100% { transform: rotateY(0deg); background: white; color: black; } }
+        .dice-icon { font-size: 7rem; color: var(--text-muted); text-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: 0.1s; line-height: 1;} #dice-num { font-size: 6rem !important; line-height: 1; text-shadow: 0 10px 30px rgba(0,0,0,0.8); font-weight: 900 !important; }
+        .coin-wrapper { perspective: 1000px; width: 200px; height: 200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; } .coin-inner { width: 100%; height: 100%; transition: transform 2.5s cubic-bezier(0.25, 1, 0.2, 1); transform-style: preserve-3d; position: relative; } .coin-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 5rem; font-weight: 900; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 15px 40px rgba(0,0,0,0.9); border: 8px solid; } .coin-heads { background: radial-gradient(circle at 30% 30%, #fde047, #b45309); color: #78350f; border-color: #f59e0b; } .coin-tails { background: radial-gradient(circle at 30% 30%, #e2e8f0, #475569); color: #0f172a; border-color: #94a3b8; transform: rotateY(180deg); } .tossing { animation: toss 2.5s cubic-bezier(0.25, 1, 0.2, 1); } @keyframes toss { 0% { transform: scale(1) translateY(0); } 50% { transform: scale(1.5) translateY(-50px); } 100% { transform: scale(1) translateY(0); } }
+
+        /* SHARED GAMES SPECIFICS */
+        .color-dice-container { display: flex; gap: 30px; justify-content: center; font-size: 6rem; margin-bottom: 20px; } .color-die { width: 130px; height: 130px; border-radius: 16px; border: 2px solid rgba(255,255,255,0.3); box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; color: white; transition: 0.3s; background: #111; font-weight: 800;} .c-grey { background: radial-gradient(circle, #333, #0a0a0a); color: rgba(255,255,255,0.4); border-color: #444; } .c-red { background: radial-gradient(circle, #ff3366, #99002b); border-color: #ff3366;} .c-blue { background: radial-gradient(circle, #00a2ff, #003d66); border-color: #00a2ff;} .c-yellow { background: radial-gradient(circle, #ffcc00, #997a00); border-color: #ffcc00;} .c-white { background: radial-gradient(circle, #ffffff, #999999); color: #000; border-color: #fff;} .c-green { background: radial-gradient(circle, #00e676, #006634); border-color: #00e676;} .c-pink { background: radial-gradient(circle, #ff66b2, #99004d); border-color: #ff66b2;}
+        .dt-arena { display: flex; justify-content: center; gap: 80px; width: 100%; align-items: center; margin-bottom: 20px; } .dt-side { display: flex; flex-direction: column; align-items: center; gap: 20px; } .dt-label { font-size: 2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; } .lbl-dragon { color: var(--danger); text-shadow: 0 0 20px rgba(255,51,102,0.6); } .lbl-tiger { color: var(--credits); text-shadow: 0 0 20px rgba(255,180,0,0.6); } .dt-card { width: 120px !important; height: 170px !important; } .dt-card .val { font-size: 3rem; } .dt-card .suit { font-size: 3.5rem; }
+        .sicbo-dice { display: flex; justify-content: center; gap: 30px; font-size: 6rem; margin-bottom: 10px; } .s-die { color: white; text-shadow: 0 10px 20px rgba(0,0,0,0.8); }
+    </style>
 </head>
 <body>
-
+  
   <div id="toast-container"></div>
 
   <div id="auth-container">
       <div class="auth-box">
-          <div class="auth-title">STICK N' TRADE</div><div class="auth-sub">CASINO</div>
-          <div class="auth-tabs"><button class="auth-tab active" onclick="switchAuthTab('login')">Login</button><button class="auth-tab" onclick="switchAuthTab('register')">Register</button></div>
+          <div class="auth-title">STICK N' TRADE</div>
+          <div class="auth-sub">CASINO</div>
           
+          <div class="auth-tabs">
+              <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+              <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+          </div>
+
           <div id="auth-form-login">
-              <div class="input-group"><input type="text" id="login-user" class="input-control" placeholder="Username" style="margin-bottom:15px;"></div>
-              <div class="input-group pwd-input-wrapper" style="margin-bottom:15px;"><input type="password" id="login-pass" class="input-control" placeholder="Password"><i class="fas fa-eye" onclick="toggleInputPwd('login-pass', this)"></i></div>
+              <div class="input-group" style="margin-bottom:20px;">
+                  <input type="text" id="login-user" class="input-control" placeholder="Username">
+              </div>
+              <div class="input-group" style="margin-bottom:15px;">
+                  <div class="pwd-input-wrapper">
+                      <input type="password" id="login-pass" class="input-control" placeholder="Password">
+                      <i class="fas fa-eye" onclick="toggleInputPwd('login-pass', this)"></i>
+                  </div>
+              </div>
               <div id="auth-error-login" class="auth-msg auth-error"></div>
-              <button class="btn-play" style="width:100%;" onclick="submitAuth('login')">LOGIN</button>
+              <button class="btn-play" style="width:100%;" onclick="submitAuth('login')">LOGIN TO CASINO</button>
           </div>
           
-          <div id="auth-form-register" class="hidden">
-              <div class="input-group"><input type="text" id="reg-user" class="input-control" placeholder="Username" style="margin-bottom:15px;"></div>
-              <div class="input-group pwd-input-wrapper" style="margin-bottom:15px;"><input type="password" id="reg-pass" class="input-control" placeholder="Password"><i class="fas fa-eye" onclick="toggleInputPwd('reg-pass', this)"></i></div>
+          <div id="auth-form-register" style="display:none;">
+              <div class="input-group" style="margin-bottom:20px;">
+                  <input type="text" id="reg-user" class="input-control" placeholder="Username">
+              </div>
+              <div class="input-group" style="margin-bottom:15px;">
+                  <div class="pwd-input-wrapper">
+                      <input type="password" id="reg-pass" class="input-control" placeholder="Password">
+                      <i class="fas fa-eye" onclick="toggleInputPwd('reg-pass', this)"></i>
+                  </div>
+              </div>
               <div id="auth-error-register" class="auth-msg auth-error"></div>
-              <button class="btn-play" style="width:100%; border-color:var(--success); color:var(--success);" onclick="submitAuth('register')">REGISTER</button>
+              <button class="btn-play" style="width:100%; border-color:var(--success); color:var(--success);" onclick="submitAuth('register')">CREATE ACCOUNT</button>
           </div>
       </div>
   </div>
 
   <div id="app-container">
-    <header class="topbar">
+      <header class="topbar">
       <div class="topbar-inner">
-        <div class="brand" onclick="switchView('casino')"><div class="brand-dot"></div><div><div class="brand-title">STICK N' TRADE</div><div class="brand-sub">CASINO</div></div></div>
         
+        <div class="brand" onclick="backToCasino()" title="Return to Lobby">
+          <div class="brand-dot"></div>
+          <div class="brand-text">
+            <div class="brand-title">STICK N' TRADE</div>
+            <div class="brand-sub">CASINO</div>
+          </div>
+        </div>
+
         <div class="topbar-right">
-          <div class="player-profile"><i class="fas fa-user-circle"></i> <span id="player-name-display">Player</span></div>
-          <div class="wallet-pill" id="pill-credits" onclick="openCashier()"><i class="fas fa-coins"></i> <span id="nav-credits">0</span> <span style="font-size:0.8rem; opacity:0.6;">TC</span></div>
+          <div class="player-profile">
+            <i class="fas fa-user-circle"></i> <span id="player-name-display">Player</span>
+          </div>
+          
+          <div class="wallet-pill" id="pill-credits" onclick="openCashier()" title="Open Cashier">
+            <i class="fas fa-coins"></i>
+            <span id="nav-credits">0</span>
+            <span class="wallet-unit">TC</span>
+            <div class="wallet-add"><i class="fas fa-plus"></i></div>
+          </div>
+          
           <div class="topbar-actions">
-              <button class="top-icon-btn" onclick="openModal('daily-reward-modal')"><i class="fas fa-calendar-check" style="color:var(--credits)"></i></button>
-              <button class="top-icon-btn" onclick="openModal('promo-modal')"><i class="fas fa-gift" style="color:var(--ps-glow)"></i></button>
-              <button class="top-icon-btn" id="mute-btn" onclick="toggleAudio()"><i class="fas fa-volume-up"></i></button>
-              <button class="top-icon-btn" onclick="confirmLogout()"><i class="fas fa-sign-out-alt" style="color:var(--danger);"></i></button>
+              <button class="top-icon-btn" onclick="openModal('daily-reward-modal')" title="Daily Reward">
+                  <i class="fas fa-calendar-check" style="color: var(--credits);"></i>
+              </button>
+              <button class="top-icon-btn" onclick="openModal('promo-modal')" title="Gift Code">
+                  <i class="fas fa-gift" style="color: var(--ps-glow);"></i>
+              </button>
+              <button class="top-icon-btn" id="mute-btn" onclick="toggleAudio()" title="Toggle Audio">
+                  <i class="fas fa-volume-up"></i>
+              </button>
+              <button class="top-icon-btn" onclick="confirmLogout()" title="Logout">
+                  <i class="fas fa-sign-out-alt" style="color:var(--danger);"></i>
+              </button>
           </div>
         </div>
       </div>
     </header>
-
-    <div class="main-wrapper">
-        <div id="view-casino" class="view-container">
-            <h1 class="casino-title">STICK N' TRADE CASINO</h1>
-            <div id="lobby-modes" class="lobby-modes-container">
-                <div class="mode-card" onclick="openLobbyMode('indiv')"><i class="fas fa-user mode-icon"></i><div class="mode-title">SOLO PLAY</div><div class="mode-desc">Single-player mini games.<br>Quick rounds and instant payouts.</div></div>
-                <div class="mode-card" onclick="openLobbyMode('shared')"><i class="fas fa-users mode-icon"></i><div class="mode-title">SHARED TABLES</div><div class="mode-desc">Multiplayer game rooms.<br>Play with others live.</div></div>
-            </div>
+      
+      <div class="main-wrapper">
+        <div class="content">
+          
+          <div id="view-casino" class="view-container">
             
-            <div id="lobby-indiv" class="hidden" style="width:100%; max-width: 1000px; display:flex; flex-direction:column; align-items:center;">
-                <button class="btn-play" style="margin-bottom:30px; min-width: 200px;" onclick="openLobbyMode('modes')">Back to Hub</button>
-                <div class="casino-grid">
-                    <div class="game-card" onclick="openGame('dice')"><div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info">Dice Roll</div></div>
-                    <div class="game-card" onclick="openGame('coinflip')"><div class="game-img"><i class="fas fa-coins"></i></div><div class="game-info">Coin Flip</div></div>
-                    <div class="game-card" onclick="openGame('blackjack')"><div class="game-img">♠️</div><div class="game-info">Blackjack</div></div>
+            <div class="lobby-wrapper" id="lobby-modes">
+              <div style="text-align: center; margin-bottom: 3rem;">
+                 <h1 class="casino-title">STICK N' TRADE CASINO</h1>
+              </div>
+
+              <div class="lobby-modes-container">
+                <div class="mode-card glass-panel" onclick="openLobbyMode('indiv')">
+                  <i class="fas fa-user mode-icon"></i>
+                  <div class="mode-title">SOLO PLAY</div>
+                  <div class="mode-desc">Single-player mini games.<br>Quick rounds and instant payouts.</div>
                 </div>
+                <div class="mode-card glass-panel" onclick="openLobbyMode('shared')">
+                  <i class="fas fa-users mode-icon"></i>
+                  <div class="mode-title" style="white-space: nowrap;">SHARED TABLES</div>
+                  <div class="mode-desc">Multiplayer game rooms.<br>Play with others live.</div>
+                </div>
+              </div>
             </div>
 
-            <div id="lobby-shared" class="hidden" style="width:100%; max-width: 1300px; display:flex; flex-direction:column; align-items:center;">
-                <button class="btn-play" style="margin-bottom:30px; min-width: 200px;" onclick="openLobbyMode('modes')">Back to Hub</button>
-                <div class="casino-grid">
-                    <div class="game-card" onclick="openSharedGame('baccarat')"><div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div><div class="game-img">🃏</div><div class="game-info">Baccarat</div></div>
-                    <div class="game-card" onclick="openSharedGame('perya')"><div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div><div class="game-img"><i class="fas fa-dice-d6"></i></div><div class="game-info">Color Game</div></div>
-                    <div class="game-card" onclick="openSharedGame('dt')"><div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div><div class="game-img"><i class="fas fa-dragon"></i></div><div class="game-info">Dragon Tiger</div></div>
-                    <div class="game-card" onclick="openSharedGame('sicbo')"><div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div><div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info">Sic Bo</div></div>
+            <div class="lobby-wrapper hidden" id="lobby-indiv">
+              <button class="global-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button>
+              <h2 class="header-title">Solo Play</h2>
+              <div class="casino-grid solo-grid">
+                <div class="game-card glass-panel" onclick="openGame('dice')">
+                    <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Dice Roll</div></div>
                 </div>
+                <div class="game-card glass-panel" onclick="openGame('coinflip')">
+                    <div class="game-img"><i class="fas fa-coins"></i></div><div class="game-info"><div class="game-title">Coin Flip</div></div>
+                </div>
+                <div class="game-card glass-panel" onclick="openGame('blackjack')">
+                    <div class="game-img"><i class="fas fa-spade">♠️</i></div><div class="game-info"><div class="game-title">Blackjack</div></div>
+                </div>
+              </div>
             </div>
-        </div>
 
-        <div id="view-game-dice" class="view-container hidden">
-            <button class="btn-play" style="margin-bottom:20px;" onclick="switchView('casino')">Leave Table</button>
+            <div class="lobby-wrapper hidden" id="lobby-shared">
+              <button class="global-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button>
+              <h2 class="header-title">Shared Tables</h2>
+              <div class="casino-grid shared-grid" style="max-width: 1300px;">
+                <div class="game-card glass-panel" onclick="openSharedGame('baccarat')">
+                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                    <div class="game-img"><i class="fas fa-cards">🃏</i></div><div class="game-info"><div class="game-title">Baccarat</div></div>
+                </div>
+                <div class="game-card glass-panel" onclick="openSharedGame('perya')">
+                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                    <div class="game-img"><i class="fas fa-dice-d6"></i></div><div class="game-info"><div class="game-title">Color Game</div></div>
+                </div>
+                <div class="game-card glass-panel" onclick="openSharedGame('dt')">
+                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                    <div class="game-img"><i class="fas fa-dragon"></i></div><div class="game-info"><div class="game-title">Dragon Tiger</div></div>
+                </div>
+                <div class="game-card glass-panel" onclick="openSharedGame('sicbo')">
+                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                    <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Sic Bo</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="view-game-dice" class="view-container hidden">
+            <button class="global-back" onclick="backToCasino()"><i class="fas fa-arrow-left"></i> Leave Table</button>
             <div class="game-box">
-                <div class="glass-panel">
-                    <div class="glass-header"><span>Dice Roll</span><div style="display:flex;gap:10px;"><button class="btn-rules" onclick="openRules('dice')" title="Rules"><i class="fas fa-info-circle"></i></button><button class="btn-rules" onclick="openGameHistory('dice')" title="My History"><i class="fas fa-history"></i></button><button class="btn-rules" onclick="openGlobalResults('dice')" title="Recent Results"><i class="fas fa-list-ol"></i></button></div></div>
-                    <div class="game-display"><i class="fas fa-dice-d20 dice-icon" id="dice-icon"></i><div id="dice-num" style="display:none; color:white;">0</div><div id="dice-msg" class="result-box"></div></div>
-                    <div class="controls-grid" style="align-items:center;">
-                        <input type="number" id="dice-bet" class="input-control" placeholder="Bet Amount" style="max-width:200px;">
-                        <button class="btn-play" id="btn-dice" onclick="playDice()" style="width:200px; background:var(--ps-glow); color:#000;">ROLL (2x)</button>
+              <div class="main-panel glass-panel">
+                <div class="glass-header" style="align-items: center;">
+                    <h2 style="margin:0; line-height:1;">Dice Roll</h2>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-rules" onclick="openRules('dice')" title="How to Play"><i class="fas fa-info-circle"></i></button>
+                        <button class="btn-rules" onclick="openGameHistory('dice')" title="My History"><i class="fas fa-history"></i></button>
+                        <button class="btn-rules" onclick="openGlobalResults('dice')" title="Recent Results"><i class="fas fa-list-ol"></i></button>
                     </div>
                 </div>
+                <div class="game-display">
+                  <i class="fas fa-dice-d20 dice-icon" id="dice-icon"></i>
+                  <div id="dice-num" style="display:none; color:white; font-weight:900;">0</div>
+                  <div id="dice-msg" class="result-box"></div>
+                </div>
+                <div class="controls-grid" style="display:flex; flex-direction:column; align-items:center; gap:15px; padding: 20px;">
+                  <div class="input-group" style="margin:0 auto; width:150px;">
+                      <label style="text-align:center">Bet Amount</label>
+                      <input type="number" id="dice-bet" class="input-control bet-input" placeholder="10">
+                  </div>
+                  <div style="display:flex; width:100%; justify-content:center;">
+                      <button class="btn-play" id="btn-dice" onclick="playDice()" style="width: 100%; max-width: 250px;">ROLL DICE</button>
+                  </div>
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
 
-        <div id="view-game-coinflip" class="view-container hidden">
-            <button class="btn-play" style="margin-bottom:20px;" onclick="switchView('casino')">Leave Table</button>
+          <div id="view-game-coinflip" class="view-container hidden">
+            <button class="global-back" onclick="backToCasino()"><i class="fas fa-arrow-left"></i> Leave Table</button>
             <div class="game-box">
-                <div class="glass-panel">
-                    <div class="glass-header"><span>Coin Flip</span><div style="display:flex;gap:10px;"><button class="btn-rules" onclick="openRules('coinflip')" title="Rules"><i class="fas fa-info-circle"></i></button><button class="btn-rules" onclick="openGameHistory('coinflip')" title="My History"><i class="fas fa-history"></i></button><button class="btn-rules" onclick="openGlobalResults('coinflip')" title="Recent Results"><i class="fas fa-list-ol"></i></button></div></div>
-                    <div class="game-display">
-                        <div class="coin-wrapper" id="coin-wrapper"><div class="coin-inner" id="coin-obj"><div class="coin-face coin-heads"><i class="fas fa-coins"></i></div><div class="coin-face coin-tails"><i class="fas fa-gem"></i></div></div></div>
-                        <div id="coin-msg" class="result-box"></div>
-                    </div>
-                    <div class="controls-grid" style="align-items:center;">
-                        <input type="number" id="coin-bet" class="input-control" placeholder="Bet Amount" style="max-width:200px;">
-                        <div style="display:flex;gap:10px;"><button class="btn-play" id="btn-heads" onclick="playCoin('Heads')" style="border-color:var(--credits); color:var(--credits); width:100px;">Heads</button><button class="btn-play" id="btn-tails" onclick="playCoin('Tails')" style="width:100px;">Tails</button></div>
+              <div class="main-panel glass-panel">
+                <div class="glass-header" style="align-items: center;">
+                    <h2 style="margin:0; line-height:1;">Coin Flip</h2>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-rules" onclick="openRules('coinflip')" title="How to Play"><i class="fas fa-info-circle"></i></button>
+                        <button class="btn-rules" onclick="openGameHistory('coinflip')" title="My History"><i class="fas fa-history"></i></button>
+                        <button class="btn-rules" onclick="openGlobalResults('coinflip')" title="Recent Results"><i class="fas fa-list-ol"></i></button>
                     </div>
                 </div>
+                <div class="game-display">
+                  <div class="coin-wrapper" id="coin-wrapper">
+                    <div class="coin-inner" id="coin-obj">
+                      <div class="coin-face coin-heads"><i class="fas fa-coins"></i></div>
+                      <div class="coin-face coin-tails"><i class="fas fa-gem"></i></div>
+                    </div>
+                  </div>
+                  <div id="coin-msg" class="result-box"></div>
+                </div>
+                <div class="controls-grid" style="display:flex; flex-direction:column; align-items:center; gap:15px; padding: 20px;">
+                  <div class="input-group" style="margin:0 auto; width:150px;">
+                      <label style="text-align:center">Bet Amount</label>
+                      <input type="number" id="coin-bet" class="input-control bet-input" placeholder="10">
+                  </div>
+                  <div style="display:flex; gap:10px; width:100%; justify-content:center; max-width: 300px;">
+                      <button class="btn-play" id="btn-heads" onclick="playCoin('Heads')" style="flex:1; background: rgba(255,180,0,0.2); border-color: var(--credits);">Heads</button>
+                      <button class="btn-play" id="btn-tails" onclick="playCoin('Tails')" style="flex:1;">Tails</button>
+                  </div>
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
 
-        <div id="view-game-blackjack" class="view-container hidden">
-            <button class="btn-play" style="margin-bottom:20px;" onclick="switchView('casino')">Leave Table</button>
-            <div class="game-box" style="max-width:1000px;">
-                <div class="glass-panel">
-                    <div class="glass-header"><span>Blackjack</span><div style="display:flex;gap:10px;"><button class="btn-rules" onclick="openRules('blackjack')" title="Rules"><i class="fas fa-info-circle"></i></button><button class="btn-rules" onclick="openGameHistory('blackjack')" title="My History"><i class="fas fa-history"></i></button><button class="btn-rules" onclick="openGlobalResults('blackjack')" title="Recent Results"><i class="fas fa-list-ol"></i></button></div></div>
-                    <div class="game-display">
-                        <div style="display:flex;gap:50px;width:100%;justify-content:center;">
-                            <div style="text-align:center;background:rgba(0,0,0,0.5);padding:20px;border-radius:12px;width:300px;"><div style="color:var(--text-muted);font-weight:900;margin-bottom:10px;">DEALER</div><div id="bj-d-score" style="font-size:2.5rem;font-weight:900;margin-bottom:15px;line-height:1;">0</div><div id="bj-d-hand" style="display:flex;gap:5px;justify-content:center;min-height:100px;"></div></div>
-                            <div style="text-align:center;background:rgba(0,0,0,0.5);padding:20px;border-radius:12px;width:300px;"><div style="color:var(--ps-glow);font-weight:900;margin-bottom:10px;">YOU</div><div id="bj-p-score" style="font-size:2.5rem;font-weight:900;margin-bottom:15px;line-height:1;">0</div><div id="bj-p-hand" style="display:flex;gap:5px;justify-content:center;min-height:100px;"></div></div>
-                        </div>
-                        <div id="bj-msg" class="result-box"></div>
-                    </div>
-                    <div class="controls-grid" id="bj-start-controls" style="align-items:center;">
-                        <input type="number" id="bj-bet" class="input-control" placeholder="Bet Amount" style="max-width:200px;">
-                        <button class="btn-play" id="btn-bj-deal" onclick="startBlackjack()" style="width:200px; background:var(--ps-glow); color:#000;">DEAL</button>
-                    </div>
-                    <div class="controls-grid hidden" id="bj-action-controls" style="display:flex; flex-direction:row; justify-content:center;">
-                        <button class="btn-play" id="btn-bj-hit" onclick="hitBlackjack()" style="border-color:var(--ps-glow); color:var(--ps-glow); width:150px;">HIT</button>
-                        <button class="btn-play" id="btn-bj-stand" onclick="standBlackjack()" style="border-color:var(--danger); color:var(--danger); width:150px;">STAND</button>
+          <div id="view-game-blackjack" class="view-container hidden">
+            <button class="global-back" onclick="backToCasino()"><i class="fas fa-arrow-left"></i> Leave Table</button>
+            <div class="game-box">
+              <div class="main-panel glass-panel">
+                <div class="glass-header" style="align-items: center;">
+                    <h2 style="margin:0; line-height:1;">Blackjack</h2>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-rules" onclick="openRules('blackjack')" title="How to Play"><i class="fas fa-info-circle"></i></button>
+                        <button class="btn-rules" onclick="openGameHistory('blackjack')" title="My History"><i class="fas fa-history"></i></button>
+                        <button class="btn-rules" onclick="openGlobalResults('blackjack')" title="Recent Results"><i class="fas fa-list-ol"></i></button>
                     </div>
                 </div>
+                <div class="game-display">
+                  <div class="blackjack-scores">
+                    <div class="card-area"><div class="bj-title">Dealer</div><div class="bj-score" id="bj-d-score">0</div><div class="card-hand" id="bj-d-hand"></div></div>
+                    <div class="card-area"><div class="bj-title">You</div><div class="bj-score" id="bj-p-score">0</div><div class="card-hand" id="bj-p-hand"></div></div>
+                  </div>
+                  <div id="bj-msg" class="result-box"></div>
+                </div>
+                <div class="controls-grid" id="bj-start-controls" style="display:flex; flex-direction:column; align-items:center; gap:15px; padding: 20px;">
+                  <div class="input-group" style="margin:0 auto; width:150px;">
+                      <label style="text-align:center">Bet Amount</label>
+                      <input type="number" id="bj-bet" class="input-control bet-input" placeholder="10">
+                  </div>
+                  <div style="display:flex; width:100%; justify-content:center;">
+                      <button class="btn-play" onclick="startBlackjack()" id="btn-bj-deal" style="width: 100%; max-width: 250px;">DEAL CARDS</button>
+                  </div>
+                </div>
+                <div class="controls-grid hidden" id="bj-action-controls" style="display:flex; justify-content:center; gap:15px; padding: 20px;">
+                  <button class="btn-play" onclick="hitBlackjack()" id="btn-bj-hit" style="flex:1; max-width:150px; background: rgba(0,162,255,0.2); border-color: var(--ps-glow); color: var(--ps-glow);">HIT</button>
+                  <button class="btn-play" onclick="standBlackjack()" id="btn-bj-stand" style="flex:1; max-width:150px; background: rgba(255,51,102,0.2); border-color: var(--danger); color: var(--danger);">STAND</button>
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
 
-        <div id="view-shared-game" class="view-container hidden">
-            <button class="btn-play" style="margin-bottom:20px;" onclick="backToSharedLobby()">Leave Table</button>
+          <div id="view-shared-game" class="view-container hidden">
+            <button class="global-back" onclick="backToSharedLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button>
+            
             <div class="shared-layout">
-                <div class="glass-panel main-panel">
-                    <div class="glass-header"><span id="sg-title">Table</span><div style="display:flex; gap:10px; align-items:center;"><div class="timer-box" id="sg-timer-box"><i class="fas fa-clock"></i> <span id="sg-timer">15</span>s</div><button class="btn-rules" onclick="openRules(activeSharedGame)" title="Rules"><i class="fas fa-info-circle"></i></button><button class="btn-rules" onclick="openGameHistory(activeSharedGame)" title="My History"><i class="fas fa-history"></i></button><button class="btn-rules" onclick="openGlobalResults(activeSharedGame)" title="Recent Results"><i class="fas fa-list-ol"></i></button></div></div>
-                    <div class="game-display" id="sg-display"></div>
-                    <div class="controls-grid" id="sg-controls-container"></div>
+              <div class="main-panel glass-panel">
+                <div class="glass-header" style="align-items: center;">
+                  <h2 id="sg-title" style="margin:0; line-height:1;">Table</h2>
+                  <div style="display:flex; align-items:center; gap:10px;">
+                      <div class="timer-box" id="sg-timer-box">
+                          <i class="fas fa-clock"></i> 
+                          <div style="display:flex; align-items:baseline;"><span id="sg-timer">15</span><span class="timer-sec">s</span></div>
+                      </div>
+                      <button class="btn-rules" onclick="openRules(window.activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
+                      <button class="btn-rules" onclick="openGameHistory(window.activeSharedGame)" title="My History"><i class="fas fa-history"></i></button>
+                      <button class="btn-rules" onclick="openGlobalResults(window.activeSharedGame)" title="Recent Results"><i class="fas fa-list-ol"></i></button>
+                  </div>
                 </div>
-                <div class="glass-panel chat-panel">
-                    <div class="glass-header"><div>LIVE CHAT</div><div style="color:var(--success); font-size:1rem;"><i class="fas fa-users"></i> <span id="sg-active-players">0</span></div></div>
-                    <div class="chat-body custom-scroll" id="sg-chat"></div>
-                    <div style="padding:15px; border-top:1px solid var(--glass-border);"><input type="text" id="chat-input" class="input-control" placeholder="Say something..." onkeypress="if(event.key==='Enter') sendChat()"></div>
+                <div class="game-display" id="sg-display"></div>
+                
+                <div class="controls-grid" style="padding:25px; border-top: 1px solid var(--glass-border);" id="sg-controls-container">
+                  </div>
+              </div>
+              
+              <div class="glass-panel chat-panel">
+                <div class="glass-header">
+                    <div>LIVE CHAT</div>
+                    <div style="display:flex; align-items:center; gap:10px; font-size: 0.95rem; font-weight:800;">
+                        <div style="display:flex; align-items:center; gap:6px; color:var(--success);"><i class="fas fa-users"></i> <span id="sg-active-players">0</span></div>
+                    </div>
                 </div>
+                <div class="chat-body custom-scroll" id="sg-chat">
+                    <div class="chat-msg chat-sys">Connected to server.</div>
+                </div>
+                <div style="padding:15px; border-top:1px solid var(--glass-border); flex-shrink: 0;">
+                    <input type="text" id="chat-input" class="input-control" placeholder="Say something..." onkeypress="if(event.key==='Enter'){sendChat();}">
+                </div>
+              </div>
+              
             </div>
+          </div>
+
         </div>
+      </div>
+  </div>
+
+  <div id="promo-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="width: 400px; height: auto; min-height: fit-content; padding: 2rem;">
+        <i class="fas fa-times modal-close-icon" onclick="closeModal('promo-modal')"></i>
+        <h3 style="margin-top:0;">REDEEM CODE</h3>
+        <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Enter your gift code below to claim free TC.</p>
+        <div class="input-group" style="margin-bottom:10px;">
+            <input type="text" id="promo-code" class="input-control bet-input" placeholder="XXXX-XXXX-XXXX">
+        </div>
+        <div id="promo-response" style="text-align:center; font-weight:800; min-height:45px; margin-bottom:15px; font-size: 1.1rem; line-height:1.4;"></div>
+        <button class="btn-play" style="width:100%;" onclick="submitPromo()">REDEEM</button>
     </div>
   </div>
 
   <div id="daily-reward-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 800px; text-align:center; max-width: 95vw;">
+    <div class="modal-content" style="width: 800px; height: auto; min-height: fit-content; padding: 2.5rem; max-width: 95vw;">
       <i class="fas fa-times modal-close-icon" onclick="closeModal('daily-reward-modal')"></i>
-      <h3 style="color:var(--credits); border:none; margin-bottom:5px;">Daily Reward</h3>
-      <p style="color:var(--text-muted); margin-bottom:25px;">Claim credits every 24 hours!</p>
-      <div class="dr-days">
-          <div class="dr-day" id="dr-day-1"><div class="dr-title">Day 1</div><div class="dr-coin">25 TC</div></div>
-          <div class="dr-day" id="dr-day-2"><div class="dr-title">Day 2</div><div class="dr-coin">50 TC</div></div>
-          <div class="dr-day" id="dr-day-3"><div class="dr-title">Day 3</div><div class="dr-coin">100 TC</div></div>
-          <div class="dr-day" id="dr-day-4"><div class="dr-title">Day 4</div><div class="dr-coin">200 TC</div></div>
-          <div class="dr-day" id="dr-day-5"><div class="dr-title">Day 5</div><div class="dr-coin">500 TC</div></div>
-          <div class="dr-day" id="dr-day-6"><div class="dr-title">Day 6</div><div class="dr-coin">750 TC</div></div>
-          <div class="dr-day" id="dr-day-7"><div class="dr-title">Day 7</div><div class="dr-coin">1000 TC</div></div>
-      </div>
-      <div id="dr-status-container"></div>
-    </div>
-  </div>
-
-  <div id="promo-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 400px; text-align:center;">
-        <i class="fas fa-times modal-close-icon" onclick="closeModal('promo-modal')"></i>
-        <h3 style="margin-top:0;">REDEEM CODE</h3>
-        <p style="color:var(--text-muted); margin-bottom:20px;">Enter your gift code below.</p>
-        <input type="text" id="promo-code" class="input-control" placeholder="XXXX-XXXX-XXXX" style="margin-bottom:10px;">
-        <div id="promo-response" style="font-weight:800; min-height:45px; margin-bottom:15px; font-size:1.1rem;"></div>
-        <button class="btn-play" style="width:100%;" onclick="submitPromo()">REDEEM</button>
+      <h3 style="font-size: 2.2rem; color: var(--credits); margin-bottom: 5px; border: none; padding-bottom: 0;">Daily Reward</h3>
+      <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px;">Come back every day to get better rewards!</p>
+      
+      <div class="dr-days" id="dr-days-container">
+          </div>
+      
+      <div id="dr-status-container">
+          </div>
     </div>
   </div>
 
@@ -316,24 +650,41 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
     <div class="modal-content" style="width: 550px; height: 550px; padding: 2rem;">
       <i class="fas fa-times modal-close-icon" onclick="closeModal('support-center-modal')"></i>
       <h3>CASHIER</h3>
-      <div class="bank-tabs"><button class="bank-tab active" onclick="switchSupportCenterTab('deposit', this)">Deposit</button><button class="bank-tab" onclick="switchSupportCenterTab('withdraw', this)">Withdraw</button><button class="bank-tab" onclick="switchSupportCenterTab('requests', this)">Requests</button></div>
-      
-      <div id="sc-tab-deposit" class="bank-section active">
-        <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem; text-align:center;">Send funds and enter your reference number below.</p>
-        <div class="input-group"><label>Amount (TC)</label><input type="number" id="dep-amount" class="input-control" placeholder="e.g. 5000"></div>
-        <div class="input-group"><label>Reference Number</label><input type="text" id="dep-ref" class="input-control" placeholder="Enter Code"></div>
-        <button class="btn-play" style="width:100%; margin-top:10px;" onclick="submitDeposit()">Submit Deposit</button>
+
+      <div class="bank-tabs">
+        <button class="bank-tab active" onclick="switchSupportCenterTab('deposit', this)">Deposit</button>
+        <button class="bank-tab" onclick="switchSupportCenterTab('withdraw', this)">Withdraw</button>
+        <button class="bank-tab" onclick="switchSupportCenterTab('requests', this)">Requests</button>
       </div>
-      
+
+      <div id="sc-tab-deposit" class="bank-section active">
+        <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem; text-align:center;">Send funds and enter your reference number below for approval.</p>
+        <div class="input-group" style="margin-bottom:15px;">
+            <label>Amount (TC)</label>
+            <input type="number" id="dep-amount" class="input-control" placeholder="e.g. 5000">
+        </div>
+        <div class="input-group" style="margin-bottom:25px;">
+            <label>Reference Number</label>
+            <input type="text" id="dep-ref" class="input-control" placeholder="Enter Reference Code">
+        </div>
+        <button class="btn-play" style="width:100%;" onclick="submitDeposit()"><i class="fas fa-arrow-down"></i> Submit Deposit</button>
+      </div>
+
       <div id="sc-tab-withdraw" class="bank-section hidden">
         <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem; text-align:center;">Withdraw your TC to real world currency.</p>
-        <div class="input-group"><label>Withdraw Amount (TC)</label><input type="number" id="wit-amount" class="input-control" placeholder="e.g. 10000"></div>
-        <div class="input-group"><label>Account Details (Name/Number)</label><input type="text" id="wit-info" class="input-control" placeholder="Where should we send it?"></div>
-        <button class="btn-play" style="width:100%; margin-top:10px;" onclick="submitWithdrawal()">Request Withdrawal</button>
+        <div class="input-group" style="margin-bottom:15px;">
+            <label>Withdraw Amount (TC)</label>
+            <input type="number" id="wit-amount" class="input-control" placeholder="e.g. 10000">
+        </div>
+        <div class="input-group" style="margin-bottom:25px;">
+            <label>Account Details (Name/Number)</label>
+            <input type="text" id="wit-info" class="input-control" placeholder="Where should we send it?">
+        </div>
+        <button class="btn-play" style="width:100%;" onclick="submitWithdrawal()"><i class="fas fa-arrow-up"></i> Request Withdrawal</button>
       </div>
-      
-      <div id="sc-tab-requests" class="bank-section hidden custom-scroll" style="height: 100%; max-height: 350px; overflow-y:auto; padding-right:5px;">
-        <div id="bank-logs-container"><div style="text-align:center; color:var(--text-muted); padding:20px;">Fetching logs...</div></div>
+
+      <div id="sc-tab-requests" class="bank-section hidden" style="height: 100%; max-height: 350px; overflow-y:auto;">
+        <div id="bank-logs-container"></div>
       </div>
     </div>
   </div>
@@ -370,7 +721,8 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
      <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; padding: 2rem;">
         <i class="fas fa-times modal-close-icon" onclick="closeModal('rules-modal')"></i>
         <h3 id="rules-title" style="margin-top:0;">How to Play</h3>
-        <div id="rules-body" style="color:var(--text-muted); font-size:1.05rem; line-height:1.6; margin-left: 20px;"></div>
+        <div id="rules-body" style="color:var(--text-muted); font-size:1.05rem; line-height:1.6; margin-left: 20px;">
+           </div>
      </div>
   </div>
 
@@ -378,32 +730,98 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
     // --- SOCKET.IO & GLOBAL STATE ---
     const socket = io(); 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    let audioMuted = false, sfxGainVal = 0.8;
+    let audioMuted = false;
+    let sfxGainVal = 0.8;
     
     let myUsername = '';
     let myCredits = 0;
-    let myGameHistory = { dice: [], coinflip: [], blackjack: [], baccarat: [], perya: [], dt: [], sicbo: [] };
+    let myGameHistory = { dice: [], coinflip: [], baccarat: [], blackjack: [], perya: [], dt: [], sicbo: [] };
     
     let activeSharedGame = null;
     let sState = { time: 15, status: 'BETTING' };
     let mySBets = {};
     let dailyTimerInterval = null;
 
-    // --- UI BASICS & MODALS ---
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
     const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    // --- UI BASICS & MODALS ---
+    function openModal(id) { 
+        document.getElementById(id).classList.remove('hidden'); 
+        if(id === 'support-center-modal') {
+            switchSupportCenterTab('deposit', document.querySelectorAll('.bank-tab')[0]);
+        }
+    }
+    
+    function closeModal(id) { 
+        document.getElementById(id).classList.add('hidden'); 
+    }
 
     function showToast(msg, type='success') {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
         toast.className = `toast toast-${type} show`;
-        if(type === 'error') toast.classList.add('toast-error');
         let icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
         toast.innerHTML = `<i class="fas ${icon}"></i> <span>${msg}</span>`;
         container.appendChild(toast);
-        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+        setTimeout(() => { 
+            toast.classList.remove('show'); 
+            setTimeout(() => toast.remove(), 300); 
+        }, 3000);
     }
+
+    // --- AUDIO API ---
+    function toggleAudio() {
+        audioMuted = !audioMuted;
+        sfxGainVal = audioMuted ? 0 : 0.8;
+        
+        // Correct Icon Switching
+        if (audioMuted) {
+            document.getElementById('mute-btn').innerHTML = '<i class="fas fa-volume-xmark" style="color:var(--danger)"></i>';
+        } else {
+            document.getElementById('mute-btn').innerHTML = '<i class="fas fa-volume-up"></i>';
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+    }
+
+    function playTone(f, t, d, v = 0.1) { 
+      if (audioMuted || audioCtx.state === 'suspended') return; 
+      let o = audioCtx.createOscillator(); 
+      let g = audioCtx.createGain(); 
+      o.type = t; 
+      o.frequency.setValueAtTime(f, audioCtx.currentTime); 
+      g.gain.setValueAtTime(v * sfxGainVal, audioCtx.currentTime); 
+      g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d); 
+      o.connect(g); 
+      g.connect(audioCtx.destination); 
+      o.start(); 
+      o.stop(audioCtx.currentTime + d); 
+    }
+
+    const sfx = { 
+      click: () => {
+          if (audioMuted || audioCtx.state === 'suspended') return;
+          let o = audioCtx.createOscillator(), g = audioCtx.createGain();
+          o.type = 'triangle'; o.frequency.setValueAtTime(600, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.03);
+          g.gain.setValueAtTime(0.15 * sfxGainVal, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+          o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + 0.03);
+      },
+      tick: () => {
+          if (audioMuted || audioCtx.state === 'suspended') return;
+          let o = audioCtx.createOscillator(), g = audioCtx.createGain();
+          o.type = 'square'; o.frequency.setValueAtTime(1200, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.02);
+          g.gain.setValueAtTime(0.05 * sfxGainVal, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02);
+          o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + 0.02);
+      },
+      deal: () => playTone(300, 'triangle', 0.1, 0.1), 
+      coin: () => { for(let i=0; i<10; i++) setTimeout(() => playTone(1500 + i * 100, 'square', 0.02, 0.05), i * 30); }, 
+      win: () => { playTone(440, 'sine', 0.1, 0.1); setTimeout(() => playTone(660, 'sine', 0.15, 0.1), 100); setTimeout(() => playTone(880, 'sine', 0.3, 0.1), 250); }, 
+      lose: () => { playTone(200, 'sawtooth', 0.4, 0.1); setTimeout(() => playTone(150, 'sawtooth', 0.6, 0.1), 200); }, 
+      lock: () => { playTone(400, 'square', 0.1, 0.1); setTimeout(() => playTone(300, 'square', 0.1, 0.1), 100); } 
+    };
+
+    document.addEventListener('mousedown', (e) => {
+       if(e.target.closest('button, .nav-link, .mode-card, .game-card, .bank-tab, .action-btn')) sfx.click();
+    });
 
     // --- AUTHENTICATION ---
     function switchAuthTab(tab) {
@@ -462,29 +880,40 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
     });
 
     socket.on('balanceUpdate', (newBalance) => {
-        let p1 = document.getElementById('pill-credits');
-        if(newBalance > myCredits) { p1.classList.remove('anim-pop'); void p1.offsetWidth; p1.classList.add('anim-pop'); sfx.win(); }
+        if(newBalance > myCredits) { 
+            let p1 = document.getElementById('pill-credits');
+            p1.classList.remove('anim-pop'); void p1.offsetWidth; p1.classList.add('anim-pop'); sfx.win(); 
+        }
         myCredits = newBalance;
         document.getElementById('nav-credits').innerText = myCredits.toLocaleString(); 
     });
 
     // --- DAILY REWARD LOGIC ---
     function setupDailyRewardUI(dailyData) {
-        document.querySelectorAll('.dr-day').forEach(el => el.className = 'dr-day');
+        const container = document.getElementById('dr-days-container');
+        container.innerHTML = '';
+        const rewards = [25, 50, 100, 200, 500, 750, 1000];
         
         for(let i=1; i<=7; i++) {
-            let el = document.getElementById('dr-day-'+i);
-            if(i < dailyData.day) {
-                el.classList.add('claimed');
-            } else if(i === dailyData.day) {
-                el.classList.add('active');
-                if(!dailyData.canClaim) el.classList.add('active-claimed');
+            let statClass = '';
+            if (i < dailyData.day) {
+                statClass = 'claimed';
+            } else if (i === dailyData.day) {
+                statClass = 'active';
+                if(!dailyData.canClaim) statClass = 'active active-claimed';
             }
+            
+            container.innerHTML += `
+                <div class="dr-day ${statClass}" id="dr-day-${i}">
+                    <div class="dr-title">Day ${i}</div>
+                    <div class="dr-coin">${rewards[i-1]}<br>Credits</div>
+                </div>
+            `;
         }
 
-        let statusContainer = document.getElementById('dr-status-container');
+        let sc = document.getElementById('dr-status-container');
         if(dailyData.canClaim) {
-            statusContainer.innerHTML = `<button class="btn-play" id="btn-claim-reward" style="width:250px; margin:0 auto; background:#ffcc00; color:#000;" onclick="claimDaily()">CLAIM REWARD</button>`;
+            sc.innerHTML = `<button class="btn-play dr-claim-btn" id="btn-claim-reward" onclick="claimDaily()">CLAIM REWARD</button>`;
         } else {
             startDailyTimer(dailyData.nextClaim);
         }
@@ -500,7 +929,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
 
     function startDailyTimer(nextClaimDate) {
         let sc = document.getElementById('dr-status-container');
-        sc.innerHTML = `<div class="dr-status-text" style="margin-top:10px;">COME BACK TOMORROW</div><div class="dr-timer" id="dr-timer-display" style="margin-top:5px;">--:--:--</div>`;
+        sc.innerHTML = `<div class="dr-status-text">COME BACK TOMORROW</div><div class="dr-timer" id="dr-timer-display">--:--:--</div>`;
         
         let dest = new Date(nextClaimDate).getTime();
         if(dailyTimerInterval) clearInterval(dailyTimerInterval);
@@ -511,7 +940,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
             
             if(d <= 0) { 
                 clearInterval(dailyTimerInterval); 
-                sc.innerHTML = `<button class="btn-play" onclick="location.reload()" style="width:250px; margin:0 auto; background:#ffcc00; color:#000;">REFRESH TO CLAIM</button>`; 
+                sc.innerHTML = `<button class="btn-play dr-claim-btn" onclick="location.reload()">REFRESH TO CLAIM</button>`; 
                 return; 
             }
             
@@ -527,7 +956,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
         }, 1000);
     }
 
-    // --- RULES & HISTORY ---
+    // --- RULES & MY HISTORY ---
     const gameInfoMap = {
       'dice': { title: "Dice Roll", body: "<ul><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (2x Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
       'coinflip': { title: "Coin Flip", body: "<ul><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>2x</strong> your bet.</li></ul>" },
@@ -573,7 +1002,14 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
        openModal('game-history-modal');
     }
 
-    // Global Results Server Fetch
+    function logHistory(gid, bet, payout, msg) {
+        if(myGameHistory[gid]) {
+            myGameHistory[gid].unshift({ result: msg, payout: payout, bet: bet });
+            if(myGameHistory[gid].length > 50) myGameHistory[gid].pop();
+        }
+    }
+
+    // --- GLOBAL RESULTS SERVER FETCH ---
     function openGlobalResults(game) {
         document.getElementById('gr-title').innerText = gameInfoMap[game].title + " Feed";
         document.getElementById('gr-items').innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">Loading...</div>`;
@@ -595,13 +1031,6 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
                 </div>`;
         });
     });
-    
-    function logHistory(gid, bet, payout, msg) {
-        if(myGameHistory[gid]) {
-            myGameHistory[gid].unshift({ result: msg, payout: payout, bet: bet });
-            if(myGameHistory[gid].length > 50) myGameHistory[gid].pop();
-        }
-    }
 
     // --- NAVIGATION LOGIC ---
     function switchView(viewId) { 
@@ -620,7 +1049,6 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
       let target = document.getElementById('lobby-' + mode);
       if(target) target.classList.remove('hidden'); 
       
-      // Toggle Big Title
       if(mode === 'modes') document.querySelector('.casino-title').classList.remove('hidden');
       else document.querySelector('.casino-title').classList.add('hidden');
     }
@@ -632,12 +1060,6 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
     
     function backToCasino() { 
       switchView('casino'); 
-    }
-
-    function confirmLogout() {
-        if(confirm("Are you sure you want to log out of Stick N' Trade?")) {
-            location.reload(); // Hard reset back to login
-        }
     }
 
     // --- SOLO GAMES ENGINE ---
@@ -658,7 +1080,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
       btn.disabled = true; mb.style.display = 'none'; icn.style.display = 'block'; nd.style.display = 'none'; 
       icn.className = `fas fa-dice-d20 dice-icon anim-shake`;
       
-      // Local deduction to prevent spam
+      // Local deduction
       myCredits -= bet; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
       socket.emit('playSolo', { game: 'dice', bet: bet });
     }
@@ -667,7 +1089,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
         const btn = document.getElementById('btn-dice'), icn = document.getElementById('dice-icon'), nd = document.getElementById('dice-num'), mb = document.getElementById('dice-msg');
         let t = 0; const indFaces = ['fa-dice-one', 'fa-dice-two', 'fa-dice-three', 'fa-dice-four', 'fa-dice-five', 'fa-dice-six'];
         
-        // Wait for animation to finish before updating balance!
+        // Wait for visual animation to finish
         let s = setInterval(() => {
             icn.className = `fas ${indFaces[Math.floor(Math.random() * 6)]} dice-icon anim-shake`; sfx.tick(); t++;
             if (t > 15) {
@@ -677,9 +1099,6 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
                 showEndBox(mb, data.bet, data.payout, `Rolled ${data.roll}`);
                 logHistory('dice', data.bet, data.payout, `Rolled ${data.roll}`);
                 
-                // NOW update balance
-                myCredits = data.newBalance; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
-                if(data.payout > 0) triggerWinAnim();
                 btn.disabled = false;
             }
         }, 80);
@@ -710,12 +1129,8 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
             showEndBox(mb, data.bet, data.payout, `Landed on ${data.result}`);
             logHistory('coinflip', data.bet, data.payout, data.result);
             
-            // NOW update balance
-            myCredits = data.newBalance; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
-            if(data.payout > 0) triggerWinAnim();
-
             document.getElementById('btn-heads').disabled = false; document.getElementById('btn-tails').disabled = false;
-            co.style.transform = `rotateY(${er}deg)`; 
+            co.style.transform = `rotateY(${er}deg)`; // Reset rotation cleanly
         }, 2500);
     });
 
@@ -749,7 +1164,8 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
                 if(hideSecond && i === 1) container.insertAdjacentHTML('beforeend', `<div class="play-card anim-deal card-back" id="hidden-card">?</div>`);
                 else container.insertAdjacentHTML('beforeend', `<div class="play-card anim-deal"><div class="val">${cards[i].val}</div><div class="suit">${sh}</div></div>`);
             }
-            document.getElementById(scoreId).innerText = data.scores ? data.scores[elId === 'bj-p-hand' ? 'player' : 'dealer'] : cards.reduce((a,b)=>a+b.bjVal,0);
+            document.getElementById(scoreId).innerText = cards.reduce((a,b)=>a+b.bjVal,0);
+            if(hideSecond) document.getElementById(scoreId).innerText = cards[0].bjVal;
         };
 
         if(data.event === 'deal') {
@@ -762,7 +1178,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
             document.getElementById('btn-bj-hit').disabled = false;
         }
         
-        if (data.status === 'resolved' || data.event === 'resolved') {
+        if (data.event === 'resolved') {
             bjSt.active = false;
             document.getElementById('bj-action-controls').classList.add('hidden');
             document.getElementById('bj-start-controls').classList.remove('hidden');
@@ -772,10 +1188,6 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
             
             showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.msg);
             logHistory('blackjack', bjSt.bet, data.payout, data.msg);
-
-            // NOW update balance
-            myCredits = data.newBalance; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
-            if(data.payout > 0) triggerWinAnim();
         }
     });
 
@@ -786,6 +1198,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
         socket.emit('sendChat', { room: activeSharedGame, msg: input.value });
         input.value = '';
     }
+    
     socket.on('chatMessage', (data) => {
         let cb = document.getElementById('sg-chat'); if (!cb) return; 
         if (data.sys) cb.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-sys">${data.text}</div>`);
@@ -964,9 +1377,15 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
     function openSharedGame(id) { 
       activeSharedGame = id; 
       document.getElementById('sg-title').innerText = sConf[id].title; 
-      let o = document.getElementById('sg-overlay'); if (o) o.classList.remove('show'); 
-      mySBets = {}; let mb = document.getElementById('sg-my-bet'); if (mb) { mb.innerText = '0 TC'; mb.style.color = 'white'; } 
-      let cb = document.getElementById('sg-chat'); if (cb) cb.innerHTML = '<div class="chat-msg chat-sys">Connected to Live Table.</div>'; 
+      
+      let o = document.getElementById('sg-overlay'); 
+      if (o) o.classList.remove('show'); 
+      document.getElementById('sg-display').innerHTML = `<div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout"></div></div>`; 
+      mySBets = {}; 
+      let mb = document.getElementById('sg-my-bet'); 
+      if (mb) { mb.innerText = '0 TC'; mb.style.color = 'white'; } 
+      let cb = document.getElementById('sg-chat'); 
+      if (cb) cb.innerHTML = '<div class="chat-msg chat-sys">Connected to Live Table.</div>'; 
       sConf[id].setupUI(); 
       document.querySelectorAll('.main-wrapper > .content > .view-container').forEach(d => d.classList.add('hidden')); 
       document.getElementById('view-shared-game').classList.remove('hidden'); 
@@ -1060,7 +1479,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
       if (o) o.classList.add('show'); 
     }
 
-    // --- CASHIER & PROMO MODAL HANDLERS ---
+    // --- CASHIER & PROMOS ---
     function openCashier() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
       sfx.click();
