@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Stick N' Trade Casino</title>
+    <title>Stick N' Trade | Master Admin</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="/socket.io/socket.io.js"></script>
 
     <style>
-        /* ================= CSS VARIABLES & RESET ================= */
+        /* ================= CSS VARIABLES ================= */
         :root { 
             --ps-bg: #000814; 
+            --ps-blue: #00439c; 
             --ps-glow: #00a2ff; 
-            --glass-bg: rgba(0, 15, 35, 0.65); 
+            --glass-bg: rgba(0, 15, 35, 0.85); 
             --glass-border: rgba(255, 255, 255, 0.15); 
-            --glass-hover: rgba(255, 255, 255, 0.9); 
             --danger: #ff3366; 
             --success: #00e676; 
             --credits: #ffb400; 
@@ -27,1425 +27,470 @@
             --text-muted: #8c9eb5; 
         }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'Outfit', sans-serif; 
-            outline: none; 
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; }
+        
         body { 
-            background: linear-gradient(135deg, #000510 0%, #001233 100%); 
+            background: linear-gradient(135deg, #000a1f 0%, #00122e 100%); 
             color: var(--text-main); 
+            min-height: 100vh; 
             display: flex; 
-            height: 100vh; 
-            overflow: hidden; 
+            overflow: hidden;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { 
-            width: 8px; 
-        }
-        ::-webkit-scrollbar-track { 
-            background: rgba(0,0,0,0.2); 
-        }
-        ::-webkit-scrollbar-thumb { 
-            background: rgba(255,255,255,0.2); 
-            border-radius: 10px; 
-        }
-        ::-webkit-scrollbar-thumb:hover { 
-            background: var(--ps-glow); 
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
 
-        /* Remove Spinners from Number Inputs */
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
-        input[type="number"] { 
-            -moz-appearance: textfield; 
-        }
+        .hidden { display: none !important; }
 
-        .hidden { 
-            display: none !important; 
-        }
-
-        /* ================= BUTTONS & INPUTS ================= */
-        .btn-primary { 
-            background: var(--ps-glow); 
-            color: #000; 
-            border: none; 
-            padding: 10px 20px; 
-            border-radius: 6px; 
-            font-weight: 900; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            text-transform: uppercase; 
-            font-size: 0.9rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            justify-content: center;
-        }
-
-        .btn-primary:hover { 
-            background: #fff; 
-            box-shadow: 0 0 15px rgba(255,255,255,0.5); 
-            transform: translateY(-2px); 
-        }
-
-        .btn-primary:active { 
-            transform: scale(0.98); 
-        }
-
-        .input-control { 
-            width: 100%; 
-            padding: 12px; 
-            background: rgba(0,0,0,0.5); 
-            border: 1px solid var(--glass-border); 
-            color: white; 
-            border-radius: 6px; 
-            font-size: 1rem; 
-            font-weight: 600; 
-            outline: none; 
-            font-family: 'Outfit', sans-serif;
-            margin-bottom: 15px;
-        }
-
-        .input-control:focus { 
-            border-color: var(--ps-glow); 
-        }
-
-        .input-group label { 
-            display: block; 
-            color: var(--text-muted); 
-            margin-bottom: 8px; 
-            font-size: 0.85rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            text-align: center; 
-        }
-
-        /* ================= AUTHENTICATION GATEWAY ================= */
-        #auth-container { 
-            position: fixed; 
-            inset: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 9999999; 
-            background: rgba(0,0,0,0.85); 
-            backdrop-filter: blur(15px); 
-        }
-
-        .auth-box { 
-            width: 400px; 
-            background: var(--glass-bg); 
-            padding: 3rem; 
-            border-radius: 16px; 
-            border: 1px solid var(--glass-border); 
-            box-shadow: 0 25px 80px rgba(0,0,0,0.9); 
-            text-align: center; 
-        }
-
-        .auth-error-msg { 
-            color: var(--danger); 
-            font-size: 0.9rem; 
-            font-weight: 800; 
-            min-height: 20px; 
-            margin-bottom: 15px; 
-            text-align: center; 
-        }
-
-        /* Password Visibility Toggle */
-        .pwd-input-wrapper { 
-            position: relative; 
-            width: 100%; 
-            display: flex; 
-            align-items: center;
-        }
-
-        .pwd-input-wrapper input { 
-            width: 100%; 
-            padding-right: 40px; 
-            text-align: center; 
-        }
-
-        .pwd-input-wrapper i { 
-            position: absolute; 
-            right: 15px; 
-            cursor: pointer; 
-            color: var(--text-muted); 
-            font-size: 1.1rem; 
-            transition: 0.2s;
-        }
-
-        .pwd-input-wrapper i:hover { 
-            color: white; 
-        }
-
-        /* ================= LAYOUT ================= */
-        #app-container { 
-            display: none; 
-            width: 100%; 
-            height: 100%; 
-        }
-
-        .sidebar { 
-            width: 280px; 
-            background: rgba(0, 5, 20, 0.85); 
-            border-right: 1px solid var(--glass-border); 
-            display: flex; 
-            flex-direction: column; 
-            z-index: 100; 
-            backdrop-filter: blur(20px); 
-        }
-
-        .sidebar-header { 
-            padding: 25px 20px; 
-            border-bottom: 1px solid var(--glass-border); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 15px; 
-        }
-
-        .brand-dot { 
-            width: 14px; 
-            height: 14px; 
-            border-radius: 50%; 
-            background: var(--danger); 
-            box-shadow: 0 0 15px var(--danger); 
-        }
-
-        .brand-title { 
-            font-weight: 900; 
-            letter-spacing: 1px; 
-            text-transform: uppercase; 
-            font-size: 1.2rem; 
-            line-height: 1.1; 
-        }
-
-        .brand-sub { 
-            color: var(--danger); 
-            font-weight: 800; 
-            font-size: 0.8rem; 
-            letter-spacing: 3px; 
-            text-transform: uppercase; 
-        }
-
-        .nav-menu { 
-            padding: 20px 15px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 5px; 
-            flex: 1; 
-        }
-
-        .nav-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            padding: 12px 20px; 
-            color: var(--text-muted); 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            border: 1px solid transparent; 
-        }
-
-        .nav-item i { 
-            font-size: 1.2rem; 
-            width: 20px; 
-            text-align: center; 
-        }
-
-        .nav-item:hover { 
-            color: white; 
-            background: rgba(255,255,255,0.05); 
-        }
-
-        .nav-item.active { 
-            background: rgba(0, 162, 255, 0.15); 
-            color: white; 
-            border-color: var(--ps-glow); 
-            box-shadow: 0 0 15px rgba(0, 162, 255, 0.2); 
-        }
-
-        .admin-profile { 
-            padding: 20px; 
-            border-top: 1px solid var(--glass-border); 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            background: rgba(0,0,0,0.3); 
-        }
-
-        .admin-avatar { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            background: var(--ps-glow); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-weight: 900; 
-            color: #000; 
-        }
-
-        .admin-info div:first-child { 
-            font-weight: 800; 
-            font-size: 0.95rem; 
-        }
-
-        .admin-info div:last-child { 
-            color: var(--success); 
-            font-size: 0.75rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-        }
-
-        .main-area { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            position: relative; 
-        }
-
-        .top-header { 
-            height: 70px; 
-            background: rgba(0,0,0,0.4); 
-            border-bottom: 1px solid var(--glass-border); 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 0 30px; 
-        }
-
-        .page-title { 
-            font-size: 1.5rem; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            margin: 0; 
-        }
-
-        .top-actions { 
-            display: flex; 
-            gap: 15px; 
-            align-items: center; 
-        }
-
-        .content-wrapper { 
-            padding: 30px; 
-            overflow-y: auto; 
-            flex: 1; 
-        }
-
-        .view-section { 
-            display: none; 
-            animation: fadeIn 0.3s ease; 
-        }
-
-        .view-section.active { 
-            display: block; 
-        }
-
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-
-        /* ================= DASHBOARD CARDS ================= */
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-            gap: 20px; 
-            margin-bottom: 30px; 
-        }
-
-        .stat-card { 
-            background: var(--glass-bg); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 12px; 
-            padding: 25px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            position: relative; 
-            overflow: hidden; 
-        }
-
-        .stat-card::before { 
-            content: ''; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 4px; 
-            height: 100%; 
-            background: var(--border-color, var(--ps-glow)); 
-        }
-
-        .stat-title { 
-            color: var(--text-muted); 
-            font-size: 0.9rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            margin-bottom: 10px; 
-        }
-
-        .stat-value { 
-            font-size: 2.5rem; 
-            font-weight: 900; 
-            font-family: 'Rajdhani', sans-serif; 
-            line-height: 1; 
-            color: white; 
-        }
-
-        .stat-icon { 
-            position: absolute; 
-            right: 20px; 
-            top: 25px; 
-            font-size: 3rem; 
-            opacity: 0.1; 
-        }
-
-        /* ================= TABLES ================= */
-        .table-container { 
-            background: var(--glass-bg); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            margin-bottom: 25px;
-        }
-
-        .table-header { 
-            padding: 20px; 
-            border-bottom: 1px solid var(--glass-border); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: rgba(0,0,0,0.3); 
-        }
-
-        .search-bar { 
-            background: rgba(0,0,0,0.5); 
-            border: 1px solid var(--glass-border); 
-            padding: 8px 15px; 
-            border-radius: 6px; 
-            color: white; 
-            width: 250px; 
-            outline: none; 
-            transition: 0.2s; 
-            text-align: center; 
-        }
-
-        .search-bar:focus { 
-            border-color: var(--ps-glow); 
-        }
-
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            text-align: center; 
-        }
-
-        th { 
-            padding: 15px 10px; 
-            font-size: 0.85rem; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            color: var(--text-muted); 
-            border-bottom: 2px solid var(--glass-border); 
-            background: rgba(0,0,0,0.4); 
-            text-align: center; 
-        }
-
-        td { 
-            padding: 15px 10px; 
-            border-bottom: 1px solid rgba(255,255,255,0.05); 
-            font-weight: 600; 
-            font-size: 0.95rem; 
-            text-align: center; 
-            vertical-align: middle; 
-        }
-
-        tr:hover td { 
-            background: rgba(255,255,255,0.02); 
-        }
-
-        /* ================= BADGES ================= */
-        .badge { 
-            padding: 5px 10px; 
-            border-radius: 4px; 
-            font-size: 0.75rem; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            display: inline-block;
-        }
-
-        .badge-pending { background: rgba(255,180,0,0.15); color: var(--credits); border: 1px solid rgba(255,180,0,0.3); }
-        .badge-approved { background: rgba(0,230,118,0.15); color: var(--success); border: 1px solid rgba(0,230,118,0.3); }
-        .badge-rejected { background: rgba(255,51,102,0.15); color: var(--danger); border: 1px solid rgba(255,51,102,0.3); }
-        .badge-active { background: rgba(0,162,255,0.15); color: var(--ps-glow); border: 1px solid rgba(0,162,255,0.3); }
-        .badge-offline { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.2); }
-
-        .role-admin { background: rgba(255,180,0,0.2); color: var(--credits); border: 1px solid var(--credits); }
-        .role-mod { background: rgba(0,162,255,0.2); color: var(--ps-glow); border: 1px solid var(--ps-glow); }
-        .role-player { background: rgba(255,255,255,0.1); color: var(--text-muted); border: 1px solid var(--glass-border); }
-
-        /* ================= ACTION ICONS ================= */
-        .action-btns { 
-            display: flex; 
-            gap: 8px; 
-            justify-content: center; 
-            align-items: center; 
-        }
-
-        .btn-icon { 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 6px; 
-            border: 1px solid transparent; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            color: white; 
-            outline: none; 
-        }
-
-        .btn-edit { background: rgba(0,162,255,0.2); color: var(--ps-glow); }
-        .btn-edit:hover { background: var(--ps-glow); color: #000; transform: scale(1.1); }
+        /* ================= AUTHENTICATION ================= */
+        #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999; background: #00050d; }
+        .auth-box { width: 420px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.8); }
+        .auth-title { font-size: 2.2rem; font-weight: 900; color: white; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;}
+        .auth-sub { color: var(--danger); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
         
-        .btn-approve { background: rgba(0,230,118,0.2); color: var(--success); }
-        .btn-approve:hover { background: var(--success); color: #000; transform: scale(1.1); }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
+        .input-control { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1.1rem; font-weight: 600; transition: 0.2s;}
+        .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
         
-        .btn-reject { background: rgba(255,51,102,0.2); color: var(--danger); }
-        .btn-reject:hover { background: var(--danger); color: #000; transform: scale(1.1); }
+        .btn-primary { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-primary:hover { background: var(--ps-glow); color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 162, 255, 0.4); }
+        .auth-msg { font-size: 0.95rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; color: var(--danger); }
 
-        .copy-icon { 
-            cursor: pointer; 
-            color: var(--text-muted); 
-            margin-left: 8px; 
-            transition: 0.2s; 
-        }
+        /* ================= DASHBOARD LAYOUT ================= */
+        #admin-app { display: none; width: 100%; height: 100vh; }
+        
+        /* SIDEBAR */
+        .sidebar { width: 280px; background: rgba(0, 5, 15, 0.95); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; flex-shrink: 0;}
+        .sidebar-header { padding: 30px 25px; border-bottom: 1px solid var(--glass-border); text-align: center; }
+        .sidebar-header h2 { font-weight: 900; font-size: 1.6rem; color: white; letter-spacing: 1px; line-height: 1.1;}
+        .sidebar-header span { color: var(--danger); font-weight: 800; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; }
+        
+        .nav-menu { padding: 20px 0; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+        .nav-item { padding: 18px 25px; color: var(--text-muted); font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 15px; border-left: 4px solid transparent; }
+        .nav-item i { width: 25px; text-align: center; font-size: 1.2rem; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active { background: rgba(0, 162, 255, 0.1); color: var(--ps-glow); border-left-color: var(--ps-glow); }
+        
+        .logout-btn { padding: 20px; text-align: center; border-top: 1px solid var(--glass-border); cursor: pointer; color: var(--danger); font-weight: 800; transition: 0.2s; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;}
+        .logout-btn:hover { background: rgba(255, 51, 102, 0.1); }
 
-        .copy-icon:hover { 
-            color: var(--ps-glow); 
-            transform: scale(1.2); 
-        }
+        /* MAIN CONTENT */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: transparent; }
+        .topbar { padding: 25px 40px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
+        .topbar h1 { font-weight: 900; font-size: 2rem; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
+        
+        .content-area { padding: 40px; overflow-y: auto; flex: 1; }
 
-        /* ================= MODALS ================= */
-        .modal-overlay { 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(0,0,0,0.85); 
-            z-index: 100000; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            backdrop-filter: blur(10px); 
-        }
+        /* STATS CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 30px; border-radius: 12px; display: flex; align-items: center; gap: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .stat-icon { width: 70px; height: 70px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; background: rgba(255,255,255,0.05); }
+        .stat-info h3 { color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px;}
+        .stat-info .value { font-size: 2.5rem; font-weight: 900; color: white; line-height: 1; }
 
-        .modal-content { 
-            background: var(--glass-bg); 
-            width: 450px; 
-            padding: 2.5rem; 
-            border-radius: 12px; 
-            border: 1px solid var(--glass-border); 
-            box-shadow: 0 25px 80px rgba(0,0,0,0.9); 
-            position: relative; 
-            max-height: 90vh; 
-            display: flex; 
-            flex-direction: column;
-        }
+        /* DATA TABLES */
+        .panel { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .panel-header { padding: 20px 30px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); }
+        .panel-header h3 { font-weight: 900; font-size: 1.3rem; text-transform: uppercase; margin: 0; letter-spacing: 1px;}
+        
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 18px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; background: rgba(0,0,0,0.3); letter-spacing: 1px; }
+        td { font-weight: 600; font-size: 1.05rem; color: white; }
+        tr:hover { background: rgba(255,255,255,0.03); }
 
-        .modal-close { 
-            position: absolute; 
-            top: 20px; 
-            right: 20px; 
-            font-size: 1.5rem; 
-            color: var(--text-muted); 
-            cursor: pointer; 
-            transition: 0.2s; 
-        }
+        .badge { padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: inline-block; }
+        .badge.pending { background: rgba(255, 180, 0, 0.15); color: var(--credits); border: 1px solid rgba(255, 180, 0, 0.3); }
+        .badge.approved, .badge.active { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .badge.rejected, .badge.banned { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
+        .badge.offline { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); border: 1px solid rgba(255, 255, 255, 0.2); }
 
-        .modal-close:hover { 
-            color: var(--danger); 
-            transform: scale(1.1);
-        }
+        /* ACTION BUTTONS IN TABLES */
+        .action-btns { display: flex; gap: 10px; }
+        .btn-sm { padding: 10px 15px; border: none; border-radius: 6px; font-weight: 800; font-size: 0.85rem; cursor: pointer; text-transform: uppercase; transition: 0.2s; color: white; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;}
+        .btn-edit { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid rgba(0, 162, 255, 0.3); } .btn-edit:hover { background: var(--ps-glow); color: black; }
+        .btn-approve { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); } .btn-approve:hover { background: var(--success); color: black; }
+        .btn-reject { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); } .btn-reject:hover { background: var(--danger); color: white; }
 
-        .modal-title { 
-            font-size: 1.5rem; 
-            font-weight: 900; 
-            margin-top: 0; 
-            margin-bottom: 20px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            border-bottom: 1px solid var(--glass-border); 
-            padding-bottom: 10px; 
-            text-align: center; 
-            flex-shrink: 0;
-        }
+        /* MODALS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--glass-bg); width: 450px; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); position: relative; box-shadow: 0 25px 80px rgba(0,0,0,0.9); }
+        .modal-close { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; background: none; border: none; transition: 0.2s; outline: none; }
+        .modal-close:hover { color: var(--danger); transform: scale(1.1); }
+        .modal-title { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-align: center; }
 
-        .input-group select option { 
-            background: #000814; 
-            color: white; 
-        }
-
-        /* ================= TOASTS ================= */
-        #toast-container { 
-            position: fixed; 
-            top: 20px; 
-            right: 20px; 
-            z-index: 9999999; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-            pointer-events: none; 
-        }
-
-        .toast { 
-            background: rgba(5, 10, 25, 0.95); 
-            backdrop-filter: blur(10px); 
-            border: 1px solid rgba(0, 162, 255, 0.4); 
-            color: white; 
-            padding: 15px 25px; 
-            border-radius: 8px; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            font-weight: 800; 
-            font-size: 1rem; 
-            transform: translateX(120%); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            box-shadow: 0 10px 30px rgba(0, 162, 255, 0.25); 
-            text-transform: uppercase;
-        }
-
-        .toast.show { 
-            transform: translateX(0); 
-        }
-
-        .toast-success { 
-            border-left: 5px solid var(--success); 
-            border-color: var(--success); 
-            box-shadow: 0 10px 30px rgba(0, 230, 118, 0.25); 
-        }
-
-        .toast-success i { 
-            color: var(--success); 
-            font-size: 1.3rem;
-        }
-
-        .toast-error { 
-            border-left: 5px solid var(--danger); 
-            border-color: var(--danger); 
-            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.25); 
-        }
-
-        .toast-error i { 
-            color: var(--danger); 
-            font-size: 1.3rem;
-        }
-
-        /* ================= MISC ELEMENTS ================= */
-        .code-item { 
-            background: rgba(0,0,0,0.4); 
-            border: 1px solid var(--glass-border); 
-            padding: 12px 15px; 
-            margin-bottom: 8px; 
-            border-radius: 6px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            font-weight: 800; 
-            color: white; 
-        }
-
-        .code-val { 
-            font-family: monospace; 
-            font-size: 1.1rem; 
-            letter-spacing: 1px; 
-            color: var(--ps-glow);
-        }
-
-        .code-action { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-        }
-
-        .pwd-cell { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-        }
     </style>
 </head>
 <body>
 
-    <div id="toast-container"></div>
-
     <div id="auth-container">
         <div class="auth-box">
-            <div class="auth-title">ADMIN ACCESS</div>
-            <div class="auth-sub">Stick N' Trade</div>
-            
-            <div id="auth-form-login">
-                <div class="input-group" style="margin-bottom:20px;">
-                    <input type="text" id="admin-user" class="input-control" placeholder="Username" style="text-align: center;" onkeypress="if(event.key==='Enter') submitAdminAuth()">
+            <div class="auth-title">STICK N' TRADE</div>
+            <div class="auth-sub">Admin Control</div>
+            <div class="input-group">
+                <label>Admin Username</label>
+                <input type="text" id="admin-user" class="input-control" placeholder="Enter username">
+            </div>
+            <div class="input-group" style="margin-bottom: 25px;">
+                <label>Master Password</label>
+                <input type="password" id="admin-pass" class="input-control" placeholder="Enter password">
+            </div>
+            <div id="auth-msg" class="auth-msg auth-error"></div>
+            <button class="btn-primary" onclick="loginAdmin()">ACCESS DASHBOARD</button>
+        </div>
+    </div>
+
+    <div id="admin-app">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>STICK N' TRADE</h2>
+                <span>Master Admin</span>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard Overview</div>
+                <div class="nav-item" onclick="switchTab('users')"><i class="fas fa-users"></i> Player Management</div>
+                <div class="nav-item" onclick="switchTab('cashier')"><i class="fas fa-money-bill-transfer"></i> Cashier & Banking</div>
+                <div class="nav-item" onclick="switchTab('promos')"><i class="fas fa-gift"></i> Promo Codes</div>
+            </div>
+            <div class="logout-btn" onclick="location.reload()">
+                <i class="fas fa-sign-out-alt"></i> Secure Logout
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="topbar">
+                <h1 id="page-title">Dashboard Overview</h1>
+                <div style="font-weight: 800; color: var(--ps-glow); display: flex; align-items: center; gap: 10px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-shield-alt"></i> Admin Terminal Connected
                 </div>
+            </div>
+
+            <div class="content-area custom-scroll">
                 
-                <div class="input-group" style="margin-bottom:20px;">
-                    <div class="pwd-input-wrapper">
-                        <input type="password" id="admin-pass" class="input-control" placeholder="Password" style="text-align: center;" onkeypress="if(event.key==='Enter') submitAdminAuth()">
-                        <i class="fas fa-eye" onclick="toggleInputPwd('admin-pass', this)" title="Toggle Visibility"></i>
+                <div id="view-dashboard" class="tab-view">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="color: var(--credits);"><i class="fas fa-coins"></i></div>
+                            <div class="stat-info"><h3>Total Economy</h3><div class="value" id="stat-economy">0 TC</div></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="color: var(--ps-glow);"><i class="fas fa-users"></i></div>
+                            <div class="stat-info"><h3>Registered Players</h3><div class="value" id="stat-users">0</div></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="color: var(--danger);"><i class="fas fa-clock"></i></div>
+                            <div class="stat-info"><h3>Pending Requests</h3><div class="value" id="stat-pending">0</div></div>
+                        </div>
                     </div>
                 </div>
-                
-                <div id="auth-error-login" class="auth-error-msg"></div>
-                
-                <button class="btn-primary" style="margin: 0 auto; min-width: 200px;" onclick="submitAdminAuth()">SECURE LOGIN</button>
+
+                <div id="view-users" class="tab-view hidden">
+                    <div class="panel">
+                        <div class="panel-header"><h3>Player Database</h3></div>
+                        <div class="custom-scroll" style="max-height: 65vh; overflow-y: auto;">
+                            <table>
+                                <thead style="position: sticky; top: 0; z-index: 10;">
+                                    <tr><th>Username</th><th>Credits (TC)</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
+                                </thead>
+                                <tbody id="users-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-cashier" class="tab-view hidden">
+                    <div class="panel">
+                        <div class="panel-header"><h3 style="color: var(--credits);">Pending Transactions</h3></div>
+                        <div class="custom-scroll" style="max-height: 40vh; overflow-y: auto;">
+                            <table>
+                                <thead style="position: sticky; top: 0; z-index: 10;">
+                                    <tr><th>Date</th><th>Player</th><th>Type</th><th>Amount</th><th>Details / Proof</th><th>Actions</th></tr>
+                                </thead>
+                                <tbody id="tx-pending-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="panel">
+                        <div class="panel-header"><h3>Transaction History</h3></div>
+                        <div class="custom-scroll" style="max-height: 35vh; overflow-y: auto;">
+                            <table>
+                                <thead style="position: sticky; top: 0; z-index: 10;">
+                                    <tr><th>Date</th><th>Player</th><th>Type</th><th>Amount</th><th>Status</th></tr>
+                                </thead>
+                                <tbody id="tx-history-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-promos" class="tab-view hidden">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Active Gift Codes</h3>
+                            <button class="btn-sm btn-approve" onclick="openModal('create-promo-modal')"><i class="fas fa-plus"></i> Generate Codes</button>
+                        </div>
+                        <div class="custom-scroll" style="max-height: 65vh; overflow-y: auto;">
+                            <table>
+                                <thead style="position: sticky; top: 0; z-index: 10;">
+                                    <tr><th>Created Date</th><th>Batch ID</th><th>Code</th><th>Value</th><th>Status</th><th>Actions</th></tr>
+                                </thead>
+                                <tbody id="promos-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <div id="app-container">
-        
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="brand-dot"></div>
-                <div>
-                    <div class="brand-title">Admin Panel</div>
-                    <div class="brand-sub">Stick N' Trade</div>
-                </div>
-            </div>
-            
-            <div class="nav-menu">
-                <a class="nav-item active" onclick="switchView('dashboard', this)"><i class="fas fa-chart-pie"></i> Dashboard</a>
-                <a class="nav-item" onclick="switchView('users', this)"><i class="fas fa-users"></i> Users</a>
-                <a class="nav-item" onclick="switchView('transactions', this)"><i class="fas fa-exchange-alt"></i> Cashier</a>
-                <a class="nav-item" onclick="switchView('giftcodes', this)"><i class="fas fa-gift"></i> Gift Codes</a>
-                
-                <a class="nav-item" style="margin-top: auto; border-top: 1px solid var(--glass-border); border-radius: 0;" href="/"><i class="fas fa-gamepad"></i> Back to Casino</a>
-            </div>
-            
-            <div class="admin-profile">
-                <div class="admin-avatar">AD</div>
-                <div class="admin-info">
-                    <div id="admin-name-display">Admin Boss</div>
-                    <div><i class="fas fa-circle" style="font-size:0.5rem; margin-right:4px;"></i> System Online</div>
-                </div>
-            </div>
-        </aside>
-
-        <main class="main-area">
-            <header class="top-header">
-                <h1 class="page-title" id="topbar-title">Dashboard</h1>
-                <div class="top-actions">
-                    <button class="btn-primary" onclick="showToast('Database is actively synced in real-time.', 'success')"><i class="fas fa-sync-alt"></i> Data Synced</button>
-                    <button class="btn-primary" style="background: rgba(255,51,102,0.2); color: var(--danger);" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                </div>
-            </header>
-
-            <div class="content-wrapper custom-scroll">
-                
-                <section id="view-dashboard" class="view-section active">
-                    <div class="stats-grid">
-                        <div class="stat-card" style="--border-color: var(--credits);">
-                            <i class="fas fa-coins stat-icon"></i>
-                            <div class="stat-title">Total Economy (TC)</div>
-                            <div class="stat-value" id="stat-economy">0</div>
-                        </div>
-                        <div class="stat-card" style="--border-color: var(--ps-glow);">
-                            <i class="fas fa-users stat-icon"></i>
-                            <div class="stat-title">Registered Players</div>
-                            <div class="stat-value" id="stat-players">0</div>
-                        </div>
-                        <div class="stat-card" style="--border-color: var(--danger);">
-                            <i class="fas fa-hourglass-half stat-icon"></i>
-                            <div class="stat-title">Pending Requests</div>
-                            <div class="stat-value" id="stat-pending">0</div>
-                        </div>
-                        <div class="stat-card" style="--border-color: var(--success);">
-                            <i class="fas fa-gift stat-icon"></i>
-                            <div class="stat-title">Active Gift Batches</div>
-                            <div class="stat-value" id="stat-promos">0</div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-users" class="view-section">
-                    <div class="table-container">
-                        <div class="table-header">
-                            <h3 style="margin:0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Player Management</h3>
-                            <input type="text" class="search-bar" placeholder="Search username..." onkeyup="filterTable('users-tbody', this.value)">
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Join Date</th>
-                                    <th>Username</th>
-                                    <th>Password</th>
-                                    <th>Role</th>
-                                    <th>Balance (TC)</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="users-tbody">
-                                </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section id="view-transactions" class="view-section">
-                    <div class="table-container">
-                        <div class="table-header">
-                            <h3 style="margin:0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Cashier Logs</h3>
-                            <input type="text" class="search-bar" placeholder="Search ID or Username..." onkeyup="filterTable('tx-tbody', this.value)">
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Type</th>
-                                    <th>Username</th>
-                                    <th>Amount (TC)</th>
-                                    <th>Ref / Details</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tx-tbody">
-                                </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section id="view-giftcodes" class="view-section">
-                    <div class="table-container">
-                        <div class="table-header">
-                            <h3 style="margin:0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Gift Code Batches</h3>
-                            <button class="btn-primary" onclick="openModal('modal-create-giftcode')"><i class="fas fa-plus"></i> Generate Codes</button>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Batch ID</th>
-                                    <th>Reward (TC)</th>
-                                    <th>Generated</th>
-                                    <th>Used</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="giftcodes-tbody">
-                                </tbody>
-                        </table>
-                    </div>
-                </section>
-
-            </div>
-        </main>
-    </div>
-
-    <div id="modal-edit-user" class="modal-overlay hidden">
-        <div class="modal-content" style="width: 400px;">
-            <i class="fas fa-times modal-close" onclick="closeModal('modal-edit-user')"></i>
-            <h3 class="modal-title">Edit User</h3>
-            
-            <input type="hidden" id="edit-uid">
+    <div id="edit-user-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('edit-user-modal')"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title">Edit Player</h3>
+            <input type="hidden" id="edit-u-id">
             
             <div class="input-group">
-                <label>Username</label>
-                <input type="text" id="edit-uname" disabled style="opacity:0.7; border-color:transparent;" class="input-control">
+                <label>Username (Read Only)</label>
+                <input type="text" id="edit-u-name" class="input-control" disabled style="opacity: 0.5;">
             </div>
-            
             <div class="input-group">
+                <label>Account Balance (TC)</label>
+                <input type="number" id="edit-u-credits" class="input-control">
+            </div>
+            <div class="input-group" style="margin-bottom: 25px;">
                 <label>Account Role</label>
-                <select id="edit-urole" class="input-control">
+                <select id="edit-u-role" class="input-control" style="appearance: auto; cursor: pointer;">
                     <option value="Player">Player</option>
-                    <option value="Moderator">Moderator</option>
+                    <option value="VIP">VIP</option>
                     <option value="Admin">Admin</option>
                 </select>
             </div>
-            
-            <div class="input-group">
-                <label>Balance (TC)</label>
-                <input type="number" id="edit-ubalance" class="input-control">
-            </div>
-            
-            <button class="btn-primary" style="width:100%; justify-content:center; margin-top:10px;" onclick="saveUserEdit()">Save Changes</button>
+            <button class="btn-primary" onclick="saveUserEdit()">SAVE CHANGES</button>
         </div>
     </div>
 
-    <div id="modal-create-giftcode" class="modal-overlay hidden">
+    <div id="create-promo-modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <i class="fas fa-times modal-close" onclick="closeModal('modal-create-giftcode')"></i>
+            <button class="modal-close" onclick="closeModal('create-promo-modal')"><i class="fas fa-times"></i></button>
             <h3 class="modal-title">Generate Gift Codes</h3>
             
             <div class="input-group">
-                <label>How many codes to create?</label>
-                <input type="number" id="new-gc-count" placeholder="e.g. 50" class="input-control">
+                <label>TC Value Per Code</label>
+                <input type="number" id="promo-amount" class="input-control" placeholder="e.g. 500">
             </div>
-            
-            <div class="input-group">
-                <label>How much credits per code?</label>
-                <input type="number" id="new-gc-amt" placeholder="e.g. 100" class="input-control">
+            <div class="input-group" style="margin-bottom: 25px;">
+                <label>Quantity of Codes to Generate</label>
+                <input type="number" id="promo-count" class="input-control" placeholder="e.g. 10">
             </div>
-            
-            <button class="btn-primary" style="width:100%; justify-content:center; margin-top:10px;" onclick="saveGiftBatch()"><i class="fas fa-bolt"></i> Generate Batch</button>
-        </div>
-    </div>
-
-    <div id="modal-view-gcs" class="modal-overlay hidden">
-        <div class="modal-content" style="width: 500px;">
-            <i class="fas fa-times modal-close" onclick="closeModal('modal-view-gcs')"></i>
-            <h3 class="modal-title" id="gc-modal-title">Gift Codes</h3>
-            
-            <button class="btn-primary" style="width:100%; margin-bottom: 15px; background:rgba(255,255,255,0.1); color:white; border: 1px solid var(--glass-border);" id="btn-copy-all-batch">
-                <i class="fas fa-copy"></i> Copy All Unused Codes
-            </button>
-            
-            <div id="gc-list" class="custom-scroll" style="flex: 1; overflow-y:auto; padding-right: 5px; max-height: 300px;">
-                </div>
+            <button class="btn-primary" onclick="generatePromo()">CREATE BATCH</button>
         </div>
     </div>
 
     <script>
-        // --- SOCKET.IO INITIALIZATION ---
         const socket = io();
-        
-        // This holds the master copy of the database locally for UI rendering
-        let adminDB = { 
-            users: [], 
-            transactions: [], 
-            giftBatches: [], 
-            stats: { economy: 0 } 
-        };
 
-        // --- AUTHENTICATION LOGIC ---
-        function submitAdminAuth() {
-            const userField = document.getElementById('admin-user').value.trim();
-            const passField = document.getElementById('admin-pass').value;
-            const errorDiv = document.getElementById('auth-error-login');
-            
-            if(!userField || !passField) {
-                errorDiv.innerText = "Please enter both username and password.";
-                return;
-            }
-            
-            socket.emit('adminLogin', { username: userField, password: passField });
+        // Data Stores
+        let gUsers = [];
+        let gTxs = [];
+        let gPromos = [];
+
+        // --- AUTHENTICATION ---
+        function loginAdmin() {
+            const u = document.getElementById('admin-user').value;
+            const p = document.getElementById('admin-pass').value;
+            socket.emit('adminLogin', { username: u, password: p });
         }
 
-        socket.on('adminLoginSuccess', (data) => {
-            document.getElementById('auth-error-login').innerText = "";
+        socket.on('authError', msg => {
+            document.getElementById('auth-msg').innerText = msg;
+        });
+
+        socket.on('adminLoginSuccess', data => {
             document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('app-container').style.display = 'flex';
-            document.getElementById('admin-name-display').innerText = data.username;
-            showToast(`Authentication successful. Welcome, ${data.role}.`, "success");
+            document.getElementById('admin-app').style.display = 'flex';
         });
 
-        socket.on('authError', (msg) => {
-            document.getElementById('auth-error-login').innerText = msg;
+        // --- NAVIGATION ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+
+            const titles = { 'dashboard': 'Dashboard Overview', 'users': 'Player Management', 'cashier': 'Cashier & Banking', 'promos': 'Promo Codes' };
+            document.getElementById('page-title').innerText = titles[tabId];
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // --- DATA SYNCHRONIZATION ---
+        socket.on('adminDataSync', data => {
+            gUsers = data.users;
+            gTxs = data.transactions;
+            gPromos = data.giftBatches;
+            
+            // 1. Update Dashboard Stats
+            document.getElementById('stat-economy').innerText = data.stats.economy.toLocaleString() + ' TC';
+            document.getElementById('stat-users').innerText = gUsers.length;
+            
+            let pendingCount = gTxs.filter(t => t.status === 'Pending').length;
+            document.getElementById('stat-pending').innerText = pendingCount;
+
+            // 2. Render UI
+            renderUsers();
+            renderTransactions();
+            renderPromos();
         });
 
-        function logoutAdmin() {
-            if(confirm("Are you sure you want to end your secure session?")) {
-                location.reload();
-            }
-        }
-
-        // Toggle Password visibility in input field
-        function toggleInputPwd(inputId, iconElement) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                iconElement.classList.remove('fa-eye');
-                iconElement.classList.add('fa-eye-slash');
-            } else {
-                input.type = "password";
-                iconElement.classList.remove('fa-eye-slash');
-                iconElement.classList.add('fa-eye');
-            }
-        }
-
-        // Toggle Password visibility in the Users Table
-        function toggleTablePwd(iconElement) {
-            const cell = iconElement.closest('td');
-            const mask = cell.querySelector('.pwd-mask');
-            const text = cell.querySelector('.pwd-text');
-            
-            if (mask.style.display === 'none') {
-                // Hide it
-                mask.style.display = 'inline';
-                text.style.display = 'none';
-                iconElement.classList.remove('fa-eye-slash');
-                iconElement.classList.add('fa-eye');
-                iconElement.style.color = 'var(--text-muted)';
-            } else {
-                // Show it
-                mask.style.display = 'none';
-                text.style.display = 'inline';
-                iconElement.classList.remove('fa-eye');
-                iconElement.classList.add('fa-eye-slash');
-                iconElement.style.color = 'white';
-            }
-        }
-
-        // --- GLOBAL UI HELPERS ---
-        function showToast(msg, type='success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type} show`;
-            
-            let icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-            toast.innerHTML = `<i class="fas ${icon}"></i> <span>${msg}</span>`;
-            
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function switchView(viewId, navElement) {
-            // Hide all sections
-            document.querySelectorAll('.view-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Show targeted section
-            document.getElementById('view-' + viewId).classList.add('active');
-            
-            // Update Sidebar Highlights
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('active');
-            });
-            if(navElement) {
-                navElement.classList.add('active');
-            }
-            
-            // Update Top Bar Title
-            const titles = { 
-                'dashboard': 'Dashboard Overview', 
-                'users': 'Player Database', 
-                'transactions': 'Cashier & Requests', 
-                'giftcodes': 'Promo Code Center' 
-            };
-            document.getElementById('topbar-title').innerText = titles[viewId] || 'Dashboard';
-
-            // Trigger re-render to ensure fresh data
-            if (viewId === 'users') renderUsers();
-            if (viewId === 'transactions') renderTransactions();
-            if (viewId === 'giftcodes') renderGiftBatches();
-        }
-
-        function openModal(modalId) { 
-            document.getElementById(modalId).classList.remove('hidden'); 
-        }
-        
-        function closeModal(modalId) { 
-            document.getElementById(modalId).classList.add('hidden'); 
-        }
-
-        function filterTable(tbodyId, searchQuery) {
-            const rows = document.getElementById(tbodyId).getElementsByTagName('tr');
-            const query = searchQuery.toLowerCase();
-            
-            for (let i = 0; i < rows.length; i++) {
-                let rowText = rows[i].innerText.toLowerCase();
-                if (rowText.includes(query)) {
-                    rows[i].style.display = '';
-                } else {
-                    rows[i].style.display = 'none';
-                }
-            }
-        }
-
-        function copyToClipboard(textToCopy) {
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => {
-                    showToast("Copied to clipboard!", "success");
-                })
-                .catch(() => {
-                    showToast("Failed to copy text.", "error");
-                });
-        }
-
-        // --- REAL-TIME DATA SYNC ---
-        socket.on('adminDataSync', (data) => {
-            // Update local memory cache
-            adminDB = data;
-            
-            // Update Dashboard Global Stats
-            document.getElementById('stat-economy').innerText = data.stats.economy.toLocaleString();
-            document.getElementById('stat-players').innerText = data.users.length.toLocaleString();
-            
-            // Count pending transactions
-            const pendingCount = data.transactions.filter(t => t.status === 'Pending').length;
-            document.getElementById('stat-pending').innerText = pendingCount.toLocaleString();
-            
-            document.getElementById('stat-promos').innerText = data.giftBatches.length.toLocaleString();
-
-            // Refresh whatever view the admin is currently looking at
-            const activeViewId = document.querySelector('.view-section.active').id;
-            
-            if (activeViewId === 'view-users') renderUsers();
-            if (activeViewId === 'view-transactions') renderTransactions();
-            if (activeViewId === 'view-giftcodes') renderGiftBatches();
-        });
-
-        // --- RENDER FUNCTIONS ---
-        
-        // 1. Render Users Table
+        // --- RENDERING FUNCTIONS ---
         function renderUsers() {
             const tbody = document.getElementById('users-tbody');
             tbody.innerHTML = '';
             
-            // Sorting Logic for the Database
-            // Hierarchy 1: Role (Admin > Moderator > Player)
-            // Hierarchy 2: Status (Active > Offline > Banned)
-            const roleWeights = { 'Admin': 1, 'Moderator': 2, 'Player': 3 };
-            const statusWeights = { 'Active': 1, 'Offline': 2, 'Banned': 3 };
-            
-            let sortedUsers = [...adminDB.users].sort((a, b) => {
-                if (roleWeights[a.role] !== roleWeights[b.role]) {
-                    return roleWeights[a.role] - roleWeights[b.role];
-                }
-                if (statusWeights[a.status] !== statusWeights[b.status]) {
-                    return statusWeights[a.status] - statusWeights[b.status];
-                }
-                return a.username.localeCompare(b.username);
-            });
-
-            sortedUsers.forEach(user => {
-                // Determine Visual Status Badge
-                let statusBadgeClass = '';
-                if (user.status === 'Active') statusBadgeClass = 'badge-active';
-                else if (user.status === 'Offline') statusBadgeClass = 'badge-offline';
-                else statusBadgeClass = 'badge-rejected';
+            gUsers.forEach(u => {
+                let statClass = u.status === 'Active' ? 'active' : (u.status === 'Banned' ? 'banned' : 'offline');
                 
-                // Determine Visual Role Badge
-                let roleBadgeClass = '';
-                if (user.role === 'Admin') roleBadgeClass = 'role-admin';
-                else if (user.role === 'Moderator') roleBadgeClass = 'role-mod';
-                else roleBadgeClass = 'role-player';
+                let actionBtn = u.status === 'Banned' 
+                    ? `<button class="btn-sm btn-approve" onclick="actionUser('unban', '${u._id}')"><i class="fas fa-unlock"></i> Unban</button>`
+                    : `<button class="btn-sm btn-reject" onclick="actionUser('ban', '${u._id}')"><i class="fas fa-ban"></i> Ban</button>`;
 
-                // Construct Row
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td style="color:var(--text-muted); font-size:0.85rem;">
-                        ${new Date(user.joinDate).toLocaleDateString()}
-                    </td>
-                    <td style="font-weight:800; color:white;">
-                        ${user.username}
-                    </td>
-                    <td style="font-family:monospace; color:var(--text-muted); font-size:0.9rem;">
-                        <div class="pwd-cell">
-                            <span class="pwd-mask">••••••••</span>
-                            <span class="pwd-text" style="display:none;">${user.password}</span>
-                            <i class="fas fa-eye" style="cursor:pointer; color:var(--text-muted);" onclick="toggleTablePwd(this)" title="Toggle Visibility"></i>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="badge ${roleBadgeClass}">${user.role}</span>
-                    </td>
-                    <td style="color:var(--credits); font-weight:900;">
-                        ${user.credits.toLocaleString()}
-                    </td>
-                    <td>
-                        <span class="badge ${statusBadgeClass}">${user.status}</span>
-                    </td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="btn-icon btn-edit" onclick="openEditUser('${user._id}')" title="Edit/Promote">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            ${user.status !== 'Banned' ? 
-                              `<button class="btn-icon btn-reject" onclick="processBan('${user._id}')" title="Ban Player">
-                                  <i class="fas fa-ban"></i>
-                               </button>` : 
-                              `<button class="btn-icon btn-approve" onclick="processUnban('${user._id}')" title="Unban Player">
-                                  <i class="fas fa-check"></i>
-                               </button>`
-                            }
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // 2. Render Transactions (Cashier) Table
-        function renderTransactions() {
-            const tbody = document.getElementById('tx-tbody');
-            tbody.innerHTML = '';
-            
-            // Separate Pending from Resolved
-            const pendingList = adminDB.transactions.filter(t => t.status === 'Pending');
-            const resolvedList = adminDB.transactions.filter(t => t.status !== 'Pending');
-
-            if (pendingList.length === 0 && resolvedList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 2rem; color:var(--text-muted);">No records found in database.</td></tr>`;
-                return;
-            }
-
-            // Helper to build rows
-            const buildRowHTML = (tx, isPending) => {
-                let txColor = tx.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
-                let sign = tx.type === 'Deposit' ? '+' : '-';
-                
-                let badgeClass = 'badge-pending';
-                if (tx.status === 'Approved') badgeClass = 'badge-approved';
-                if (tx.status === 'Rejected') badgeClass = 'badge-rejected';
-
-                let actionHTML = '';
-                if (isPending) {
-                    actionHTML = `
-                        <button class="btn-icon btn-approve" onclick="resolveTransaction('${tx._id}', 'Approved')" title="Approve Transaction">
-                            <i class="fas fa-check"></i>
-                        </button>
-                        <button class="btn-icon btn-reject" onclick="resolveTransaction('${tx._id}', 'Rejected')" title="Reject Transaction">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
-                } else {
-                    actionHTML = `<span style="color:var(--text-muted); font-size:0.8rem; font-weight:800; text-transform:uppercase;">Resolved</span>`;
-                }
-
-                // Opacity drop for resolved rows to keep focus on pending
-                const rowStyle = isPending ? '' : 'opacity: 0.5;';
-
-                return `
-                    <tr style="${rowStyle}">
-                        <td style="font-family:monospace; color:var(--text-muted);">
-                            ${tx._id.substring(0, 8)}
-                        </td>
-                        <td style="font-weight:900; text-transform:uppercase; color:white;">
-                            ${tx.type}
-                        </td>
-                        <td style="font-weight:800; color:white;">
-                            ${tx.username}
-                        </td>
-                        <td style="color:${txColor}; font-weight:900;">
-                            ${sign}${tx.amount.toLocaleString()}
-                        </td>
-                        <td style="font-size:0.85rem; color:var(--text-muted);">
-                            ${tx.ref}
-                        </td>
-                        <td>
-                            <span class="badge ${badgeClass}">${tx.status}</span>
-                        </td>
-                        <td style="color:var(--text-muted); font-size:0.85rem;">
-                            ${new Date(tx.date).toLocaleDateString()}
-                        </td>
-                        <td>
-                            <div class="action-btns">
-                                ${actionHTML}
-                            </div>
+                tbody.innerHTML += `
+                    <tr>
+                        <td><div style="font-weight:900; color:var(--ps-glow); font-size:1.1rem;">${u.username}</div></td>
+                        <td style="color:var(--credits); font-weight: 800;">${u.credits.toLocaleString()} TC</td>
+                        <td>${u.role}</td>
+                        <td><span class="badge ${statClass}">${u.status}</span></td>
+                        <td><span style="color:var(--text-muted); font-size:0.9rem;">${new Date(u.joinDate).toLocaleDateString()}</span></td>
+                        <td class="action-btns">
+                            <button class="btn-sm btn-edit" onclick="openEditUser('${u._id}')"><i class="fas fa-pen"></i> Edit</button>
+                            ${actionBtn}
                         </td>
                     </tr>
                 `;
-            };
-
-            // Render all Pending first, then Resolved below
-            pendingList.forEach(tx => { tbody.innerHTML += buildRowHTML(tx, true); });
-            resolvedList.forEach(tx => { tbody.innerHTML += buildRowHTML(tx, false); });
-        }
-
-        // 3. Render Gift Code Batches Table
-        function renderGiftBatches() {
-            const tbody = document.getElementById('giftcodes-tbody');
-            tbody.innerHTML = '';
-            
-            if (adminDB.giftBatches.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color:var(--text-muted);">No active gift batches found.</td></tr>`;
-                return;
-            }
-
-            adminDB.giftBatches.forEach(batch => {
-                let totalCodes = batch.codes.length;
-                let usedCodes = batch.codes.filter(c => c.redeemedBy !== null).length;
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td style="font-weight:900; color:white; letter-spacing:1px; font-family:monospace;">
-                        ${batch._id.substring(0, 8)}
-                    </td>
-                    <td style="color:var(--ps-glow); font-weight:900;">
-                        ${batch.amount.toLocaleString()} TC
-                    </td>
-                    <td style="color:white; font-weight:800;">
-                        ${totalCodes}
-                    </td>
-                    <td style="color:var(--text-muted);">
-                        ${usedCodes}
-                    </td>
-                    <td style="color:var(--text-muted); font-size:0.85rem;">
-                        ${new Date(batch.date).toLocaleDateString()}
-                    </td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="btn-icon btn-edit" onclick="openViewGiftCodesModal('${batch._id}')" title="Inspect Codes">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn-icon btn-reject" onclick="processDeleteBatch('${batch._id}')" title="Delete Entire Batch">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
             });
         }
 
+        function renderTransactions() {
+            const pBody = document.getElementById('tx-pending-tbody');
+            const hBody = document.getElementById('tx-history-tbody');
+            pBody.innerHTML = ''; hBody.innerHTML = '';
 
-        // --- EMITTERS FOR ACTIONS ---
-        
-        let currentEditUserId = null;
-        
-        function openEditUser(userId) {
-            const user = adminDB.users.find(u => u._id === userId);
-            if (!user) return;
+            gTxs.forEach(t => {
+                let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
+                let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+                
+                if (t.status === 'Pending') {
+                    pBody.innerHTML += `
+                        <tr>
+                            <td style="color:var(--text-muted); font-size:0.95rem;">${dStr}</td>
+                            <td style="font-weight:900; color:var(--ps-glow); font-size: 1.1rem;">${t.username}</td>
+                            <td style="text-transform:uppercase; font-weight:800;">${t.type}</td>
+                            <td style="color:${color}; font-weight: 800;">${t.amount.toLocaleString()} TC</td>
+                            <td style="font-family: monospace; color: var(--text-muted);">${t.ref}</td>
+                            <td class="action-btns">
+                                <button class="btn-sm btn-approve" onclick="resolveTx('${t._id}', 'Approved')"><i class="fas fa-check"></i> Approve</button>
+                                <button class="btn-sm btn-reject" onclick="resolveTx('${t._id}', 'Rejected')"><i class="fas fa-times"></i> Reject</button>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    let statClass = t.status === 'Approved' ? 'approved' : 'rejected';
+                    hBody.innerHTML += `
+                        <tr>
+                            <td style="color:var(--text-muted); font-size:0.95rem;">${dStr}</td>
+                            <td style="font-weight:900; font-size: 1.1rem;">${t.username}</td>
+                            <td style="text-transform:uppercase; font-weight: 800;">${t.type}</td>
+                            <td style="color:${color}; font-weight: 800;">${t.amount.toLocaleString()} TC</td>
+                            <td><span class="badge ${statClass}">${t.status}</span></td>
+                        </tr>
+                    `;
+                }
+            });
+            if(pBody.innerHTML === '') pBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); font-style: italic; padding: 30px;">No pending cashier requests.</td></tr>`;
+        }
+
+        function renderPromos() {
+            const tbody = document.getElementById('promos-tbody');
+            tbody.innerHTML = '';
             
-            currentEditUserId = userId;
-            
-            document.getElementById('edit-uname').value = user.username;
-            document.getElementById('edit-ubalance').value = user.credits;
-            document.getElementById('edit-urole').value = user.role || 'Player';
-            
-            openModal('modal-edit-user');
+            gPromos.forEach(b => {
+                let dStr = new Date(b.date).toLocaleDateString();
+                let statHtml = b.redeemedBy 
+                    ? `<span class="badge offline">Used by ${b.redeemedBy}</span>` 
+                    : `<span class="badge active">Active Code</span>`;
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="color:var(--text-muted); font-size:0.95rem;">${dStr}</td>
+                        <td style="font-size: 0.9rem; color: var(--text-muted);">#${b.batchId}</td>
+                        <td style="font-family:monospace; font-size:1.2rem; letter-spacing:2px; font-weight: 900; color: white;">${b.code}</td>
+                        <td style="color:var(--ps-glow); font-weight: 800;">${b.amount.toLocaleString()} TC</td>
+                        <td>${statHtml}</td>
+                        <td class="action-btns">
+                            <button class="btn-sm btn-reject" onclick="deleteBatch('${b._id}')"><i class="fas fa-trash"></i> Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- ACTION HANDLERS ---
+        function resolveTx(id, status) {
+            if(confirm(`Are you sure you want to officially mark this transaction as ${status}?`)) {
+                socket.emit('adminAction', { type: 'resolveTx', id: id, status: status });
+            }
+        }
+
+        function actionUser(type, id) {
+            let msg = type === 'ban' ? "Are you sure you want to BAN this player?" : "Are you sure you want to UNBAN this player?";
+            if(confirm(msg)) socket.emit('adminAction', { type: type, id: id });
+        }
+
+        function openEditUser(id) {
+            const u = gUsers.find(x => x._id === id);
+            if(!u) return;
+            document.getElementById('edit-u-id').value = u._id;
+            document.getElementById('edit-u-name').value = u.username;
+            document.getElementById('edit-u-credits').value = u.credits;
+            document.getElementById('edit-u-role').value = u.role;
+            openModal('edit-user-modal');
         }
 
         function saveUserEdit() {
-            const newBalance = parseInt(document.getElementById('edit-ubalance').value);
-            const newRole = document.getElementById('edit-urole').value;
-            
-            if (isNaN(newBalance)) return showToast("Balance must be a valid number.", "error");
-
-            // Tell Server to Update MongoDB
-            socket.emit('adminAction', { 
-                type: 'editUser', 
-                id: currentEditUserId, 
-                credits: newBalance, 
-                role: newRole 
+            socket.emit('adminAction', {
+                type: 'editUser',
+                id: document.getElementById('edit-u-id').value,
+                credits: parseInt(document.getElementById('edit-u-credits').value),
+                role: document.getElementById('edit-u-role').value
             });
-            
-            closeModal('modal-edit-user');
-            showToast("Player account successfully updated.", "success");
+            closeModal('edit-user-modal');
         }
 
-        function processBan(userId) {
-            if (confirm("Are you certain you want to ban this player from the casino?")) {
-                socket.emit('adminAction', { type: 'ban', id: userId });
-                showToast("Player access revoked.", "error");
-            }
-        }
-        
-        function processUnban(userId) {
-            socket.emit('adminAction', { type: 'unban', id: userId });
-            showToast("Player access restored.", "success");
-        }
-
-        function resolveTransaction(txId, statusChoice) {
-            socket.emit('adminAction', { 
-                type: 'resolveTx', 
-                id: txId, 
-                status: statusChoice 
-            });
-            showToast(`Transaction marked as ${statusChoice}.`);
+        function generatePromo() {
+            let amt = parseInt(document.getElementById('promo-amount').value);
+            let cnt = parseInt(document.getElementById('promo-count').value);
+            if(!amt || !cnt) return alert("Please fill out both the TC amount and quantity.");
+            
+            socket.emit('adminAction', { type: 'createBatch', amount: amt, count: cnt });
+            closeModal('create-promo-modal');
+            document.getElementById('promo-amount').value = '';
+            document.getElementById('promo-count').value = '';
         }
 
-        function saveGiftBatch() {
-            const countInput = parseInt(document.getElementById('new-gc-count').value);
-            const amountInput = parseInt(document.getElementById('new-gc-amt').value);
-
-            if (isNaN(countInput) || isNaN(amountInput) || countInput <= 0 || amountInput <= 0) {
-                return showToast('Please enter valid, positive numbers.', 'error');
-            }
-
-            // Tell Server to Generate Codes in DB
-            socket.emit('adminAction', { 
-                type: 'createBatch', 
-                count: countInput, 
-                amount: amountInput 
-            });
-            
-            closeModal('modal-create-giftcode');
-            showToast(`Batch generation sequence initialized for ${countInput} codes.`);
-            
-            // Clean up UI inputs
-            document.getElementById('new-gc-count').value = '';
-            document.getElementById('new-gc-amt').value = '';
-        }
-
-        function openViewGiftCodesModal(batchId) {
-            const batch = adminDB.giftBatches.find(b => b._id === batchId);
-            if (!batch) return;
-            
-            document.getElementById('gc-modal-title').innerText = `Batch Details`;
-            
-            const listContainer = document.getElementById('gc-list');
-            listContainer.innerHTML = '';
-            
-            let allUnusedCodes = [];
-
-            batch.codes.forEach(codeObj => {
-                let statusHTML = '';
-                let textColor = 'white';
-                let backgroundColor = 'rgba(0,0,0,0.4)';
-
-                if (codeObj.redeemedBy) {
-                    statusHTML = `<span style="color:var(--text-muted); font-size:0.85rem;">Claimed by ${codeObj.redeemedBy}</span>`;
-                    textColor = 'var(--text-muted)';
-                    backgroundColor = 'rgba(255,255,255,0.05)';
-                } else {
-                    statusHTML = `<i class="fas fa-copy copy-icon" onclick="copyToClipboard('${codeObj.code}')" title="Copy Code"></i>`;
-                    allUnusedCodes.push(codeObj.code);
-                }
-                
-                listContainer.innerHTML += `
-                    <div class="code-item" style="background:${backgroundColor}">
-                        <span class="code-val" style="color:${textColor}">${codeObj.code}</span>
-                        <span class="code-action">${statusHTML}</span>
-                    </div>
-                `;
-            });
-
-            // Set up master copy button
-            document.getElementById('btn-copy-all-batch').onclick = () => {
-                const combinedCodesString = allUnusedCodes.join('\n');
-                if (!combinedCodesString) {
-                    return showToast("There are no unused codes remaining in this batch to copy.", "error");
-                }
-                copyToClipboard(combinedCodesString);
-            };
-
-            openModal('modal-view-gcs');
-        }
-
-        function processDeleteBatch(batchId) {
-            if (confirm(`CRITICAL ACTION: Are you sure you want to completely delete this batch? All unclaimed codes will instantly invalidate.`)) {
-                socket.emit('adminAction', { type: 'deleteBatch', id: batchId });
-                showToast(`Batch completely removed from system.`, 'error');
+        function deleteBatch(id) {
+            if(confirm("Permanently delete this promo code?")) {
+                socket.emit('adminAction', { type: 'deleteBatch', id: id });
             }
         }
 
-        // --- SECURITY ---
+        // Anti-snoop Security
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.onkeydown = function(e) {
             if(e.keyCode === 123) return false; 
