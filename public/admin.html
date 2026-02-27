@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="/socket.io/socket.io.js"></script>
 <style>
 :root { --ps-bg: #000814; --ps-glow: #00a2ff; --glass-bg: rgba(0, 15, 35, 0.65); --glass-border: rgba(255, 255, 255, 0.15); --glass-hover: rgba(255, 255, 255, 0.9); --danger: #ff3366; --success: #00e676; --credits: #ffb400; --text-main: #f8fafc; --text-muted: #8c9eb5; }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; }
@@ -113,7 +114,6 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .update-date { color: var(--text-muted); font-size: 0.85rem; font-weight: 800; }
 .update-msg { color: #d1d5db; line-height: 1.5; font-size: 0.95rem; }
 .pwd-cell { display: flex; align-items: center; justify-content: center; gap: 8px; }
-.input-control { border-color: var(--glass-border) !important; color: white !important;}
 </style>
 </head>
 <body>
@@ -124,7 +124,6 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <div class="auth-box">
           <div class="auth-title">ADMIN ACCESS</div>
           <div class="auth-sub">Stick N' Trade</div>
-          
           <div id="auth-form-login">
               <div class="input-group" style="margin-bottom:20px;">
                   <input type="text" id="admin-user" class="input-control" placeholder="Username" style="text-align: center;" onkeypress="if(event.key==='Enter') submitAdminAuth()">
@@ -143,40 +142,65 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
   <div id="app-container">
       <aside class="sidebar">
-        <div class="sidebar-header"><div class="brand-dot"></div><div><div class="brand-title">Admin Panel</div><div class="brand-sub">Stick N' Trade</div></div></div>
+        <div class="sidebar-header">
+          <div class="brand-dot"></div>
+          <div><div class="brand-title">Admin Panel</div><div class="brand-sub">Stick N' Trade</div></div>
+        </div>
         <div class="nav-menu">
           <a class="nav-item active" onclick="switchView('dashboard', this)"><i class="fas fa-chart-pie"></i> Dashboard</a>
           <a class="nav-item" onclick="switchView('users', this)"><i class="fas fa-users"></i> Users</a>
           <a class="nav-item" onclick="switchView('transactions', this)"><i class="fas fa-exchange-alt"></i> Cashier</a>
           <a class="nav-item" onclick="switchView('giftcodes', this)"><i class="fas fa-gift"></i> Gift Codes</a>
           <a class="nav-item" onclick="switchView('updates', this)"><i class="fas fa-bullhorn"></i> System Updates</a>
-          <a class="nav-item" style="margin-top: auto; border-top: 1px solid var(--glass-border); border-radius: 0;" href="index.html"><i class="fas fa-gamepad"></i> Back to Casino</a>
+          <a class="nav-item" style="margin-top: auto; border-top: 1px solid var(--glass-border); border-radius: 0;" href="/"><i class="fas fa-gamepad"></i> Back to Casino</a>
         </div>
-        <div class="admin-profile"><div class="admin-avatar">AD</div><div class="admin-info"><div>Head Admin</div><div><i class="fas fa-circle" style="font-size:0.5rem; margin-right:4px;"></i> System Online</div></div></div>
+        <div class="admin-profile">
+          <div class="admin-avatar">AD</div>
+          <div class="admin-info"><div id="admin-name-display">Admin</div><div><i class="fas fa-circle" style="font-size:0.5rem; margin-right:4px;"></i> System Online</div></div>
+        </div>
       </aside>
 
       <main class="main-area">
         <header class="top-header">
           <h1 class="page-title" id="topbar-title">Dashboard</h1>
           <div class="top-actions">
-            <button class="btn-primary" onclick="showToast('Database manually synced.', 'success')"><i class="fas fa-sync-alt"></i> Sync Data</button>
+            <button class="btn-primary" onclick="socket.emit('forceSync')"><i class="fas fa-sync-alt"></i> Sync Data</button>
             <button class="btn-primary" style="background: rgba(255,51,102,0.2); color: var(--danger);" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Logout</button>
           </div>
         </header>
 
         <div class="content-wrapper custom-scroll">
+          
           <section id="view-dashboard" class="view-section active">
             <div class="stats-grid">
-              <div class="stat-card" style="--border-color: var(--credits);"><i class="fas fa-coins stat-icon"></i><div class="stat-title">Total Economy (TC)</div><div class="stat-value" id="stat-economy">...</div></div>
-              <div class="stat-card" style="--border-color: var(--ps-glow);"><i class="fas fa-users stat-icon"></i><div class="stat-title">Registered Players</div><div class="stat-value" id="stat-players">...</div></div>
-              <div class="stat-card" style="--border-color: var(--danger);"><i class="fas fa-hourglass-half stat-icon"></i><div class="stat-title">Pending Requests</div><div class="stat-value" id="stat-pending">...</div></div>
-              <div class="stat-card" style="--border-color: var(--success);"><i class="fas fa-gift stat-icon"></i><div class="stat-title">Active Gift Batches</div><div class="stat-value" id="stat-promos">...</div></div>
+              <div class="stat-card" style="--border-color: var(--credits);">
+                <i class="fas fa-coins stat-icon"></i><div class="stat-title">Total Economy (TC)</div><div class="stat-value" id="stat-economy">0</div>
+              </div>
+              <div class="stat-card" style="--border-color: var(--ps-glow);">
+                <i class="fas fa-users stat-icon"></i><div class="stat-title">Registered Players</div><div class="stat-value" id="stat-players">0</div>
+              </div>
+              <div class="stat-card" style="--border-color: var(--danger);">
+                <i class="fas fa-hourglass-half stat-icon"></i><div class="stat-title">Pending Requests</div><div class="stat-value" id="stat-pending">0</div>
+              </div>
+              <div class="stat-card" style="--border-color: var(--success);">
+                <i class="fas fa-gift stat-icon"></i><div class="stat-title">Active Gift Batches</div><div class="stat-value" id="stat-promos">0</div>
+              </div>
+            </div>
+            <div class="table-container">
+              <div class="table-header"><h3 style="margin:0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Recent System Activity</h3></div>
+              <table>
+                <thead><tr><th>Time</th><th>Action</th><th>User</th><th>Details</th></tr></thead>
+                <tbody id="activity-tbody"></tbody>
+              </table>
             </div>
           </section>
 
           <section id="view-users" class="view-section">
             <div class="table-container">
-              <div class="table-header"><h3 style="margin:0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Player Management</h3><input type="text" class="search-bar" placeholder="Search username..." onkeyup="filterTable('users-tbody', this.value)"></div>
+              <div class="table-header">
+                <h3 style="margin:0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Player Management</h3>
+                <input type="text" class="search-bar" placeholder="Search username..." onkeyup="filterTable('users-tbody', this.value)">
+              </div>
               <table>
                 <thead><tr><th>Join Date</th><th>Username</th><th>Password</th><th>Role</th><th>Balance (TC)</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody id="users-tbody"></tbody>
@@ -186,7 +210,10 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
           <section id="view-transactions" class="view-section">
             <div class="table-container">
-              <div class="table-header"><h3 style="margin:0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Cashier Logs</h3><input type="text" class="search-bar" placeholder="Search ID or Username..." onkeyup="filterTable('tx-tbody', this.value)"></div>
+              <div class="table-header">
+                <h3 style="margin:0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Cashier Logs</h3>
+                <input type="text" class="search-bar" placeholder="Search ID or Username..." onkeyup="filterTable('tx-tbody', this.value)">
+              </div>
               <table>
                 <thead><tr><th>ID</th><th>Type</th><th>Username</th><th>Amount (TC)</th><th>Ref / Details</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                 <tbody id="tx-tbody"></tbody>
@@ -196,7 +223,10 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
           <section id="view-giftcodes" class="view-section">
             <div class="table-container">
-              <div class="table-header"><h3 style="margin:0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Gift Code Batches</h3><button class="btn-primary" onclick="openModal('modal-create-giftcode')"><i class="fas fa-plus"></i> Generate Codes</button></div>
+              <div class="table-header">
+                <h3 style="margin:0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Gift Code Batches</h3>
+                <button class="btn-primary" onclick="openModal('modal-create-giftcode')"><i class="fas fa-plus"></i> Generate Codes</button>
+              </div>
               <table>
                 <thead><tr><th>Batch ID</th><th>Reward (TC)</th><th>Generated</th><th>Used</th><th>Date</th><th>Actions</th></tr></thead>
                 <tbody id="giftcodes-tbody"></tbody>
@@ -207,13 +237,18 @@ tr:hover td { background: rgba(255,255,255,0.02); }
           <section id="view-updates" class="view-section">
             <div class="table-container" style="padding: 30px;">
                 <h3 style="margin: 0 0 20px 0; font-size: 1.5rem; text-transform:uppercase; letter-spacing:1px; text-align:center;">Push System Update</h3>
-                <div class="input-group"><label>Announcement Title</label><input type="text" id="update-title" placeholder="e.g. Server Maintenance"></div>
-                <div class="input-group"><label>Message content</label><textarea id="update-msg" class="input-control" placeholder="Type your update message to all players here..."></textarea></div>
-                <button class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="pushUpdateServer()"><i class="fas fa-paper-plane"></i> PUSH UPDATE</button>
+                <div class="input-group">
+                    <label>Announcement Title</label><input type="text" id="update-title" placeholder="e.g. Server Maintenance">
+                </div>
+                <div class="input-group">
+                    <label>Message content</label><textarea id="update-msg" class="input-control" placeholder="Type your update message to all players here..."></textarea>
+                </div>
+                <button class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="pushUpdate()"><i class="fas fa-paper-plane"></i> PUSH UPDATE</button>
             </div>
             <h3 style="margin: 0 0 15px 0; font-size: 1.2rem; text-transform:uppercase; letter-spacing:1px;">Recent Updates</h3>
             <div id="updates-log-container"></div>
           </section>
+
         </div>
       </main>
   </div>
@@ -224,9 +259,12 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <h3 class="modal-title">Edit User</h3>
       <input type="hidden" id="edit-uid">
       <div class="input-group"><label>Username</label><input type="text" id="edit-uname" disabled style="opacity:0.7; border-color:transparent;"></div>
-      <div class="input-group"><label>Account Role</label><select id="edit-urole" class="input-control"><option value="Player">Player</option><option value="Moderator">Moderator</option><option value="Admin">Admin</option></select></div>
+      <div class="input-group">
+        <label>Account Role</label>
+        <select id="edit-urole" class="input-control"><option value="Player">Player</option><option value="Moderator">Moderator</option><option value="Admin">Admin</option></select>
+      </div>
       <div class="input-group"><label>Balance (TC)</label><input type="number" id="edit-ubalance"></div>
-      <button class="btn-primary" style="width:100%; justify-content:center; margin-top:10px;" onclick="saveUserEditServer()">Save Changes</button>
+      <button class="btn-primary" style="width:100%; justify-content:center; margin-top:10px;" onclick="saveUserEdit()">Save Changes</button>
     </div>
   </div>
 
@@ -236,7 +274,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <h3 class="modal-title">Generate Gift Codes</h3>
       <div class="input-group"><label>How many giftcodes?</label><input type="number" id="new-gc-count" placeholder="e.g. 50"></div>
       <div class="input-group"><label>How much credits?</label><input type="number" id="new-gc-amt" placeholder="e.g. 100"></div>
-      <button class="btn-primary" style="width:100%; justify-content:center; margin-top:10px;" onclick="saveGiftBatchServer()"><i class="fas fa-bolt"></i> Generate Codes</button>
+      <button class="btn-primary" style="width:100%; justify-content:center; margin-top:10px;" onclick="saveGiftBatch()"><i class="fas fa-bolt"></i> Generate Codes</button>
     </div>
   </div>
 
@@ -249,82 +287,261 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     </div>
   </div>
 
-  <script src="/socket.io/socket.io.js"></script>
+  <div id="toast-container"></div>
+
   <script>
+    // --- SOCKET.IO & GLOBAL STATE ---
     const socket = io();
-    let db = { users: [], transactions: [], giftBatches: [], updates: [] }; // Local cache populated by server
+    let adminDB = { users: [], transactions: [], giftBatches: [], updates: [] };
 
-    function toggleInputPwd(inputId, icon) { const input = document.getElementById(inputId); if (input.type === "password") { input.type = "text"; icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); } else { input.type = "password"; icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); } }
-    function toggleTablePwd(icon) { const td = icon.closest('td'); const mask = td.querySelector('.pwd-mask'); const text = td.querySelector('.pwd-text'); if(mask.style.display === 'none') { mask.style.display = 'inline'; text.style.display = 'none'; icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); icon.style.color = 'var(--text-muted)'; } else { mask.style.display = 'none'; text.style.display = 'inline'; icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); icon.style.color = 'white'; } }
-    function showToast(msg, type='success') { const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = `toast toast-${type}`; let icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'; toast.innerHTML = `<i class="fas ${icon}"></i> <span>${msg}</span>`; container.appendChild(toast); setTimeout(() => toast.classList.add('show'), 10); setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000); }
-    function switchView(viewId, el) { document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active')); document.getElementById('view-' + viewId).classList.add('active'); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); if(el) el.classList.add('active'); const titles = { 'dashboard': 'Dashboard', 'users': 'Player Management', 'transactions': 'Cashier Requests', 'giftcodes': 'Gift Codes', 'updates': 'System Updates' }; document.getElementById('topbar-title').innerText = titles[viewId]; if(viewId === 'users') renderUsers(); if(viewId === 'transactions') renderTransactions(); if(viewId === 'giftcodes') renderGiftBatches(); if(viewId === 'updates') renderUpdates(); }
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => showToast("Copied!", "success")).catch(() => showToast("Failed to copy.", "error")); }
-    function filterTable(tbodyId, query) { let trs = document.getElementById(tbodyId).getElementsByTagName('tr'); query = query.toLowerCase(); for(let i=0; i<trs.length; i++) { let txt = trs[i].innerText.toLowerCase(); trs[i].style.display = txt.includes(query) ? '' : 'none'; } }
-
+    // --- AUTHENTICATION LOGIC ---
     function submitAdminAuth() {
-        const user = document.getElementById('admin-user').value.trim();
-        const pass = document.getElementById('admin-pass').value;
+        const u = document.getElementById('admin-user').value.trim();
+        const p = document.getElementById('admin-pass').value;
         const errDiv = document.getElementById('auth-error-login');
-        if(!user || !pass) return errDiv.innerText = "Enter credentials.";
-        
-        socket.emit('adminLogin', { username: user, password: pass });
+        if(!u || !p) return errDiv.innerText = "Enter credentials.";
+        socket.emit('adminLogin', { username: u, password: p });
     }
-
-    function logoutAdmin() {
-        if(confirm("Are you sure you want to log out?")) {
-            document.getElementById('app-container').style.display = 'none';
-            document.getElementById('auth-container').style.display = 'flex';
-            document.getElementById('admin-pass').value = '';
-        }
-    }
-
-    // SERVER EMITTERS (Placeholders for now)
-    function saveUserEditServer() { showToast("Backend user edit logic pending.", "error"); closeModal('modal-edit-user'); }
-    function banUser(uid) { showToast("Backend ban logic pending.", "error"); }
-    function unbanUser(uid) { showToast("Backend unban logic pending.", "error"); }
-    function resolveTx(tid, status) { showToast("Backend Tx logic pending.", "error"); }
-    function saveGiftBatchServer() { showToast("Backend Code Gen pending.", "error"); closeModal('modal-create-giftcode'); }
-    function deleteBatch(batchId) { showToast("Backend batch delete pending.", "error"); }
-    function pushUpdateServer() { showToast("Backend Push Update pending.", "error"); }
-
-    // RENDERERS (Expects DB to be populated by server later)
-    function renderUsers() {
-        const tb = document.getElementById('users-tbody'); tb.innerHTML = '';
-        if(db.users.length===0) return tb.innerHTML = `<tr><td colspan="7" style="color:var(--text-muted);">Awaiting server data...</td></tr>`;
-    }
-    function renderTransactions() {
-        const tb = document.getElementById('tx-tbody'); tb.innerHTML = '';
-        if(db.transactions.length===0) return tb.innerHTML = `<tr><td colspan="8" style="color:var(--text-muted);">Awaiting server data...</td></tr>`;
-    }
-    function renderGiftBatches() {
-        const tb = document.getElementById('giftcodes-tbody'); tb.innerHTML = '';
-        if(db.giftBatches.length===0) return tb.innerHTML = `<tr><td colspan="6" style="color:var(--text-muted);">Awaiting server data...</td></tr>`;
-    }
-    function renderUpdates() {
-        const con = document.getElementById('updates-log-container'); con.innerHTML = '';
-    }
-
-    // SOCKET LISTENERS
-    socket.on('adminAuthError', (msg) => {
-        document.getElementById('auth-error-login').innerText = msg;
-    });
 
     socket.on('adminLoginSuccess', (data) => {
         document.getElementById('auth-error-login').innerText = "";
         document.getElementById('auth-container').style.display = 'none';
         document.getElementById('app-container').style.display = 'flex';
-        showToast(`Welcome back, Admin!`, "success");
-        // Trigger server to send current data
-        socket.emit('fetchAdminData');
+        document.getElementById('admin-name-display').innerText = data.username;
+        showToast(`Welcome back, ${data.role}!`, "success");
+        socket.emit('getAdminData'); // Request initial DB dump
     });
 
-    socket.on('adminDataSync', (data) => {
-        // Will populate local DB with real DB from server later
-        db = data; 
-        switchView('dashboard', document.querySelector('.nav-item')); 
+    socket.on('authError', (msg) => {
+        document.getElementById('auth-error-login').innerText = msg;
     });
+
+    function logoutAdmin() {
+        if(confirm("Are you sure you want to log out?")) location.reload();
+    }
+
+    function toggleInputPwd(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") { input.type = "text"; icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); } 
+        else { input.type = "password"; icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
+    }
+
+    function toggleTablePwd(icon) {
+        const td = icon.closest('td'); const mask = td.querySelector('.pwd-mask'); const text = td.querySelector('.pwd-text');
+        if(mask.style.display === 'none') { mask.style.display = 'inline'; text.style.display = 'none'; icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); icon.style.color = 'var(--text-muted)'; } 
+        else { mask.style.display = 'none'; text.style.display = 'inline'; icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); icon.style.color = 'white'; }
+    }
+
+    // --- UI LOGIC ---
+    function showToast(msg, type='success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        let icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        toast.innerHTML = `<i class="fas ${icon}"></i> <span>${msg}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+
+    function switchView(viewId, el) {
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('view-' + viewId).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        if(el) el.classList.add('active');
+        
+        const titles = { 'dashboard': 'Dashboard', 'users': 'Player Management', 'transactions': 'Cashier Requests', 'giftcodes': 'Gift Codes', 'updates': 'System Updates' };
+        document.getElementById('topbar-title').innerText = titles[viewId];
+
+        if(viewId === 'users') renderUsers();
+        if(viewId === 'transactions') renderTransactions();
+        if(viewId === 'giftcodes') renderGiftBatches();
+        if(viewId === 'updates') renderUpdates();
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function filterTable(tbodyId, query) {
+        let trs = document.getElementById(tbodyId).getElementsByTagName('tr');
+        query = query.toLowerCase();
+        for(let i=0; i<trs.length; i++) {
+            let txt = trs[i].innerText.toLowerCase();
+            trs[i].style.display = txt.includes(query) ? '' : 'none';
+        }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => { showToast("Copied to clipboard!", "success"); })
+        .catch(() => { showToast("Failed to copy.", "error"); });
+    }
+
+    // --- SOCKET DATA SYNCING & RENDERING ---
+    socket.on('adminDataSync', (data) => {
+        adminDB = data;
+        
+        // Update Dashboard Stats
+        document.getElementById('stat-economy').innerText = data.stats.economy.toLocaleString();
+        document.getElementById('stat-players').innerText = data.users.length.toLocaleString();
+        document.getElementById('stat-pending').innerText = data.transactions.filter(t => t.status === 'Pending').length;
+        document.getElementById('stat-promos').innerText = data.giftBatches.length.toLocaleString();
+
+        // Refresh views based on what's active
+        const activeView = document.querySelector('.view-section.active').id;
+        if(activeView === 'view-users') renderUsers();
+        if(activeView === 'view-transactions') renderTransactions();
+        if(activeView === 'view-giftcodes') renderGiftBatches();
+        if(activeView === 'view-updates') renderUpdates();
+    });
+
+    socket.on('adminToast', (data) => { showToast(data.msg, data.type); });
+
+    function renderUsers() {
+        const tb = document.getElementById('users-tbody'); tb.innerHTML = '';
+        const roleW = { 'Admin': 1, 'Moderator': 2, 'Player': 3 };
+        const statW = { 'Active': 1, 'Offline': 2, 'Banned': 3 };
+        
+        let sortedUsers = [...adminDB.users].sort((a, b) => {
+            if (roleW[a.role] !== roleW[b.role]) return roleW[a.role] - roleW[b.role];
+            if (statW[a.status] !== statW[b.status]) return statW[a.status] - statW[b.status];
+            return a.username.localeCompare(b.username);
+        });
+
+        sortedUsers.forEach(u => {
+            let badge = u.status === 'Active' ? 'badge-active' : (u.status === 'Offline' ? 'badge-offline' : 'badge-rejected');
+            let roleBadge = u.role === 'Admin' ? 'role-admin' : (u.role === 'Moderator' ? 'role-mod' : 'role-player');
+
+            tb.innerHTML += `
+                <tr>
+                    <td style="color:var(--text-muted); font-size:0.85rem;">${new Date(u.joinDate).toLocaleDateString()}</td>
+                    <td style="font-weight:800; color:white;">${u.username}</td>
+                    <td style="font-family:monospace; color:var(--text-muted); font-size:0.9rem;">
+                        <div class="pwd-cell"><span class="pwd-mask">••••••••</span><span class="pwd-text" style="display:none;">${u.password}</span><i class="fas fa-eye" style="cursor:pointer; color:var(--text-muted);" onclick="toggleTablePwd(this)" title="Toggle Visibility"></i></div>
+                    </td>
+                    <td><span class="badge ${roleBadge}">${u.role}</span></td>
+                    <td style="color:var(--credits); font-weight:900;">${u.credits.toLocaleString()}</td>
+                    <td><span class="badge ${badge}">${u.status}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon btn-edit" onclick="openEditUser('${u._id}')" title="Edit/Promote"><i class="fas fa-pen"></i></button>
+                            ${u.status !== 'Banned' ? 
+                              `<button class="btn-icon btn-reject" onclick="socket.emit('adminAction', {type:'ban', id:'${u._id}'})" title="Ban User"><i class="fas fa-ban"></i></button>` : 
+                              `<button class="btn-icon btn-approve" onclick="socket.emit('adminAction', {type:'unban', id:'${u._id}'})" title="Unban User"><i class="fas fa-check"></i></button>`
+                            }
+                        </div>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    function renderTransactions() {
+        const tb = document.getElementById('tx-tbody'); tb.innerHTML = '';
+        const pending = adminDB.transactions.filter(t => t.status === 'Pending');
+        const resolved = adminDB.transactions.filter(t => t.status !== 'Pending');
+
+        const createRow = (t, isPending) => {
+            let tColor = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
+            let sign = t.type === 'Deposit' ? '+' : '-';
+            let statClass = t.status === 'Approved' ? 'badge-approved' : (t.status === 'Rejected' ? 'badge-rejected' : 'badge-pending');
+            let actions = isPending ? `
+                <button class="btn-icon btn-approve" onclick="socket.emit('adminAction', {type:'resolveTx', id:'${t._id}', status:'Approved'})" title="Approve"><i class="fas fa-check"></i></button>
+                <button class="btn-icon btn-reject" onclick="socket.emit('adminAction', {type:'resolveTx', id:'${t._id}', status:'Rejected'})" title="Reject"><i class="fas fa-times"></i></button>
+            ` : `<span style="color:var(--text-muted); font-size:0.8rem; font-weight:800; text-transform:uppercase;">Resolved</span>`;
+
+            return `<tr style="${!isPending ? 'opacity:0.4;' : ''}">
+                    <td style="font-family:monospace; color:var(--text-muted);">${t._id.substring(0,8)}</td>
+                    <td style="font-weight:900; text-transform:uppercase; color:white;">${t.type}</td>
+                    <td style="font-weight:800; color:white;">${t.username}</td>
+                    <td style="color:${tColor}; font-weight:900;">${sign}${t.amount.toLocaleString()}</td>
+                    <td style="font-size:0.85rem; color:var(--text-muted);">${t.ref}</td>
+                    <td><span class="badge ${statClass}">${t.status}</span></td>
+                    <td style="color:var(--text-muted); font-size:0.85rem;">${new Date(t.date).toLocaleDateString()}</td>
+                    <td><div class="action-btns">${actions}</div></td></tr>`;
+        };
+
+        let html = '';
+        pending.forEach(t => html += createRow(t, true));
+        resolved.forEach(t => html += createRow(t, false));
+        tb.innerHTML = html;
+    }
+
+    function renderGiftBatches() {
+        const tb = document.getElementById('giftcodes-tbody'); tb.innerHTML = '';
+        adminDB.giftBatches.forEach(b => {
+            let total = b.codes.length; let used = b.codes.filter(c => c.redeemedBy !== null).length;
+            tb.innerHTML += `<tr>
+                    <td style="font-weight:900; color:white; letter-spacing:1px;">${b._id}</td>
+                    <td style="color:var(--ps-glow); font-weight:900;">${b.amount.toLocaleString()} TC</td>
+                    <td style="color:white; font-weight:800;">${total}</td>
+                    <td style="color:var(--text-muted);">${used}</td>
+                    <td style="color:var(--text-muted); font-size:0.85rem;">${new Date(b.date).toLocaleDateString()}</td>
+                    <td><div class="action-btns">
+                            <button class="btn-icon btn-edit" onclick="viewGiftCodes('${b._id}')" title="View Codes"><i class="fas fa-eye"></i></button>
+                            <button class="btn-icon btn-reject" onclick="socket.emit('adminAction', {type:'deleteBatch', id:'${b._id}'})" title="Delete Batch"><i class="fas fa-trash"></i></button>
+                        </div></td></tr>`;
+        });
+    }
+
+    function renderUpdates() {
+        const con = document.getElementById('updates-log-container'); con.innerHTML = '';
+        adminDB.updates.forEach(u => {
+            con.innerHTML += `<div class="update-item"><div class="update-header"><div class="update-title">${u.title}</div><div class="update-date">${new Date(u.date).toLocaleDateString()}</div></div><div class="update-msg">${u.msg}</div></div>`;
+        });
+    }
+
+    // --- EMITTERS ---
+    let currentEditUid = null;
+    function openEditUser(uid) {
+        const user = adminDB.users.find(u => u._id === uid);
+        currentEditUid = uid;
+        document.getElementById('edit-uname').value = user.username;
+        document.getElementById('edit-ubalance').value = user.credits;
+        document.getElementById('edit-urole').value = user.role || 'Player';
+        openModal('modal-edit-user');
+    }
+
+    function saveUserEdit() {
+        const newBal = parseInt(document.getElementById('edit-ubalance').value);
+        const newRole = document.getElementById('edit-urole').value;
+        socket.emit('adminAction', { type: 'editUser', id: currentEditUid, credits: newBal, role: newRole });
+        closeModal('modal-edit-user');
+    }
+
+    function saveGiftBatch() {
+        const count = parseInt(document.getElementById('new-gc-count').value);
+        const amt = parseInt(document.getElementById('new-gc-amt').value);
+        if(isNaN(count) || isNaN(amt) || count <= 0 || amt <= 0) return showToast('Please enter valid numbers.', 'error');
+        socket.emit('adminAction', { type: 'createBatch', count: count, amount: amt });
+        closeModal('modal-create-giftcode');
+        document.getElementById('new-gc-count').value = ''; document.getElementById('new-gc-amt').value = '';
+    }
+
+    function viewGiftCodes(batchId) {
+        const batch = adminDB.giftBatches.find(b => b._id === batchId);
+        document.getElementById('gc-modal-title').innerText = `Batch ${batchId.substring(0,6)}...`;
+        let html = '';
+        batch.codes.forEach(c => {
+            let statusHTML = c.redeemedBy ? `<span style="color:var(--text-muted); font-size:0.85rem;">Claimed by ${c.redeemedBy}</span>` : `<i class="fas fa-copy copy-icon" onclick="copyToClipboard('${c.code}')"></i>`;
+            let color = c.redeemedBy ? 'var(--text-muted)' : 'white';
+            let bg = c.redeemedBy ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.4)';
+            html += `<div class="code-item" style="background:${bg}"><span class="code-val" style="color:${color}">${c.code}</span><span class="code-action">${statusHTML}</span></div>`;
+        });
+        document.getElementById('gc-list').innerHTML = html;
+        document.getElementById('btn-copy-all-batch').onclick = () => {
+            let allCodes = batch.codes.map(c => c.code).join('\n');
+            if(!allCodes) return showToast("No codes to copy.", "error");
+            copyToClipboard(allCodes);
+        };
+        openModal('modal-view-gcs');
+    }
+
+    function pushUpdate() {
+        const title = document.getElementById('update-title').value;
+        const msg = document.getElementById('update-msg').value;
+        if(!title || !msg) return showToast("Please fill all fields.", "error");
+        socket.emit('adminAction', { type: 'pushUpdate', title: title, msg: msg });
+        document.getElementById('update-title').value = ''; document.getElementById('update-msg').value = '';
+    }
 
     // --- ANTI-SNOOPING SECURITY ---
     document.addEventListener('contextmenu', event => event.preventDefault());
