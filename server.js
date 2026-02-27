@@ -319,18 +319,65 @@ io.on('connection', (socket) => {
         sharedTables.bets.push({ userId: user._id, socketId: socket.id, room: data.room, choice: data.choice, amount: data.amount });
     });
 
-    socket.on('adminLogin', async (data) => {
-        if (data.username === 'admin' && data.password === 'admin') {
-            socket.emit('adminLoginSuccess', { username: 'Admin Boss', role: 'Head Admin' });
-            const users = await User.find(); const txs = await Transaction.find(); const gcs = await GiftCode.find();
-            socket.emit('adminDataSync', { users, transactions: txs, giftBatches: gcs, stats: { economy: users.reduce((a,b)=>a+b.credits,0) } });
-        } else { socket.emit('authError', 'Invalid Admin Credentials.'); }
-    });
+    socket.on('adminAction', async (data) => {
+        // Handle User Management
+        if (data.type === 'editUser') {
+            await User.findByIdAndUpdate(data.id, { credits: data.credits, role: data.role });
+        } else if (data.type === 'ban') {
+            await User.findByIdAndUpdate(data.id, { status: 'Banned' });
+        } else if (data.type === 'unban') {
+            await User.findByIdAndUpdate(data.id, { status: 'Offline' });
+        }
+        
+        // Handle Cashier Approval/Rejection
+        else if (data.type === 'resolveTx') {
+            let tx = await Transaction.findById(data.id);
+            if (tx && tx.status === 'Pending') {
+                tx.status = data.status;
+                await tx.save();
+                
+                // If it was an approved deposit, add the money to the player
+                if (data.status === 'Approved' && tx.type === 'Deposit') {
+                    let u = await User.findOne({ username: tx.username });
+                    if(u) {
+                        u.credits += tx.amount;
+                        await u.save();
+                    }
+                }
+            }
+        }
+        
+        // Handle Gift Code Generation
+        else if (data.type === 'createBatch') {
+            let batchId = 'BATCH-' + Math.floor(Math.random() * 90000 + 10000);
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let codesArray = [];
+            
+            for (let i = 0; i < data.count; i++) {
+                let codeStr = '';
+                for (let j = 0; j < 8; j++) {
+                    codeStr += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                codesArray.push({ code: codeStr, redeemedBy: null });
+            }
+            
+            await new GiftCode({ batchId: batchId, amount: data.amount, codes: codesArray }).save();
+        }
+        
+        // Handle Gift Code Deletion
+        else if (data.type === 'deleteBatch') {
+            await GiftCode.findByIdAndDelete(data.id);
+        }
 
-    socket.on('disconnect', async () => {
-        if(socket.user) await User.findByIdAndUpdate(socket.user._id, { status: 'Offline' });
+        // Broadast the updated data back to all connected Admins instantly
+        const users = await User.find(); 
+        const txs = await Transaction.find(); 
+        const gcs = await GiftCode.find();
+        
+        io.emit('adminDataSync', { 
+            users, 
+            transactions: txs, 
+            giftBatches: gcs, 
+            stats: { economy: users.reduce((a, b) => a + b.credits, 0) } 
+        });
     });
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`🚀 Master Backend running on port ${PORT}`));
