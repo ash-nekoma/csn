@@ -321,7 +321,7 @@ io.on('connection', (socket) => {
                     canClaim = false;
                     nextClaim = new Date(user.dailyReward.lastClaim.getTime() + 24 * 60 * 60 * 1000);
                 } else if (diffHours > 48) {
-                    user.dailyReward.streak = 0; 
+                    user.dailyReward.streak = 0; // Streak broken, reset to Day 1
                 }
                 day = (user.dailyReward.streak % 7) + 1;
             }
@@ -413,7 +413,7 @@ io.on('connection', (socket) => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
         
-        // Validation check
+        // Strict balance check before game starts
         if (user.credits < data.bet) {
             return socket.emit('toast', { msg: 'Insufficient TC', type: 'error' });
         }
@@ -463,6 +463,7 @@ io.on('connection', (socket) => {
                     dHand: [drawCard(), drawCard()] 
                 };
                 
+                // Natural Blackjack Check using real dynamic scoring
                 let pS = getBJScore(socket.bjState.pHand);
                 if (pS === 21) {
                     let dS = getBJScore(socket.bjState.dHand);
@@ -498,6 +499,7 @@ io.on('connection', (socket) => {
             else if (data.action === 'stand' && socket.bjState) {
                 let pS = getBJScore(socket.bjState.pHand);
                 
+                // Dealer draws until 17
                 while (getBJScore(socket.bjState.dHand) < 17) {
                     socket.bjState.dHand.push(drawCard());
                 }
