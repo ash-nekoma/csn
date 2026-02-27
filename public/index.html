@@ -28,94 +28,46 @@
             --text-muted: #8c9eb5; 
         }
         
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'Outfit', sans-serif; 
-            outline: none; 
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body { 
-            background: linear-gradient(135deg, #000a1f 0%, #001f4d 50%, #000000 100%); 
-            background-size: 200% 200%; 
-            animation: AmbientBG 15s ease infinite; 
-            color: var(--text-main); 
-            min-height: 100vh; 
-            width: 100vw; 
-            overflow-x: hidden; 
-            overflow-y: auto; 
-        }
-        
-        @keyframes AmbientBG { 
-            0% { background-position: 0% 50%; } 
-            50% { background-position: 100% 50%; } 
-            100% { background-position: 0% 50%; } 
-        }
-
-        /* Hardware acceleration */
-        .chip, .anim-deal, .play-card, .coin, .dice-icon, .mode-card, .game-card { 
-            will-change: transform, opacity; 
-            transform: translateZ(0); 
-            backface-visibility: hidden; 
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; -webkit-tap-highlight-color: transparent;}
+        body { background: linear-gradient(135deg, #000a1f 0%, #001f4d 50%, #000000 100%); background-size: 200% 200%; animation: AmbientBG 15s ease infinite; color: var(--text-main); min-height: 100vh; overflow-x: hidden; overflow-y: auto; }
+        @keyframes AmbientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         button i { pointer-events: none; }
-
-        /* Custom Scrollbars */
+        
         ::-webkit-scrollbar { display: none; }
-        .custom-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent; padding-right: 5px;}
+        .custom-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent; min-height: 0; padding-right: 5px;}
         .custom-scroll::-webkit-scrollbar { width: 6px; display: block; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
 
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
         /* ================= AUTHENTICATION ================= */
-        #auth-container { 
-            position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; 
-            z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); 
-        }
-        
-        .auth-box { 
-            width: 520px; background: var(--glass-bg); padding: 3rem; 
-            border-radius: 16px; border: 1px solid var(--glass-border); 
-            box-shadow: 0 25px 80px rgba(0,0,0,0.9); text-align: center; 
-        }
-        
-        .auth-title { font-size: 2.8rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;}
+        #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
+        .auth-box { width: 520px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 25px 80px rgba(0,0,0,0.9); text-align: center; }
+        .auth-title { font-size: 2.8rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
         .auth-sub { color: var(--ps-glow); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
         .auth-tab { flex: 1; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--text-muted); font-weight: 900; padding: 10px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1.1rem; }
         .auth-tab.active { border-bottom-color: var(--ps-glow); color: var(--ps-glow); }
         .auth-msg { font-size: 0.9rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; }
-        .auth-error { color: var(--danger); }
-        .auth-success { color: var(--success); }
+        .auth-error { color: var(--danger); } .auth-success { color: var(--success); }
+        
         .pwd-input-wrapper { position: relative; width: 100%; display: flex; align-items: center;}
         .pwd-input-wrapper input { width: 100%; padding-right: 40px; }
         .pwd-input-wrapper i { position: absolute; right: 15px; cursor: pointer; color: var(--text-muted); font-size: 1.1rem; transition: 0.2s;}
         .pwd-input-wrapper i:hover { color: white; }
 
         /* ================= BUTTONS & INPUTS ================= */
-        .btn-play { 
-            background: rgba(255,255,255,0.1); color: white; 
-            border: 1px solid var(--glass-border); padding: 15px 20px; 
-            border-radius: 8px; font-size: 1.1rem; font-weight: 900; 
-            cursor: pointer; transition: 0.2s; text-transform: uppercase; 
-            letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
+        .btn-play { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--glass-border); padding: 15px 20px; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-play:hover:not(:disabled) { background: white; color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,255,255,0.2); border-color: white;} 
         .btn-play:disabled { background: rgba(0,0,0,0.5) !important; color: var(--text-muted) !important; cursor: not-allowed !important; border-color: transparent !important; opacity: 0.5 !important; box-shadow:none !important; transform:none !important;}
         
         .input-group label { display: block; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; text-align: left;}
         .input-control { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1.1rem; font-weight: 600; text-align: center;}
         .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
-
         .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;} 
         .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.1);}
 
@@ -129,15 +81,27 @@
         .brand-title { font-weight: 900; letter-spacing: 2px; text-transform: uppercase; font-size: 1.5rem; color: var(--text-main); line-height: 1; text-shadow: 0 0 10px rgba(0, 162, 255, 0.5);}
         .brand-sub { color: var(--ps-glow); font-weight: 800; font-size: 0.9rem; letter-spacing: 3px; margin-top: 2px; text-transform: uppercase;}
 
-        /* HUD Action Buttons & Icons */
-        .top-icon-btn { position: relative; cursor: pointer; background: transparent; border: none; font-size: 1.15rem; transition: 0.2s; display: flex; align-items: center; justify-content: center;}
+        /* HUD Actions Right Side */
+        .topbar-right { display: flex; align-items: center; gap: 25px; }
+        .player-profile { display: flex; align-items: center; gap: 8px; font-weight: 800; color: white; font-size: 1rem; text-transform: uppercase; }
+        .player-profile i { color: var(--ps-glow); font-size: 1.4rem; }
+
+        .wallet-pill { background: rgba(0,0,0,0.8); border: 1px solid rgba(255,180,0,0.4); padding: 6px 6px 6px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s; }
+        .wallet-pill:hover { border-color: var(--credits); transform: translateY(-2px); }
+        .wallet-pill i { color: var(--credits); font-size: 1.2rem; }
+        #nav-credits { color: var(--credits); font-weight: 900; font-size: 1.1rem; }
+        .wallet-unit { color: var(--text-muted); font-size: 0.8rem; font-weight: 800; margin-right: 5px; }
+        .wallet-add { background: var(--credits); color: black; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+
+        .topbar-actions { display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.8); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--glass-border); }
+        .top-icon-btn { position: relative; cursor: pointer; background: transparent; border: none; font-size: 1.1rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: white;}
         .top-icon-btn:hover { transform: scale(1.1); }
+        .notif-badge { position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.6rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); }
 
         /* ================= MAIN LOBBY & CARDS ================= */
         .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; padding-top: 80px;}
         .content { width: 100%; max-width: 1400px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;}
         .view-container { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; }
-        
         .header-title { font-size: 3rem; font-weight: 900; margin: 0 0 2rem 0; text-transform: uppercase; letter-spacing: 2px; color: white; text-shadow: 0 2px 15px rgba(0,0,0,0.8); text-align: center; }
         
         .global-back { position: fixed; top: 100px; left: max(20px, calc(50% - 680px)); z-index: 50; background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px; }
@@ -180,7 +144,6 @@
         .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); flex-shrink: 0; } 
         .controls-full { grid-column: span 2; display: flex; gap: 15px; justify-content: center; }
 
-        /* SHARED LAYOUT & CHAT */
         .shared-layout { display: flex; gap: 20px; height: 650px; width: 100%; max-width: 1100px; align-items: stretch; margin: 0 auto; }
         .chat-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; }
         .chat-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
@@ -193,7 +156,7 @@
         .timer-box.closing { border-color: var(--danger); color: var(--danger); box-shadow: 0 0 20px rgba(255, 51, 102, 0.4); animation: shake 0.5s infinite;}
         .timer-sec { font-size: 0.7em; margin-left: 2px; font-weight: 600; color: var(--text-muted); }
 
-        /* SHARED BET BUTTONS & ACTIVE BET OUTLINE */
+        /* SHARED BET BUTTONS */
         .bet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; }
         .bet-grid.perya-grid { grid-template-columns: repeat(3, 1fr); }
         .bet-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; padding: 15px 10px; border-radius: 8px; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;}
@@ -204,47 +167,39 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-content { background: var(--glass-bg); width: 600px; max-width: 95vw; padding: 2.5rem; border-radius: 12px; border: 1px solid var(--glass-border); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9); position: relative; display: flex; flex-direction: column; height: auto; min-height: fit-content;}
         
-        /* Clean Close Icon (No circle/border) */
+        /* Clean Close Icon */
         .modal-close-icon { position: absolute; top: 20px; right: 25px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 100; background: none; border: none; padding: 0;}
         .modal-close-icon:hover { color: var(--danger); transform: scale(1.1); }
         
-        .modal-content h3 { font-size: 2rem; font-weight: 900; margin-bottom: 1.5rem; margin-top: 10px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-align: center; flex-shrink: 0;}
+        .modal-content h3 { font-size: 2rem; font-weight: 900; margin-bottom: 1.5rem; margin-top: 10px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-transform: uppercase; text-align: center;}
 
         .bank-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; flex-shrink: 0;}
         .bank-tab { flex: 1; background: transparent; border: none; border-bottom: 4px solid transparent; color: var(--text-muted); font-weight: 900; padding: 12px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1.1rem; letter-spacing: 1px;}
         .bank-tab:hover { color: white; }
         .bank-tab.active { border-bottom: 4px solid var(--ps-glow); color: var(--ps-glow); }
-        .bank-section { display: none; flex: 1; padding-right: 15px;}
+        .bank-section { display: none; flex: 1; padding-right: 5px;}
         .bank-section.active { display: block; }
 
         /* DAILY REWARD */
         .dr-days { display: flex; gap: 10px; justify-content: center; align-items: flex-end; margin-bottom: 25px; height: 160px; }
         .dr-day { flex: 1; background: linear-gradient(180deg, #1a2a6c 0%, #001f4d 100%); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 10px 5px; height: 130px; transition: 0.3s; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        
-        /* EVERY box has the spinning animation */
         .dr-day::before { content: ''; position: absolute; inset: -50%; background: repeating-conic-gradient(rgba(255,255,255,0.08) 0 15deg, transparent 15deg 30deg); z-index: 0; opacity: 0.8; animation: rotateBurst 20s linear infinite; display: block;}
         @keyframes rotateBurst { 100% { transform: rotate(360deg); } }
         .dr-day > * { position: relative; z-index: 1; }
-
-        /* Claimed logic */
         .dr-day.claimed { filter: grayscale(1); opacity: 0.6; border-color: var(--glass-border); box-shadow: none;}
         
-        /* Active (Current Day) logic -> Massive */
         .dr-day.active { background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%); border: 2px solid #fff; transform: scale(1.15); opacity: 1; z-index: 5; box-shadow: 0 10px 25px rgba(255, 204, 0, 0.4); height: 150px; color: black; }
-        .dr-day.active::before { background: repeating-conic-gradient(rgba(255,255,255,0.3) 0 15deg, transparent 15deg 30deg); opacity: 0.6; display: block;}
+        .dr-day.active::before { background: repeating-conic-gradient(rgba(255,255,255,0.3) 0 15deg, transparent 15deg 30deg); opacity: 0.6; }
         .dr-day.active .dr-title, .dr-day.active .dr-coin { color: #000; text-shadow: none; }
         
-        /* Active BUT Claimed logic -> Keeps massive size and animation, but greyed out */
-        .dr-day.active.active-claimed { background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); filter: grayscale(1); opacity: 0.8; box-shadow: none; color: white;}
+        .dr-day.active.active-claimed { background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); filter: grayscale(1); opacity: 0.9; color: white;}
         .dr-day.active.active-claimed .dr-title, .dr-day.active.active-claimed .dr-coin { color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 
-        .dr-title { font-size: 0.9rem; text-transform: uppercase; font-weight: 900; margin-top: 5px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); text-align: center;}
-        .dr-coin { font-size: 1rem; font-weight: 900; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); text-align: center; margin-bottom: 5px;}
+        .dr-title { font-size: 0.9rem; text-transform: uppercase; font-weight: 900; margin-top: 5px; text-align: center;}
+        .dr-coin { font-size: 1rem; font-weight: 900; text-align: center; margin-bottom: 5px;}
 
         .dr-claim-btn { width: 100%; max-width: 250px; margin: 0 auto; background: #ffcc00; color: #000; font-size: 1.2rem; border: 2px solid #fff; box-shadow: 0 5px 15px rgba(255,204,0,0.4); }
         .dr-claim-btn:hover:not(:disabled) { background: #ff9900; color: #000; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,204,0,0.6);}
-        .dr-claim-btn:disabled { background: rgba(255,255,255,0.1) !important; border-color: transparent !important; color: var(--text-muted) !important; box-shadow: none !important; cursor: not-allowed !important; transform: none !important;}
-
         #dr-status-container { text-align: center; margin-top: 10px; }
         .dr-status-text { font-size: 1.2rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;}
         .dr-timer { font-size: 1.5rem; font-weight: 900; color: var(--ps-glow); font-family: 'Rajdhani', sans-serif;}
@@ -253,7 +208,7 @@
         .in-game-notif-container { position: absolute; bottom: 80px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 150; pointer-events: none; }
         .in-game-toast { background: rgba(0,0,0,0.85); border: 1px solid var(--glass-border); border-left: 3px solid white; color: white; padding: 10px 20px; border-radius: 6px; display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* GLOBAL TOAST NOTIFICATIONS (Top Right) */
+        /* GLOBAL TOAST NOTIFICATIONS */
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast { background: rgba(5, 10, 25, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0, 162, 255, 0.4); color: white; padding: 15px 25px; border-radius: 8px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0, 162, 255, 0.25); text-transform: uppercase;}
         .toast.show { transform: translateX(0); }
@@ -360,36 +315,34 @@
           </div>
         </div>
 
-        <div class="topbar-right" style="display: flex; align-items: center; gap: 25px;">
-            <div class="player-profile" style="display: flex; align-items: center; gap: 8px; font-weight: 800; color: white; font-size: 1rem; text-transform: uppercase;">
-                <i class="fas fa-user-circle" style="color: var(--ps-glow); font-size: 1.4rem;"></i>
+        <div class="topbar-right">
+            <div class="player-profile">
+                <i class="fas fa-user-circle"></i>
                 <span id="player-name-display">Player</span>
             </div>
             
-            <div class="wallet-pill" id="pill-credits" onclick="openCashier()" style="background: rgba(0,0,0,0.8); border: 1px solid rgba(255,180,0,0.4); padding: 6px 6px 6px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s;">
-                <i class="fas fa-coins" style="color: var(--credits); font-size: 1.2rem;"></i>
-                <span id="nav-credits" style="color: var(--credits); font-weight: 900; font-size: 1.1rem;">0</span>
-                <span class="wallet-unit" style="color: var(--text-muted); font-size: 0.8rem; font-weight: 800; margin-right: 5px;">TC</span>
-                <div class="wallet-add" style="background: var(--credits); color: black; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
-                    <i class="fas fa-plus"></i>
-                </div>
+            <div class="wallet-pill" id="pill-credits" onclick="openCashier()" title="Open Cashier">
+                <i class="fas fa-coins"></i>
+                <span id="nav-credits">0</span>
+                <span class="wallet-unit">TC</span>
+                <div class="wallet-add"><i class="fas fa-plus"></i></div>
             </div>
             
-            <div class="topbar-actions" style="display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.8); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--glass-border);">
-                <button class="top-icon-btn" onclick="openModal('notif-modal')" title="Notifications" style="background:none; border:none; color:white; font-size:1.1rem; cursor:pointer; position:relative;">
+            <div class="topbar-actions">
+                <button class="top-icon-btn" onclick="showToast('No new notifications.', 'success')" title="Notifications">
                     <i class="fas fa-bell"></i>
-                    <div class="notif-badge" style="position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.6rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg);">3</div>
+                    <div class="notif-badge">3</div>
                 </button>
-                <button class="top-icon-btn" onclick="openModal('daily-reward-modal')" title="Daily Reward" style="background:none; border:none; color:var(--credits); font-size:1.1rem; cursor:pointer;">
+                <button class="top-icon-btn" onclick="openModal('daily-reward-modal')" title="Daily Reward" style="color:var(--credits);">
                     <i class="fas fa-calendar-check"></i>
                 </button>
-                <button class="top-icon-btn" onclick="openModal('promo-modal')" title="Gift Code" style="background:none; border:none; color:var(--ps-glow); font-size:1.1rem; cursor:pointer;">
+                <button class="top-icon-btn" onclick="openModal('promo-modal')" title="Gift Code" style="color:var(--ps-glow);">
                     <i class="fas fa-gift"></i>
                 </button>
-                <button class="top-icon-btn" id="mute-btn" onclick="toggleAudio()" title="Toggle Audio" style="background:none; border:none; color:white; font-size:1.1rem; cursor:pointer;">
+                <button class="top-icon-btn" id="mute-btn" onclick="toggleAudio()" title="Toggle Audio">
                     <i class="fas fa-volume-up"></i>
                 </button>
-                <button class="top-icon-btn" onclick="confirmLogout()" title="Logout" style="background:none; border:none; color:var(--danger); font-size:1.1rem; cursor:pointer;">
+                <button class="top-icon-btn" onclick="confirmLogout()" title="Logout" style="color:var(--danger);">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
@@ -679,7 +632,7 @@
         </div>
         <div class="input-group" style="margin-bottom:25px;">
             <label>Account Details (Name)</label>
-            <input type="text" id="wit-info" class="input-control" placeholder="e.g. John Doe / 09123456789">
+            <input type="text" id="wit-info" class="input-control" placeholder="e.g. John Doe / GCash">
         </div>
         <button class="btn-play" style="width:100%;" onclick="submitWithdrawal()"><i class="fas fa-arrow-up"></i> Request Withdrawal</button>
       </div>
@@ -714,8 +667,8 @@
             </div>
 
         <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 300px; padding-right:5px;">
-            <div style="display:flex; padding:10px 15px; border-bottom:2px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:var(--glass-bg); z-index:10;">
-                Outcome Feed (Last 25)
+            <div style="display:flex; padding:10px 15px; border-bottom:2px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:var(--glass-bg); z-index:10; justify-content:center;">
+                Last 25 Outcomes
             </div>
             <div id="gr-items" style="display:flex; flex-direction:column; gap:8px; margin-top:10px;"></div>
         </div>
@@ -731,17 +684,8 @@
      </div>
   </div>
 
-  <div id="notif-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; max-height: 80vh;">
-        <button class="modal-close-icon" onclick="closeModal('notif-modal')"><i class="fas fa-times"></i></button>
-        <h3 style="margin-top:0;">Notifications</h3>
-        <div id="notif-list" class="custom-scroll" style="overflow-y:auto; display:flex; flex-direction:column; gap:10px; max-height: 400px; padding-right:5px;">
-            <div style="text-align:center; color:var(--text-muted); padding:20px;">No new notifications.</div>
-        </div>
-     </div>
-  </div>
-
   <script>
+    // --- SOCKET.IO & GLOBAL STATE ---
     const socket = io(); 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let audioMuted = false;
@@ -758,6 +702,7 @@
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
+    // Dynamic Color Mapping Helper for game results
     function getBetColor(betWord) {
         const map = {
             'Player': 'var(--ps-glow)', 'Banker': 'var(--danger)', 'Tie': 'var(--success)',
@@ -787,7 +732,7 @@
         }, 3000);
     }
 
-    // Dynamic In-Game Toast Notifs
+    // Dynamic In-Game Toast Notifs (inside board)
     function sendInGameNotif(msg) {
         sfx.notif();
         const activeView = document.querySelector('.view-container:not(.hidden) .game-display');
@@ -797,13 +742,11 @@
         if (!container) {
             container = document.createElement('div');
             container.className = 'in-game-notif-container';
-            container.style.cssText = 'position: absolute; bottom: 90px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 150; pointer-events: none;';
             activeView.appendChild(container);
         }
 
         const toast = document.createElement('div');
-        toast.className = `toast show`;
-        toast.style.cssText = 'background: rgba(0,0,0,0.85); border: 1px solid var(--glass-border); border-left: 3px solid white; color: white; padding: 10px 20px; border-radius: 6px; display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);';
+        toast.className = `in-game-toast`;
         toast.innerHTML = `<i class="fas fa-info-circle" style="color:white"></i> <span>${msg}</span>`;
         
         container.appendChild(toast);
@@ -925,6 +868,7 @@
         showToast(`Welcome, ${myUsername}!`, "success");
     });
 
+    // Handle delayed balances from server
     socket.on('balanceUpdateData', (newBalance) => {
         updateMyBalance(newBalance);
     });
@@ -1013,13 +957,13 @@
 
     // --- RULES & MY HISTORY ---
     const gameInfoMap = {
-      'dice': { title: "Dice Roll", body: "<ul style='margin-left:20px; color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (2x Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
-      'coinflip': { title: "Coin Flip", body: "<ul style='margin-left:20px; color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>2x</strong> your bet.</li></ul>" },
-      'baccarat': { title: "Baccarat", body: "<ul style='margin-left:20px; color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Player, Banker, or Tie. Hand closest to <strong>9</strong> wins.</li><li style='margin-bottom:10px;'><strong>Card Rules:</strong> Standard 3rd card draw rules apply.</li><li style='margin-bottom:10px;'>Player pays <strong>2x</strong>. Banker pays <strong>1.95x</strong>. Tie pays <strong>8x</strong>.</li></ul>" },
-      'blackjack': { title: "Blackjack", body: "<ul style='margin-left:20px; color:var(--text-muted);'><li style='margin-bottom:10px;'>Beat the dealer without going over 21.</li><li style='margin-bottom:10px;'>Dealer must draw to 16 and stand on <strong>17 or higher</strong>.</li><li style='margin-bottom:10px;'>Natural Blackjack pays <strong>2.5x</strong>. Standard wins pay <strong>2x</strong>. Ties push.</li></ul>" },
-      'perya': { title: "Color Game", body: "<ul style='margin-left:20px; color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Red, Blue, Yellow, White, Green, or Pink.</li><li style='margin-bottom:10px;'>3 dice are rolled.</li><li style='margin-bottom:10px;'>1 Match pays <strong>2x</strong>. 2 Matches pay <strong>3x</strong>. 3 Matches pay <strong>4x</strong>!</li></ul>" },
-      'dt': { title: "Dragon Tiger", body: "<ul style='margin-left:20px; color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Dragon, Tiger, or Tie. Highest card wins.</li><li style='margin-bottom:10px;'>Aces are low (1). Kings are high (13).</li><li style='margin-bottom:10px;'>Dragon/Tiger pays <strong>2x</strong>. Tie pays <strong>8x</strong>.</li></ul>" },
-      'sicbo': { title: "Sic Bo", body: "<ul style='margin-left:20px; color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Small (Sum 4-10) or Big (Sum 11-17).</li><li style='margin-bottom:10px;'>Wins pay <strong>2x</strong>.</li><li style='margin-bottom:10px;'>Any Triple roll loses all Big/Small bets.</li></ul>" }
+      'dice': { title: "Dice Roll", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (2x Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
+      'coinflip': { title: "Coin Flip", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>2x</strong> your bet.</li></ul>" },
+      'baccarat': { title: "Baccarat", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Player, Banker, or Tie. Hand closest to <strong>9</strong> wins.</li><li style='margin-bottom:10px;'><strong>Card Rules:</strong> Standard 3rd card draw rules apply.</li><li style='margin-bottom:10px;'>Player pays <strong>2x</strong>. Banker pays <strong>1.95x</strong>. Tie pays <strong>8x</strong>.</li></ul>" },
+      'blackjack': { title: "Blackjack", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Beat the dealer without going over 21.</li><li style='margin-bottom:10px;'>Dealer must draw to 16 and stand on <strong>17 or higher</strong>.</li><li style='margin-bottom:10px;'>Natural Blackjack pays <strong>2.5x</strong>. Standard wins pay <strong>2x</strong>. Ties push.</li></ul>" },
+      'perya': { title: "Color Game", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Red, Blue, Yellow, White, Green, or Pink.</li><li style='margin-bottom:10px;'>3 dice are rolled.</li><li style='margin-bottom:10px;'>1 Match pays <strong>2x</strong>. 2 Matches pay <strong>3x</strong>. 3 Matches pay <strong>4x</strong>!</li></ul>" },
+      'dt': { title: "Dragon Tiger", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Dragon, Tiger, or Tie. Highest card wins.</li><li style='margin-bottom:10px;'>Aces are low (1). Kings are high (13).</li><li style='margin-bottom:10px;'>Dragon/Tiger pays <strong>2x</strong>. Tie pays <strong>8x</strong>.</li></ul>" },
+      'sicbo': { title: "Sic Bo", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Small (Sum 4-10) or Big (Sum 11-17).</li><li style='margin-bottom:10px;'>Wins pay <strong>2x</strong>.</li><li style='margin-bottom:10px;'>Any Triple roll loses all Big/Small bets.</li></ul>" }
     };
 
     function openRules(k) { 
@@ -1097,7 +1041,6 @@
         
         data.results.forEach(r => {
             let content = '';
-            // If Color Game, draw 3 dice instead of text!
             if (data.game === 'perya') {
                 let colors = r.result.split(','); 
                 let diceHtml = colors.map(c => `<div class="color-die c-${c.toLowerCase().trim()}" style="width:25px; height:25px; border-radius:4px; display:inline-block; border:1px solid rgba(255,255,255,0.2);"></div>`).join('');
@@ -1213,6 +1156,7 @@
         box.innerHTML = h; box.style.display = 'block'; 
     }
 
+    // Dice
     function playDice() {
       let bet = parseInt(document.getElementById('dice-bet').value);
       if (isNaN(bet) || bet <= 0 || bet > myCredits) return showToast("Invalid bet.", "error");
@@ -1221,6 +1165,7 @@
       btn.disabled = true; mb.style.display = 'none'; icn.style.display = 'block'; nd.style.display = 'none'; 
       icn.className = `fas fa-dice-d20 dice-icon anim-shake`;
       
+      // Deduct bet instantly locally
       myCredits -= bet; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
       socket.emit('playSolo', { game: 'dice', bet: bet });
     }
@@ -1239,7 +1184,6 @@
                 showEndBox(mb, data.bet, data.payout, `Rolled ${data.roll}`);
                 logHistory('dice', data.bet, data.payout, `Rolled ${data.roll}`);
                 
-                // Allow immediate replay, bet amount remains
                 setTimeout(() => {
                    icn.className = 'fas fa-dice-d20 dice-icon';
                    icn.style.display = 'block'; nd.style.display = 'none'; mb.style.display = 'none';
@@ -1267,7 +1211,7 @@
 
     socket.on('coinResult', (data) => {
         const cw = document.getElementById('coin-wrapper'), co = document.getElementById('coin-obj'), mb = document.getElementById('coin-msg');
-        coinFlips += 5; // Adds exactly 5 full rotations (1800 deg)
+        coinFlips += 5; 
         let er = data.result === 'Tails' ? 180 : 0; 
         co.style.transform = `rotateY(${coinFlips * 360 + er}deg)`; 
         
@@ -1278,11 +1222,9 @@
             
             updateMyBalance(data.newBalance, data.payout > 0);
             
-            // Re-enable instantly, keep bet
             document.getElementById('btn-heads').disabled = false; 
             document.getElementById('btn-tails').disabled = false;
             
-            // Auto hide result box after 3s
             setTimeout(() => { mb.style.display = 'none'; }, 3000);
         }, 2500);
     });
@@ -1314,7 +1256,6 @@
         if(bjSt.active) { bjSt.active=false; document.getElementById('btn-bj-hit').disabled=true; document.getElementById('btn-bj-stand').disabled=true; socket.emit('playSolo', { game:'blackjack', action:'stand' }); } 
     }
 
-    // Helper: Gets dynamic blackjack score (Ace = 11 or 1)
     function getBJScore(hand) {
         let score = 0, aces = 0;
         hand.forEach(c => { score += c.bjVal; if (c.val === 'A') aces++; });
@@ -1322,7 +1263,7 @@
         return score;
     }
 
-    // Append single card
+    // Appends cards one by one so CSS animations work properly per card
     async function appendCard(containerId, scoreId, card, fullHandArr, isHidden = false) {
         let container = document.getElementById(containerId);
         let ir = (card.suit === '♥' || card.suit === '♦'); 
@@ -1338,7 +1279,7 @@
         container.insertAdjacentHTML('beforeend', html);
         sfx.deal();
         
-        await delay(400); 
+        await delay(400); // Visual landing delay
         
         if (!isHidden) {
             document.getElementById(scoreId).innerText = getBJScore(fullHandArr);
@@ -1365,7 +1306,7 @@
             document.getElementById('bj-action-controls').classList.add('hidden');
             document.getElementById('bj-start-controls').classList.remove('hidden');
             
-            // Reveal dealer
+            // Reveal hidden dealer card
             let hidden = document.getElementById('hidden-card');
             if (hidden) {
                 let c = data.dHand[1];
@@ -1377,6 +1318,7 @@
                 document.getElementById('bj-d-score').innerText = getBJScore(data.dHand.slice(0,2));
             }
 
+            // Draw extra dealer cards
             if (data.dHand.length > 2) {
                 for(let i = 2; i < data.dHand.length; i++) {
                     await delay(400); 
@@ -1388,7 +1330,6 @@
             showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.msg);
             logHistory('blackjack', bjSt.bet, data.payout, data.msg);
             updateMyBalance(data.newBalance, data.payout > 0);
-            if (data.payout > data.bet) sendInGameNotif(`You won +${data.payout - data.bet} TC`);
             
             document.getElementById('btn-bj-deal').disabled = false;
         }
@@ -1498,7 +1439,7 @@
                 let sh = ir ? `<span class="card-red">${card.suit}</span>` : card.suit;
                 side.insertAdjacentHTML('beforeend', `<div class="play-card anim-deal"><div class="val">${card.val}</div><div class="suit">${sh}</div></div>`);
                 sfx.deal();
-                await delay(500);
+                await delay(500); // Visual deal wait
                 scoreEl.innerText = arr.reduce((sum, c) => sum + c.bacVal, 0) % 10;
             };
 
