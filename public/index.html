@@ -155,16 +155,16 @@
         .live-dot { width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; animation: pulseRed 1.5s infinite; }
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
 
-        .casino-grid { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; align-items: center; margin: 0 auto; max-width: 1300px; }
-        .casino-grid.solo-grid { max-width: 1000px; } 
-
-        .game-card { width: 280px; height: 400px; cursor: pointer; display: flex; flex-direction: column; position: relative; border-radius: 16px; overflow: hidden; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; }
+        /* STRICT VERTICAL CARDS GRID */
+        .casino-grid { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
+        
+        .game-card { width: 240px; height: 340px; cursor: pointer; display: flex; flex-direction: column; position: relative; border-radius: 16px; overflow: hidden; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; flex-shrink: 0;}
         .game-card:hover { transform: translateY(-8px); border-color: var(--glass-hover); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.1); }
-        .game-img { flex: 1; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 6rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; }
-        .game-card:hover .game-img { color: white; text-shadow: 0 0 25px var(--ps-glow); background: rgba(0,30,70,0.6); }
-        .game-info { padding: 20px; text-align: center; background: rgba(0,0,0,0.85); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 6px; height: 110px; justify-content: center; }
-        .game-title { font-size: 1.4rem; font-weight: 900; color: white; text-transform:uppercase; letter-spacing: 1px; margin: 0; } 
-        .game-desc { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; line-height: 1.3; }
+        .game-img { flex: 1; background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; font-size: 5rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; }
+        .game-card:hover .game-img { color: white; text-shadow: 0 0 25px var(--ps-glow); background: rgba(0,30,70,0.4); }
+        .game-info { height: 100px; padding: 15px; text-align: center; background: rgba(0, 5, 15, 0.95); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 5px; justify-content: center; }
+        .game-title { font-size: 1.3rem; font-weight: 900; color: white; text-transform:uppercase; letter-spacing: 1px; margin: 0; } 
+        .game-desc { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; line-height: 1.3; }
 
         .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 1rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
@@ -173,7 +173,7 @@
         .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
 
-        .game-box { display: flex; flex-direction: column; width: 100%; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; height: 650px;} 
+        .game-box { display: flex; flex-direction: column; width: 100%; max-width: 850px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; height: 650px;} 
         .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 20px; min-height: 350px;}
         
         .controls-grid { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); flex-shrink: 0; } 
@@ -209,7 +209,7 @@
         }
         .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; border-color: var(--glass-border) !important; color: var(--text-muted) !important; }
 
-        /* MODALS - SIZED TO FIT CONTENT (PlayStation Theme / Glassmorphism) */
+        /* MODALS (PlayStation Theme / Glassmorphism) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-content { background: rgba(0, 5, 15, 0.9); width: 600px; max-width: 95vw; padding: 2.5rem; border-radius: 12px; border: 1px solid rgba(0, 162, 255, 0.4); border-top: 3px solid var(--ps-glow); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 30px rgba(0, 162, 255, 0.1); position: relative; display: flex; flex-direction: column; height: auto; max-height: 90vh; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);}
         .modal-close-icon { position: absolute; top: 25px; right: 25px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 10;}
@@ -223,13 +223,13 @@
         .bank-section { display: none; flex: 1; padding-right: 15px;}
         .bank-section.active { display: block; }
         
-        .btn-ledger { background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--glass-border); border-left: 3px solid var(--ps-glow); width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}
-        .btn-ledger:hover { background: rgba(255,255,255,0.1); border-color: white; }
+        .btn-ledger { background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--glass-border); border-left: 3px solid var(--ps-glow); width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 10px;}
+        .btn-ledger:hover { background: rgba(255,255,255,0.1); border-color: white; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,162,255,0.2);}
 
         /* Solid Header Backgrounds to fix scroll overlap */
         thead th { position: sticky; top: 0; background: #000a1f; z-index: 10; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); padding: 10px 15px;}
 
-        /* DAILY REWARD MODAL SPECIFICS */
+        /* DAILY REWARD */
         .dr-days { display: flex; gap: 10px; justify-content: center; align-items: flex-end; margin-bottom: 25px; height: 160px; }
         .dr-day { flex: 1; background: linear-gradient(180deg, #1a2a6c 0%, #001f4d 100%); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 10px 5px; height: 130px; transition: 0.3s; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .dr-day::before { content: ''; position: absolute; inset: -50%; background: repeating-conic-gradient(rgba(255,255,255,0.08) 0 15deg, transparent 15deg 30deg); z-index: 0; opacity: 0.8; animation: rotateBurst 20s linear infinite; }
@@ -260,7 +260,10 @@
         .dr-status-text { font-size: 1.2rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
         .dr-timer { font-size: 1.5rem; font-weight: 900; color: var(--ps-glow); font-family: 'Rajdhani', sans-serif; }
 
-        /* TOAST NOTIFICATIONS (PLAYSTATION STYLE) */
+        /* BACCARAT TEXT & IN-GAME NOTIFS */
+        #bac-action-text { height: 24px; color: var(--ps-glow); font-weight: 800; text-align: center; margin-top: 40px; letter-spacing: 1px; text-transform: uppercase; font-size: 1.1rem; text-shadow: 0 0 10px rgba(0,162,255,0.5); }
+
+        /* GLOBAL TOAST (Top Right) */
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast { background: rgba(0, 5, 15, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0, 162, 255, 0.4); color: white; padding: 15px 25px; border-radius: 8px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0, 162, 255, 0.25); text-transform: uppercase;}
         .toast.show { transform: translateX(0); }
@@ -270,10 +273,10 @@
         .toast-error i { color: var(--danger); font-size: 1.3rem;}
 
         /* REQUEST LOGS */
-        .ticket-log-item { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 8px; padding: 10px 15px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;}
-        .ticket-log-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;}
-        .ticket-log-id { font-family: monospace; color: var(--text-muted); font-weight: 600; font-size: 0.85rem;}
-        .ticket-log-status { font-weight: 900; text-transform: uppercase; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; letter-spacing: 1px;}
+        .ticket-log-item { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;}
+        .ticket-log-header { display: flex; justify-content: space-between; align-items: center; font-size: 1rem;}
+        .ticket-log-id { font-family: monospace; color: var(--text-muted); font-weight: 600;}
+        .ticket-log-status { font-weight: 900; text-transform: uppercase; font-size: 0.8rem; padding: 5px 10px; border-radius: 4px; letter-spacing: 1px;}
         .ticket-log-status.pending { background: rgba(255, 180, 0, 0.15); color: var(--credits); border: 1px solid rgba(255, 180, 0, 0.3); }
         .ticket-log-status.approved { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
         .ticket-log-status.rejected { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
@@ -288,8 +291,7 @@
         .result-box.lose, .result-overlay-shared.lose { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.4); border-right: 4px solid var(--danger); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
         .result-box.push, .result-overlay-shared.push { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); border-right: 4px solid var(--text-muted); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        .result-overlay-shared { display: flex; flex-direction: column; opacity: 0; pointer-events: none; } 
-        .result-overlay-shared.show { opacity: 1; pointer-events: all; }
+        .result-overlay-shared { display: flex; flex-direction: column; opacity: 0; pointer-events: none; background: rgba(0, 10, 30, 0.85); border: 1px solid rgba(0, 162, 255, 0.4); border-right: 4px solid var(--ps-glow); transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } .result-overlay-shared.show { opacity: 1; pointer-events: all; transform: translateX(0); }
         
         .res-title { font-size: 1.2rem; font-weight: 900; color: white; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; text-align: right; width: 100%; } 
         .res-payout { font-size: 1.4rem; font-weight: 800; text-align: right; width: 100%; }
@@ -302,8 +304,10 @@
         /* GAME ASSETS */
         .blackjack-scores { display: flex; justify-content: center; gap: 40px; width: 100%; align-items: flex-start; } .card-area { min-width: 250px; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 240px; } .bj-title { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; } .bj-score { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 15px; line-height: 1; } .card-hand { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; width: 100%; } .play-card { background: white; color: black; border-radius: 6px; width: 65px; height: 95px; border: 1px solid #ccc; box-shadow: 2px 5px 15px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; } .play-card .val { font-size: 1.6rem; line-height: 1; margin-bottom: 2px; } .play-card .suit { font-size: 1.8rem; line-height: 1; } .card-red { color: #e60000; } .card-back { background: repeating-linear-gradient(45deg, #001f4d, #001f4d 10px, #000a1f 10px, #000a1f 20px); border: 2px solid rgba(255,255,255,0.8); color: transparent; }
         .anim-deal { animation: dealCard 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: center; } @keyframes dealCard { 0% { opacity: 0; transform: translate(0, -200px) scale(0.5) rotateY(180deg); } 100% { opacity: 1; transform: translate(0, 0) scale(1) rotateY(0deg); } } .anim-flip { animation: flipCard 0.4s ease-in-out forwards; } @keyframes flipCard { 0% { transform: rotateY(180deg); } 50% { transform: rotateY(90deg); color: transparent; } 51% { color: inherit; background: white; } 100% { transform: rotateY(0deg); background: white; color: black; } }
-        .dice-icon { font-size: 7rem; color: var(--text-muted); text-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: 0.1s; line-height: 1; } #dice-num { font-size: 6rem !important; line-height: 1; text-shadow: 0 10px 30px rgba(0,0,0,0.8); font-weight: 900 !important; }
+        .dice-icon { font-size: 7rem; color: var(--text-muted); text-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: 0.1s; line-height: 1;} #dice-num { font-size: 6rem !important; line-height: 1; text-shadow: 0 10px 30px rgba(0,0,0,0.8); font-weight: 900 !important; }
         .coin-wrapper { perspective: 1000px; width: 200px; height: 200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; } .coin-inner { width: 100%; height: 100%; transition: transform 2.5s cubic-bezier(0.25, 1, 0.2, 1); transform-style: preserve-3d; position: relative; } .coin-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 5rem; font-weight: 900; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 15px 40px rgba(0,0,0,0.9); border: 8px solid; } .coin-heads { background: radial-gradient(circle at 30% 30%, #fde047, #b45309); color: #78350f; border-color: #f59e0b; } .coin-tails { background: radial-gradient(circle at 30% 30%, #e2e8f0, #475569); color: #0f172a; border-color: #94a3b8; transform: rotateY(180deg); } .tossing { animation: toss 2.5s cubic-bezier(0.25, 1, 0.2, 1); } @keyframes toss { 0% { transform: scale(1) translateY(0); } 50% { transform: scale(1.5) translateY(-50px); } 100% { transform: scale(1) translateY(0); } }
+
+        /* SHARED GAMES SPECIFICS */
         .color-dice-container { display: flex; gap: 30px; justify-content: center; font-size: 6rem; margin-bottom: 20px; } .color-die { width: 130px; height: 130px; border-radius: 16px; border: 2px solid rgba(255,255,255,0.3); box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; color: white; transition: 0.3s; background: #111; font-weight: 800;} .c-grey { background: radial-gradient(circle, #333, #0a0a0a); color: rgba(255,255,255,0.4); border-color: #444; } .c-red { background: radial-gradient(circle, #ff3366, #99002b); border-color: #ff3366;} .c-blue { background: radial-gradient(circle, #00a2ff, #003d66); border-color: #00a2ff;} .c-yellow { background: radial-gradient(circle, #ffcc00, #997a00); border-color: #ffcc00;} .c-white { background: radial-gradient(circle, #ffffff, #999999); color: #000; border-color: #fff;} .c-green { background: radial-gradient(circle, #00e676, #006634); border-color: #00e676;} .c-pink { background: radial-gradient(circle, #ff66b2, #99004d); border-color: #ff66b2;}
         .dt-arena { display: flex; justify-content: center; gap: 80px; width: 100%; align-items: center; margin-bottom: 20px; } .dt-side { display: flex; flex-direction: column; align-items: center; gap: 20px; } .dt-label { font-size: 2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; } .lbl-dragon { color: var(--danger); text-shadow: 0 0 20px rgba(255,51,102,0.6); } .lbl-tiger { color: var(--credits); text-shadow: 0 0 20px rgba(255,180,0,0.6); } .dt-card { width: 120px !important; height: 170px !important; } .dt-card .val { font-size: 3rem; } .dt-card .suit { font-size: 3.5rem; }
         .sicbo-dice { display: flex; justify-content: center; gap: 30px; font-size: 6rem; margin-bottom: 10px; } .s-die { color: white; text-shadow: 0 10px 20px rgba(0,0,0,0.8); }
@@ -312,10 +316,10 @@
         @media (max-width: 768px) {
             .topbar { padding: 10px 15px; height: auto; min-height: 60px; }
             .topbar-inner { flex-direction: row; gap: 10px; justify-content: space-between; flex-wrap: nowrap;}
-            .brand-title { font-size: 1.2rem; display: none; } /* Hide text on mobile, keep logo dot */
+            .brand-title { font-size: 1.2rem; display: none; } 
             .brand-sub { display: none; }
             .topbar-right { gap: 10px; }
-            .player-profile { display: none; } /* Save space on mobile */
+            .player-profile { display: none; } 
             
             .main-wrapper { padding-top: 100px; justify-content: flex-start; }
             .casino-title { font-size: 2.2rem; margin-top: 20px;}
@@ -461,41 +465,45 @@
             </div>
 
             <div class="lobby-wrapper hidden" id="lobby-indiv">
-              <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
-              <h2 class="header-title">Solo Play</h2>
-              <div class="casino-grid solo-grid">
-                <div class="game-card glass-panel" onclick="openGame('dice')">
-                    <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Dice Roll</div><div class="game-desc">Roll over 50. Pays 2x.</div></div>
-                </div>
-                <div class="game-card glass-panel" onclick="openGame('coinflip')">
-                    <div class="game-img"><i class="fas fa-coins"></i></div><div class="game-info"><div class="game-title">Coin Flip</div><div class="game-desc">Heads or Tails. Pays 2x.</div></div>
-                </div>
-                <div class="game-card glass-panel" onclick="openGame('blackjack')">
-                    <div class="game-img"><i class="fas fa-spade">♠️</i></div><div class="game-info"><div class="game-title">Blackjack</div><div class="game-desc">Beat the dealer to 21.</div></div>
-                </div>
+              <div class="game-wrapper solo-wrap">
+                  <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
+                  <h2 class="header-title" style="align-self: center;">Solo Play</h2>
+                  <div class="casino-grid solo-grid">
+                    <div class="game-card glass-panel" onclick="openGame('dice')">
+                        <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Dice Roll</div><div class="game-desc">Roll over 50. Pays 2x.</div></div>
+                    </div>
+                    <div class="game-card glass-panel" onclick="openGame('coinflip')">
+                        <div class="game-img"><i class="fas fa-coins"></i></div><div class="game-info"><div class="game-title">Coin Flip</div><div class="game-desc">Heads or Tails. Pays 2x.</div></div>
+                    </div>
+                    <div class="game-card glass-panel" onclick="openGame('blackjack')">
+                        <div class="game-img"><i class="fas fa-spade">♠️</i></div><div class="game-info"><div class="game-title">Blackjack</div><div class="game-desc">Beat the dealer to 21.</div></div>
+                    </div>
+                  </div>
               </div>
             </div>
 
             <div class="lobby-wrapper hidden" id="lobby-shared">
-              <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
-              <h2 class="header-title">Shared Tables</h2>
-              <div class="casino-grid shared-grid">
-                <div class="game-card glass-panel" onclick="openSharedGame('baccarat')">
-                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                    <div class="game-img"><i class="fas fa-cards">🃏</i></div><div class="game-info"><div class="game-title">Baccarat</div><div class="game-desc">Closest to 9 wins.</div></div>
-                </div>
-                <div class="game-card glass-panel" onclick="openSharedGame('perya')">
-                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                    <div class="game-img"><i class="fas fa-dice-d6"></i></div><div class="game-info"><div class="game-title">Color Game</div><div class="game-desc">Classic 3-dice color drop.</div></div>
-                </div>
-                <div class="game-card glass-panel" onclick="openSharedGame('dt')">
-                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                    <div class="game-img"><i class="fas fa-dragon"></i></div><div class="game-info"><div class="game-title">Dragon Tiger</div><div class="game-desc">Highest card takes all.</div></div>
-                </div>
-                <div class="game-card glass-panel" onclick="openSharedGame('sicbo')">
-                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                    <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Sic Bo</div><div class="game-desc">Asian 3-dice betting.</div></div>
-                </div>
+              <div class="game-wrapper" style="max-width: 1200px;">
+                  <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
+                  <h2 class="header-title" style="align-self: center;">Shared Tables</h2>
+                  <div class="casino-grid shared-grid">
+                    <div class="game-card glass-panel" onclick="openSharedGame('baccarat')">
+                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                        <div class="game-img"><i class="fas fa-cards">🃏</i></div><div class="game-info"><div class="game-title">Baccarat</div><div class="game-desc">Closest to 9 wins.</div></div>
+                    </div>
+                    <div class="game-card glass-panel" onclick="openSharedGame('perya')">
+                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                        <div class="game-img"><i class="fas fa-dice-d6"></i></div><div class="game-info"><div class="game-title">Color Game</div><div class="game-desc">Classic 3-dice color drop.</div></div>
+                    </div>
+                    <div class="game-card glass-panel" onclick="openSharedGame('dt')">
+                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                        <div class="game-img"><i class="fas fa-dragon"></i></div><div class="game-info"><div class="game-title">Dragon Tiger</div><div class="game-desc">Highest card takes all.</div></div>
+                    </div>
+                    <div class="game-card glass-panel" onclick="openSharedGame('sicbo')">
+                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                        <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Sic Bo</div><div class="game-desc">Asian 3-dice betting.</div></div>
+                    </div>
+                  </div>
               </div>
             </div>
           </div>
@@ -518,14 +526,14 @@
                       <div id="dice-msg" class="result-box"></div>
                     </div>
                     <div class="controls-grid">
-                      <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; margin-bottom: 15px;">
+                      <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto;">
                           <div class="input-group" style="margin:0; width: 150px;">
                               <label>Bet Amount</label>
                               <input type="number" id="dice-bet" class="input-control bet-input" placeholder="10">
                           </div>
                       </div>
-                      <div class="controls-full">
-                          <button class="btn-play" id="btn-dice" onclick="playDice()" style="width: 100%; max-width: 300px;">ROLL DICE</button>
+                      <div class="controls-full" style="max-width: 600px; margin: 0 auto;">
+                          <button class="btn-play" id="btn-dice" onclick="playDice()" style="width: 100%;">ROLL DICE</button>
                       </div>
                     </div>
                   </div>
@@ -555,13 +563,13 @@
                       <div id="coin-msg" class="result-box"></div>
                     </div>
                     <div class="controls-grid">
-                      <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; margin-bottom: 15px;">
+                      <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto;">
                           <div class="input-group" style="margin:0; width: 150px;">
                               <label>Bet Amount</label>
                               <input type="number" id="coin-bet" class="input-control bet-input" placeholder="10">
                           </div>
                       </div>
-                      <div class="controls-full" style="max-width: 400px; margin: 0 auto;">
+                      <div class="controls-full" style="max-width: 600px; margin: 0 auto;">
                           <button class="btn-play" id="btn-heads" onclick="playCoin('Heads')" style="flex:1; background: rgba(255,180,0,0.2); border-color: var(--credits);">Heads</button>
                           <button class="btn-play" id="btn-tails" onclick="playCoin('Tails')" style="flex:1; background: rgba(255,255,255,0.1); border-color: white;">Tails</button>
                       </div>
@@ -592,19 +600,19 @@
                     </div>
                     
                     <div class="controls-grid" id="bj-start-controls">
-                      <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; margin-bottom: 15px;">
+                      <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto;">
                           <div class="input-group" style="margin:0; width: 150px;">
                               <label>Bet Amount</label>
                               <input type="number" id="bj-bet" class="input-control bet-input" placeholder="10">
                           </div>
                       </div>
-                      <div class="controls-full">
-                          <button class="btn-play" onclick="startBlackjack()" id="btn-bj-deal" style="width: 100%; max-width: 300px;">DEAL CARDS</button>
+                      <div class="controls-full" style="max-width: 600px; margin: 0 auto;">
+                          <button class="btn-play" onclick="startBlackjack()" id="btn-bj-deal" style="width: 100%;">DEAL CARDS</button>
                       </div>
                     </div>
 
                     <div class="controls-grid hidden" id="bj-action-controls" style="padding: 25px;">
-                      <div class="controls-full" style="max-width: 400px; margin: 0 auto;">
+                      <div class="controls-full" style="max-width: 600px; margin: 0 auto;">
                           <button class="btn-play" onclick="hitBlackjack()" id="btn-bj-hit" style="flex:1; background: rgba(0,162,255,0.2); border-color: var(--ps-glow); color: var(--ps-glow);"><i class="fas fa-hand-point-down"></i> HIT</button>
                           <button class="btn-play" onclick="standBlackjack()" id="btn-bj-stand" style="flex:1; background: rgba(255,51,102,0.2); border-color: var(--danger); color: var(--danger);"><i class="fas fa-hand-paper"></i> STAND</button>
                       </div>
@@ -739,8 +747,8 @@
 
       <div id="sc-tab-ledger" class="bank-section hidden">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-            <h4 style="color:var(--ps-glow); margin:0;">CREDIT LEDGER</h4>
-            <button class="btn-rules" style="width:auto; padding: 5px 10px; height: 30px; font-size: 0.8rem;" onclick="switchSupportCenterTab('deposit', document.querySelectorAll('#cashier-tabs-nav .bank-tab')[0])"><i class="fas fa-arrow-left"></i> BACK</button>
+            <h4 style="color:var(--ps-glow); margin:0; text-transform: uppercase; letter-spacing: 1px;">Credit Ledger</h4>
+            <button class="btn-rules" style="width:auto; padding: 5px 15px; height: 35px; font-size: 0.9rem;" onclick="switchSupportCenterTab('deposit', document.querySelectorAll('#cashier-tabs-nav .bank-tab')[0])"><i class="fas fa-arrow-left"></i> BACK</button>
         </div>
         <div id="ledger-logs-container" class="custom-scroll" style="height: 250px; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; overflow-y: auto; overflow-x: hidden;"></div>
       </div>
@@ -752,21 +760,23 @@
         <i class="fas fa-times modal-close-icon" onclick="closeModal('history-modal')"></i>
         <h3 id="history-title" style="margin-top:0;">HISTORY</h3>
         
-        <div id="history-stats-container" style="background:rgba(0,0,0,0.4); padding:15px; border-radius:8px; margin-bottom:15px; border: 1px solid var(--glass-border);">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 20px;">
-                <div style="flex: 1;">
-                    <div style="font-weight:900; color:white; font-size:1.1rem; margin-bottom:10px;" id="stat-total-rounds">TOTAL ROUNDS: 0</div>
-                    <div id="stat-percentages" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
-                </div>
-                <div style="flex: 1; text-align: right;">
-                    <div style="color:var(--text-muted); font-size:0.85rem; font-weight:800; text-transform:uppercase; margin-bottom: 5px; letter-spacing: 1px;">Recent Outcomes</div>
-                    <div id="stat-recent-5" style="display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:6px;"></div>
-                </div>
+        <div id="history-stats-container" style="background:rgba(0,0,0,0.5); padding:20px; border-radius:12px; margin-bottom:15px; border: 1px solid var(--glass-border); display:flex; flex-direction:column; gap:15px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+                <span style="color:var(--text-muted); font-weight:800; font-size:0.9rem; letter-spacing:1px;">TOTAL ROUNDS:</span>
+                <span id="stat-total-rounds" style="color:white; font-weight:900; font-size:1.1rem;">0</span>
+            </div>
+            <div>
+                <div style="color:var(--text-muted); font-weight:800; font-size:0.9rem; margin-bottom:8px; letter-spacing:1px;">PERCENTAGE OF BETTABLES:</div>
+                <div id="stat-percentages" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+            </div>
+            <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+                <div style="color:var(--text-muted); font-weight:800; font-size:0.9rem; margin-bottom:8px; letter-spacing:1px;">FIVE RECENT OUTCOMES:</div>
+                <div id="stat-recent-5" style="display:flex; gap:8px; align-items:center;"></div>
             </div>
         </div>
 
         <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 350px; padding-right:5px;">
-            <div style="display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:1px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:rgba(0, 10, 25, 0.95); z-index:10; backdrop-filter: blur(5px);">
+            <div style="display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:1px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:rgba(0, 5, 15, 0.95); z-index:10; backdrop-filter: blur(5px);">
                 <div style="text-align:center;">Result</div>
                 <div style="text-align:center;">Bets</div>
                 <div style="text-align:center; color:var(--success)">Win</div>
@@ -778,10 +788,10 @@
   </div>
 
   <div id="rules-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content;">
+     <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; padding: 2.5rem;">
         <i class="fas fa-times modal-close-icon" onclick="closeModal('rules-modal')"></i>
         <h3 id="rules-title" style="margin-top:0;">How to Play</h3>
-        <div id="rules-body" style="color:var(--text-muted); font-size:1rem; line-height:1.6; padding: 0 20px; text-align: left;"></div>
+        <div id="rules-body" style="color:var(--text-muted); font-size:1rem; line-height:1.6; padding: 0 10px; text-align: left;"></div>
      </div>
   </div>
 
@@ -830,7 +840,7 @@
         return str.split(',').map(c => {
             let color = c.trim().toLowerCase();
             if(!color) return '';
-            return `<div class="color-die c-${color}" style="width:16px; height:16px; border-radius:3px; display:inline-block; border:1px solid rgba(255,255,255,0.2); margin:0 2px;"></div>`;
+            return `<div class="color-die c-${color}" style="width:18px; height:18px; border-radius:4px; display:inline-flex; border:1px solid rgba(255,255,255,0.2); margin:0 2px;"></div>`;
         }).join('');
     }
 
@@ -984,11 +994,13 @@
 
     socket.on('balanceUpdateData', (newBalance) => { updateMyBalance(newBalance, true); });
 
+    function triggerWinAnim() { 
+      let p1 = document.getElementById('pill-credits'); 
+      if (p1) { p1.classList.remove('anim-pop'); void p1.offsetWidth; p1.classList.add('anim-pop'); sfx.win(); } 
+    }
+
     function updateMyBalance(newBalance, didWin = false) {
-        if(didWin && newBalance > myCredits) { 
-            let p1 = document.getElementById('pill-credits');
-            p1.classList.remove('anim-pop'); void p1.offsetWidth; p1.classList.add('anim-pop'); sfx.win(); 
-        }
+        if(didWin && newBalance > myCredits) { triggerWinAnim(); }
         myCredits = newBalance;
         document.getElementById('nav-credits').innerText = myCredits.toLocaleString(); 
     }
@@ -1071,7 +1083,7 @@
         currentHistoryGame = id;
         
         document.getElementById('history-title').innerText = gameInfoMap[id].title.toUpperCase() + " HISTORY";
-        document.getElementById('stat-total-rounds').innerText = "TOTAL ROUNDS: Loading...";
+        document.getElementById('stat-total-rounds').innerText = "0";
         document.getElementById('stat-percentages').innerHTML = "";
         document.getElementById('stat-recent-5').innerHTML = "";
         
@@ -1132,7 +1144,7 @@
     socket.on('globalResultsData', data => {
         if(data.game !== currentHistoryGame) return;
         
-        document.getElementById('stat-total-rounds').innerText = `TOTAL ROUNDS: ${data.stats.total}`;
+        document.getElementById('stat-total-rounds').innerText = data.stats.total;
         
         let statsHtml = ``;
         if (data.stats.total > 0) {
@@ -1151,16 +1163,15 @@
         }
         document.getElementById('stat-percentages').innerHTML = statsHtml;
 
-        // Render Recent 5
         let recent5 = data.results.slice(0, 5);
         let rHtml = recent5.map(r => {
             if (data.game === 'perya') {
-                return `<div style="display:flex; gap:2px;">${colorsToDice(r.result)}</div>`;
+                return `<div style="display:flex; gap:2px; background:rgba(0,0,0,0.5); padding:4px; border-radius:6px;">${colorsToDice(r.result)}</div>`;
             } else {
                 let word = r.result.split(' ')[0];
-                return `<span style="color:${getBetColor(word)}; font-weight:900;">${word}</span>`;
+                return `<span style="color:${getBetColor(word)}; font-weight:900; background:rgba(0,0,0,0.5); padding:4px 8px; border-radius:4px;">${word}</span>`;
             }
-        }).join('<span style="color:var(--glass-border); margin:0 4px;">|</span>');
+        }).join('');
         document.getElementById('stat-recent-5').innerHTML = rHtml || '<span style="color:var(--text-muted)">No recent games</span>';
     });
 
@@ -1332,6 +1343,7 @@
         
         setTimeout(() => {
             cw.classList.remove('tossing');
+            
             showEndBox(mb, data.bet, data.payout, `Landed on ${data.result}`, data.newBalance);
             logHistory('coinflip', data.choice.toUpperCase(), data.result.toUpperCase(), data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0, true);
             
@@ -1466,17 +1478,17 @@
           d.innerHTML = `<div class="color-dice-container" id="cg-dice"><div class="color-die c-grey" id="cd1">?</div><div class="color-die c-grey" id="cd2">?</div><div class="color-die c-grey" id="cd3">?</div></div><div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; grid-column: span 2; background: rgba(0,0,0,0.4); padding: 15px 30px; border-radius: 12px; border: 1px solid var(--glass-border); width: 100%; max-width: 500px; margin: 0 auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; grid-column: span 2; background: rgba(0,0,0,0.4); padding: 15px 30px; border-radius: 12px; border: 1px solid var(--glass-border); width: 100%; max-width: 600px; margin: 0 auto;">
               <div class="input-group" style="margin:0; width:150px;">
                 <label style="text-align:center; font-size: 0.8rem;">Bet Amount</label>
                 <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
               </div>
               <div style="text-align:center; cursor:pointer; padding: 10px 20px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid var(--glass-border);" onclick="openCurrentBetsModal()" title="View your bets">
-                <div style="color:var(--text-muted);font-size:0.8rem;font-weight:800;text-transform:uppercase;margin-bottom:5px;"><i class="fas fa-eye"></i> My Bets</div>
-                <div id="sg-my-bet" style="color:var(--credits);font-size:1.4rem;font-weight:900; line-height: 1;">0 TC</div>
+                <div style="color:var(--text-muted);font-size:0.8rem;font-weight:800;text-transform:uppercase;margin-bottom:5px;">Total Bet</div>
+                <div id="sg-my-bet" style="color:white;font-size:1.4rem;font-weight:900; line-height: 1;">0 TC</div>
               </div>
             </div>
-            <div class="bet-grid perya-grid controls-full" id="sg-bet-grid" style="width:100%"></div>`; 
+            <div class="bet-grid perya-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) { 
             const choices = [ {id: 'Yellow', c: '#ffcc00'}, {id: 'White', c: '#ffffff'}, {id: 'Pink', c: '#ff66b2'}, {id: 'Blue', c: '#00a2ff'}, {id: 'Red', c: '#ff3366'}, {id: 'Green', c: '#00e676'} ];
@@ -1543,17 +1555,17 @@
           
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; grid-column: span 2; background: rgba(0,0,0,0.4); padding: 15px 30px; border-radius: 12px; border: 1px solid var(--glass-border); width: 100%; max-width: 500px; margin: 0 auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; grid-column: span 2; background: rgba(0,0,0,0.4); padding: 15px 30px; border-radius: 12px; border: 1px solid var(--glass-border); width: 100%; max-width: 600px; margin: 0 auto;">
               <div class="input-group" style="margin:0; width:150px;">
                 <label style="text-align:center; font-size: 0.8rem;">Bet Amount</label>
                 <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
               </div>
               <div style="text-align:center; cursor:pointer; padding: 10px 20px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid var(--glass-border);" onclick="openCurrentBetsModal()" title="View your bets">
-                <div style="color:var(--text-muted);font-size:0.8rem;font-weight:800;text-transform:uppercase;margin-bottom:5px;"><i class="fas fa-eye"></i> My Bets</div>
-                <div id="sg-my-bet" style="color:var(--credits);font-size:1.4rem;font-weight:900; line-height: 1;">0 TC</div>
+                <div style="color:var(--text-muted);font-size:0.8rem;font-weight:800;text-transform:uppercase;margin-bottom:5px;">Total Bet</div>
+                <div id="sg-my-bet" style="color:white;font-size:1.4rem;font-weight:900; line-height: 1;">0 TC</div>
               </div>
             </div>
-            <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%"></div>`; 
+            <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
             <button class="bet-btn shared-tile" data-choice="Player" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Player')">PLAYER (x2)</button>
@@ -1625,17 +1637,17 @@
           d.innerHTML = `<div class="dt-arena"><div class="dt-side"><div class="dt-label lbl-dragon">Dragon</div><div id="dt-c1" class="card-back dt-card play-card">?</div></div><div style="font-size:2.5rem;color:white;font-weight:300;">VS</div><div class="dt-side"><div class="dt-label lbl-tiger">Tiger</div><div id="dt-c2" class="card-back dt-card play-card">?</div></div></div><div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; grid-column: span 2; background: rgba(0,0,0,0.4); padding: 15px 30px; border-radius: 12px; border: 1px solid var(--glass-border); width: 100%; max-width: 500px; margin: 0 auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; grid-column: span 2; background: rgba(0,0,0,0.4); padding: 15px 30px; border-radius: 12px; border: 1px solid var(--glass-border); width: 100%; max-width: 600px; margin: 0 auto;">
               <div class="input-group" style="margin:0; width:150px;">
                 <label style="text-align:center; font-size: 0.8rem;">Bet Amount</label>
                 <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
               </div>
               <div style="text-align:center; cursor:pointer; padding: 10px 20px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid var(--glass-border);" onclick="openCurrentBetsModal()" title="View your bets">
-                <div style="color:var(--text-muted);font-size:0.8rem;font-weight:800;text-transform:uppercase;margin-bottom:5px;"><i class="fas fa-eye"></i> My Bets</div>
-                <div id="sg-my-bet" style="color:var(--credits);font-size:1.4rem;font-weight:900; line-height: 1;">0 TC</div>
+                <div style="color:var(--text-muted);font-size:0.8rem;font-weight:800;text-transform:uppercase;margin-bottom:5px;">Total Bet</div>
+                <div id="sg-my-bet" style="color:white;font-size:1.4rem;font-weight:900; line-height: 1;">0 TC</div>
               </div>
             </div>
-            <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%"></div>`; 
+            <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
             <button class="bet-btn shared-tile" data-choice="Dragon" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Dragon')">DRAGON (x2)</button>
@@ -1676,22 +1688,22 @@
           d.innerHTML = `<div class="sicbo-dice" id="sb-dice"><i class="fas fa-dice-d6 s-die"></i><i class="fas fa-dice-d6 s-die"></i><i class="fas fa-dice-d6 s-die"></i></div><div id="sb-sum" style="font-size:2rem;color:var(--text-muted); margin-top:30px; font-weight:900; letter-spacing:2px;">Waiting for roll...</div><div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; grid-column: span 2; background: rgba(0,0,0,0.4); padding: 15px 30px; border-radius: 12px; border: 1px solid var(--glass-border); width: 100%; max-width: 500px; margin: 0 auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; grid-column: span 2; background: rgba(0,0,0,0.4); padding: 15px 30px; border-radius: 12px; border: 1px solid var(--glass-border); width: 100%; max-width: 600px; margin: 0 auto;">
               <div class="input-group" style="margin:0; width:150px;">
                 <label style="text-align:center; font-size: 0.8rem;">Bet Amount</label>
                 <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
               </div>
               <div style="text-align:center; cursor:pointer; padding: 10px 20px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid var(--glass-border);" onclick="openCurrentBetsModal()" title="View your bets">
-                <div style="color:var(--text-muted);font-size:0.8rem;font-weight:800;text-transform:uppercase;margin-bottom:5px;"><i class="fas fa-eye"></i> My Bets</div>
-                <div id="sg-my-bet" style="color:var(--credits);font-size:1.4rem;font-weight:900; line-height: 1;">0 TC</div>
+                <div style="color:var(--text-muted);font-size:0.8rem;font-weight:800;text-transform:uppercase;margin-bottom:5px;">Total Bet</div>
+                <div id="sg-my-bet" style="color:white;font-size:1.4rem;font-weight:900; line-height: 1;">0 TC</div>
               </div>
             </div>
-            <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%"></div>`; 
+            <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
-            <button class="bet-btn shared-tile" data-choice="Small" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Small')">SMALL (x2)</button>
+            <button class="bet-btn shared-tile" data-choice="Small" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Small')">SMALL (4-10)</button>
             <div style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-weight:800;font-size:1rem;text-align:center;">TRIPLE LOSES</div>
-            <button class="bet-btn shared-tile" data-choice="Big" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Big')">BIG (x2)</button>`; 
+            <button class="bet-btn shared-tile" data-choice="Big" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Big')">BIG (11-17)</button>`; 
         },
         animateResult: function(data) { 
           const dc = document.getElementById('sb-dice'); 
@@ -1790,24 +1802,28 @@
       
       logHistory(gid, betsPlacedStr || '-', resStr, wonProfit, lostBet, tba > 0);
       
-      if (t) t.innerHTML = msg; 
-      if (tba > 0 && b) { 
-        b.style.display = 'block'; 
-        if (net > 0) { b.innerHTML = `Won <span style="color:var(--success)">+${net} TC</span>`; triggerWinAnim();} 
-        else if (net === 0) { b.innerHTML = `Push <span style="color:var(--text-muted)">Returned</span>`; } 
-        else { b.innerHTML = `Lost <span style="color:var(--danger)">-${Math.abs(net)} TC</span>`; } 
-      } else if (b) {
-          b.style.display = 'none'; 
-      } 
-      
-      box.classList.add('show'); 
-      
-      setTimeout(() => { socket.emit('requestBalanceRefresh'); }, 1500);
+      // Exact Pacing
+      setTimeout(() => {
+          if (t) t.innerHTML = msg; 
+          if (tba > 0 && b) { 
+            b.style.display = 'block'; 
+            if (net > 0) { b.innerHTML = `Won <span style="color:var(--success)">+${net} TC</span>`; triggerWinAnim();} 
+            else if (net === 0) { b.innerHTML = `Push <span style="color:var(--text-muted)">Returned</span>`; } 
+            else { b.innerHTML = `Lost <span style="color:var(--danger)">-${Math.abs(net)} TC</span>`; } 
+          } else if (b) {
+              b.style.display = 'none'; 
+          } 
+          
+          box.style.display = 'flex';
+          setTimeout(() => { box.classList.add('show'); }, 10);
+          
+          setTimeout(() => { socket.emit('requestBalanceRefresh'); }, 1500);
+      }, 500);
     }
 
     function wipeTableVisually() {
         let o = document.getElementById('sg-overlay'); 
-        if (o) { o.classList.remove('show'); } 
+        if (o) { o.classList.remove('show'); setTimeout(() => { o.style.display = 'none'; }, 300); } 
         
         let oldBetInput = document.getElementById('sg-bet-input') ? document.getElementById('sg-bet-input').value : '';
         
