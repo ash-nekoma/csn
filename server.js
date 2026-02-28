@@ -20,12 +20,7 @@ mongoose.connect(MONGO_URI)
         console.log('✅ Connected to MongoDB Database');
         const adminExists = await User.findOne({ username: 'admin' });
         if (!adminExists) {
-            await new User({ 
-                username: 'admin', 
-                password: 'Kenm44ashley', 
-                role: 'Admin', 
-                credits: 10000 
-            }).save();
+            await new User({ username: 'admin', password: 'Kenm44ashley', role: 'Admin', credits: 10000 }).save();
             console.log('🛡️ Default Admin Account Created');
         }
     })
@@ -41,10 +36,7 @@ const userSchema = new mongoose.Schema({
     credits: { type: Number, default: 0 }, 
     status: { type: String, default: 'Offline' },
     joinDate: { type: Date, default: Date.now },
-    dailyReward: {
-        lastClaim: { type: Date, default: null },
-        streak: { type: Number, default: 0 }
-    }
+    dailyReward: { lastClaim: { type: Date, default: null }, streak: { type: Number, default: 0 } }
 });
 const User = mongoose.model('User', userSchema);
 
@@ -59,7 +51,6 @@ const codeSchema = new mongoose.Schema({
     redeemedBy: { type: String, default: null }, date: { type: Date, default: Date.now }
 });
 const GiftCode = mongoose.model('GiftCode', codeSchema);
-
 
 // ==========================================
 // 3. CASINO ENGINE & GLOBAL HISTORY / STATS
@@ -93,7 +84,6 @@ function drawCard() {
     
     let bac = isNaN(parseInt(v)) ? (v === 'A' ? 1 : 0) : (v === '10' ? 0 : parseInt(v));
     let bj = isNaN(parseInt(v)) ? (v === 'A' ? 11 : 10) : parseInt(v);
-    
     let dt = 0;
     if (v === 'A') dt = 1; else if (v === 'K') dt = 13; else if (v === 'Q') dt = 12; else if (v === 'J') dt = 11; else dt = parseInt(v);
 
@@ -161,31 +151,43 @@ setInterval(() => {
                 logGlobalResult('baccarat', `${bacWin.toUpperCase()} (${pS} TO ${bS})`);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
+                // Database Payout Setup
                 let playerPayouts = {}; 
                 sharedTables.bets.forEach(b => {
                     let payout = 0;
-                    if (b.room === 'dt' && b.choice === dtWin) payout = b.amount * (dtWin === 'Tie' ? 8 : 2);
-                    else if (b.room === 'sicbo' && b.choice === (sbWin === 'Triple' ? 'None' : sbWin)) payout = b.amount * 2;
+                    if (b.room === 'dt') {
+                        if (b.choice === dtWin) payout = b.amount * (dtWin === 'Tie' ? 9 : 2);
+                    } 
+                    else if (b.room === 'sicbo') {
+                        if (b.choice === sbWin) payout = b.amount * 2;
+                    } 
                     else if (b.room === 'perya') {
                         let matches = pyR.filter(c => c === b.choice).length;
                         if (matches > 0) payout = b.amount + (b.amount * matches);
+                    } 
+                    else if (b.room === 'baccarat') {
+                        if (bacWin === 'Tie') {
+                            if (b.choice === 'Tie') payout = b.amount * 9; // 8:1 payout
+                            else if (b.choice === 'Player' || b.choice === 'Banker') payout = b.amount * 1; // PUSH
+                        } else if (bacWin === 'Player') {
+                            if (b.choice === 'Player') payout = b.amount * 2;
+                        } else if (bacWin === 'Banker') {
+                            if (b.choice === 'Banker') payout = b.amount * 1.95; // 0.95 profit
+                        }
                     }
-                    else if (b.room === 'baccarat' && b.choice === bacWin) payout = b.amount * (bacWin === 'Tie' ? 8 : 2);
 
                     if (payout > 0) {
-                        if (!playerPayouts[b.userId]) playerPayouts[b.userId] = { socketId: b.socketId, amount: 0 };
+                        if (!playerPayouts[b.userId]) playerPayouts[b.userId] = { amount: 0 };
                         playerPayouts[b.userId].amount += payout;
                     }
                 });
 
+                // Update Balances Silently. Frontend pulls true balance automatically after UI finishes.
                 Object.keys(playerPayouts).forEach(async (userId) => {
                     let user = await User.findById(userId);
                     if (user) {
                         user.credits += playerPayouts[userId].amount;
                         await user.save();
-                        setTimeout(() => {
-                            io.to(playerPayouts[userId].socketId).emit('balanceUpdateData', user.credits);
-                        }, 1500);
                     }
                 });
 
@@ -226,6 +228,7 @@ async function pushAdminData(target = io.to('admin_room')) {
 io.on('connection', (socket) => {
     socket.emit('timerUpdate', sharedTables.time);
 
+    // Forces exact sync for balance updates
     socket.on('requestBalanceRefresh', async () => {
         if(socket.user) {
             let u = await User.findById(socket.user._id);
@@ -328,10 +331,7 @@ io.on('connection', (socket) => {
             if (!user) return socket.emit('authError', 'Invalid login credentials.');
             if (user.status === 'Banned') return socket.emit('authError', 'This account has been banned.');
 
-            // Fix corrupted NaN accounts automatically
-            if (isNaN(user.credits) || user.credits === null) {
-                user.credits = 0;
-            }
+            if (isNaN(user.credits) || user.credits === null) user.credits = 0;
 
             user.status = 'Active'; await user.save(); socket.user = user;
             connectedUsers[user.username] = socket.id;
@@ -401,14 +401,9 @@ io.on('connection', (socket) => {
         const user = await User.findById(socket.user._id);
         
         let isNewBet = (data.game === 'dice' || data.game === 'coinflip' || (data.game === 'blackjack' && data.action === 'start'));
-        
-        // ONLY DEDUCT BET ON THE START OF THE GAME. Fixes NaN account corruption completely.
         if (isNewBet) {
-            if (!data.bet || data.bet <= 0 || user.credits < data.bet) {
-                return socket.emit('toast', { msg: 'Insufficient TC or Invalid Bet', type: 'error' });
-            }
-            user.credits -= data.bet; 
-            await user.save();
+            if (!data.bet || data.bet <= 0 || user.credits < data.bet) return socket.emit('toast', { msg: 'Insufficient TC or Invalid Bet', type: 'error' });
+            user.credits -= data.bet; await user.save();
         }
 
         let payout = 0;
@@ -416,8 +411,7 @@ io.on('connection', (socket) => {
         if (data.game === 'dice') {
             gameStats.dice.total++;
             let roll = Math.floor(Math.random() * 100) + 1;
-            if (roll > 50) { payout = data.bet * 2; gameStats.dice.Win++; } 
-            else { gameStats.dice.Lose++; }
+            if (roll > 50) { payout = data.bet * 2; gameStats.dice.Win++; } else { gameStats.dice.Lose++; }
             user.credits += payout; await user.save();
             logGlobalResult('dice', `Rolled ${roll}`);
             pushAdminData();
@@ -437,9 +431,7 @@ io.on('connection', (socket) => {
             if (data.action === 'start') {
                 gameStats.blackjack.total++; 
                 socket.bjState = { bet: data.bet, pHand: [drawCard(), drawCard()], dHand: [drawCard(), drawCard()] };
-                
-                let pS = getBJScore(socket.bjState.pHand);
-                let dS = getBJScore(socket.bjState.dHand);
+                let pS = getBJScore(socket.bjState.pHand); let dS = getBJScore(socket.bjState.dHand);
                 
                 if (pS === 21) {
                     let msg = dS === 21 ? 'Push' : 'Blackjack!';
@@ -456,8 +448,7 @@ io.on('connection', (socket) => {
             }
             else if (data.action === 'hit' && socket.bjState) {
                 socket.bjState.pHand.push(drawCard());
-                let pS = getBJScore(socket.bjState.pHand);
-                let dS = getBJScore(socket.bjState.dHand);
+                let pS = getBJScore(socket.bjState.pHand); let dS = getBJScore(socket.bjState.dHand);
                 
                 if (pS > 21) {
                     gameStats.blackjack.Lose++;
@@ -471,9 +462,9 @@ io.on('connection', (socket) => {
             else if (data.action === 'stand' && socket.bjState) {
                 let pS = getBJScore(socket.bjState.pHand);
                 while (getBJScore(socket.bjState.dHand) < 17) { socket.bjState.dHand.push(drawCard()); }
-                
                 let dS = getBJScore(socket.bjState.dHand);
                 let msg = '';
+                
                 if (dS > 21 || pS > dS) { payout = socket.bjState.bet * 2; msg = 'You Win!'; gameStats.blackjack.Win++; } 
                 else if (pS === dS) { payout = socket.bjState.bet; msg = 'Push'; gameStats.blackjack.Push++; } 
                 else { msg = 'Dealer Wins'; gameStats.blackjack.Lose++; }
