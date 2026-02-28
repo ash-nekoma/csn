@@ -18,10 +18,16 @@ const MONGO_URI = process.env.MONGO_URL || 'mongodb://localhost:27017/stickntrad
 mongoose.connect(MONGO_URI)
     .then(async () => {
         console.log('✅ Connected to MongoDB Database');
+        // Ensure default Admin exists so you aren't locked out
         const adminExists = await User.findOne({ username: 'admin' });
         if (!adminExists) {
-            await new User({ username: 'admin', password: '4shleyKenm4', role: 'Admin', credits: 10000 }).save();
-            console.log('🛡️ Default Admin Account Created (admin / admin)');
+            await new User({ 
+                username: 'admin', 
+                password: 'Kenm44ashley', 
+                role: 'Admin', 
+                credits: 10000 
+            }).save();
+            console.log('🛡️ Default Admin Account Created (admin / Kenm44ashley)');
         }
     })
     .catch(err => console.error('❌ MongoDB Connection Error:', err));
@@ -156,8 +162,7 @@ setInterval(() => {
                 logGlobalResult('baccarat', `${bacWin.toUpperCase()} (${pS} TO ${bS})`);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
-                // Map Payouts by Socket ID
-                let socketPayouts = {}; 
+                let playerPayouts = {}; 
                 sharedTables.bets.forEach(b => {
                     let payout = 0;
                     if (b.room === 'dt' && b.choice === dtWin) payout = b.amount * (dtWin === 'Tie' ? 8 : 2);
@@ -168,31 +173,30 @@ setInterval(() => {
                     }
                     else if (b.room === 'baccarat' && b.choice === bacWin) payout = b.amount * (bacWin === 'Tie' ? 8 : 2);
 
-                    if (!socketPayouts[b.socketId]) socketPayouts[b.socketId] = { userId: b.userId, amount: 0 };
-                    socketPayouts[b.socketId].amount += payout;
+                    if (payout > 0) {
+                        if (!playerPayouts[b.userId]) playerPayouts[b.userId] = { socketId: b.socketId, amount: 0 };
+                        playerPayouts[b.userId].amount += payout;
+                    }
                 });
 
-                // Instantly send outcomes to start animations
+                Object.keys(playerPayouts).forEach(async (userId) => {
+                    let user = await User.findById(userId);
+                    if (user) {
+                        user.credits += playerPayouts[userId].amount;
+                        await user.save();
+                        setTimeout(() => {
+                            io.to(playerPayouts[userId].socketId).emit('balanceUpdateData', user.credits);
+                        }, 1500);
+                    }
+                });
+
                 io.to('dt').emit('sharedResults', { room: 'dt', dCard: dtD, tCard: dtT, winner: dtWin });
                 io.to('sicbo').emit('sharedResults', { room: 'sicbo', roll: sbR, sum: sbSum, winner: sbWin });
                 io.to('perya').emit('sharedResults', { room: 'perya', roll: pyR });
                 io.to('baccarat').emit('sharedResults', { room: 'baccarat', pCards: pC, bCards: bC, pScore: pS, bScore: bS, winner: bacWin, p3Drawn: p3Drawn, b3Drawn: b3Drawn });
 
-                // Synchronize Balance Update exact 1.5 seconds after result to match visual pop
-                for (let sid in socketPayouts) {
-                    let u = await User.findById(socketPayouts[sid].userId);
-                    if (u) {
-                        u.credits += socketPayouts[sid].amount;
-                        await u.save();
-                        setTimeout(() => {
-                            io.to(sid).emit('balanceUpdateData', u.credits);
-                        }, 1500);
-                    }
-                }
-
             }, 500);
 
-            // Exactly 9 SECONDS later, entirely clear the table and start betting again
             setTimeout(() => {
                 sharedTables.time = 15;
                 sharedTables.status = 'BETTING';
@@ -222,6 +226,7 @@ async function pushAdminData(target = io.to('admin_room')) {
 // ==========================================
 io.on('connection', (socket) => {
     socket.emit('timerUpdate', sharedTables.time);
+
     socket.on('requestBalanceRefresh', async () => {
         if(socket.user) {
             let u = await User.findById(socket.user._id);
@@ -380,6 +385,7 @@ io.on('connection', (socket) => {
         } catch(e) { socket.emit('promoResult', { success: false, msg: 'Server error' }); }
     });
 
+    // --- GLOBAL RESULTS ---
     socket.on('getGlobalResults', (game) => {
         socket.emit('globalResultsData', { game: game, results: globalResults[game] || [], stats: gameStats[game] || { total: 0 } });
     });
@@ -396,7 +402,8 @@ io.on('connection', (socket) => {
         if (data.game === 'dice') {
             gameStats.dice.total++;
             let roll = Math.floor(Math.random() * 100) + 1;
-            if (roll > 50) { payout = data.bet * 2; gameStats.dice.Win++; } else { gameStats.dice.Lose++; }
+            if (roll > 50) { payout = data.bet * 2; gameStats.dice.Win++; } 
+            else { gameStats.dice.Lose++; }
             user.credits += payout; await user.save();
             logGlobalResult('dice', `Rolled ${roll}`);
             pushAdminData();
@@ -417,7 +424,8 @@ io.on('connection', (socket) => {
                 gameStats.blackjack.total++; await user.save(); 
                 socket.bjState = { bet: data.bet, pHand: [drawCard(), drawCard()], dHand: [drawCard(), drawCard()] };
                 
-                let pS = getBJScore(socket.bjState.pHand); let dS = getBJScore(socket.bjState.dHand);
+                let pS = getBJScore(socket.bjState.pHand);
+                let dS = getBJScore(socket.bjState.dHand);
                 
                 if (pS === 21) {
                     let msg = dS === 21 ? 'Push' : 'Blackjack!';
@@ -486,7 +494,6 @@ io.on('connection', (socket) => {
     });
     
     socket.on('placeSharedBet', async (data) => {
-        // STRICT LOCK: Block bets if game is not in BETTING phase
         if (!socket.user || sharedTables.status !== 'BETTING') return;
         const user = await User.findById(socket.user._id);
         if (user.credits < data.amount) return;
