@@ -130,7 +130,7 @@
         .btn-back:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
         /* MAIN LOBBY & CARDS */
-        /* Flex-start ensures PC alignment never sinks and mobile never overlaps */
+        /* Flex-start ensures PC alignment never sinks */
         .main-wrapper { height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 100px; overflow-y: auto;}
         .content { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; padding: 0 2rem; margin: 0 auto; flex: 1;}
         .view-container { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s; padding-bottom: 40px;}
@@ -142,7 +142,7 @@
         .lobby-modes-container { display: flex; gap: 40px; justify-content: center; width: 100%; max-width: 900px; flex-wrap: wrap; }
         
         /* MASSIVE PORTRAIT HOME CARDS (Blueprint) */
-        .mode-card { width: 320px; height: 460px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; flex-shrink: 0; }
+        .mode-card { width: 340px; height: 440px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; flex-shrink: 0; }
         .mode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); z-index: 1; }
         .mode-card:hover { transform: translateY(-10px); border-color: var(--ps-glow); box-shadow: 0 15px 40px rgba(0, 162, 255, 0.2); background: rgba(0, 30, 60, 0.8); }
         .mode-icon { font-size: 6rem; margin-bottom: 2.5rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; z-index: 2; }
@@ -156,13 +156,14 @@
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
 
         /* STRICT VERTICAL CARDS GRID FOR GAMES (Blueprint) */
-        .casino-grid { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
-        
-        .game-card { width: 240px; height: 360px; cursor: pointer; display: flex; flex-direction: column; position: relative; border-radius: 16px; overflow: hidden; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; flex-shrink: 0;}
+        .casino-grid { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; align-items: center; width: 100%; max-width: 1300px; margin: 0 auto; }
+        .casino-grid.solo-grid { max-width: 1000px; } 
+
+        .game-card { width: 280px; height: 400px; cursor: pointer; display: flex; flex-direction: column; position: relative; border-radius: 16px; overflow: hidden; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; flex-shrink: 0;}
         .game-card:hover { transform: translateY(-8px); border-color: var(--glass-hover); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.1); }
         .game-img { flex: 1; background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; font-size: 5rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; }
         .game-card:hover .game-img { color: white; text-shadow: 0 0 25px var(--ps-glow); background: rgba(0,30,70,0.4); }
-        .game-info { height: 100px; padding: 15px; text-align: center; background: rgba(0, 5, 15, 0.95); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 5px; justify-content: center; }
+        .game-info { height: 110px; padding: 15px; text-align: center; background: rgba(0, 5, 15, 0.95); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 5px; justify-content: center; }
         .game-title { font-size: 1.3rem; font-weight: 900; color: white; text-transform:uppercase; letter-spacing: 1px; margin: 0; } 
         .game-desc { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; line-height: 1.3; }
 
@@ -173,16 +174,16 @@
         .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
 
-        /* Game Box dynamically expands as needed to not cut off content */
-        .game-box { display: flex; flex-direction: column; width: 100%; max-width: 850px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; height: auto; min-height: 600px;} 
+        /* Game Box perfectly sizes to fit Perya layout */
+        .game-box { display: flex; flex-direction: column; width: 100%; max-width: 850px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; height: 680px;} 
         .main-panel { display: flex; flex-direction: column; height: 100%; }
-        .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 40px 20px; min-height: 350px;}
+        .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 20px;}
         
         .controls-grid { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); flex-shrink: 0; } 
         .controls-full { display: flex; gap: 15px; justify-content: center; width: 100%; }
 
-        .shared-layout { display: flex; gap: 20px; width: 100%; height: auto; min-height: 650px; align-items: stretch; justify-content: center; }
-        .chat-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: auto; min-height: 600px;}
+        .shared-layout { display: flex; gap: 20px; width: 100%; height: 680px; align-items: stretch; justify-content: center; }
+        .chat-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; }
         .chat-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
         .chat-msg { background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 8px; border-left: 3px solid var(--ps-light-blue); animation: popIn 0.2s ease-out; flex-shrink: 0;}
         .chat-user { font-weight: 900; color: var(--ps-glow); margin-bottom: 5px; text-transform: uppercase; font-size: 0.85rem;}
@@ -289,7 +290,8 @@
         .result-box.lose, .result-overlay-shared.lose { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.4); border-right: 4px solid var(--danger); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
         .result-box.push, .result-overlay-shared.push { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); border-right: 4px solid var(--text-muted); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        .result-overlay-shared { display: flex; flex-direction: column; opacity: 0; pointer-events: none; background: rgba(0, 10, 30, 0.85); border: 1px solid rgba(0, 162, 255, 0.4); border-right: 4px solid var(--ps-glow); transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } .result-overlay-shared.show { opacity: 1; pointer-events: all; transform: translateX(0); }
+        .result-overlay-shared { display: flex; flex-direction: column; opacity: 0; pointer-events: none; background: rgba(0, 10, 30, 0.85); border: 1px solid rgba(0, 162, 255, 0.4); border-right: 4px solid var(--ps-glow); transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
+        .result-overlay-shared.show { opacity: 1; pointer-events: all; transform: translateX(0); }
         
         .res-title { font-size: 1.2rem; font-weight: 900; color: white; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; text-align: right; width: 100%; } 
         .res-payout { font-size: 1.4rem; font-weight: 800; text-align: right; width: 100%; }
@@ -521,7 +523,7 @@
                         <h2 style="margin:0; line-height:1;">Dice Roll</h2>
                         <div style="display:flex; gap:8px;">
                             <button class="btn-rules" onclick="openRules('dice')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                            <button class="btn-rules" onclick="openHistory('dice')" title="History"><i class="fas fa-list-alt"></i></button>
+                            <button class="btn-rules" onclick="openHistory('dice')" title="History"><i class="fas fa-history"></i></button>
                         </div>
                     </div>
                     <div class="game-display">
@@ -552,7 +554,7 @@
                         <h2 style="margin:0; line-height:1;">Coin Flip</h2>
                         <div style="display:flex; gap:8px;">
                             <button class="btn-rules" onclick="openRules('coinflip')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                            <button class="btn-rules" onclick="openHistory('coinflip')" title="History"><i class="fas fa-list-alt"></i></button>
+                            <button class="btn-rules" onclick="openHistory('coinflip')" title="History"><i class="fas fa-history"></i></button>
                         </div>
                     </div>
                     <div class="game-display">
@@ -590,7 +592,7 @@
                         <h2 style="margin:0; line-height:1;">Blackjack</h2>
                         <div style="display:flex; gap:8px;">
                             <button class="btn-rules" onclick="openRules('blackjack')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                            <button class="btn-rules" onclick="openHistory('blackjack')" title="History"><i class="fas fa-list-alt"></i></button>
+                            <button class="btn-rules" onclick="openHistory('blackjack')" title="History"><i class="fas fa-history"></i></button>
                         </div>
                     </div>
                     <div class="game-display">
@@ -756,27 +758,29 @@
   </div>
 
   <div id="history-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 550px; height: 600px; padding: 0;">
+     <div class="modal-content" style="width: 650px; height: 650px; padding: 0;">
         <div style="padding: 20px 25px; border-bottom: 1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; flex-shrink: 0;">
              <h3 id="history-title" style="margin:0; border:none; padding:0; font-size:1.5rem; text-transform: uppercase; letter-spacing: 2px;">HISTORY</h3>
              <i class="fas fa-times modal-close-icon" style="position:static;" onclick="closeModal('history-modal')"></i>
         </div>
         
-        <div style="padding: 20px; flex:1; display:flex; flex-direction:column; gap:15px; overflow:hidden;">
-            <div style="background:rgba(0,0,0,0.5); border:1px solid var(--glass-border); border-radius:8px; padding:15px; text-align:center; flex-shrink: 0;">
-                <div style="font-weight:900; color:white; font-size:1.1rem; margin-bottom:5px;">TOTAL ROUNDS: <span id="stat-total-rounds" style="color:var(--credits);">0</span></div>
-                <div id="stat-percentages" style="display:flex; justify-content:center; gap:15px; font-size:0.9rem; font-weight:800;"></div>
+        <div style="padding: 20px; flex:1; display:flex; flex-direction:column; overflow:hidden;">
+            <div id="history-stats-container" style="display:flex; flex-direction:column; align-items:center; text-align:center; flex-shrink: 0;">
+                <div style="font-weight:900; color:white; font-size:1.1rem; margin-bottom:8px;">
+                    TOTAL ROUNDS: <span id="stat-total-rounds" style="color:var(--credits);">0</span>
+                </div>
+                <div id="stat-percentages" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; font-size:0.9rem; font-weight:800; margin-bottom: 20px;"></div>
+                
+                <div style="font-weight:900; color:var(--text-muted); font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; margin-bottom: 10px;">FIVE RECENT OUTCOMES</div>
+                <div id="stat-recent-5" style="display:flex; justify-content:center; gap:10px; margin-bottom: 20px;"></div>
             </div>
             
-            <div style="flex:1; border:1px solid var(--glass-border); border-radius:8px; background:rgba(0,5,15,0.8); display:flex; flex-direction:column; position:relative; margin-top:10px;">
-                <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--glass-bg); padding:2px 15px; font-size:0.8rem; font-weight:900; color:white; text-transform:uppercase; letter-spacing:1px; border: 1px solid var(--glass-border); border-radius:6px; backdrop-filter: blur(10px);">RECENT RESULTS</div>
-                
-                <div style="display:grid; grid-template-columns: 2fr 1.5fr 1fr 1fr; padding:20px 15px 10px 15px; border-bottom:1px solid rgba(255,255,255,0.1); font-size:0.8rem; font-weight:900; color:var(--text-muted); text-align:center; text-transform:uppercase; flex-shrink: 0;">
+            <div style="flex:1; border:1px solid var(--glass-border); border-radius:8px; background:rgba(0,5,15,0.8); display:flex; flex-direction:column; overflow: hidden;">
+                <div style="display:grid; grid-template-columns: 2fr 1.5fr 1fr 1fr; padding:15px; border-bottom:1px solid rgba(255,255,255,0.1); font-size:0.85rem; font-weight:900; color:var(--text-muted); text-align:center; text-transform:uppercase; background: rgba(0,0,0,0.8); flex-shrink: 0;">
                     <div>Result</div><div>Bets</div><div style="color:var(--success)">Win</div><div style="color:var(--danger)">Loss</div>
                 </div>
                 
-                <div id="history-items" class="custom-scroll" style="flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px;">
-                    </div>
+                <div id="history-items" class="custom-scroll" style="flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px;"></div>
             </div>
         </div>
      </div>
@@ -836,7 +840,7 @@
         return str.split(',').map(c => {
             let color = c.trim().toLowerCase();
             if(!color) return '';
-            return `<div class="color-die c-${color}" style="width:18px; height:18px; border-radius:4px; display:inline-flex; border:1px solid rgba(255,255,255,0.2); margin:0 2px;"></div>`;
+            return `<div class="color-die c-${color}" style="width:20px; height:20px; border-radius:4px; display:inline-flex; border:1px solid rgba(255,255,255,0.2); margin:0 2px;"></div>`;
         }).join('');
     }
 
@@ -1081,6 +1085,7 @@
         document.getElementById('history-title').innerText = gameInfoMap[id].title.toUpperCase() + " HISTORY";
         document.getElementById('stat-total-rounds').innerText = "0";
         document.getElementById('stat-percentages').innerHTML = "";
+        document.getElementById('stat-recent-5').innerHTML = "";
         
         const list = document.getElementById('history-items');
         list.innerHTML = '';
@@ -1116,7 +1121,7 @@
                     rHtml = `<span style="font-weight:900; color:${getBetColor(h.result.split(' ')[0])}">${h.result}</span>`;
                 }
 
-                list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:12px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:grid; grid-template-columns: 2fr 1.5fr 1fr 1fr; gap:10px; align-items:center; font-size:0.9rem; text-transform:uppercase; text-align:center;">
+                list.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; border-left:4px solid ${cColor}; display:grid; grid-template-columns: 2fr 1.5fr 1fr 1fr; gap:10px; align-items:center; font-size:0.9rem; text-transform:uppercase; text-align:center;">
                     <div>${rHtml}</div>
                     <div>${bHtml}</div>
                     <div>${winVal}</div>
@@ -1130,11 +1135,10 @@
     }
 
     function logHistory(gid, betStr, resultStr, wonProfit, lostBet, didBet = true) {
-        if(myGameHistory[gid]) {
-            myGameHistory[gid].unshift({ bet: betStr, result: resultStr, wonProfit: wonProfit, lostBet: lostBet, didBet: didBet });
-            // Hard clamp to 5 elements exact
-            if(myGameHistory[gid].length > 5) myGameHistory[gid].pop();
-        }
+        if(!myGameHistory[gid]) myGameHistory[gid] = [];
+        myGameHistory[gid].unshift({ bet: betStr, result: resultStr, wonProfit: wonProfit, lostBet: lostBet, didBet: didBet });
+        // Rigidly enforce the 5 item limit
+        if(myGameHistory[gid].length > 5) myGameHistory[gid].pop();
     }
 
     socket.on('globalResultsData', data => {
@@ -1150,12 +1154,23 @@
                     if (data.game === 'perya') {
                         statsHtml += `<div style="display:flex; align-items:center; gap:6px;"><div class="color-die c-${key.toLowerCase()}" style="width:16px; height:16px; border-radius:3px; border:1px solid rgba(255,255,255,0.2); font-size:0;"></div><span style="color:white; font-weight:800;">${perc}%</span></div>`;
                     } else {
-                        statsHtml += `<span>${key.toUpperCase()}: <span style="color:${getBetColor(key)}; font-weight:800;">${perc}%</span></span>`;
+                        statsHtml += `<span><span style="color:${getBetColor(key)}; font-weight:800;">${key.toUpperCase()}: ${perc}%</span></span>`;
                     }
                 }
             });
         }
         document.getElementById('stat-percentages').innerHTML = statsHtml;
+
+        let recent5 = data.results.slice(0, 5);
+        let rHtml = recent5.map(r => {
+            if (data.game === 'perya') {
+                return `<div style="display:flex; gap:2px; background:rgba(0,0,0,0.5); padding:6px; border-radius:6px;">${colorsToDice(r.result)}</div>`;
+            } else {
+                let word = r.result.split(' ')[0];
+                return `<span style="color:${getBetColor(word)}; font-weight:900; background:rgba(0,0,0,0.5); padding:6px 12px; border-radius:6px; font-size: 0.9rem;">${word}</span>`;
+            }
+        }).join('');
+        document.getElementById('stat-recent-5').innerHTML = rHtml;
     });
 
     // --- INTERACTIVE CURRENT BETS ---
@@ -1239,7 +1254,7 @@
     function backToCasino() { switchView('casino'); }
     function confirmLogout() { if(confirm("Are you sure you want to log out of Stick N' Trade?")) { location.reload(); } }
 
-    // --- SOLO GAMES ENGINE (PERFECT TIMING FIX) ---
+    // --- SOLO GAMES ENGINE (PERFECT TIMING FIX WITH NO BLANK FLASH) ---
     function showEndBox(box, bet, payout, msg, newBalance) {
         let pft = payout > bet ? payout - bet : 0; 
         let loss = payout === 0 ? bet : 0;
@@ -1257,14 +1272,19 @@
             box.className = "result-box lose"; 
         } 
         
-        // Exact 0.5s pause before showing the result box to ensure animation is completely done visually
-        setTimeout(() => {
-            box.innerHTML = h; box.style.display = 'block'; 
-            setTimeout(() => { box.classList.add('show'); }, 10);
-            
-            // Exact 1.5s pause AFTER box shows before animating credits
-            setTimeout(() => { updateMyBalance(newBalance, payout > bet); }, 1500);
-        }, 500);
+        // 1. Inject the HTML into the DOM invisibly first to prevent the flash
+        box.innerHTML = h; 
+        box.style.display = 'flex'; 
+        box.style.opacity = '0'; // Keep it hidden while layout renders
+        
+        // 2. Trigger the slide-in animation cleanly
+        requestAnimationFrame(() => {
+            box.style.opacity = '1';
+            box.classList.add('show'); 
+        });
+        
+        // 3. Exact 1.5s pause AFTER box shows before animating credits
+        setTimeout(() => { updateMyBalance(newBalance, payout > bet); }, 1500);
     }
 
     async function playDice() {
@@ -1293,7 +1313,8 @@
           icn.style.display = 'none'; nd.style.display = 'block'; nd.innerText = resData.roll;
           nd.style.color = resData.payout > 0 ? "var(--success)" : "var(--danger)";
           
-          showEndBox(mb, resData.bet, resData.payout, `Rolled ${resData.roll}`, resData.newBalance);
+          await delay(500); // Pause before reveal box
+          showEndBox(mb, resData.bet, resData.payout, resData.resStr, resData.newBalance);
           logHistory('dice', resData.bet + ' TC', resData.resStr, resData.payout > resData.bet ? resData.payout - resData.bet : 0, resData.payout === 0 ? resData.bet : 0, true);
           
           await delay(3500); // Cooldown
@@ -1328,7 +1349,8 @@
           coinFlips += 5; let er = resData.result === 'Tails' ? 180 : 0; 
           co.style.transform = `rotateY(${coinFlips * 360 + er}deg)`; 
           
-          showEndBox(mb, resData.bet, resData.payout, `Landed on ${resData.result}`, resData.newBalance);
+          await delay(500); // Pause before box
+          showEndBox(mb, resData.bet, resData.payout, resData.resStr, resData.newBalance);
           logHistory('coinflip', choice.toUpperCase(), resData.resStr, resData.payout > resData.bet ? resData.payout - resData.bet : 0, resData.payout === 0 ? resData.bet : 0, true);
           
           await delay(3500); // Cooldown
@@ -1790,6 +1812,7 @@
       sfx.tick(); 
     }
 
+    // --- SHARED PAYOUT TIMING FIX ---
     function processSharedPayout(gid, pa, tba, msg, wonProfit = 0, lostBet = 0, betsPlacedStr = "", resStr = "") { 
       const box = document.getElementById('sg-overlay'); 
       const t = document.getElementById('sg-res-title');
@@ -1803,14 +1826,10 @@
 
       if (tba > 0) {
           if (net > 0) {
-              h += `<div class="res-payout" style="color:var(--success)">+${net} TC</div>`;
               box.className = "result-overlay-shared win";
           } else if (net === 0) {
-              h += `<div class="res-payout" style="color:white">Push / Even</div>`;
               box.className = "result-overlay-shared push";
           } else {
-              sfx.lose();
-              h += `<div class="res-payout" style="color:var(--danger)">Lost -${Math.abs(net)}</div>`;
               box.className = "result-overlay-shared lose";
           }
       } else {
@@ -1824,7 +1843,7 @@
           if (t) t.innerHTML = msg; 
           if (tba > 0 && b) { 
             b.style.display = 'block'; 
-            if (net > 0) { b.innerHTML = `Won <span style="color:var(--success)">+${net} TC</span>`; triggerWinAnim();} 
+            if (net > 0) { b.innerHTML = `Won <span style="color:var(--success)">+${net} TC</span>`; } 
             else if (net === 0) { b.innerHTML = `Push <span style="color:var(--text-muted)">Returned</span>`; } 
             else { b.innerHTML = `Lost <span style="color:var(--danger)">-${Math.abs(net)} TC</span>`; } 
           } else if (b) {
@@ -1832,7 +1851,14 @@
           } 
           
           box.style.display = 'flex';
-          setTimeout(() => { box.classList.add('show'); }, 10);
+          box.style.opacity = '0';
+          
+          requestAnimationFrame(() => {
+              box.style.opacity = '1';
+              box.classList.add('show'); 
+              if (tba > 0 && net > 0) sfx.win();
+              else if (tba > 0 && net < 0) sfx.lose();
+          });
           
           setTimeout(() => { socket.emit('requestBalanceRefresh'); }, 1500);
       }, 500);
