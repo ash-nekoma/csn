@@ -78,7 +78,7 @@ let gameStats = {
 
 function logGlobalResult(game, resultStr) {
     globalResults[game].unshift({ result: resultStr, time: new Date() });
-    if (globalResults[game].length > 25) globalResults[game].pop();
+    if (globalResults[game].length > 5) globalResults[game].pop(); // Strict limit to 5 for the HUD
 }
 
 function drawCard() {
@@ -116,12 +116,14 @@ setInterval(() => {
             io.emit('lockBets');
 
             setTimeout(async () => {
+                // Dragon Tiger Logic
                 let dtD = drawCard(), dtT = drawCard();
                 let dtWin = dtD.dtVal > dtT.dtVal ? 'Dragon' : (dtT.dtVal > dtD.dtVal ? 'Tiger' : 'Tie');
                 let dtResStr = dtWin === 'Tie' ? `TIE (${dtD.raw} TO ${dtT.raw})` : `${dtWin.toUpperCase()} WINS (${dtD.raw} TO ${dtT.raw})`;
                 logGlobalResult('dt', dtResStr);
                 gameStats.dt.total++; gameStats.dt[dtWin]++;
                 
+                // Sic Bo Logic
                 let sbR = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1];
                 let sbSum = sbR[0] + sbR[1] + sbR[2];
                 let sbTrip = (sbR[0] === sbR[1] && sbR[1] === sbR[2]);
@@ -130,11 +132,13 @@ setInterval(() => {
                 logGlobalResult('sicbo', sbResStr);
                 gameStats.sicbo.total++; gameStats.sicbo[sbWin]++;
 
+                // Color Game Logic
                 const cols = ['Yellow','White','Pink','Blue','Red','Green'];
                 let pyR = [cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)]];
                 logGlobalResult('perya', pyR.join(','));
                 gameStats.perya.total++; pyR.forEach(c => gameStats.perya[c]++);
 
+                // Baccarat Logic
                 let pC = [drawCard(), drawCard()], bC = [drawCard(), drawCard()];
                 let pS = (pC[0].bacVal + pC[1].bacVal) % 10;
                 let bS = (bC[0].bacVal + bC[1].bacVal) % 10;
@@ -159,6 +163,7 @@ setInterval(() => {
                 logGlobalResult('baccarat', bacResStr);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
+                // Process Shared Table Bets
                 let playerStats = {}; 
                 sharedTables.bets.forEach(b => {
                     let payout = 0;
@@ -275,6 +280,7 @@ io.on('connection', (socket) => {
             user.credits += payout; await user.save();
             await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Dice` }).save();
             let resStr = `ROLLED ${roll}`;
+            logGlobalResult('dice', resStr);
             pushAdminData();
             socket.emit('diceResult', { roll, payout, bet: data.bet, resStr: resStr, newBalance: user.credits, stats: gameStats.dice });
         } 
@@ -286,6 +292,7 @@ io.on('connection', (socket) => {
             user.credits += payout; await user.save();
             await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Coinflip` }).save();
             let resStr = `LANDED ON ${result.toUpperCase()}`;
+            logGlobalResult('coinflip', resStr);
             pushAdminData();
             socket.emit('coinResult', { result, payout, bet: data.bet, resStr: resStr, newBalance: user.credits, stats: gameStats.coinflip });
         }
@@ -302,6 +309,7 @@ io.on('connection', (socket) => {
                     user.credits += payout; await user.save();
                     await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Blackjack` }).save();
                     let resStr = `${msg.toUpperCase()} (${pS} TO ${dS})`;
+                    logGlobalResult('blackjack', resStr);
                     pushAdminData();
                     socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, resStr: resStr, bet: data.bet, newBalance: user.credits, stats: gameStats.blackjack });
                     socket.bjState = null;
@@ -318,6 +326,7 @@ io.on('connection', (socket) => {
                     gameStats.blackjack.Lose++;
                     await new CreditLog({ username: user.username, action: 'Game', amount: -socket.bjState.bet, details: `Solo Blackjack` }).save();
                     let resStr = `BUST (${pS} TO ${dS})`;
+                    logGlobalResult('blackjack', resStr);
                     socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', resStr: resStr, bet: socket.bjState.bet, newBalance: user.credits, stats: gameStats.blackjack });
                     socket.bjState = null;
                 } else {
@@ -337,7 +346,9 @@ io.on('connection', (socket) => {
                 
                 user.credits += payout; await user.save();
                 await new CreditLog({ username: user.username, action: 'Game', amount: payout - socket.bjState.bet, details: `Solo Blackjack` }).save();
+                
                 let resStr = (dS > 21) ? `DEALER BUSTS (${pS} TO ${dS})` : `${msg.toUpperCase()} (${pS} TO ${dS})`;
+                logGlobalResult('blackjack', resStr);
                 pushAdminData();
                 socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, resStr: resStr, bet: socket.bjState.bet, newBalance: user.credits, stats: gameStats.blackjack });
                 socket.bjState = null;
@@ -566,6 +577,10 @@ io.on('connection', (socket) => {
             socket.emit('promoResult', { success: true, amt: gc.amount });
             socket.emit('balanceUpdateData', user.credits);
         } catch(e) { socket.emit('promoResult', { success: false, msg: 'Server error' }); }
+    });
+
+    socket.on('getGlobalResults', (game) => {
+        socket.emit('globalResultsData', { game: game, results: globalResults[game] || [], stats: gameStats[game] || { total: 0 } });
     });
 
     socket.on('disconnect', async () => {
