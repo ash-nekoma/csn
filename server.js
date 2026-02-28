@@ -116,13 +116,11 @@ setInterval(() => {
             io.emit('lockBets');
 
             setTimeout(async () => {
-                // 1. Dragon Tiger
                 let dtD = drawCard(), dtT = drawCard();
                 let dtWin = dtD.dtVal > dtT.dtVal ? 'Dragon' : (dtT.dtVal > dtD.dtVal ? 'Tiger' : 'Tie');
                 logGlobalResult('dt', `${dtWin.toUpperCase()}`);
                 gameStats.dt.total++; gameStats.dt[dtWin]++;
                 
-                // 2. Sic Bo
                 let sbR = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1];
                 let sbSum = sbR[0] + sbR[1] + sbR[2];
                 let sbTrip = (sbR[0] === sbR[1] && sbR[1] === sbR[2]);
@@ -130,13 +128,11 @@ setInterval(() => {
                 logGlobalResult('sicbo', sbTrip ? `TRIPLE` : `${sbWin.toUpperCase()}`);
                 gameStats.sicbo.total++; gameStats.sicbo[sbWin]++;
 
-                // 3. Color Game (Perya)
                 const cols = ['Yellow','White','Pink','Blue','Red','Green'];
                 let pyR = [cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)]];
                 logGlobalResult('perya', pyR.join(','));
                 gameStats.perya.total++; pyR.forEach(c => gameStats.perya[c]++);
 
-                // 4. Baccarat
                 let pC = [drawCard(), drawCard()], bC = [drawCard(), drawCard()];
                 let pS = (pC[0].bacVal + pC[1].bacVal) % 10;
                 let bS = (bC[0].bacVal + bC[1].bacVal) % 10;
@@ -160,7 +156,6 @@ setInterval(() => {
                 logGlobalResult('baccarat', `${bacWin.toUpperCase()}`);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
-                // Map Payouts and Build Ledger
                 let playerStats = {}; 
                 sharedTables.bets.forEach(b => {
                     let payout = 0;
@@ -201,11 +196,6 @@ setInterval(() => {
                         if(net !== 0) {
                             await new CreditLog({ username: user.username, action: 'Game', amount: net, details: `Shared Table (${st.room})` }).save();
                         }
-
-                        // Delay pushing visually to allow result animations to play
-                        setTimeout(() => {
-                            io.to(st.socketId).emit('balanceUpdateData', user.credits);
-                        }, 1500);
                     }
                 });
 
@@ -216,14 +206,13 @@ setInterval(() => {
 
             }, 500);
 
-            // Give extra time for long Baccarat sequences before wiping table
             setTimeout(() => {
                 sharedTables.time = 15;
                 sharedTables.status = 'BETTING';
                 sharedTables.bets = [];
                 io.emit('newRound'); 
                 pushAdminData();
-            }, 12000); 
+            }, 9000); 
         }
     }
 }, 1000);
@@ -261,150 +250,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- SOLO GAMES ENGINE ---
-    socket.on('playSolo', async (data) => {
-        if (!socket.user) return;
-        const user = await User.findById(socket.user._id);
-        
-        let isNewBet = (data.game === 'dice' || data.game === 'coinflip' || (data.game === 'blackjack' && data.action === 'start'));
-        
-        // Strict NaN / Null Preventer
-        if (isNewBet) {
-            if (!data.bet || isNaN(data.bet) || data.bet <= 0 || user.credits < data.bet) {
-                return socket.emit('toast', { msg: 'Insufficient TC or Invalid Bet', type: 'error' });
-            }
-            user.credits -= data.bet; 
-            await user.save();
-        }
-
-        let payout = 0;
-
-        if (data.game === 'dice') {
-            gameStats.dice.total++;
-            let roll = Math.floor(Math.random() * 100) + 1;
-            if (roll > 50) { payout = data.bet * 2; gameStats.dice.Win++; } 
-            else { gameStats.dice.Lose++; }
-            user.credits += payout; await user.save();
-            await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Dice` }).save();
-            logGlobalResult('dice', `Rolled ${roll}`);
-            pushAdminData();
-            socket.emit('diceResult', { roll, payout, bet: data.bet, newBalance: user.credits });
-        } 
-        else if (data.game === 'coinflip') {
-            gameStats.coinflip.total++;
-            let result = Math.random() < 0.5 ? 'Heads' : 'Tails';
-            gameStats.coinflip[result]++;
-            if (data.choice === result) payout = data.bet * 2;
-            user.credits += payout; await user.save();
-            await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Coinflip` }).save();
-            logGlobalResult('coinflip', result);
-            pushAdminData();
-            socket.emit('coinResult', { result, payout, bet: data.bet, newBalance: user.credits });
-        }
-        else if (data.game === 'blackjack') {
-            if (data.action === 'start') {
-                gameStats.blackjack.total++; 
-                socket.bjState = { bet: data.bet, pHand: [drawCard(), drawCard()], dHand: [drawCard(), drawCard()] };
-                let pS = getBJScore(socket.bjState.pHand); let dS = getBJScore(socket.bjState.dHand);
-                
-                if (pS === 21) {
-                    let msg = dS === 21 ? 'Push' : 'Blackjack!';
-                    payout = dS === 21 ? data.bet : data.bet * 2.5;
-                    if(msg === 'Blackjack!') gameStats.blackjack.Win++; else gameStats.blackjack.Push++;
-                    user.credits += payout; await user.save();
-                    await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Blackjack` }).save();
-                    logGlobalResult('blackjack', `${msg.toUpperCase()}`);
-                    pushAdminData();
-                    socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, bet: data.bet, newBalance: user.credits });
-                    socket.bjState = null;
-                } else {
-                    socket.emit('bjUpdate', { event: 'deal', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand });
-                }
-            }
-            else if (data.action === 'hit') {
-                if(!socket.bjState) return;
-                socket.bjState.pHand.push(drawCard());
-                let pS = getBJScore(socket.bjState.pHand); let dS = getBJScore(socket.bjState.dHand);
-                
-                if (pS > 21) {
-                    gameStats.blackjack.Lose++;
-                    await new CreditLog({ username: user.username, action: 'Game', amount: -socket.bjState.bet, details: `Solo Blackjack` }).save();
-                    logGlobalResult('blackjack', `BUST!`);
-                    socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', bet: socket.bjState.bet, newBalance: user.credits });
-                    socket.bjState = null;
-                } else {
-                    socket.emit('bjUpdate', { event: 'hit', pHand: socket.bjState.pHand });
-                }
-            }
-            else if (data.action === 'stand') {
-                if(!socket.bjState) return;
-                let pS = getBJScore(socket.bjState.pHand);
-                while (getBJScore(socket.bjState.dHand) < 17) { socket.bjState.dHand.push(drawCard()); }
-                let dS = getBJScore(socket.bjState.dHand);
-                let msg = '';
-                
-                if (dS > 21 || pS > dS) { payout = socket.bjState.bet * 2; msg = 'You Win!'; gameStats.blackjack.Win++; } 
-                else if (pS === dS) { payout = socket.bjState.bet; msg = 'Push'; gameStats.blackjack.Push++; } 
-                else { msg = 'Dealer Wins'; gameStats.blackjack.Lose++; }
-                
-                user.credits += payout; await user.save();
-                await new CreditLog({ username: user.username, action: 'Game', amount: payout - socket.bjState.bet, details: `Solo Blackjack` }).save();
-                let logMsg = (dS > 21) ? 'DEALER BUSTS!' : msg.toUpperCase();
-                logGlobalResult('blackjack', logMsg);
-                pushAdminData();
-                socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, bet: socket.bjState.bet, newBalance: user.credits });
-                socket.bjState = null;
-            }
-        }
-    });
-
-    // --- SHARED TABLES NETWORKING ---
-    socket.on('joinRoom', (room) => { 
-        if(socket.currentRoom) { socket.leave(socket.currentRoom); rooms[socket.currentRoom]--; }
-        socket.join(room); socket.currentRoom = room; rooms[room]++; 
-        io.emit('playerCount', rooms); 
-    });
-    
-    socket.on('leaveRoom', (room) => { 
-        socket.leave(room); socket.currentRoom = null;
-        if (rooms[room] > 0) rooms[room]--; 
-        io.emit('playerCount', rooms); 
-    });
-    
-    socket.on('sendChat', (data) => { 
-        if (socket.user && socket.currentRoom) { 
-            io.to(socket.currentRoom).emit('chatMessage', { user: socket.user.username, text: data.msg, sys: false }); 
-        } 
-    });
-    
-    socket.on('placeSharedBet', async (data) => {
-        if (!socket.user || sharedTables.status !== 'BETTING') return;
-        const user = await User.findById(socket.user._id);
-        if (user.credits < data.amount) return;
-        user.credits -= data.amount; await user.save();
-        sharedTables.bets.push({ userId: user._id, socketId: socket.id, username: user.username, room: data.room, choice: data.choice, amount: data.amount });
-    });
-
-    // --- CASHIER ACTIONS ---
-    socket.on('submitTransaction', async (data) => { 
-        if (socket.user) {
-            await new Transaction({ username: socket.user.username, type: data.type, amount: data.amount, ref: data.ref }).save(); 
-            if(data.type === 'Withdrawal') {
-                await new CreditLog({ username: socket.user.username, action: 'Withdrawal', amount: -data.amount, details: `Requested` }).save();
-            }
-            const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
-            socket.emit('transactionsData', txs);
-            pushAdminData(); 
-        }
-    });
-    socket.on('getTransactions', async () => { 
-        if (socket.user) {
-            const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
-            socket.emit('transactionsData', txs);
-        }
-    });
-
-    // --- AUTHENTICATION & OTHER ---
     socket.on('adminLogin', async (data) => {
         const user = await User.findOne({ username: data.username, password: data.password });
         if (user && user.role === 'Admin') {
@@ -565,6 +410,139 @@ io.on('connection', (socket) => {
 
     socket.on('getGlobalResults', (game) => {
         socket.emit('globalResultsData', { game: game, results: globalResults[game] || [], stats: gameStats[game] || { total: 0 } });
+    });
+
+    // --- SOLO GAMES ENGINE ---
+    socket.on('playSolo', async (data) => {
+        if (!socket.user) return;
+        const user = await User.findById(socket.user._id);
+        
+        let isNewBet = (data.game === 'dice' || data.game === 'coinflip' || (data.game === 'blackjack' && data.action === 'start'));
+        if (isNewBet) {
+            if (!data.bet || isNaN(data.bet) || data.bet <= 0 || user.credits < data.bet) return socket.emit('toast', { msg: 'Insufficient TC or Invalid Bet', type: 'error' });
+            user.credits -= data.bet; await user.save();
+        }
+
+        let payout = 0;
+
+        if (data.game === 'dice') {
+            gameStats.dice.total++;
+            let roll = Math.floor(Math.random() * 100) + 1;
+            if (roll > 50) { payout = data.bet * 2; gameStats.dice.Win++; } else { gameStats.dice.Lose++; }
+            user.credits += payout; await user.save();
+            await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Dice` }).save();
+            logGlobalResult('dice', `Rolled ${roll}`);
+            pushAdminData();
+            socket.emit('diceResult', { roll, payout, bet: data.bet, newBalance: user.credits });
+        } 
+        else if (data.game === 'coinflip') {
+            gameStats.coinflip.total++;
+            let result = Math.random() < 0.5 ? 'Heads' : 'Tails';
+            gameStats.coinflip[result]++;
+            if (data.choice === result) payout = data.bet * 2;
+            user.credits += payout; await user.save();
+            await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Coinflip` }).save();
+            logGlobalResult('coinflip', result);
+            pushAdminData();
+            socket.emit('coinResult', { result, payout, bet: data.bet, newBalance: user.credits });
+        }
+        else if (data.game === 'blackjack') {
+            if (data.action === 'start') {
+                gameStats.blackjack.total++; 
+                socket.bjState = { bet: data.bet, pHand: [drawCard(), drawCard()], dHand: [drawCard(), drawCard()] };
+                let pS = getBJScore(socket.bjState.pHand); let dS = getBJScore(socket.bjState.dHand);
+                
+                if (pS === 21) {
+                    let msg = dS === 21 ? 'Push' : 'Blackjack!';
+                    payout = dS === 21 ? data.bet : data.bet * 2.5;
+                    if(msg === 'Blackjack!') gameStats.blackjack.Win++; else gameStats.blackjack.Push++;
+                    user.credits += payout; await user.save();
+                    await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Blackjack` }).save();
+                    logGlobalResult('blackjack', `${msg.toUpperCase()}`);
+                    pushAdminData();
+                    socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, bet: data.bet, newBalance: user.credits });
+                    socket.bjState = null;
+                } else {
+                    socket.emit('bjUpdate', { event: 'deal', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand });
+                }
+            }
+            else if (data.action === 'hit' && socket.bjState) {
+                socket.bjState.pHand.push(drawCard());
+                let pS = getBJScore(socket.bjState.pHand); let dS = getBJScore(socket.bjState.dHand);
+                
+                if (pS > 21) {
+                    gameStats.blackjack.Lose++;
+                    await new CreditLog({ username: user.username, action: 'Game', amount: -socket.bjState.bet, details: `Solo Blackjack` }).save();
+                    logGlobalResult('blackjack', `BUST!`);
+                    socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', bet: socket.bjState.bet, newBalance: user.credits });
+                    socket.bjState = null;
+                } else {
+                    socket.emit('bjUpdate', { event: 'hit', pHand: socket.bjState.pHand });
+                }
+            }
+            else if (data.action === 'stand' && socket.bjState) {
+                let pS = getBJScore(socket.bjState.pHand);
+                while (getBJScore(socket.bjState.dHand) < 17) { socket.bjState.dHand.push(drawCard()); }
+                let dS = getBJScore(socket.bjState.dHand);
+                let msg = '';
+                
+                if (dS > 21 || pS > dS) { payout = socket.bjState.bet * 2; msg = 'You Win!'; gameStats.blackjack.Win++; } 
+                else if (pS === dS) { payout = socket.bjState.bet; msg = 'Push'; gameStats.blackjack.Push++; } 
+                else { msg = 'Dealer Wins'; gameStats.blackjack.Lose++; }
+                
+                user.credits += payout; await user.save();
+                await new CreditLog({ username: user.username, action: 'Game', amount: payout - socket.bjState.bet, details: `Solo Blackjack` }).save();
+                let logMsg = (dS > 21) ? 'DEALER BUSTS!' : msg.toUpperCase();
+                logGlobalResult('blackjack', logMsg);
+                pushAdminData();
+                socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, bet: socket.bjState.bet, newBalance: user.credits });
+                socket.bjState = null;
+            }
+        }
+    });
+
+    socket.on('joinRoom', (room) => { 
+        if(socket.currentRoom) { socket.leave(socket.currentRoom); rooms[socket.currentRoom]--; }
+        socket.join(room); socket.currentRoom = room; rooms[room]++; 
+        io.emit('playerCount', rooms); 
+    });
+    
+    socket.on('leaveRoom', (room) => { 
+        socket.leave(room); socket.currentRoom = null;
+        if (rooms[room] > 0) rooms[room]--; 
+        io.emit('playerCount', rooms); 
+    });
+    
+    socket.on('sendChat', (data) => { 
+        if (socket.user && socket.currentRoom) { 
+            io.to(socket.currentRoom).emit('chatMessage', { user: socket.user.username, text: data.msg, sys: false }); 
+        } 
+    });
+    
+    socket.on('placeSharedBet', async (data) => {
+        if (!socket.user || sharedTables.status !== 'BETTING') return;
+        const user = await User.findById(socket.user._id);
+        if (user.credits < data.amount) return;
+        user.credits -= data.amount; await user.save();
+        sharedTables.bets.push({ userId: user._id, socketId: socket.id, username: user.username, room: data.room, choice: data.choice, amount: data.amount });
+    });
+
+    socket.on('submitTransaction', async (data) => { 
+        if (socket.user) {
+            await new Transaction({ username: socket.user.username, type: data.type, amount: data.amount, ref: data.ref }).save(); 
+            if(data.type === 'Withdrawal') {
+                await new CreditLog({ username: socket.user.username, action: 'Withdrawal', amount: -data.amount, details: `Requested` }).save();
+            }
+            const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
+            socket.emit('transactionsData', txs);
+            pushAdminData(); 
+        }
+    });
+    socket.on('getTransactions', async () => { 
+        if (socket.user) {
+            const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
+            socket.emit('transactionsData', txs);
+        }
     });
 
     socket.on('disconnect', async () => {
