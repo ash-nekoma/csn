@@ -18,7 +18,6 @@ const MONGO_URI = process.env.MONGO_URL || 'mongodb://localhost:27017/stickntrad
 mongoose.connect(MONGO_URI)
     .then(async () => {
         console.log('✅ Connected to MongoDB Database');
-        // Ensure default Admin exists so you aren't locked out
         const adminExists = await User.findOne({ username: 'admin' });
         if (!adminExists) {
             await new User({ 
@@ -61,7 +60,6 @@ const codeSchema = new mongoose.Schema({
 });
 const GiftCode = mongoose.model('GiftCode', codeSchema);
 
-
 // ==========================================
 // 3. CASINO ENGINE & GLOBAL HISTORY / STATS
 // ==========================================
@@ -92,19 +90,11 @@ function drawCard() {
     let v = vs[Math.floor(Math.random() * vs.length)];
     let s = ss[Math.floor(Math.random() * ss.length)];
     
-    // Baccarat Values (Face cards & 10 = 0, Ace = 1)
     let bac = isNaN(parseInt(v)) ? (v === 'A' ? 1 : 0) : (v === '10' ? 0 : parseInt(v));
-    
-    // Blackjack Values (Face cards = 10, Ace = 11 default)
     let bj = isNaN(parseInt(v)) ? (v === 'A' ? 11 : 10) : parseInt(v);
     
-    // Dragon Tiger Values (Strict Ranking: Ace = 1 (Lowest), King = 13 (Highest))
     let dt = 0;
-    if (v === 'A') dt = 1; 
-    else if (v === 'K') dt = 13; 
-    else if (v === 'Q') dt = 12; 
-    else if (v === 'J') dt = 11; 
-    else dt = parseInt(v);
+    if (v === 'A') dt = 1; else if (v === 'K') dt = 13; else if (v === 'Q') dt = 12; else if (v === 'J') dt = 11; else dt = parseInt(v);
 
     let suitHtml = (s === '♥' || s === '♦') ? `<span class="card-red">${s}</span>` : s;
     return { val: v, suit: s, bacVal: bac, bjVal: bj, dtVal: dt, raw: v, suitHtml: suitHtml };
@@ -130,13 +120,11 @@ setInterval(() => {
             io.emit('lockBets');
 
             setTimeout(async () => {
-                // 1. Dragon Tiger (Now Ace is 1 and King is 13)
                 let dtD = drawCard(), dtT = drawCard();
                 let dtWin = dtD.dtVal > dtT.dtVal ? 'Dragon' : (dtT.dtVal > dtD.dtVal ? 'Tiger' : 'Tie');
                 logGlobalResult('dt', `${dtWin.toUpperCase()} WIN (${dtD.raw} TO ${dtT.raw})`);
                 gameStats.dt.total++; gameStats.dt[dtWin]++;
                 
-                // 2. Sic Bo
                 let sbR = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1];
                 let sbSum = sbR[0] + sbR[1] + sbR[2];
                 let sbTrip = (sbR[0] === sbR[1] && sbR[1] === sbR[2]);
@@ -144,13 +132,11 @@ setInterval(() => {
                 logGlobalResult('sicbo', sbTrip ? `TRIPLE ${sbR[0]}` : `${sbWin.toUpperCase()} (${sbSum})`);
                 gameStats.sicbo.total++; gameStats.sicbo[sbWin]++;
 
-                // 3. Color Game (Perya)
                 const cols = ['Yellow','White','Pink','Blue','Red','Green'];
                 let pyR = [cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)]];
                 logGlobalResult('perya', pyR.join(','));
                 gameStats.perya.total++; pyR.forEach(c => gameStats.perya[c]++);
 
-                // 4. Baccarat
                 let pC = [drawCard(), drawCard()], bC = [drawCard(), drawCard()];
                 let pS = (pC[0].bacVal + pC[1].bacVal) % 10;
                 let bS = (bC[0].bacVal + bC[1].bacVal) % 10;
@@ -174,7 +160,6 @@ setInterval(() => {
                 logGlobalResult('baccarat', `${bacWin.toUpperCase()} (${pS} TO ${bS})`);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
-                // Database Payout Setup
                 let playerPayouts = {}; 
                 sharedTables.bets.forEach(b => {
                     let payout = 0;
@@ -210,7 +195,6 @@ setInterval(() => {
 
             }, 500);
 
-            // 9 SECONDS to fully clear the table and restart timer
             setTimeout(() => {
                 sharedTables.time = 15;
                 sharedTables.status = 'BETTING';
@@ -273,11 +257,20 @@ io.on('connection', (socket) => {
                 io.emit('notification', { title: 'System Announcement', msg: data.msg, type: 'ps-glow' });
             }
             else if (data.type === 'giftCredits') {
-                if (data.target.toLowerCase() === 'all') {
+                if (data.target === 'all_registered') {
+                    // Update all accounts
                     await User.updateMany({}, { $inc: { credits: data.amount } });
                     io.emit('notification', { title: 'Gift Received!', msg: `Admin has gifted everyone ${data.amount} TC!`, type: 'success' });
                     io.emit('refreshBalance'); 
-                } else {
+                } 
+                else if (data.target === 'all_active') {
+                    // Update only people online/active
+                    await User.updateMany({ status: 'Active' }, { $inc: { credits: data.amount } });
+                    io.emit('notification', { title: 'Gift Received!', msg: `Admin has gifted all active players ${data.amount} TC!`, type: 'success' });
+                    io.emit('refreshBalance');
+                } 
+                else {
+                    // Specific user
                     let u = await User.findOne({ username: new RegExp('^' + data.target + '$', 'i') });
                     if (u) {
                         u.credits += data.amount; await u.save();
