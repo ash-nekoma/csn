@@ -60,6 +60,7 @@ const codeSchema = new mongoose.Schema({
 });
 const GiftCode = mongoose.model('GiftCode', codeSchema);
 
+
 // ==========================================
 // 3. CASINO ENGINE & GLOBAL HISTORY / STATS
 // ==========================================
@@ -257,20 +258,11 @@ io.on('connection', (socket) => {
                 io.emit('notification', { title: 'System Announcement', msg: data.msg, type: 'ps-glow' });
             }
             else if (data.type === 'giftCredits') {
-                if (data.target === 'all_registered') {
-                    // Update all accounts
+                if (data.target.toLowerCase() === 'all') {
                     await User.updateMany({}, { $inc: { credits: data.amount } });
                     io.emit('notification', { title: 'Gift Received!', msg: `Admin has gifted everyone ${data.amount} TC!`, type: 'success' });
                     io.emit('refreshBalance'); 
-                } 
-                else if (data.target === 'all_active') {
-                    // Update only people online/active
-                    await User.updateMany({ status: 'Active' }, { $inc: { credits: data.amount } });
-                    io.emit('notification', { title: 'Gift Received!', msg: `Admin has gifted all active players ${data.amount} TC!`, type: 'success' });
-                    io.emit('refreshBalance');
-                } 
-                else {
-                    // Specific user
+                } else {
                     let u = await User.findOne({ username: new RegExp('^' + data.target + '$', 'i') });
                     if (u) {
                         u.credits += data.amount; await u.save();
@@ -325,24 +317,34 @@ io.on('connection', (socket) => {
         } catch(e) { console.error("Admin Action Error:", e); }
     });
 
-    // --- AUTHENTICATION ---
+    // --- AUTHENTICATION & STREAK LOGIC ---
     socket.on('login', async (data) => {
         try {
             const user = await User.findOne({ username: data.username, password: data.password });
             if (!user) return socket.emit('authError', 'Invalid login credentials.');
             if (user.status === 'Banned') return socket.emit('authError', 'This account has been banned.');
 
-            user.status = 'Active'; await user.save(); socket.user = user;
+            user.status = 'Active'; 
             connectedUsers[user.username] = socket.id;
-            pushAdminData();
             
+            // Validate Streak Time
             let now = new Date(), canClaim = true, day = 1, nextClaim = null;
             if (user.dailyReward.lastClaim) {
                 let diffHours = (now - user.dailyReward.lastClaim) / (1000 * 60 * 60);
-                if (diffHours < 24) { canClaim = false; nextClaim = new Date(user.dailyReward.lastClaim.getTime() + 24 * 60 * 60 * 1000); } 
-                else if (diffHours > 48) { user.dailyReward.streak = 0; }
+                
+                if (diffHours > 48) { 
+                    user.dailyReward.streak = 0; // Break Streak
+                } 
+                else if (diffHours < 24) { 
+                    canClaim = false; 
+                    nextClaim = new Date(user.dailyReward.lastClaim.getTime() + 24 * 60 * 60 * 1000); 
+                } 
+                
                 day = (user.dailyReward.streak % 7) + 1;
             }
+            
+            await user.save(); // Save status and potential streak break
+            pushAdminData();
             
             socket.emit('loginSuccess', { username: user.username, credits: user.credits, role: user.role, daily: { canClaim, day, nextClaim } });
         } catch(e) { socket.emit('authError', 'Server Error.'); }
@@ -363,15 +365,25 @@ io.on('connection', (socket) => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
         let now = new Date();
-        if (user.dailyReward.lastClaim && (now - user.dailyReward.lastClaim) / (1000 * 60 * 60) < 24) return; 
+        
+        // Final backend streak check before granting
+        if (user.dailyReward.lastClaim) {
+            let diffHours = (now - user.dailyReward.lastClaim) / (1000 * 60 * 60);
+            if (diffHours < 24) return; // Cannot double claim
+            if (diffHours > 48) user.dailyReward.streak = 0; // Missed a day
+        }
 
         let day = (user.dailyReward.streak % 7) + 1;
         const rewards = [25, 50, 100, 200, 500, 750, 1000];
         let amt = rewards[day - 1];
 
-        user.credits += amt; user.dailyReward.lastClaim = now; user.dailyReward.streak += 1;
+        user.credits += amt; 
+        user.dailyReward.lastClaim = now; 
+        user.dailyReward.streak += 1;
+        
         await user.save();
         pushAdminData();
+        
         socket.emit('dailyClaimed', { amt, newBalance: user.credits, nextClaim: new Date(now.getTime() + 24 * 60 * 60 * 1000) });
     });
 
@@ -392,7 +404,6 @@ io.on('connection', (socket) => {
         } catch(e) { socket.emit('promoResult', { success: false, msg: 'Server error' }); }
     });
 
-    // --- GLOBAL RESULTS ---
     socket.on('getGlobalResults', (game) => {
         socket.emit('globalResultsData', { game: game, results: globalResults[game] || [], stats: gameStats[game] || { total: 0 } });
     });
