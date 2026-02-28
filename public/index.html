@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="/socket.io/socket.io.js"></script>
     <style>
         :root { --ps-bg: #000814; --ps-blue: #00439c; --ps-light-blue: #0070cc; --ps-glow: #00a2ff; --glass-bg: rgba(0, 15, 35, 0.65); --glass-border: rgba(255, 255, 255, 0.15); --glass-hover: rgba(255, 255, 255, 0.9); --danger: #ff3366; --success: #00e676; --credits: #ffb400; --text-main: #f8fafc; --text-muted: #8c9eb5; --radius: 12px; }
@@ -26,27 +27,20 @@
         input[type="number"] { -moz-appearance: textfield; }
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
-        /* ================= AUTHENTICATION GATEWAY ================= */
+        /* AUTHENTICATION GATEWAY */
         #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
-        
-        /* Fixed Width & Padding */
         .auth-box { width: 420px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 25px 80px rgba(0,0,0,0.9); text-align: center; }
-        
-        /* Reduced Font Size so it doesn't wrap/mess up */
         .auth-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
         .auth-sub { color: var(--ps-glow); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
-        
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
         .auth-tab { flex: 1; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--text-muted); font-weight: 900; padding: 10px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1.1rem; }
         .auth-tab.active { border-bottom-color: var(--ps-glow); color: var(--ps-glow); }
-        
         .auth-msg { font-size: 0.9rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; }
         .auth-error { color: var(--danger); }
         .auth-success { color: var(--success); }
-        
         .pwd-input-wrapper { position: relative; width: 100%; display: block; }
         
-        /* True Center Math (No asymmetrical padding) */
+        /* True Center Math for Passwords */
         .pwd-input-wrapper input { width: 100%; text-align: center; padding: 15px; }
         .pwd-input-wrapper i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 1.1rem; z-index: 2; transition: 0.2s; }
         .pwd-input-wrapper i:hover { color: white; }
@@ -160,7 +154,7 @@
         .bank-section { display: none; flex: 1; padding-right: 5px; }
         .bank-section.active { display: block; }
 
-        /* Solid Header Backgrounds to fix scroll overlap */
+        /* Prevent scrolling text overlap */
         thead th { position: sticky; top: 0; background: #000a1f; z-index: 10; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); padding: 10px 15px;}
 
         /* DAILY REWARD */
@@ -169,6 +163,7 @@
         .dr-day > * { position: relative; z-index: 1; }
         .dr-day.claimed { filter: grayscale(1); opacity: 0.6; border-color: var(--glass-border); box-shadow: none; }
         
+        /* Clean Blue Pulse for Active Day */
         .dr-day.active { background: linear-gradient(180deg, #1a2a6c 0%, #001f4d 100%); border: 2px solid var(--ps-glow); opacity: 1; z-index: 5; box-shadow: 0 0 20px rgba(0, 162, 255, 0.5); color: white; animation: pulseBorder 2s infinite; }
         @keyframes pulseBorder { 0% { box-shadow: 0 0 10px rgba(0, 162, 255, 0.4); } 50% { box-shadow: 0 0 25px rgba(0, 162, 255, 0.8); } 100% { box-shadow: 0 0 10px rgba(0, 162, 255, 0.4); } }
         
@@ -179,13 +174,14 @@
         .dr-claim-btn { width: 100%; max-width: 250px; margin: 0 auto; background: #ffcc00; color: #000; font-size: 1.2rem; border: 2px solid #fff; box-shadow: 0 5px 15px rgba(255,204,0,0.4); }
         .dr-claim-btn:hover:not(:disabled) { background: #ff9900; color: #000; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,204,0,0.6); }
         .dr-claim-btn:disabled { background: rgba(255,255,255,0.1) !important; border-color: transparent !important; color: var(--text-muted) !important; box-shadow: none !important; cursor: not-allowed !important; transform: none !important; }
-
         #dr-status-container { text-align: center; margin-top: 10px; }
         .dr-status-text { font-size: 1.2rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
         .dr-timer { font-size: 1.5rem; font-weight: 900; color: var(--ps-glow); font-family: 'Rajdhani', sans-serif; }
 
-        /* BACCARAT TEXT & IN-GAME NOTIFS (NO TOP TOASTS) */
+        /* BACCARAT TEXT & IN-GAME NOTIFS */
         #bac-action-text { height: 24px; color: var(--ps-glow); font-weight: 800; text-align: center; margin-top: 40px; letter-spacing: 1px; text-transform: uppercase; font-size: 1.1rem; text-shadow: 0 0 10px rgba(0,162,255,0.5); }
+        .in-game-notif-container { position: absolute; bottom: 100px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 150; pointer-events: none; }
+        .in-game-toast { background: rgba(0,0,0,0.85); border: 1px solid var(--glass-border); border-left: 3px solid white; color: white; padding: 10px 20px; border-radius: 6px; display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
         /* GLOBAL TOAST (Top Right) */
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
@@ -327,7 +323,6 @@
         <div class="content">
           
           <div id="view-casino" class="view-container">
-            
             <div class="lobby-wrapper" id="lobby-modes">
               <div style="text-align: center; margin-bottom: 3rem;">
                  <h1 class="casino-title">STICK N' TRADE CASINO</h1>
@@ -395,8 +390,7 @@
                     <h2 style="margin:0; line-height:1;">Dice Roll</h2>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-rules" onclick="openRules('dice')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openGameHistory('dice')" title="My History"><i class="fas fa-history"></i></button>
-                        <button class="btn-rules" onclick="openGlobalResults('dice')" title="Recent Results Feed"><i class="fas fa-list-ol"></i></button>
+                        <button class="btn-rules" onclick="openGameHistory('dice')" title="History"><i class="fas fa-history"></i></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -425,8 +419,7 @@
                     <h2 style="margin:0; line-height:1;">Coin Flip</h2>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-rules" onclick="openRules('coinflip')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openGameHistory('coinflip')" title="My History"><i class="fas fa-history"></i></button>
-                        <button class="btn-rules" onclick="openGlobalResults('coinflip')" title="Recent Results Feed"><i class="fas fa-list-ol"></i></button>
+                        <button class="btn-rules" onclick="openGameHistory('coinflip')" title="History"><i class="fas fa-history"></i></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -460,8 +453,7 @@
                     <h2 style="margin:0; line-height:1;">Blackjack</h2>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-rules" onclick="openRules('blackjack')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openGameHistory('blackjack')" title="My History"><i class="fas fa-history"></i></button>
-                        <button class="btn-rules" onclick="openGlobalResults('blackjack')" title="Recent Results Feed"><i class="fas fa-list-ol"></i></button>
+                        <button class="btn-rules" onclick="openGameHistory('blackjack')" title="History"><i class="fas fa-history"></i></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -495,22 +487,18 @@
               <div class="main-panel glass-panel">
                 <div class="glass-header" style="align-items: center;">
                   <h2 id="sg-title" style="margin:0; line-height:1;">Table</h2>
-                  
                   <div style="display:flex; align-items:center; gap:10px;">
                       <div class="timer-box" id="sg-timer-box">
                           <i class="fas fa-clock"></i> 
                           <div style="display:flex; align-items:baseline;"><span id="sg-timer">15</span><span class="timer-sec">s</span></div>
                       </div>
-                      <button class="btn-rules" onclick="openRules(activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                      <button class="btn-rules" onclick="openGameHistory(activeSharedGame)" title="My History"><i class="fas fa-history"></i></button>
-                      <button class="btn-rules" onclick="openGlobalResults(activeSharedGame)" title="Recent Results Feed"><i class="fas fa-list-ol"></i></button>
+                      <button class="btn-rules" onclick="openRules(window.activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
+                      <button class="btn-rules" onclick="openGameHistory(window.activeSharedGame)" title="History"><i class="fas fa-history"></i></button>
                   </div>
                 </div>
-                
                 <div class="game-display" id="sg-display"></div>
                 
-                <div class="controls-grid" style="padding:25px; border-top: 1px solid var(--glass-border);" id="sg-controls-container">
-                  </div>
+                <div class="controls-grid" style="padding:25px; border-top: 1px solid var(--glass-border);" id="sg-controls-container"></div>
               </div>
               
               <div class="glass-panel chat-panel">
@@ -537,17 +525,16 @@
 
   <div id="current-bets-modal" class="modal-overlay hidden">
     <div class="modal-content" style="width: 400px; padding: 40px 30px 30px;">
-        <button class="modal-close-icon" onclick="closeModal('current-bets-modal')"><i class="fas fa-times"></i></button>
+        <i class="fas fa-times modal-close-icon" onclick="closeModal('current-bets-modal')"></i>
         <h3 style="margin-top:0;">My Current Bets</h3>
         <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Active wagers for this round</p>
-        
         <div id="cb-list" class="custom-scroll" style="max-height: 300px; display: flex; flex-direction: column; gap: 10px;"></div>
     </div>
   </div>
 
   <div id="promo-modal" class="modal-overlay hidden">
     <div class="modal-content" style="width: 400px; height: auto; min-height: fit-content; padding: 40px 30px 30px;">
-        <button class="modal-close-icon" onclick="closeModal('promo-modal')"><i class="fas fa-times"></i></button>
+        <i class="fas fa-times modal-close-icon" onclick="closeModal('promo-modal')"></i>
         <h3 style="margin-top:0;">REDEEM CODE</h3>
         <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Enter your gift code below to claim free TC.</p>
         <div class="input-group" style="margin-bottom:10px;">
@@ -560,10 +547,9 @@
 
   <div id="daily-reward-modal" class="modal-overlay hidden">
     <div class="modal-content" style="width: 800px; height: auto; min-height: fit-content; padding: 40px 30px 30px; max-width: 95vw;">
-      <button class="modal-close-icon" onclick="closeModal('daily-reward-modal')"><i class="fas fa-times"></i></button>
+      <i class="fas fa-times modal-close-icon" onclick="closeModal('daily-reward-modal')"></i>
       <h3 style="font-size: 2.2rem; color: var(--credits); margin-bottom: 5px; border: none; padding-bottom: 0;">Daily Reward</h3>
       <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px;">Claim credits every 24 hours!</p>
-      
       <div class="dr-days" id="dr-days-container"></div>
       <div id="dr-status-container"></div>
     </div>
@@ -571,9 +557,8 @@
 
   <div id="support-center-modal" class="modal-overlay hidden">
     <div class="modal-content" style="width: 550px; height: 550px; padding: 40px 30px 30px;">
-      <button class="modal-close-icon" onclick="closeModal('support-center-modal')"><i class="fas fa-times"></i></button>
+      <i class="fas fa-times modal-close-icon" onclick="closeModal('support-center-modal')"></i>
       <h3>CASHIER</h3>
-
       <div class="bank-tabs">
         <button class="bank-tab active" onclick="switchSupportCenterTab('deposit', this)">Deposit</button>
         <button class="bank-tab" onclick="switchSupportCenterTab('withdraw', this)">Withdraw</button>
@@ -616,9 +601,8 @@
 
   <div id="game-history-modal" class="modal-overlay hidden">
      <div class="modal-content" style="width: 550px; height: auto; min-height: fit-content; max-height: 80vh; padding: 40px 30px 30px;">
-        <button class="modal-close-icon" onclick="closeModal('game-history-modal')"><i class="fas fa-times"></i></button>
+        <i class="fas fa-times modal-close-icon" onclick="closeModal('game-history-modal')"></i>
         <h3 id="gh-title" style="margin-top:0;">Bet History</h3>
-        
         <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 400px; padding-right:5px;">
             <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:2px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#000a1f; z-index:10;">
                 <div>Result</div><div style="text-align:center; color:var(--success)">Win</div><div style="text-align:right; color:var(--danger)">Loss</div>
@@ -630,11 +614,9 @@
 
   <div id="global-results-modal" class="modal-overlay hidden">
      <div class="modal-content" style="width: 450px; height: auto; min-height: fit-content; max-height: 80vh; padding: 40px 30px 30px;">
-        <button class="modal-close-icon" onclick="closeModal('global-results-modal')"><i class="fas fa-times"></i></button>
+        <i class="fas fa-times modal-close-icon" onclick="closeModal('global-results-modal')"></i>
         <h3 id="gr-title" style="margin-top:0;">Recent Results</h3>
-        
         <div id="gr-stats-header" style="background:rgba(0,0,0,0.6); padding:15px; border-radius:8px; margin-bottom:15px; font-size:0.9rem; font-weight:800; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:10px; justify-content:center; border: 1px solid var(--glass-border);"></div>
-
         <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 300px; padding-right:5px;">
             <div style="display:flex; padding:10px 15px; border-bottom:2px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#000a1f; z-index:10; justify-content:center;">
                 Last 25 Outcomes
@@ -646,7 +628,7 @@
 
   <div id="rules-modal" class="modal-overlay hidden">
      <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; padding: 40px 30px 30px;">
-        <button class="modal-close-icon" onclick="closeModal('rules-modal')"><i class="fas fa-times"></i></button>
+        <i class="fas fa-times modal-close-icon" onclick="closeModal('rules-modal')"></i>
         <h3 id="rules-title" style="margin-top:0;">How to Play</h3>
         <div id="rules-body" style="color:var(--text-muted); font-size:1.05rem; line-height:1.6; margin-left: 20px;"></div>
      </div>
@@ -654,7 +636,7 @@
 
   <div id="notif-modal" class="modal-overlay hidden">
      <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; max-height: 80vh; padding: 40px 30px 30px;">
-        <button class="modal-close-icon" onclick="closeModal('notif-modal')"><i class="fas fa-times"></i></button>
+        <i class="fas fa-times modal-close-icon" onclick="closeModal('notif-modal')"></i>
         <h3 style="margin-top:0;">Notifications</h3>
         <div id="notif-list" class="custom-scroll" style="overflow-y:auto; display:flex; flex-direction:column; gap:10px; max-height: 400px; padding-right:5px;">
             <div style="text-align:center; color:var(--text-muted); padding:20px;" id="no-notif-msg">No new notifications.</div>
@@ -690,7 +672,6 @@
         return map[betWord] || 'white';
     }
 
-    // --- UI BASICS & MODALS ---
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
@@ -705,7 +686,6 @@
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
-    // Live Socket Notifications from Admin
     socket.on('notification', (data) => {
         const list = document.getElementById('notif-list');
         const noMsg = document.getElementById('no-notif-msg');
@@ -731,7 +711,6 @@
         openModal('notif-modal');
     }
 
-    // --- AUDIO API ---
     function toggleAudio() {
         audioMuted = !audioMuted;
         sfxGainVal = audioMuted ? 0 : 0.8;
@@ -749,8 +728,7 @@
       o.type = t; o.frequency.setValueAtTime(f, audioCtx.currentTime); 
       g.gain.setValueAtTime(v * sfxGainVal, audioCtx.currentTime); 
       g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d); 
-      o.connect(g); g.connect(audioCtx.destination); 
-      o.start(); o.stop(audioCtx.currentTime + d); 
+      o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + d); 
     }
 
     const sfx = { 
@@ -779,7 +757,6 @@
        if(e.target.closest('button, .nav-link, .mode-card, .game-card, .bank-tab, .action-btn, .top-icon-btn, .brand, .wallet-pill')) sfx.click();
     });
 
-    // --- AUTHENTICATION ---
     function switchAuthTab(tab) {
         document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
         if(tab === 'login') {
@@ -852,7 +829,6 @@
         document.getElementById('nav-credits').innerText = myCredits.toLocaleString(); 
     }
 
-    // --- DAILY REWARD LOGIC ---
     function setupDailyRewardUI(dailyData) {
         const container = document.getElementById('dr-days-container');
         container.innerHTML = '';
@@ -898,7 +874,6 @@
         }, 1000);
     }
 
-    // --- RULES & MY HISTORY ---
     const gameInfoMap = {
       'dice': { title: "Dice Roll", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (2x Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
       'coinflip': { title: "Coin Flip", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>2x</strong> your bet.</li></ul>" },
@@ -942,7 +917,6 @@
         }
     }
 
-    // --- GLOBAL RESULTS FETCH WITH STATS ---
     function openGlobalResults(game) {
         document.getElementById('gr-title').innerText = gameInfoMap[game].title + " Feed";
         document.getElementById('gr-items').innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">Loading...</div>`;
@@ -984,7 +958,6 @@
         });
     });
 
-    // --- INTERACTIVE CURRENT BETS ---
     function openCurrentBetsModal() {
         if(!activeSharedGame) return;
         const list = document.getElementById('cb-list');
@@ -1004,7 +977,6 @@
         openModal('current-bets-modal');
     }
 
-    // --- NAVIGATION LOGIC ---
     function switchView(viewId) { 
       if (audioCtx.state === 'suspended') audioCtx.resume(); 
       document.querySelectorAll('.main-wrapper > .content > .view-container').forEach(d => d.classList.add('hidden')); 
@@ -1027,8 +999,8 @@
     
     function openGame(id) { 
       switchView('game-' + id); 
-      
       document.querySelectorAll('.result-box').forEach(b => b.style.display = 'none'); 
+      
       if(id === 'dice') {
           document.getElementById('dice-icon').className = 'fas fa-dice-d20 dice-icon';
           document.getElementById('dice-icon').style.display='block'; 
@@ -1065,6 +1037,8 @@
 
     function confirmLogout() { if(confirm("Are you sure you want to log out of Stick N' Trade?")) { location.reload(); } }
 
+    // --- SOLO GAMES ENGINE ---
+    // Perfect Green/Red Result Box format applied everywhere!
     function showEndBox(box, bet, payout, msg, delayUpdate = 0) {
         let pft = payout - bet; let h = `<div class="res-title" style="color:white;">${msg}</div>`; 
         if (payout > bet) { 
@@ -1084,6 +1058,7 @@
         setTimeout(() => { box.classList.add('show'); }, 10);
     }
 
+    // Dice
     function playDice() {
       let betEl = document.getElementById('dice-bet');
       let bet = parseInt(betEl.value);
@@ -1108,13 +1083,20 @@
                 clearInterval(s);
                 icn.style.display = 'none'; nd.style.display = 'block'; nd.innerText = data.roll;
                 nd.style.color = data.payout > 0 ? "var(--success)" : "var(--danger)";
+                
                 showEndBox(mb, data.bet, data.payout, `Rolled ${data.roll}`);
                 logHistory('dice', data.bet, data.payout, `Rolled ${data.roll}`);
-                setTimeout(() => { icn.className = 'fas fa-dice-d20 dice-icon'; icn.style.display = 'block'; nd.style.display = 'none'; mb.style.display = 'none'; btn.disabled = false; }, 3000);
+                
+                setTimeout(() => {
+                   icn.className = 'fas fa-dice-d20 dice-icon';
+                   icn.style.display = 'block'; nd.style.display = 'none'; mb.style.display = 'none';
+                   btn.disabled = false;
+                }, 3000);
             }
         }, 80);
     });
 
+    // Coin Flip
     let coinFlips = 0;
     function playCoin(choice) {
       let betEl = document.getElementById('coin-bet');
@@ -1144,6 +1126,7 @@
         }, 2500);
     });
 
+    // Blackjack
     let bjSt = { bet: 0, active: false };
     function startBlackjack() {
       if (bjSt.active) return; 
@@ -1203,6 +1186,7 @@
             document.getElementById('bj-action-controls').classList.add('hidden');
             document.getElementById('bj-start-controls').classList.remove('hidden');
             
+            // Critical Bust Fix: Force card to land before "Bust!" shows
             let pHandEl = document.getElementById('bj-p-hand');
             if (pHandEl && data.msg === 'Bust!' && data.pHand.length > pHandEl.children.length) {
                 let lastCard = data.pHand[data.pHand.length - 1];
@@ -1229,6 +1213,7 @@
         }
     });
 
+    // --- SHARED LIVE TABLES ENGINE ---
     function sendChat() {
         const input = document.getElementById('chat-input');
         if(input.value.trim() === '') return;
@@ -1527,7 +1512,6 @@
         }
     });
 
-    // --- SHARED TABLE LOCAL RESET ---
     function resetSharedTable() {
         sState.status = 'BETTING'; 
         let r = document.getElementById('sg-timer-box'); 
@@ -1564,7 +1548,6 @@
         }
     }
 
-    // Process result box, delay adding credits visually by 1.5s to prioritize the outcome notification
     function processSharedPayout(gid, pa, tba, rt) { 
       const box = document.getElementById('sg-overlay'); 
       if (!box) return;
@@ -1576,11 +1559,9 @@
           if (pft > 0) {
               h += `<div class="res-payout" style="color:var(--success)">+${pa} TC</div>`;
               box.className = "result-box win";
-              setTimeout(() => { updateMyBalance(myCredits + pft, true); }, 1500);
           } else if (pft === 0 && pa > 0) {
               h += `<div class="res-payout" style="color:white">Push</div>`;
               box.className = "result-box push";
-              setTimeout(() => { updateMyBalance(myCredits + pa, false); }, 1500);
           } else {
               sfx.lose();
               h += `<div class="res-payout" style="color:var(--danger)">Lost -${tba}</div>`;
@@ -1595,6 +1576,10 @@
       box.style.display = 'block';
       setTimeout(() => { box.classList.add('show'); }, 10);
       
+      // Request balance refresh exactly 1.5 seconds later (Syncs perfectly with visual pop)
+      setTimeout(() => { socket.emit('requestBalanceRefresh'); }, 1500);
+      
+      // Reset the table visually exactly 3.5 seconds later (Total 5 seconds after results hit)
       setTimeout(resetSharedTable, 5000);
     }
 
@@ -1626,16 +1611,12 @@
     function submitDeposit() {
         const amt = document.getElementById('dep-amount').value;
         const proofInput = document.getElementById('dep-ref');
-        
         if(!amt || proofInput.files.length === 0) return showToast("Please fill amount and attach proof.", "error");
-        
         let filename = proofInput.files[0].name; 
         socket.emit('submitTransaction', { type: 'Deposit', amount: parseInt(amt), ref: filename });
-        
         let msgBox = document.getElementById('dep-msg');
         msgBox.innerHTML = '<span style="color:var(--success)">REQUEST SUBMITTED</span>';
         setTimeout(() => { if(msgBox) msgBox.innerHTML = ''; }, 3000);
-
         document.getElementById('dep-amount').value = ''; 
         document.getElementById('dep-ref').value = '';
     }
@@ -1645,14 +1626,11 @@
         const info = document.getElementById('wit-info').value;
         if(!amt || !info) return showToast("Please fill all fields.", "error");
         if(amt > myCredits) return showToast("Insufficient TC.", "error");
-        
         myCredits -= amt; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
         socket.emit('submitTransaction', { type: 'Withdrawal', amount: amt, ref: info });
-        
         let msgBox = document.getElementById('wit-msg');
         msgBox.innerHTML = '<span style="color:var(--success)">REQUEST SUBMITTED</span>';
         setTimeout(() => { if(msgBox) msgBox.innerHTML = ''; }, 3000);
-
         document.getElementById('wit-amount').value = ''; document.getElementById('wit-info').value = '';
     }
 
@@ -1667,7 +1645,7 @@
     });
 
     function submitPromo() {
-        const code = document.getElementById('promo-code').value.trim(); // Notice NO toUpperCase() so it remains case-sensitive
+        const code = document.getElementById('promo-code').value.trim(); 
         if(!code) return document.getElementById('promo-response').innerHTML = `<span style="color:var(--danger)">Enter a code.</span>`;
         socket.emit('redeemPromo', code);
     }
