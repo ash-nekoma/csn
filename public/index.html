@@ -91,7 +91,7 @@
         .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; } 
         .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.1); }
 
-        /* 1-ROW HUD TOPBAR */
+        /* ================= 1-ROW HUD TOPBAR ================= */
         #app-container { display: none; }
         .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 99999; background: rgba(0,0,0,0.8); border-bottom: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(16px); padding: 12px 25px; }
         .topbar-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;}
@@ -187,6 +187,7 @@
         .bet-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; padding: 15px 10px; border-radius: 8px; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
         .bet-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         .bet-btn.has-bet { border-top: 2px solid var(--tile-color, var(--ps-glow)) !important; border-left: 2px solid var(--tile-color, var(--ps-glow)) !important; border-right: 2px solid var(--tile-color, var(--ps-glow)) !important; box-shadow: inset 0 0 15px rgba(255,255,255,0.1), 0 -5px 20px rgba(0,0,0,0.6); color: #fff !important; text-shadow: 0 0 10px var(--tile-color, var(--ps-glow)); transform: translateY(-3px); }
+        .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; border-color: var(--glass-border); color: var(--text-muted); }
 
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
@@ -748,7 +749,6 @@
     let myCredits = 0;
     let myGameHistory = { dice: [], coinflip: [], baccarat: [], blackjack: [], perya: [], dt: [], sicbo: [] };
     
-    // Globally defined to properly attach to rules/history buttons
     window.activeSharedGame = null;
     let sState = { time: 15, status: 'BETTING' };
     let mySBets = {};
@@ -767,7 +767,6 @@
         return map[betWord] || 'white';
     }
 
-    // --- UI BASICS & MODALS ---
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
@@ -782,7 +781,6 @@
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
-    // Live Socket Notifications from Admin
     socket.on('notification', (data) => {
         const list = document.getElementById('notif-list');
         const noMsg = document.getElementById('no-notif-msg');
@@ -808,7 +806,6 @@
         openModal('notif-modal');
     }
 
-    // --- AUDIO API ---
     function toggleAudio() {
         audioMuted = !audioMuted;
         sfxGainVal = audioMuted ? 0 : 0.8;
@@ -989,10 +986,10 @@
     const gameInfoMap = {
       'dice': { title: "Dice Roll", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (2x Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
       'coinflip': { title: "Coin Flip", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>2x</strong> your bet.</li></ul>" },
-      'baccarat': { title: "Baccarat", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Player, Banker, or Tie. Hand closest to <strong>9</strong> wins.</li><li style='margin-bottom:10px;'><strong>Card Rules:</strong> Standard 3rd card draw rules apply.</li><li style='margin-bottom:10px;'>Player pays <strong>2x</strong>. Banker pays <strong>2x</strong>. Tie pays <strong>8x</strong>.</li></ul>" },
+      'baccarat': { title: "Baccarat", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Player, Banker, or Tie. Hand closest to <strong>9</strong> wins.</li><li style='margin-bottom:10px;'><strong>Card Rules:</strong> Standard 3rd card draw rules apply.</li><li style='margin-bottom:10px;'>Player pays <strong>1:1</strong>. Banker pays <strong>1:0.95</strong>.</li><li style='margin-bottom:10px;'>Tie pays <strong>8:1</strong>. Player/Banker bets push on Tie.</li></ul>" },
       'blackjack': { title: "Blackjack", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Beat the dealer without going over 21.</li><li style='margin-bottom:10px;'>Dealer must draw to 16 and stand on <strong>17 or higher</strong>.</li><li style='margin-bottom:10px;'>Natural Blackjack pays <strong>2.5x</strong>. Standard wins pay <strong>2x</strong>. Ties push.</li></ul>" },
-      'perya': { title: "Color Game", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Red, Blue, Yellow, White, Green, or Pink.</li><li style='margin-bottom:10px;'>3 dice are rolled.</li><li style='margin-bottom:10px;'>1 Match pays <strong>2x</strong>. 2 Matches pay <strong>3x</strong>. 3 Matches pay <strong>4x</strong>!</li></ul>" },
-      'dt': { title: "Dragon Tiger", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Dragon, Tiger, or Tie. Highest card wins.</li><li style='margin-bottom:10px;'>Aces are low (1). Kings are high (13).</li><li style='margin-bottom:10px;'>Dragon/Tiger pays <strong>2x</strong>. Tie pays <strong>8x</strong>.</li></ul>" },
+      'perya': { title: "Color Game", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Red, Blue, Yellow, White, Green, or Pink.</li><li style='margin-bottom:10px;'>3 dice are rolled.</li><li style='margin-bottom:10px;'>1 Match pays <strong>1:1</strong>. 2 Matches pay <strong>2:1</strong>. 3 Matches pay <strong>3:1</strong>!</li></ul>" },
+      'dt': { title: "Dragon Tiger", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Dragon, Tiger, or Tie. Highest card wins.</li><li style='margin-bottom:10px;'>Aces are low (1). Kings are high (13).</li><li style='margin-bottom:10px;'>Dragon/Tiger pays <strong>1:1</strong>. Tie pays <strong>8:1</strong>.</li></ul>" },
       'sicbo': { title: "Sic Bo", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Small (Sum 4-10) or Big (Sum 11-17).</li><li style='margin-bottom:10px;'>Wins pay <strong>2x</strong>.</li><li style='margin-bottom:10px;'>Any Triple roll loses all Big/Small bets.</li></ul>" }
     };
 
@@ -1003,6 +1000,7 @@
       openModal('rules-modal'); 
     }
 
+    // UPDATED HISTORY TO SEPARATE WIN/LOSS BY PROFIT AND BET
     function openGameHistory(id) {
        if (!id || !gameInfoMap[id]) return; 
        const list = document.getElementById('gh-items');
@@ -1011,20 +1009,26 @@
        if(history.length === 0) { list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">No history available yet.</div>`; } 
        else {
           history.forEach(h => {
-             let isWin = h.payout > h.bet; let isPush = h.payout === h.bet;
-             let winVal = isWin ? `+${h.payout - h.bet}` : (isPush ? 'PUSH' : '-');
-             let lossVal = (!isWin && !isPush) ? `-${h.bet}` : '-';
-             let color = isWin ? 'var(--success)' : (isPush ? 'white' : 'var(--danger)');
-             let word = h.result.split(' ')[0]; let primaryColor = getBetColor(word);
-             list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:12px 15px; border-radius:6px; border-left:4px solid ${color}; display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; align-items:center; font-size:0.95rem; word-break: break-all;"><span style="font-weight:900; color:${primaryColor}; text-transform:uppercase;">${h.result}</span><span style="color:var(--success); font-weight:800; text-align:center;">${winVal}</span><span style="color:var(--danger); font-weight:800; text-align:right;">${lossVal}</span></div>`;
+             let winVal = h.wonProfit > 0 ? `+${h.wonProfit}` : '-';
+             let lossVal = h.lostBet > 0 ? `-${h.lostBet}` : '-';
+             
+             if (h.wonProfit === 0 && h.lostBet === 0) { winVal = 'PUSH'; lossVal = '-'; }
+             
+             let cColor = 'white';
+             if (h.wonProfit > h.lostBet) cColor = 'var(--success)';
+             else if (h.wonProfit < h.lostBet) cColor = 'var(--danger)';
+             
+             let primaryColor = getBetColor(h.result.split(' ')[0]) || 'white';
+             
+             list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:12px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; align-items:center; font-size:0.95rem; word-break: break-all;"><span style="font-weight:900; color:${primaryColor}; text-transform:uppercase;">${h.result}</span><span style="color:var(--success); font-weight:800; text-align:center;">${winVal}</span><span style="color:var(--danger); font-weight:800; text-align:right;">${lossVal}</span></div>`;
           });
        }
        openModal('game-history-modal');
     }
 
-    function logHistory(gid, bet, payout, msg) {
+    function logHistory(gid, bet, payout, msg, wonProfit, lostBet) {
         if(myGameHistory[gid]) {
-            myGameHistory[gid].unshift({ result: msg, payout: payout, bet: bet });
+            myGameHistory[gid].unshift({ result: msg, payout: payout, bet: bet, wonProfit: wonProfit, lostBet: lostBet });
             if(myGameHistory[gid].length > 50) myGameHistory[gid].pop();
         }
     }
@@ -1157,9 +1161,12 @@
     // --- SOLO GAMES ENGINE ---
     // Perfect Green/Red Result Box format. Triggers ONLY when animation is done.
     function showEndBox(box, bet, payout, msg, newBalance) {
-        let pft = payout - bet; let h = `<div class="res-title" style="color:white;">${msg}</div>`; 
+        let pft = payout > bet ? payout - bet : 0; 
+        let loss = payout === 0 ? bet : 0;
+        
+        let h = `<div class="res-title" style="color:white;">${msg}</div>`; 
         if (payout > bet) { 
-            h += `<div class="res-payout" style="color:var(--success)">+${payout} TC</div>`; 
+            h += `<div class="res-payout" style="color:var(--success)">+${pft} TC</div>`; 
             box.className = "result-box win"; 
             updateMyBalance(newBalance, true);
         } else if (payout === bet) { 
@@ -1168,7 +1175,7 @@
             updateMyBalance(newBalance, false);
         } else { 
             sfx.lose(); 
-            h += `<div class="res-payout" style="color:var(--danger)">Lost -${Math.abs(pft)}</div>`; 
+            h += `<div class="res-payout" style="color:var(--danger)">Lost -${loss}</div>`; 
             box.className = "result-box lose"; 
             updateMyBalance(newBalance, false);
         } 
@@ -1203,7 +1210,7 @@
                 nd.style.color = data.payout > 0 ? "var(--success)" : "var(--danger)";
                 
                 showEndBox(mb, data.bet, data.payout, `Rolled ${data.roll}`, data.newBalance);
-                logHistory('dice', data.bet, data.payout, `Rolled ${data.roll}`);
+                logHistory('dice', data.bet, data.payout, `Rolled ${data.roll}`, data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0);
                 
                 setTimeout(() => {
                    icn.className = 'fas fa-dice-d20 dice-icon';
@@ -1238,7 +1245,7 @@
         setTimeout(() => {
             cw.classList.remove('tossing');
             showEndBox(mb, data.bet, data.payout, `Landed on ${data.result}`, data.newBalance);
-            logHistory('coinflip', data.bet, data.payout, data.result);
+            logHistory('coinflip', data.bet, data.payout, data.result, data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0);
             document.getElementById('btn-heads').disabled = false; document.getElementById('btn-tails').disabled = false;
             setTimeout(() => { mb.style.display = 'none'; }, 3000);
         }, 2500);
@@ -1325,7 +1332,9 @@
             }
             
             showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.msg, data.newBalance);
-            logHistory('blackjack', bjSt.bet, data.payout, data.msg);
+            let wProf = data.payout > bjSt.bet ? data.payout - bjSt.bet : 0;
+            let lBet = data.payout === 0 ? bjSt.bet : 0;
+            logHistory('blackjack', bjSt.bet, data.payout, data.msg, wProf, lBet);
             document.getElementById('btn-bj-deal').disabled = false;
         }
     });
@@ -1395,21 +1404,27 @@
                 
                 let totBet = 0, totWon = 0;
                 let wC = 0, lC = 0;
+                let wonProfit = 0, lostBet = 0;
+                
                 for(let b in mySBets) { 
-                    totBet += mySBets[b]; 
+                    let a = mySBets[b];
+                    totBet += a; 
                     let m = rollArr.filter(x => x.trim() === b).length; 
                     if(m > 0) {
-                        totWon += mySBets[b] + (mySBets[b] * m); 
+                        let p = a + (a * m);
+                        totWon += p; 
+                        wonProfit += (a * m);
                         wC++;
                     } else {
+                        lostBet += a;
                         lC++;
                     }
                 }
-                let msg = rollArr.join(', ');
+                let msg = rollArr.join(', ').toUpperCase();
                 if (Object.keys(mySBets).length > 1) {
                     msg += ` (${wC} WIN, ${lC} LOSE)`;
                 }
-                processSharedPayout('perya', totWon, totBet, msg);
+                processSharedPayout('perya', totWon, totBet, msg, wonProfit, lostBet);
             }, 2000);
         }
       },
@@ -1438,9 +1453,9 @@
           if (cg) cg.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;grid-column:span 2"><div class="input-group" style="margin:0;text-align:left;width:150px;"><label style="text-align:center">Bet Amount</label><input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10"></div><div style="text-align:right; cursor:pointer; transition:0.2s;" onclick="openCurrentBetsModal()" title="Click to view bets" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1"><div style="color:var(--text-muted);font-size:0.85rem;font-weight:600;text-transform:uppercase;margin-bottom:5px;"><i class="fas fa-eye"></i> Total Bet</div><div id="sg-my-bet" style="color:white;font-size:1.5rem;font-weight:800;">0 TC</div></div></div><div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
-            <button class="bet-btn shared-tile" data-choice="Player" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Player')">PLAYER (2x)</button>
-            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (8x)</button>
-            <button class="bet-btn shared-tile" data-choice="Banker" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Banker')">BANKER (2x)</button>`;
+            <button class="bet-btn shared-tile" data-choice="Player" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Player')">PLAYER (1:1)</button>
+            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (8:1)</button>
+            <button class="bet-btn shared-tile" data-choice="Banker" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Banker')">BANKER (1:0.95)</button>`;
         },
         animateResult: async function(data) {
             let pHand = document.getElementById('bac-p-hand'), bHand = document.getElementById('bac-b-hand');
@@ -1483,13 +1498,22 @@
             let w = data.winner;
             let tp = 0, tba = 0; 
             let wC = 0, lC = 0;
+            let wonProfit = 0, lostBet = 0;
+            
             for (let b in mySBets) { 
                 let a = mySBets[b]; tba += a; 
-                if (b === w) { tp += a * (w === 'Tie' ? 8 : 2); wC++; } else { lC++; }
+                if (b === w) { 
+                    let p = a * (w === 'Tie' ? 9 : (w === 'Banker' ? 1.95 : 2)); 
+                    tp += p; wC++; wonProfit += (p - a);
+                } else if (w === 'Tie' && (b === 'Player' || b === 'Banker')) {
+                    tp += a; // Push refund
+                } else { 
+                    lC++; lostBet += a;
+                }
             } 
-            let msg = `${w.toUpperCase()} WINS!`;
+            let msg = w === 'Tie' ? `TIE!` : `${w.toUpperCase()} WINS!`;
             if (Object.keys(mySBets).length > 1) msg += ` (${wC} WIN, ${lC} LOSE)`;
-            processSharedPayout('baccarat', tp, tba, msg);
+            processSharedPayout('baccarat', tp, tba, msg, wonProfit, lostBet);
         }
       },
       'dt': {
@@ -1509,9 +1533,9 @@
             <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
-            <button class="bet-btn shared-tile" data-choice="Dragon" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Dragon')">DRAGON (2x)</button>
-            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (8x)</button>
-            <button class="bet-btn shared-tile" data-choice="Tiger" style="--tile-color:var(--credits); border-bottom:5px solid var(--credits);" onclick="placeSharedBet('Tiger')">TIGER (2x)</button>`; 
+            <button class="bet-btn shared-tile" data-choice="Dragon" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Dragon')">DRAGON (1:1)</button>
+            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (8:1)</button>
+            <button class="bet-btn shared-tile" data-choice="Tiger" style="--tile-color:var(--credits); border-bottom:5px solid var(--credits);" onclick="placeSharedBet('Tiger')">TIGER (1:1)</button>`; 
         },
         animateResult: function(data) { 
           let e1 = document.getElementById('dt-c1'); 
@@ -1524,13 +1548,19 @@
               let w = data.winner;
               let tp = 0, tba = 0; 
               let wC = 0, lC = 0;
+              let wonProfit = 0, lostBet = 0;
               for (let b in mySBets) { 
                 let a = mySBets[b]; tba += a; 
-                if (b === w) { tp += a * (w === 'Tie' ? 8 : 2); wC++; } else { lC++; }
+                if (b === w) { 
+                    let p = a * (w === 'Tie' ? 9 : 2); 
+                    tp += p; wC++; wonProfit += (p - a);
+                } else { 
+                    lC++; lostBet += a; 
+                }
               } 
-              let msg = `${w.toUpperCase()} WINS!`;
+              let msg = w === 'Tie' ? `TIE!` : `${w.toUpperCase()} WINS!`;
               if (Object.keys(mySBets).length > 1) msg += ` (${wC} WIN, ${lC} LOSE)`;
-              processSharedPayout('dt', tp, tba, msg); 
+              processSharedPayout('dt', tp, tba, msg, wonProfit, lostBet); 
             }, 1000); 
           }, 500); 
         }
@@ -1572,13 +1602,14 @@
             let w = data.winner; 
             let tp = 0, tba = 0; 
             let wC = 0, lC = 0;
+            let wonProfit = 0, lostBet = 0;
             for (let b in mySBets) { 
               let a = mySBets[b]; tba += a; 
-              if (b === w) { tp += a * 2; wC++; } else { lC++; }
+              if (b === w) { tp += a * 2; wC++; wonProfit += a; } else { lC++; lostBet += a;}
             } 
             let msg = it ? `TRIPLE! HOUSE WINS` : `${w.toUpperCase()} (${s})`;
             if (Object.keys(mySBets).length > 1) msg += ` (${wC} WIN, ${lC} LOSE)`;
-            processSharedPayout('sicbo', tp, tba, msg); 
+            processSharedPayout('sicbo', tp, tba, msg, wonProfit, lostBet); 
           }, 2000); 
         }
       }
@@ -1624,27 +1655,27 @@
       sfx.tick(); 
     }
 
-    // Displays the exact green/red box, asks server for true balance update
-    function processSharedPayout(gid, pa, tba, rt) { 
+    // Process shared payout and pass explicitly calculated win/loss stats
+    function processSharedPayout(gid, pa, tba, rt, wonProfit = 0, lostBet = 0) { 
       const box = document.getElementById('sg-overlay'); 
       if (!box) return;
 
-      let pft = pa - tba;
+      let net = wonProfit - lostBet;
       let h = `<div class="res-title" style="color:white;">${rt}</div>`; 
 
       if (tba > 0) {
-          if (pft > 0) {
-              h += `<div class="res-payout" style="color:var(--success)">+${pa} TC</div>`;
+          if (net > 0) {
+              h += `<div class="res-payout" style="color:var(--success)">+${net} TC</div>`;
               box.className = "result-box win";
-          } else if (pft === 0 && pa > 0) {
+          } else if (net === 0) {
               h += `<div class="res-payout" style="color:white">Push</div>`;
               box.className = "result-box push";
           } else {
               sfx.lose();
-              h += `<div class="res-payout" style="color:var(--danger)">Lost -${tba}</div>`;
+              h += `<div class="res-payout" style="color:var(--danger)">Lost -${Math.abs(net)}</div>`;
               box.className = "result-box lose";
           }
-          logHistory(gid, tba, pa, rt);
+          logHistory(gid, tba, pa, rt, wonProfit, lostBet);
       } else {
           box.className = "result-box push";
       }
@@ -1653,7 +1684,7 @@
       box.style.display = 'block';
       setTimeout(() => { box.classList.add('show'); }, 10);
       
-      // Tell server to send updated balance after visual delay to sync animation
+      // Pull correct balance from server EXACTLY 1.5 seconds later
       setTimeout(() => { socket.emit('requestBalanceRefresh'); }, 1500);
     }
 
