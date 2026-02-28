@@ -13,30 +13,16 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <style>
-        /* ================= CSS VARIABLES ================= */
         :root { 
-            --ps-bg: #000814; 
-            --ps-blue: #00439c; 
-            --ps-glow: #00a2ff; 
-            --glass-bg: rgba(0, 15, 35, 0.85); 
-            --glass-border: rgba(255, 255, 255, 0.15); 
-            --danger: #ff3366; 
-            --success: #00e676; 
-            --credits: #ffb400; 
-            --text-main: #f8fafc; 
-            --text-muted: #8c9eb5; 
+            --ps-bg: #000814; --ps-blue: #00439c; --ps-glow: #00a2ff; 
+            --glass-bg: rgba(0, 15, 35, 0.85); --glass-border: rgba(255, 255, 255, 0.15); 
+            --danger: #ff3366; --success: #00e676; --credits: #ffb400; 
+            --text-main: #f8fafc; --text-muted: #8c9eb5; 
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; }
         
-        body { 
-            background: linear-gradient(135deg, #000a1f 0%, #00122e 100%); 
-            color: var(--text-main); 
-            min-height: 100vh; 
-            width: 100vw;
-            display: flex; 
-            overflow: hidden;
-        }
+        body { background: linear-gradient(135deg, #000a1f 0%, #00122e 100%); color: var(--text-main); min-height: 100vh; width: 100vw; display: flex; overflow: hidden; }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -45,44 +31,22 @@
 
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
-        /* ================= AUTHENTICATION ================= */
-        #auth-container { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            display: flex; justify-content: center; align-items: center; 
-            z-index: 999999; background: #00050d; 
-        }
-        
-        .auth-box { 
-            width: 420px; background: var(--glass-bg); padding: 3rem; 
-            border-radius: 16px; border: 1px solid var(--glass-border); 
-            text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.8); 
-            position: relative; z-index: 10; 
-        }
-        
+        /* AUTHENTICATION */
+        #auth-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 999999; background: #00050d; }
+        .auth-box { width: 420px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.8); position: relative; z-index: 10; }
         .auth-title { font-size: 2.2rem; font-weight: 900; color: white; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;}
         .auth-sub { color: var(--danger); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
         
         .input-group { margin-bottom: 15px; text-align: left; width: 100%; }
         .input-group label { display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
-        
-        .input-control { 
-            width: 100%; padding: 15px; background: rgba(0,0,0,0.5); 
-            border: 1px solid var(--glass-border); color: white; 
-            border-radius: 8px; font-size: 1.1rem; font-weight: 600; 
-            transition: 0.2s; pointer-events: auto; cursor: text;
-        }
+        .input-control { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1.1rem; font-weight: 600; transition: 0.2s; pointer-events: auto; cursor: text; }
         .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
         
-        .btn-primary { 
-            background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); 
-            padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; 
-            cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; pointer-events: auto;
-        }
+        .btn-primary { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; pointer-events: auto; }
         .btn-primary:hover { background: var(--ps-glow); color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 162, 255, 0.4); }
-        
         .auth-msg { font-size: 0.95rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; color: var(--danger); }
 
-        /* ================= DASHBOARD LAYOUT ================= */
+        /* DASHBOARD LAYOUT */
         #admin-app { display: none; width: 100%; height: 100vh; position: relative; z-index: 1;}
         
         /* SIDEBAR */
@@ -121,10 +85,7 @@
         
         table { width: 100%; border-collapse: collapse; text-align: left; }
         th, td { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        
-        /* Solid Sticky Headers to prevent text overlap */
         thead th { position: sticky; top: 0; background: #000a1f; z-index: 10; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); padding: 15px 20px;}
-        
         td { font-weight: 600; font-size: 1rem; color: white; }
         tr:hover { background: rgba(255,255,255,0.03); }
 
@@ -134,7 +95,6 @@
         .badge.rejected, .badge.banned { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
         .badge.offline { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); border: 1px solid rgba(255, 255, 255, 0.2); }
 
-        /* ACTION BUTTONS IN TABLES */
         .action-btns { display: flex; gap: 8px; }
         .btn-sm { padding: 6px 12px; border: none; border-radius: 6px; font-weight: 800; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; transition: 0.2s; color: white; letter-spacing: 1px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;}
         .btn-edit { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid rgba(0, 162, 255, 0.3); } .btn-edit:hover { background: var(--ps-glow); color: black; }
@@ -149,7 +109,6 @@
         .modal-close:hover { color: var(--danger); transform: scale(1.1); }
         .modal-title { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-align: center; }
 
-        /* FILTER BAR */
         .filter-bar { display: flex; gap: 15px; background: rgba(0,0,0,0.4); padding: 15px 30px; border-bottom: 1px solid var(--glass-border); align-items: center;}
         .filter-bar input, .filter-bar select { padding: 10px 15px; background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; border-radius: 6px; font-size: 0.95rem; font-weight: 600; outline: none; }
         .filter-bar input:focus, .filter-bar select:focus { border-color: var(--ps-glow); }
@@ -233,16 +192,28 @@
 
                         <div class="panel" style="margin-bottom:0; flex:1;">
                             <div class="panel-header"><h3 style="color:var(--credits)"><i class="fas fa-gift"></i> Direct Gift Credits</h3></div>
-                            <div style="padding: 20px 30px; display:flex; gap:15px; align-items:flex-end;">
-                                <div class="input-group" style="margin:0;">
-                                    <label>Username (or "All")</label>
-                                    <input type="text" id="tool-target" class="input-control" placeholder="PlayerName">
+                            <div style="padding: 20px 30px; display:flex; flex-direction:column; gap:15px;">
+                                <div style="display:flex; gap:15px; width: 100%;">
+                                    <div class="input-group" style="margin:0; flex:1;">
+                                        <label>Target Group</label>
+                                        <select id="tool-target-type" class="input-control" style="appearance: auto;" onchange="toggleGiftTarget()">
+                                            <option value="specific">Specific Player</option>
+                                            <option value="all_active">All Active Players</option>
+                                            <option value="all_registered">All Registered Players</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group" style="margin:0; flex:1;" id="gift-user-group">
+                                        <label>Username</label>
+                                        <input type="text" id="tool-target-user" class="input-control" placeholder="PlayerName">
+                                    </div>
                                 </div>
-                                <div class="input-group" style="margin:0;">
-                                    <label>Amount</label>
-                                    <input type="number" id="tool-amt" class="input-control" placeholder="500">
+                                <div style="display:flex; gap:15px; width: 100%; align-items: flex-end;">
+                                    <div class="input-group" style="margin:0; flex:2;">
+                                        <label>Amount (TC)</label>
+                                        <input type="number" id="tool-amt" class="input-control" placeholder="500">
+                                    </div>
+                                    <button class="btn-primary" style="flex:1; padding: 15px;" onclick="sendGift()"><i class="fas fa-check"></i> Send Gift</button>
                                 </div>
-                                <button class="btn-primary" style="width:auto; padding: 15px 25px;" onclick="sendGift()"><i class="fas fa-check"></i></button>
                             </div>
                         </div>
                     </div>
@@ -370,7 +341,6 @@
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('create-promo-modal')"><i class="fas fa-times"></i></button>
             <h3 class="modal-title">Generate Gift Codes</h3>
-            
             <div class="input-group">
                 <label>TC Value Per Code</label>
                 <input type="number" id="promo-amount" class="input-control" placeholder="e.g. 500">
@@ -416,7 +386,6 @@
     <script>
         const socket = io();
 
-        // Data Stores
         let gUsers = [];
         let gTxs = [];
         let gPromos = [];
@@ -444,7 +413,6 @@
         });
 
         socket.on('adminLoginSuccess', data => {
-            // Completely hide the auth wrapper so it doesn't block clicks
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('admin-app').style.display = 'flex';
         });
@@ -676,7 +644,16 @@
             }
         }
 
-        // --- GLOBAL ADMIN TOOLS ---
+        function toggleGiftTarget() {
+            const type = document.getElementById('tool-target-type').value;
+            const userGroup = document.getElementById('gift-user-group');
+            if (type === 'specific') {
+                userGroup.style.display = 'block';
+            } else {
+                userGroup.style.display = 'none';
+            }
+        }
+
         function sendGlobalUpdate() {
             let msg = document.getElementById('tool-msg').value;
             if(!msg) return alert("Enter a message.");
@@ -686,12 +663,30 @@
         }
 
         function sendGift() {
-            let target = document.getElementById('tool-target').value;
+            let type = document.getElementById('tool-target-type').value;
+            let targetUser = document.getElementById('tool-target-user').value;
             let amt = parseInt(document.getElementById('tool-amt').value);
-            if(!target || !amt) return alert("Enter Username (or 'All') and Amount.");
-            if(confirm(`Gift ${amt} TC to ${target}?`)) {
+            
+            if (!amt) return alert("Enter an Amount.");
+            
+            let target = '';
+            let confirmMsg = '';
+            
+            if (type === 'specific') {
+                if (!targetUser) return alert("Enter a Username.");
+                target = targetUser;
+                confirmMsg = `Gift ${amt} TC to ${target}?`;
+            } else if (type === 'all_active') {
+                target = 'all_active';
+                confirmMsg = `Gift ${amt} TC to ALL ACTIVE players?`;
+            } else if (type === 'all_registered') {
+                target = 'all_registered';
+                confirmMsg = `Gift ${amt} TC to ALL REGISTERED players (including offline)?`;
+            }
+
+            if(confirm(confirmMsg)) {
                 socket.emit('adminAction', { type: 'giftCredits', target: target, amount: amt });
-                document.getElementById('tool-target').value = '';
+                document.getElementById('tool-target-user').value = '';
                 document.getElementById('tool-amt').value = '';
             }
         }
