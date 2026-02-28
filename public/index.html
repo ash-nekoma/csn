@@ -26,7 +26,7 @@
         input[type="number"] { -moz-appearance: textfield; }
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
-        /* AUTHENTICATION GATEWAY */
+        /* AUTHENTICATION GATEWAY (Fixed Size and Alignment) */
         #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
         .auth-box { width: 420px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 25px 80px rgba(0,0,0,0.9); text-align: center; }
         .auth-title { font-size: 2.8rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
@@ -151,6 +151,9 @@
         .bank-section { display: none; flex: 1; padding-right: 5px; }
         .bank-section.active { display: block; }
 
+        /* Solid Header Backgrounds to fix scroll overlap */
+        thead th { position: sticky; top: 0; background: #000a1f; z-index: 10; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); padding: 10px 15px;}
+
         /* DAILY REWARD */
         .dr-days { display: flex; gap: 10px; justify-content: center; align-items: flex-end; margin-bottom: 25px; height: 160px; }
         .dr-day { flex: 1; background: linear-gradient(180deg, #1a2a6c 0%, #001f4d 100%); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 10px 5px; height: 130px; transition: 0.3s; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
@@ -172,7 +175,7 @@
         .dr-status-text { font-size: 1.2rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
         .dr-timer { font-size: 1.5rem; font-weight: 900; color: var(--ps-glow); font-family: 'Rajdhani', sans-serif; }
 
-        /* BACCARAT TEXT & IN-GAME NOTIFS (NO TOP TOASTS) */
+        /* BACCARAT TEXT & IN-GAME NOTIFS */
         #bac-action-text { height: 24px; color: var(--ps-glow); font-weight: 800; text-align: center; margin-top: 40px; letter-spacing: 1px; text-transform: uppercase; font-size: 1.1rem; text-shadow: 0 0 10px rgba(0,162,255,0.5); }
 
         /* GLOBAL TOAST (Top Right) */
@@ -205,13 +208,11 @@
         @keyframes popBalance { 0% { transform: scale(1); } 50% { transform: scale(1.1); background: rgba(0, 230, 118, 0.3); border-color: var(--success); } 100% { transform: scale(1); } } .anim-pop { animation: popBalance 0.6s ease-out; }
         @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } 75% { transform: rotate(-15deg); } 100% { transform: rotate(0deg); } } .anim-shake { animation: shake 0.3s infinite; }
 
-        /* SOLO GAMES ASSETS */
+        /* GAME ASSETS */
         .blackjack-scores { display: flex; justify-content: center; gap: 40px; width: 100%; align-items: flex-start; } .card-area { min-width: 250px; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 240px; } .bj-title { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; } .bj-score { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 15px; line-height: 1; } .card-hand { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; width: 100%; } .play-card { background: white; color: black; border-radius: 6px; width: 65px; height: 95px; border: 1px solid #ccc; box-shadow: 2px 5px 15px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; } .play-card .val { font-size: 1.6rem; line-height: 1; margin-bottom: 2px; } .play-card .suit { font-size: 1.8rem; line-height: 1; } .card-red { color: #e60000; } .card-back { background: repeating-linear-gradient(45deg, #001f4d, #001f4d 10px, #000a1f 10px, #000a1f 20px); border: 2px solid rgba(255,255,255,0.8); color: transparent; }
         .anim-deal { animation: dealCard 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: center; } @keyframes dealCard { 0% { opacity: 0; transform: translate(0, -200px) scale(0.5) rotateY(180deg); } 100% { opacity: 1; transform: translate(0, 0) scale(1) rotateY(0deg); } } .anim-flip { animation: flipCard 0.4s ease-in-out forwards; } @keyframes flipCard { 0% { transform: rotateY(180deg); } 50% { transform: rotateY(90deg); color: transparent; } 51% { color: inherit; background: white; } 100% { transform: rotateY(0deg); background: white; color: black; } }
         .dice-icon { font-size: 7rem; color: var(--text-muted); text-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: 0.1s; line-height: 1; } #dice-num { font-size: 6rem !important; line-height: 1; text-shadow: 0 10px 30px rgba(0,0,0,0.8); font-weight: 900 !important; }
         .coin-wrapper { perspective: 1000px; width: 200px; height: 200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; } .coin-inner { width: 100%; height: 100%; transition: transform 2.5s cubic-bezier(0.25, 1, 0.2, 1); transform-style: preserve-3d; position: relative; } .coin-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 5rem; font-weight: 900; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 15px 40px rgba(0,0,0,0.9); border: 8px solid; } .coin-heads { background: radial-gradient(circle at 30% 30%, #fde047, #b45309); color: #78350f; border-color: #f59e0b; } .coin-tails { background: radial-gradient(circle at 30% 30%, #e2e8f0, #475569); color: #0f172a; border-color: #94a3b8; transform: rotateY(180deg); } .tossing { animation: toss 2.5s cubic-bezier(0.25, 1, 0.2, 1); } @keyframes toss { 0% { transform: scale(1) translateY(0); } 50% { transform: scale(1.5) translateY(-50px); } 100% { transform: scale(1) translateY(0); } }
-
-        /* SHARED GAMES ASSETS */
         .color-dice-container { display: flex; gap: 30px; justify-content: center; font-size: 6rem; margin-bottom: 20px; } .color-die { width: 130px; height: 130px; border-radius: 16px; border: 2px solid rgba(255,255,255,0.3); box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; color: white; transition: 0.3s; background: #111; font-weight: 800;} .c-grey { background: radial-gradient(circle, #333, #0a0a0a); color: rgba(255,255,255,0.4); border-color: #444; } .c-red { background: radial-gradient(circle, #ff3366, #99002b); border-color: #ff3366;} .c-blue { background: radial-gradient(circle, #00a2ff, #003d66); border-color: #00a2ff;} .c-yellow { background: radial-gradient(circle, #ffcc00, #997a00); border-color: #ffcc00;} .c-white { background: radial-gradient(circle, #ffffff, #999999); color: #000; border-color: #fff;} .c-green { background: radial-gradient(circle, #00e676, #006634); border-color: #00e676;} .c-pink { background: radial-gradient(circle, #ff66b2, #99004d); border-color: #ff66b2;}
         .dt-arena { display: flex; justify-content: center; gap: 80px; width: 100%; align-items: center; margin-bottom: 20px; } .dt-side { display: flex; flex-direction: column; align-items: center; gap: 20px; } .dt-label { font-size: 2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; } .lbl-dragon { color: var(--danger); text-shadow: 0 0 20px rgba(255,51,102,0.6); } .lbl-tiger { color: var(--credits); text-shadow: 0 0 20px rgba(255,180,0,0.6); } .dt-card { width: 120px !important; height: 170px !important; } .dt-card .val { font-size: 3rem; } .dt-card .suit { font-size: 3.5rem; }
         .sicbo-dice { display: flex; justify-content: center; gap: 30px; font-size: 6rem; margin-bottom: 10px; } .s-die { color: white; text-shadow: 0 10px 20px rgba(0,0,0,0.8); }
@@ -288,6 +289,9 @@
             </div>
             
             <div class="topbar-actions">
+                <button class="top-icon-btn admin-btn hidden" onclick="window.location.href='/admin.html'" title="Admin Panel" style="color:var(--ps-glow);">
+                    <i class="fas fa-user-shield"></i>
+                </button>
                 <button class="top-icon-btn" onclick="openNotifModal()" title="Notifications">
                     <i class="fas fa-bell"></i>
                     <div class="notif-badge" id="notif-badge-display" style="display:none;">0</div>
@@ -314,7 +318,6 @@
         <div class="content">
           
           <div id="view-casino" class="view-container">
-            
             <div class="lobby-wrapper" id="lobby-modes">
               <div style="text-align: center; margin-bottom: 3rem;">
                  <h1 class="casino-title">STICK N' TRADE CASINO</h1>
@@ -527,9 +530,7 @@
         <button class="modal-close-icon" onclick="closeModal('current-bets-modal')"><i class="fas fa-times"></i></button>
         <h3 style="margin-top:0;">My Current Bets</h3>
         <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Active wagers for this round</p>
-        
-        <div id="cb-list" class="custom-scroll" style="max-height: 300px; display: flex; flex-direction: column; gap: 10px;">
-            </div>
+        <div id="cb-list" class="custom-scroll" style="max-height: 300px; display: flex; flex-direction: column; gap: 10px;"></div>
     </div>
   </div>
 
@@ -538,11 +539,11 @@
         <button class="modal-close-icon" onclick="closeModal('promo-modal')"><i class="fas fa-times"></i></button>
         <h3 style="margin-top:0;">REDEEM CODE</h3>
         <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Enter your gift code below to claim free TC.</p>
-        <div class="input-group" style="margin-bottom:15px;">
+        <div class="input-group" style="margin-bottom:10px;">
             <input type="text" id="promo-code" class="input-control bet-input" placeholder="XXXX-XXXX-XXXX">
         </div>
-        <button class="btn-play" style="width:100%;" onclick="submitPromo()">REDEEM</button>
-        <div id="promo-response" style="text-align:center; font-weight:800; min-height:25px; margin-top:15px; font-size: 1.1rem; line-height:1.4;"></div>
+        <button class="btn-play" style="width:100%; margin-top: 10px;" onclick="submitPromo()">REDEEM</button>
+        <div id="promo-response" style="text-align:center; font-weight:800; min-height:45px; margin-top:15px; font-size: 1.1rem; line-height:1.4;"></div>
     </div>
   </div>
 
@@ -552,11 +553,8 @@
       <h3 style="font-size: 2.2rem; color: var(--credits); margin-bottom: 5px; border: none; padding-bottom: 0;">Daily Reward</h3>
       <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px;">Claim credits every 24 hours!</p>
       
-      <div class="dr-days" id="dr-days-container">
-          </div>
-      
-      <div id="dr-status-container">
-          </div>
+      <div class="dr-days" id="dr-days-container"></div>
+      <div id="dr-status-container"></div>
     </div>
   </div>
 
@@ -582,7 +580,7 @@
             <input type="file" id="dep-ref" class="input-control" accept="image/*" style="padding: 10px; font-size: 0.95rem; cursor: pointer;">
         </div>
         <button class="btn-play" style="width:100%;" onclick="submitDeposit()"><i class="fas fa-arrow-down"></i> Submit Deposit</button>
-        <div id="dep-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:15px; text-transform:uppercase; font-size:1rem;"></div>
+        <div id="dep-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:15px; text-transform:uppercase; font-size:0.9rem;"></div>
       </div>
 
       <div id="sc-tab-withdraw" class="bank-section hidden">
@@ -596,12 +594,11 @@
             <input type="text" id="wit-info" class="input-control" placeholder="e.g. AshleyChan">
         </div>
         <button class="btn-play" style="width:100%;" onclick="submitWithdrawal()"><i class="fas fa-arrow-up"></i> Request Withdrawal</button>
-        <div id="wit-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:15px; text-transform:uppercase; font-size:1rem;"></div>
+        <div id="wit-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:15px; text-transform:uppercase; font-size:0.9rem;"></div>
       </div>
 
       <div id="sc-tab-requests" class="bank-section hidden">
-        <div id="bank-logs-container" class="custom-scroll" style="height: 250px; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; overflow-y: auto; overflow-x: hidden;">
-            </div>
+        <div id="bank-logs-container" class="custom-scroll" style="height: 250px; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; overflow-y: auto; overflow-x: hidden;"></div>
       </div>
     </div>
   </div>
@@ -612,7 +609,7 @@
         <h3 id="gh-title" style="margin-top:0;">Bet History</h3>
         
         <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 400px; padding-right:5px;">
-            <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:2px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:var(--glass-bg); z-index:10;">
+            <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:2px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#000a1f; z-index:10;">
                 <div>Result</div><div style="text-align:center; color:var(--success)">Win</div><div style="text-align:right; color:var(--danger)">Loss</div>
             </div>
             <div id="gh-items" style="display:flex; flex-direction:column; gap:8px; margin-top:10px;"></div>
@@ -625,11 +622,10 @@
         <button class="modal-close-icon" onclick="closeModal('global-results-modal')"><i class="fas fa-times"></i></button>
         <h3 id="gr-title" style="margin-top:0;">Recent Results</h3>
         
-        <div id="gr-stats-header" style="background:rgba(0,0,0,0.6); padding:15px; border-radius:8px; margin-bottom:15px; font-size:0.9rem; font-weight:800; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:10px; justify-content:center; border: 1px solid var(--glass-border);">
-            </div>
+        <div id="gr-stats-header" style="background:rgba(0,0,0,0.6); padding:15px; border-radius:8px; margin-bottom:15px; font-size:0.9rem; font-weight:800; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:10px; justify-content:center; border: 1px solid var(--glass-border);"></div>
 
         <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 300px; padding-right:5px;">
-            <div style="display:flex; padding:10px 15px; border-bottom:2px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:var(--glass-bg); z-index:10; justify-content:center;">
+            <div style="display:flex; padding:10px 15px; border-bottom:2px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#000a1f; z-index:10; justify-content:center;">
                 Last 25 Outcomes
             </div>
             <div id="gr-items" style="display:flex; flex-direction:column; gap:8px; margin-top:10px;"></div>
@@ -641,8 +637,7 @@
      <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; padding: 40px 30px 30px;">
         <button class="modal-close-icon" onclick="closeModal('rules-modal')"><i class="fas fa-times"></i></button>
         <h3 id="rules-title" style="margin-top:0;">How to Play</h3>
-        <div id="rules-body" style="color:var(--text-muted); font-size:1.05rem; line-height:1.6; margin-left: 20px;">
-           </div>
+        <div id="rules-body" style="color:var(--text-muted); font-size:1.05rem; line-height:1.6; margin-left: 20px;"></div>
      </div>
   </div>
 
@@ -696,10 +691,33 @@
         let icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
         toast.innerHTML = `<i class="fas ${icon}"></i> <span>${msg}</span>`;
         container.appendChild(toast);
-        setTimeout(() => { 
-            toast.classList.remove('show'); 
-            setTimeout(() => toast.remove(), 300); 
-        }, 3000);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+
+    // Live Socket Notifications from Admin
+    socket.on('notification', (data) => {
+        const list = document.getElementById('notif-list');
+        const noMsg = document.getElementById('no-notif-msg');
+        if (noMsg) noMsg.style.display = 'none';
+        
+        let color = data.type === 'success' ? 'var(--success)' : (data.type === 'error' ? 'var(--danger)' : 'var(--ps-glow)');
+        let html = `<div class="ticket-log-item" style="cursor:default; margin-bottom:0;"><div class="ticket-log-header"><span class="ticket-log-id" style="color:${color}">${data.title}</span><span style="font-size:0.8rem; color:var(--text-muted);">Just now</span></div><div style="font-weight:600; font-size:1rem; color:white;">${data.msg}</div></div>`;
+        
+        list.insertAdjacentHTML('afterbegin', html);
+        
+        let badge = document.getElementById('notif-badge-display');
+        badge.style.display = 'block';
+        badge.innerText = (parseInt(badge.innerText) || 0) + 1;
+        
+        showToast(data.msg, data.type);
+    });
+
+    socket.on('refreshBalance', () => { socket.emit('requestBalanceRefresh'); });
+
+    function openNotifModal() {
+        let badge = document.getElementById('notif-badge-display');
+        badge.style.display = 'none'; badge.innerText = '0';
+        openModal('notif-modal');
     }
 
     // --- AUDIO API ---
@@ -709,23 +727,19 @@
         let icon = document.querySelector('#mute-btn i');
         if (icon) {
             icon.className = audioMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
-            icon.style.color = audioMuted ? 'var(--danger)' : 'white';
+            icon.parentElement.style.color = audioMuted ? 'var(--danger)' : 'white';
         }
         if (!audioMuted && audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     function playTone(f, t, d, v = 0.1) { 
       if (audioMuted || audioCtx.state === 'suspended') return; 
-      let o = audioCtx.createOscillator(); 
-      let g = audioCtx.createGain(); 
-      o.type = t; 
-      o.frequency.setValueAtTime(f, audioCtx.currentTime); 
+      let o = audioCtx.createOscillator(); let g = audioCtx.createGain(); 
+      o.type = t; o.frequency.setValueAtTime(f, audioCtx.currentTime); 
       g.gain.setValueAtTime(v * sfxGainVal, audioCtx.currentTime); 
       g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d); 
-      o.connect(g); 
-      g.connect(audioCtx.destination); 
-      o.start(); 
-      o.stop(audioCtx.currentTime + d); 
+      o.connect(g); g.connect(audioCtx.destination); 
+      o.start(); o.stop(audioCtx.currentTime + d); 
     }
 
     const sfx = { 
@@ -776,6 +790,8 @@
         else { input.type = "password"; icon.className = "fas fa-eye"; }
     }
 
+    document.getElementById('login-pass').addEventListener('keypress', function(e) { if (e.key === 'Enter') submitAuth('login'); });
+
     function submitAuth(mode) {
         const uId = mode === 'login' ? 'login-user' : 'reg-user';
         const pId = mode === 'login' ? 'login-pass' : 'reg-pass';
@@ -802,6 +818,10 @@
         document.getElementById('player-name-display').innerText = myUsername;
         document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
         
+        if(data.role === 'Admin') {
+            document.querySelector('.admin-btn').classList.remove('hidden');
+        }
+
         setupDailyRewardUI(data.daily);
 
         document.getElementById('auth-container').style.display = 'none';
@@ -810,34 +830,7 @@
         switchView('casino');
     });
 
-    // --- NOTIFICATIONS ---
-    socket.on('notification', (data) => {
-        const list = document.getElementById('notif-list');
-        const noMsg = document.getElementById('no-notif-msg');
-        if (noMsg) noMsg.style.display = 'none';
-        
-        let color = data.type === 'success' ? 'var(--success)' : (data.type === 'error' ? 'var(--danger)' : 'var(--ps-glow)');
-        let html = `<div class="ticket-log-item" style="cursor:default; margin-bottom:0;"><div class="ticket-log-header"><span class="ticket-log-id" style="color:${color}">${data.title}</span><span style="font-size:0.8rem; color:var(--text-muted);">Just now</span></div><div style="font-weight:600; font-size:1rem; color:white;">${data.msg}</div></div>`;
-        
-        list.insertAdjacentHTML('afterbegin', html);
-        
-        let badge = document.getElementById('notif-badge-display');
-        badge.style.display = 'block';
-        badge.innerText = (parseInt(badge.innerText) || 0) + 1;
-        
-        showToast(data.msg, data.type);
-    });
-
-    function openNotifModal() {
-        let badge = document.getElementById('notif-badge-display');
-        badge.style.display = 'none';
-        badge.innerText = '0';
-        openModal('notif-modal');
-    }
-
-    socket.on('balanceUpdateData', (newBalance) => {
-        updateMyBalance(newBalance);
-    });
+    socket.on('balanceUpdateData', (newBalance) => { updateMyBalance(newBalance); });
 
     function updateMyBalance(newBalance, didWin = false) {
         if(didWin) { 
@@ -855,40 +848,22 @@
         const rewards = [25, 50, 100, 200, 500, 750, 1000];
         
         for(let i=1; i<=7; i++) {
-            let statClass = '';
-            let boxTitle = `Day ${i}`;
-            
-            if (i < dailyData.day || (i === dailyData.day && !dailyData.canClaim)) {
-                statClass = 'claimed';
-                boxTitle = "CLAIMED";
-            } else if (i === dailyData.day && dailyData.canClaim) {
-                statClass = 'active';
-            }
-            
-            container.innerHTML += `
-                <div class="dr-day ${statClass}" id="dr-day-${i}">
-                    <div class="dr-title">${boxTitle}</div>
-                    <div class="dr-coin">${rewards[i-1]}<br>Credits</div>
-                </div>
-            `;
+            let statClass = ''; let boxTitle = `Day ${i}`;
+            if (i < dailyData.day || (i === dailyData.day && !dailyData.canClaim)) { statClass = 'claimed'; boxTitle = "CLAIMED"; } 
+            else if (i === dailyData.day && dailyData.canClaim) { statClass = 'active'; }
+            container.innerHTML += `<div class="dr-day ${statClass}" id="dr-day-${i}"><div class="dr-title">${boxTitle}</div><div class="dr-coin">${rewards[i-1]}<br>Credits</div></div>`;
         }
 
         let sc = document.getElementById('dr-status-container');
-        if(dailyData.canClaim) {
-            sc.innerHTML = `<button class="btn-play dr-claim-btn" id="btn-claim-reward" onclick="claimDaily()">CLAIM REWARD</button>`;
-        } else {
-            startDailyTimer(dailyData.nextClaim);
-        }
+        if(dailyData.canClaim) { sc.innerHTML = `<button class="btn-play dr-claim-btn" id="btn-claim-reward" onclick="claimDaily()">CLAIM REWARD</button>`; } 
+        else { startDailyTimer(dailyData.nextClaim); }
     }
 
     function claimDaily() { socket.emit('claimDaily'); }
 
     socket.on('dailyClaimed', (data) => {
         let activeEl = document.querySelector('.dr-day.active');
-        if (activeEl) {
-            activeEl.classList.add('active-claimed');
-            activeEl.querySelector('.dr-title').innerText = "CLAIMED";
-        }
+        if (activeEl) { activeEl.classList.add('active-claimed'); activeEl.querySelector('.dr-title').innerText = "CLAIMED"; }
         updateMyBalance(data.newBalance, true);
         startDailyTimer(data.nextClaim);
         showToast(`Reward Claimed: +${data.amt} TC!`);
@@ -898,13 +873,11 @@
     function startDailyTimer(nextClaimDate) {
         let sc = document.getElementById('dr-status-container');
         sc.innerHTML = `<div class="dr-status-text" style="margin-top:10px;">COME BACK TOMORROW</div><div class="dr-timer" id="dr-timer-display" style="margin-top:5px;">--:--:--</div>`;
-        
         let dest = new Date(nextClaimDate).getTime();
         if(dailyTimerInterval) clearInterval(dailyTimerInterval);
         
         dailyTimerInterval = setInterval(() => {
-            let now = new Date().getTime();
-            let d = dest - now;
+            let now = new Date().getTime(); let d = dest - now;
             if(d <= 0) { clearInterval(dailyTimerInterval); sc.innerHTML = `<button class="btn-play dr-claim-btn" onclick="location.reload()">REFRESH TO CLAIM</button>`; return; }
             let h = Math.floor((d % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             let m = Math.floor((d % (1000 * 60 * 60)) / (1000 * 60));
@@ -937,26 +910,15 @@
        const list = document.getElementById('gh-items');
        list.innerHTML = '';
        const history = myGameHistory[id] || [];
-       if(history.length === 0) {
-          list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">No history available yet.</div>`;
-       } else {
+       if(history.length === 0) { list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">No history available yet.</div>`; } 
+       else {
           history.forEach(h => {
-             let isWin = h.payout > h.bet;
-             let isPush = h.payout === h.bet;
+             let isWin = h.payout > h.bet; let isPush = h.payout === h.bet;
              let winVal = isWin ? `+${h.payout - h.bet}` : (isPush ? 'PUSH' : '-');
              let lossVal = (!isWin && !isPush) ? `-${h.bet}` : '-';
              let color = isWin ? 'var(--success)' : (isPush ? 'white' : 'var(--danger)');
-             
-             let word = h.result.split(' ')[0];
-             let primaryColor = getBetColor(word);
-
-             list.innerHTML += `
-                <div style="background:rgba(0,0,0,0.5); padding:12px 15px; border-radius:6px; border-left:4px solid ${color}; display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; align-items:center; font-size:0.95rem; word-break: break-all;">
-                   <span style="font-weight:900; color:${primaryColor}; text-transform:uppercase;">${h.result}</span>
-                   <span style="color:var(--success); font-weight:800; text-align:center;">${winVal}</span>
-                   <span style="color:var(--danger); font-weight:800; text-align:right;">${lossVal}</span>
-                </div>
-             `;
+             let word = h.result.split(' ')[0]; let primaryColor = getBetColor(word);
+             list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:12px 15px; border-radius:6px; border-left:4px solid ${color}; display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; align-items:center; font-size:0.95rem; word-break: break-all;"><span style="font-weight:900; color:${primaryColor}; text-transform:uppercase;">${h.result}</span><span style="color:var(--success); font-weight:800; text-align:center;">${winVal}</span><span style="color:var(--danger); font-weight:800; text-align:right;">${lossVal}</span></div>`;
           });
        }
        openModal('game-history-modal');
@@ -980,7 +942,6 @@
 
     socket.on('globalResultsData', data => {
         let statsHtml = `<div style="width:100%; text-align:center; font-size:1.1rem; color:white; margin-bottom:10px;">Total Rounds: ${data.stats.total}</div>`;
-        
         if (data.stats.total > 0) {
             statsHtml += `<div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; width:100%;">`;
             Object.keys(data.stats).forEach(key => {
@@ -1008,15 +969,10 @@
                 let color = getBetColor(word);
                 content = `<span style="color:${color};">${r.result}</span>`;
             }
-
-            list.innerHTML += `
-                <div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:6px; display:flex; justify-content:center; align-items:center; font-weight:900; font-size: 1.2rem; text-transform:uppercase; letter-spacing: 1px;">
-                    ${content}
-                </div>`;
+            list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:6px; display:flex; justify-content:center; align-items:center; font-weight:900; font-size: 1.2rem; text-transform:uppercase; letter-spacing: 1px;">${content}</div>`;
         });
     });
 
-    // --- INTERACTIVE CURRENT BETS ---
     function openCurrentBetsModal() {
         if(!activeSharedGame) return;
         const list = document.getElementById('cb-list');
@@ -1028,26 +984,14 @@
             list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">No active bets for this round.</div>`;
         } else {
             entries.forEach(([choice, amount]) => {
-                total += amount;
-                let cColor = getBetColor(choice);
-                list.innerHTML += `
-                    <div style="background:rgba(0,0,0,0.5); padding:12px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:flex; justify-content:space-between; align-items:center; font-weight:800;">
-                        <span style="text-transform:uppercase; color:${cColor};">${choice}</span>
-                        <span style="color:var(--credits); font-size: 1.1rem;">${amount.toLocaleString()} TC</span>
-                    </div>
-                `;
+                total += amount; let cColor = getBetColor(choice);
+                list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:12px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:flex; justify-content:space-between; align-items:center; font-weight:800;"><span style="text-transform:uppercase; color:${cColor};">${choice}</span><span style="color:var(--credits); font-size: 1.1rem;">${amount.toLocaleString()} TC</span></div>`;
             });
-            list.innerHTML += `
-                <div style="border-top:1px solid var(--glass-border); padding-top:15px; margin-top:5px; display:flex; justify-content:space-between; font-weight:900; font-size:1.2rem; color:white;">
-                    <span>TOTAL WAGERED</span>
-                    <span style="color:var(--credits);">${total.toLocaleString()} TC</span>
-                </div>
-            `;
+            list.innerHTML += `<div style="border-top:1px solid var(--glass-border); padding-top:15px; margin-top:5px; display:flex; justify-content:space-between; font-weight:900; font-size:1.2rem; color:white;"><span>TOTAL WAGERED</span><span style="color:var(--credits);">${total.toLocaleString()} TC</span></div>`;
         }
         openModal('current-bets-modal');
     }
 
-    // --- NAVIGATION LOGIC ---
     function switchView(viewId) { 
       if (audioCtx.state === 'suspended') audioCtx.resume(); 
       document.querySelectorAll('.main-wrapper > .content > .view-container').forEach(d => d.classList.add('hidden')); 
@@ -1084,10 +1028,8 @@
           document.getElementById('coin-wrapper').classList.remove('tossing');
       }
       if(id === 'blackjack') {
-          document.getElementById('bj-p-hand').innerHTML=''; 
-          document.getElementById('bj-d-hand').innerHTML='';
-          document.getElementById('bj-p-score').innerText='0';
-          document.getElementById('bj-d-score').innerText='0';
+          document.getElementById('bj-p-hand').innerHTML=''; document.getElementById('bj-d-hand').innerHTML='';
+          document.getElementById('bj-p-score').innerText='0'; document.getElementById('bj-d-score').innerText='0';
           document.getElementById('bj-start-controls').classList.remove('hidden');
           document.getElementById('bj-action-controls').classList.add('hidden');
           document.getElementById('btn-bj-deal').disabled = false;
@@ -1098,8 +1040,7 @@
     function backToSoloLobby() { switchView('casino'); openLobbyMode('indiv'); }
     function backToSharedLobby() { 
         if (activeSharedGame && mySBets && Object.values(mySBets).reduce((a,b)=>a+b,0) > 0 && sState.status === 'BETTING') {
-            showToast("Cannot leave with active bets. Wait for round to finish.", "error");
-            return;
+            showToast("Cannot leave with active bets. Wait for round to finish.", "error"); return;
         }
         document.getElementById('view-shared-game').classList.add('hidden'); 
         socket.emit('leaveRoom', activeSharedGame);
@@ -1109,39 +1050,27 @@
     }
     function backToCasino() { switchView('casino'); }
 
-    function confirmLogout() {
-        if(confirm("Are you sure you want to log out of Stick N' Trade?")) {
-            location.reload(); 
-        }
-    }
+    function confirmLogout() { if(confirm("Are you sure you want to log out of Stick N' Trade?")) { location.reload(); } }
 
-    // --- SOLO GAMES ENGINE ---
-    function showEndBox(box, bet, payout, msg, delayUpdate = 0) {
-        let pft = payout - bet; 
-        let h = `<div class="res-title" style="color:white;">${msg}</div>`; 
-        
+    function showEndBox(box, bet, payout, msg) {
+        let pft = payout - bet; let h = `<div class="res-title" style="color:white;">${msg}</div>`; 
         if (payout > bet) { 
             h += `<div class="res-payout" style="color:var(--success)">+${payout} TC</div>`; 
             box.className = "result-box win"; 
-            if(delayUpdate > 0) setTimeout(() => { updateMyBalance(myCredits + payout, true); }, delayUpdate);
-        } 
-        else if (payout === bet) { 
+            setTimeout(() => { updateMyBalance(myCredits + payout, true); }, 1200);
+        } else if (payout === bet) { 
             h += `<div class="res-payout" style="color:white">Push</div>`; 
             box.className = "result-box push"; 
-            if(delayUpdate > 0) setTimeout(() => { updateMyBalance(myCredits + payout, false); }, delayUpdate);
-        } 
-        else { 
+            setTimeout(() => { updateMyBalance(myCredits + payout, false); }, 1200);
+        } else { 
             sfx.lose(); 
             h += `<div class="res-payout" style="color:var(--danger)">Lost -${Math.abs(pft)}</div>`; 
             box.className = "result-box lose"; 
         } 
-        
-        box.innerHTML = h; 
-        box.style.display = 'block'; 
+        box.innerHTML = h; box.style.display = 'block'; 
         setTimeout(() => { box.classList.add('show'); }, 10);
     }
 
-    // Dice
     function playDice() {
       let betEl = document.getElementById('dice-bet');
       let bet = parseInt(betEl.value);
@@ -1166,21 +1095,13 @@
                 clearInterval(s);
                 icn.style.display = 'none'; nd.style.display = 'block'; nd.innerText = data.roll;
                 nd.style.color = data.payout > 0 ? "var(--success)" : "var(--danger)";
-                
-                // Result shown AFTER animation
                 showEndBox(mb, data.bet, data.payout, `Rolled ${data.roll}`);
                 logHistory('dice', data.bet, data.payout, `Rolled ${data.roll}`);
-                
-                setTimeout(() => {
-                   icn.className = 'fas fa-dice-d20 dice-icon';
-                   icn.style.display = 'block'; nd.style.display = 'none'; mb.style.display = 'none';
-                   btn.disabled = false;
-                }, 3000);
+                setTimeout(() => { icn.className = 'fas fa-dice-d20 dice-icon'; icn.style.display = 'block'; nd.style.display = 'none'; mb.style.display = 'none'; btn.disabled = false; }, 3000);
             }
         }, 80);
     });
 
-    // Coin Flip
     let coinFlips = 0;
     function playCoin(choice) {
       let betEl = document.getElementById('coin-bet');
@@ -1198,24 +1119,18 @@
 
     socket.on('coinResult', (data) => {
         const cw = document.getElementById('coin-wrapper'), co = document.getElementById('coin-obj'), mb = document.getElementById('coin-msg');
-        coinFlips += 5; 
-        let er = data.result === 'Tails' ? 180 : 0; 
+        coinFlips += 5; let er = data.result === 'Tails' ? 180 : 0; 
         co.style.transform = `rotateY(${coinFlips * 360 + er}deg)`; 
         
         setTimeout(() => {
             cw.classList.remove('tossing');
-            // Result shown AFTER animation
             showEndBox(mb, data.bet, data.payout, `Landed on ${data.result}`);
             logHistory('coinflip', data.bet, data.payout, data.result);
-            
-            document.getElementById('btn-heads').disabled = false; 
-            document.getElementById('btn-tails').disabled = false;
-            
+            document.getElementById('btn-heads').disabled = false; document.getElementById('btn-tails').disabled = false;
             setTimeout(() => { mb.style.display = 'none'; }, 3000);
         }, 2500);
     });
 
-    // Blackjack
     let bjSt = { bet: 0, active: false };
     function startBlackjack() {
       if (bjSt.active) return; 
@@ -1237,12 +1152,8 @@
       socket.emit('playSolo', { game: 'blackjack', action: 'start', bet: bet });
     }
     
-    function hitBlackjack() { 
-        if(bjSt.active) { document.getElementById('btn-bj-hit').disabled=true; socket.emit('playSolo', { game:'blackjack', action:'hit' }); } 
-    }
-    function standBlackjack() { 
-        if(bjSt.active) { bjSt.active=false; document.getElementById('btn-bj-hit').disabled=true; document.getElementById('btn-bj-stand').disabled=true; socket.emit('playSolo', { game:'blackjack', action:'stand' }); } 
-    }
+    function hitBlackjack() { if(bjSt.active) { document.getElementById('btn-bj-hit').disabled=true; socket.emit('playSolo', { game:'blackjack', action:'hit' }); } }
+    function standBlackjack() { if(bjSt.active) { bjSt.active=false; document.getElementById('btn-bj-hit').disabled=true; document.getElementById('btn-bj-stand').disabled=true; socket.emit('playSolo', { game:'blackjack', action:'stand' }); } }
 
     function getBJScore(hand) {
         let score = 0, aces = 0;
@@ -1253,24 +1164,12 @@
 
     async function appendCard(containerId, scoreId, card, fullHandArr, isHidden = false) {
         let container = document.getElementById(containerId);
-        let ir = (card.suit === '♥' || card.suit === '♦'); 
-        let sh = ir ? `<span class="card-red">${card.suit}</span>` : card.suit;
-        
-        let html = '';
-        if(isHidden) {
-            html = `<div class="play-card anim-deal card-back" id="hidden-card">?</div>`;
-        } else {
-            html = `<div class="play-card anim-deal"><div class="val">${card.val}</div><div class="suit">${sh}</div></div>`;
-        }
-        
+        let ir = (card.suit === '♥' || card.suit === '♦'); let sh = ir ? `<span class="card-red">${card.suit}</span>` : card.suit;
+        let html = isHidden ? `<div class="play-card anim-deal card-back" id="hidden-card">?</div>` : `<div class="play-card anim-deal"><div class="val">${card.val}</div><div class="suit">${sh}</div></div>`;
         container.insertAdjacentHTML('beforeend', html);
         sfx.deal();
-        
         await delay(400); 
-        
-        if (!isHidden) {
-            document.getElementById(scoreId).innerText = getBJScore(fullHandArr);
-        }
+        if (!isHidden) document.getElementById(scoreId).innerText = getBJScore(fullHandArr);
     }
 
     socket.on('bjUpdate', async (data) => {
@@ -1279,10 +1178,8 @@
             await appendCard('bj-d-hand', 'bj-d-score', data.dHand[0], data.dHand.slice(0,1));
             await appendCard('bj-p-hand', 'bj-p-score', data.pHand[1], data.pHand);
             await appendCard('bj-d-hand', 'bj-d-score', data.dHand[1], data.dHand, true); 
-            
             document.getElementById('bj-action-controls').classList.remove('hidden');
-            document.getElementById('btn-bj-hit').disabled = false;
-            document.getElementById('btn-bj-stand').disabled = false;
+            document.getElementById('btn-bj-hit').disabled = false; document.getElementById('btn-bj-stand').disabled = false;
         } 
         else if (data.event === 'hit') {
             await appendCard('bj-p-hand', 'bj-p-score', data.pHand[data.pHand.length - 1], data.pHand);
@@ -1293,7 +1190,6 @@
             document.getElementById('bj-action-controls').classList.add('hidden');
             document.getElementById('bj-start-controls').classList.remove('hidden');
             
-            // Critical Bust Fix: Force card to land before "Bust!" shows
             let pHandEl = document.getElementById('bj-p-hand');
             if (pHandEl && data.msg === 'Bust!' && data.pHand.length > pHandEl.children.length) {
                 let lastCard = data.pHand[data.pHand.length - 1];
@@ -1302,13 +1198,9 @@
             
             let hidden = document.getElementById('hidden-card');
             if (hidden) {
-                let c = data.dHand[1];
-                let ir = (c.suit === '♥' || c.suit === '♦');
-                let sh = ir ? `<span class="card-red">${c.suit}</span>` : c.suit;
+                let c = data.dHand[1]; let ir = (c.suit === '♥' || c.suit === '♦'); let sh = ir ? `<span class="card-red">${c.suit}</span>` : c.suit;
                 hidden.outerHTML = `<div class="play-card anim-flip"><div class="val">${c.val}</div><div class="suit">${sh}</div></div>`;
-                sfx.deal();
-                await delay(400);
-                document.getElementById('bj-d-score').innerText = getBJScore(data.dHand.slice(0,2));
+                sfx.deal(); await delay(400); document.getElementById('bj-d-score').innerText = getBJScore(data.dHand.slice(0,2));
             }
 
             if (data.dHand.length > 2 && data.msg !== 'Bust!') {
@@ -1320,12 +1212,10 @@
             
             showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.msg);
             logHistory('blackjack', bjSt.bet, data.payout, data.msg);
-            
             document.getElementById('btn-bj-deal').disabled = false;
         }
     });
 
-    // --- SHARED LIVE TABLES ENGINE ---
     function sendChat() {
         const input = document.getElementById('chat-input');
         if(input.value.trim() === '') return;
@@ -1368,25 +1258,16 @@
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) { 
             const choices = [ {id: 'Yellow', c: '#ffcc00'}, {id: 'White', c: '#ffffff'}, {id: 'Pink', c: '#ff66b2'}, {id: 'Blue', c: '#00a2ff'}, {id: 'Red', c: '#ff3366'}, {id: 'Green', c: '#00e676'} ];
-            choices.forEach(c => { 
-              bg.innerHTML += `<button class="bet-btn perya-tile" data-choice="${c.id}" style="--tile-color:${c.c}; border-bottom:5px solid ${c.c}" onclick="placeSharedBet('${c.id}')">${c.id}</button>`; 
-            }); 
+            choices.forEach(c => { bg.innerHTML += `<button class="bet-btn perya-tile" data-choice="${c.id}" style="--tile-color:${c.c}; border-bottom:5px solid ${c.c}" onclick="placeSharedBet('${c.id}')">${c.id}</button>`; }); 
           } 
         },
         animateResult: function(data) {
             let d1 = document.getElementById('cd1'), d2 = document.getElementById('cd2'), d3 = document.getElementById('cd3'); 
-            if(d1) {
-                d1.className = 'color-die anim-shake c-grey'; d2.className = 'color-die anim-shake c-grey'; d3.className = 'color-die anim-shake c-grey'; 
-                d1.innerText = ''; d2.innerText = ''; d3.innerText = ''; sfx.tick();
-            }
+            if(d1) { d1.className = 'color-die anim-shake c-grey'; d2.className = 'color-die anim-shake c-grey'; d3.className = 'color-die anim-shake c-grey'; d1.innerText = ''; d2.innerText = ''; d3.innerText = ''; sfx.tick(); }
             
             setTimeout(() => {
                 let rollArr = Array.isArray(data.roll) ? data.roll : data.roll.split(',');
-                if (d1) {
-                    d1.className = `color-die c-${rollArr[0].toLowerCase().trim()}`; 
-                    d2.className = `color-die c-${rollArr[1].toLowerCase().trim()}`; 
-                    d3.className = `color-die c-${rollArr[2].toLowerCase().trim()}`; 
-                }
+                if (d1) { d1.className = `color-die c-${rollArr[0].toLowerCase().trim()}`; d2.className = `color-die c-${rollArr[1].toLowerCase().trim()}`; d3.className = `color-die c-${rollArr[2].toLowerCase().trim()}`; }
                 
                 let totBet = 0, totWon = 0;
                 for(let b in mySBets) { 
@@ -1448,9 +1329,7 @@
             pS = await dealTo(pHand, pScoreEl, pS, data.pCards[1]);
             bS = await dealTo(bHand, bScoreEl, bS, data.bCards[1]);
 
-            if (data.p3Drawn || data.b3Drawn) {
-                await delay(800);
-            }
+            if (data.p3Drawn || data.b3Drawn) { await delay(800); }
 
             if (data.p3Drawn) {
                 if(acText) acText.innerText = "Player draws 3rd card...";
@@ -1673,11 +1552,11 @@
           if (pft > 0) {
               h += `<div class="res-payout" style="color:var(--success)">+${pa} TC</div>`;
               box.className = "result-box win";
-              setTimeout(() => { updateMyBalance(player.credits, true); }, 1500);
+              setTimeout(() => { updateMyBalance(myCredits + pft, true); }, 1500);
           } else if (pft === 0 && pa > 0) {
               h += `<div class="res-payout" style="color:white">Push</div>`;
               box.className = "result-box push";
-              setTimeout(() => { updateMyBalance(player.credits, false); }, 1500);
+              setTimeout(() => { updateMyBalance(myCredits + pa, false); }, 1500);
           } else {
               sfx.lose();
               h += `<div class="res-payout" style="color:var(--danger)">Lost -${tba}</div>`;
@@ -1764,8 +1643,8 @@
     });
 
     function submitPromo() {
-        const code = document.getElementById('promo-code').value.trim();
-        if(!code) return document.getElementById('promo-response').innerHTML = `<span style="color:var(--danger)">Enter a code.</span>`;
+        const code = document.getElementById('promo-code').value;
+        if(!code.trim()) return document.getElementById('promo-response').innerHTML = `<span style="color:var(--danger)">Enter a code.</span>`;
         socket.emit('redeemPromo', code);
     }
 
