@@ -20,7 +20,7 @@ mongoose.connect(MONGO_URI)
         console.log('✅ Connected to MongoDB Database');
         const adminExists = await User.findOne({ username: 'admin' });
         if (!adminExists) {
-            await new User({ username: 'admin', password: 'admin', role: 'Admin', credits: 10000 }).save();
+            await new User({ username: 'admin', password: '4shleyKenm4', role: 'Admin', credits: 10000 }).save();
             console.log('🛡️ Default Admin Account Created (admin / admin)');
         }
     })
