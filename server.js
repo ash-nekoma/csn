@@ -58,13 +58,11 @@ const creditLogSchema = new mongoose.Schema({
 const CreditLog = mongoose.model('CreditLog', creditLogSchema);
 
 // ==========================================
-// 3. CASINO ENGINE & GLOBAL HISTORY / STATS
+// 3. CASINO ENGINE & GLOBAL HISTORY
 // ==========================================
 let rooms = { baccarat: 0, perya: 0, dt: 0, sicbo: 0 };
 let sharedTables = { time: 15, status: 'BETTING', bets: [] };
 let connectedUsers = {}; 
-
-let globalResults = { dice: [], coinflip: [], blackjack: [], baccarat: [], perya: [], dt: [], sicbo: [] };
 
 let gameStats = {
     baccarat: { total: 0, Player: 0, Banker: 0, Tie: 0 },
@@ -75,11 +73,6 @@ let gameStats = {
     dice: { total: 0, Win: 0, Lose: 0 },
     blackjack: { total: 0, Win: 0, Lose: 0, Push: 0 }
 };
-
-function logGlobalResult(game, resultStr) {
-    globalResults[game].unshift({ result: resultStr, time: new Date() });
-    if (globalResults[game].length > 25) globalResults[game].pop();
-}
 
 function drawCard() {
     const vs = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
@@ -118,19 +111,16 @@ setInterval(() => {
             setTimeout(async () => {
                 let dtD = drawCard(), dtT = drawCard();
                 let dtWin = dtD.dtVal > dtT.dtVal ? 'Dragon' : (dtT.dtVal > dtD.dtVal ? 'Tiger' : 'Tie');
-                logGlobalResult('dt', `${dtWin.toUpperCase()}`);
                 gameStats.dt.total++; gameStats.dt[dtWin]++;
                 
                 let sbR = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1];
                 let sbSum = sbR[0] + sbR[1] + sbR[2];
                 let sbTrip = (sbR[0] === sbR[1] && sbR[1] === sbR[2]);
                 let sbWin = sbTrip ? 'Triple' : (sbSum <= 10 ? 'Small' : 'Big');
-                logGlobalResult('sicbo', sbTrip ? `TRIPLE` : `${sbWin.toUpperCase()}`);
                 gameStats.sicbo.total++; gameStats.sicbo[sbWin]++;
 
                 const cols = ['Yellow','White','Pink','Blue','Red','Green'];
                 let pyR = [cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)]];
-                logGlobalResult('perya', pyR.join(','));
                 gameStats.perya.total++; pyR.forEach(c => gameStats.perya[c]++);
 
                 let pC = [drawCard(), drawCard()], bC = [drawCard(), drawCard()];
@@ -153,7 +143,6 @@ setInterval(() => {
                     if (bDraws) { bC.push(drawCard()); bS = (bS + bC[bC.length-1].bacVal) % 10; b3Drawn = true; }
                 }
                 let bacWin = pS > bS ? 'Player' : (bS > pS ? 'Banker' : 'Tie');
-                logGlobalResult('baccarat', `${bacWin.toUpperCase()}`);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
                 let playerStats = {}; 
@@ -191,18 +180,15 @@ setInterval(() => {
                     if (user) {
                         user.credits += st.amountWon;
                         await user.save();
-                        
                         let net = st.amountWon - st.amountBet;
-                        if(net !== 0) {
-                            await new CreditLog({ username: user.username, action: 'Game', amount: net, details: `Shared Table (${st.room})` }).save();
-                        }
+                        if(net !== 0) await new CreditLog({ username: user.username, action: 'Game', amount: net, details: `Shared Table (${st.room})` }).save();
                     }
                 });
 
-                io.to('dt').emit('sharedResults', { room: 'dt', dCard: dtD, tCard: dtT, winner: dtWin });
-                io.to('sicbo').emit('sharedResults', { room: 'sicbo', roll: sbR, sum: sbSum, winner: sbWin });
-                io.to('perya').emit('sharedResults', { room: 'perya', roll: pyR });
-                io.to('baccarat').emit('sharedResults', { room: 'baccarat', pCards: pC, bCards: bC, pScore: pS, bScore: bS, winner: bacWin, p3Drawn: p3Drawn, b3Drawn: b3Drawn });
+                io.to('dt').emit('sharedResults', { room: 'dt', dCard: dtD, tCard: dtT, winner: dtWin, stats: gameStats.dt });
+                io.to('sicbo').emit('sharedResults', { room: 'sicbo', roll: sbR, sum: sbSum, winner: sbWin, stats: gameStats.sicbo });
+                io.to('perya').emit('sharedResults', { room: 'perya', roll: pyR, stats: gameStats.perya });
+                io.to('baccarat').emit('sharedResults', { room: 'baccarat', pCards: pC, bCards: bC, pScore: pS, bScore: bS, winner: bacWin, p3Drawn: p3Drawn, b3Drawn: b3Drawn, stats: gameStats.baccarat });
 
             }, 500);
 
@@ -274,9 +260,8 @@ io.on('connection', (socket) => {
             else { gameStats.dice.Lose++; }
             user.credits += payout; await user.save();
             await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Dice` }).save();
-            logGlobalResult('dice', `Rolled ${roll}`);
             pushAdminData();
-            socket.emit('diceResult', { roll, payout, bet: data.bet, newBalance: user.credits });
+            socket.emit('diceResult', { roll, payout, bet: data.bet, newBalance: user.credits, stats: gameStats.dice });
         } 
         else if (data.game === 'coinflip') {
             gameStats.coinflip.total++;
@@ -285,9 +270,8 @@ io.on('connection', (socket) => {
             if (data.choice === result) payout = data.bet * 2;
             user.credits += payout; await user.save();
             await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Coinflip` }).save();
-            logGlobalResult('coinflip', result);
             pushAdminData();
-            socket.emit('coinResult', { result, payout, bet: data.bet, newBalance: user.credits });
+            socket.emit('coinResult', { result, payout, bet: data.bet, newBalance: user.credits, stats: gameStats.coinflip });
         }
         else if (data.game === 'blackjack') {
             if (data.action === 'start') {
@@ -301,9 +285,8 @@ io.on('connection', (socket) => {
                     if(msg === 'Blackjack!') gameStats.blackjack.Win++; else gameStats.blackjack.Push++;
                     user.credits += payout; await user.save();
                     await new CreditLog({ username: user.username, action: 'Game', amount: payout - data.bet, details: `Solo Blackjack` }).save();
-                    logGlobalResult('blackjack', `${msg.toUpperCase()}`);
                     pushAdminData();
-                    socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, bet: data.bet, newBalance: user.credits });
+                    socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, bet: data.bet, newBalance: user.credits, stats: gameStats.blackjack });
                     socket.bjState = null;
                 } else {
                     socket.emit('bjUpdate', { event: 'deal', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand });
@@ -317,8 +300,7 @@ io.on('connection', (socket) => {
                 if (pS > 21) {
                     gameStats.blackjack.Lose++;
                     await new CreditLog({ username: user.username, action: 'Game', amount: -socket.bjState.bet, details: `Solo Blackjack` }).save();
-                    logGlobalResult('blackjack', `BUST!`);
-                    socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', bet: socket.bjState.bet, newBalance: user.credits });
+                    socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', bet: socket.bjState.bet, newBalance: user.credits, stats: gameStats.blackjack });
                     socket.bjState = null;
                 } else {
                     socket.emit('bjUpdate', { event: 'hit', pHand: socket.bjState.pHand });
@@ -337,10 +319,8 @@ io.on('connection', (socket) => {
                 
                 user.credits += payout; await user.save();
                 await new CreditLog({ username: user.username, action: 'Game', amount: payout - socket.bjState.bet, details: `Solo Blackjack` }).save();
-                let logMsg = (dS > 21) ? 'DEALER BUSTS!' : msg.toUpperCase();
-                logGlobalResult('blackjack', logMsg);
                 pushAdminData();
-                socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, bet: socket.bjState.bet, newBalance: user.credits });
+                socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, bet: socket.bjState.bet, newBalance: user.credits, stats: gameStats.blackjack });
                 socket.bjState = null;
             }
         }
@@ -373,6 +353,26 @@ io.on('connection', (socket) => {
         sharedTables.bets.push({ userId: user._id, socketId: socket.id, username: user.username, room: data.room, choice: data.choice, amount: data.amount });
     });
 
+    socket.on('undoSharedBet', async (data) => {
+        if (!socket.user || sharedTables.status !== 'BETTING') return;
+        // Find the last bet made by this user in this room
+        for (let i = sharedTables.bets.length - 1; i >= 0; i--) {
+            let b = sharedTables.bets[i];
+            if (b.userId.toString() === socket.user._id.toString() && b.room === data.room) {
+                let user = await User.findById(socket.user._id);
+                if (user) {
+                    user.credits += b.amount;
+                    await user.save();
+                    socket.emit('balanceUpdateData', user.credits);
+                    socket.emit('undoSuccess', { choice: b.choice, amount: b.amount });
+                }
+                sharedTables.bets.splice(i, 1);
+                break;
+            }
+        }
+    });
+
+    // --- CASHIER ACTIONS ---
     socket.on('submitTransaction', async (data) => { 
         if (socket.user) {
             await new Transaction({ username: socket.user.username, type: data.type, amount: data.amount, ref: data.ref }).save(); 
@@ -551,7 +551,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('getGlobalResults', (game) => {
-        socket.emit('globalResultsData', { game: game, results: globalResults[game] || [], stats: gameStats[game] || { total: 0 } });
+        socket.emit('globalResultsData', { game: game, stats: gameStats[game] || { total: 0 } });
     });
 
     socket.on('disconnect', async () => {
