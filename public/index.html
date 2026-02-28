@@ -79,12 +79,12 @@
         .pwd-input-wrapper i:hover { color: white; }
 
         /* BUTTONS & INPUTS */
-        .btn-play { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--glass-border); padding: 12px 15px; border-radius: 8px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-play { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--glass-border); padding: 12px 15px; border-radius: 8px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-shrink: 0;}
         .btn-play:hover:not(:disabled) { background: white; color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,255,255,0.2); border-color: white;} 
         .btn-play:disabled { background: rgba(0,0,0,0.5) !important; color: var(--text-muted) !important; cursor: not-allowed !important; border-color: transparent !important; opacity: 0.5 !important; box-shadow:none !important; transform:none !important; }
         
-        .input-group label { display: block; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 800; margin-bottom: 8px; text-align: left; }
-        .input-control { width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1rem; font-weight: 600; text-align: center; outline: none; transition: 0.2s;}
+        .input-group label { display: block; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 800; margin-bottom: 8px; text-align: left; flex-shrink: 0;}
+        .input-control { width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1rem; font-weight: 600; text-align: center; outline: none; transition: 0.2s; flex-shrink: 0;}
         .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
         .bet-input { text-align: center !important; }
         .bet-input::placeholder { text-align: center; color: rgba(255,255,255,0.4); }
@@ -115,38 +115,46 @@
         #nav-credits { color: var(--credits); font-weight: 900; font-size: 1.1rem; }
         .wallet-unit { color: var(--text-muted); font-size: 0.8rem; font-weight: 800; }
 
-        .topbar-actions { display: flex; flex-direction: row; align-items: center; gap: 15px; background: rgba(0,0,0,0.8); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--glass-border); width: fit-content; }
+        .topbar-actions { display: flex; flex-direction: row; align-items: center; gap: 15px; background: rgba(0,0,0,0.8); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--glass-border); width: fit-content; position: relative;}
         .top-icon-btn { position: relative; cursor: pointer; background: transparent; border: none; font-size: 1.15rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: white; width: 20px; }
-        .top-icon-btn i { text-align: center; width: 100%; transition: 0.2s; }
+        .top-icon-btn i { text-align: center; width: 100%; transition: 0.2s; pointer-events: none;}
         .top-icon-btn:hover { transform: scale(1.1); }
         
-        .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); }
-        .notif-badge.active { display: block; }
+        .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); pointer-events: none;}
 
-        /* NEW NOTIFICATION POPOVER (Replaces the Center Modal) */
-        .notif-popover { position: absolute; top: 65px; right: 0; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); transform-origin: top right; transition: all 0.2s ease-out; opacity: 1; transform: scale(1); }
-        .notif-popover.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
+        /* DROPDOWN POPOVERS (Notifications & Gifts) */
+        .dropdown-popover { position: absolute; top: 45px; right: 0; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); transform-origin: top right; transition: all 0.2s ease-out; opacity: 1; transform: scale(1); cursor: default;}
+        .dropdown-popover.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
+        
+        /* Notif Specific */
         .notif-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--glass-border); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;}
         .notif-actions { display: flex; gap: 10px; }
         .notif-action-btn { background: transparent; border: none; color: var(--text-muted); font-size: 0.8rem; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
         .notif-action-btn:hover { color: white; }
         .notif-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .notif-action-btn.del:hover:not(:disabled) { color: var(--danger); }
-        
         .notif-popover-list { display: flex; flex-direction: column; gap: 8px; padding: 15px; max-height: 400px; overflow-y: auto; overflow-x: hidden; }
-        .notif-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 5px; position: relative; transition: 0.2s; }
+        .notif-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 5px; position: relative; transition: 0.2s; cursor: pointer;}
         .notif-item.unread { border-left: 3px solid var(--ps-glow); background: rgba(0,162,255,0.05); }
-        .notif-item-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; }
+        .notif-item-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; pointer-events: none;}
         .notif-item-title { color: white; }
         .notif-item.unread .notif-item-title { color: var(--ps-glow); }
         .notif-item-time { color: var(--text-muted); font-weight: 600; font-size: 0.75rem; }
-        .notif-item-body { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; padding-right: 20px;}
+        .notif-item-body { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; padding-right: 20px; pointer-events: none;}
         .notif-item-del { position: absolute; right: 12px; bottom: 12px; background: transparent; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .notif-item-del:hover { color: var(--danger); transform: scale(1.1); }
 
-        /* MAIN RIGID WRAPPER */
+        /* BACK NAVIGATION ALIGNED */
+        .game-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center;}
+        .game-wrapper.solo-wrap { max-width: 850px; }
+        
+        .back-nav { margin-bottom: 15px; width: 100%; display: flex; justify-content: flex-start;}
+        .btn-back { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
+        .btn-back:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+
+        /* MAIN RIGID WRAPPER (No Scroll on Desktop) */
         @media (min-width: 769px) {
-            .main-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100vh - 75px); margin-top: 75px; overflow: hidden;}
+            .main-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: calc(100vh - 75px); margin-top: 75px;}
             .content { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 2rem; flex: 1;}
         }
 
@@ -159,13 +167,18 @@
         .lobby-modes-container { display: flex; gap: 40px; justify-content: center; width: 100%; max-width: 900px; flex-wrap: wrap; }
         
         /* MASSIVE PORTRAIT HOME CARDS (Blueprint) */
-        .mode-card { width: clamp(300px, 100%, 340px); height: 460px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; flex-shrink: 0; }
+        .mode-card { width: clamp(300px, 100%, 340px); height: 440px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; flex-shrink: 0; }
         .mode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); z-index: 1; }
         .mode-card:hover { transform: translateY(-10px); border-color: var(--ps-glow); box-shadow: 0 15px 40px rgba(0, 162, 255, 0.2); background: rgba(0, 30, 60, 0.8); }
         .mode-icon { font-size: 6rem; margin-bottom: 2.5rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; z-index: 2; }
         .mode-card:hover .mode-icon { transform: scale(1.1); color: white; text-shadow: 0 0 20px var(--ps-glow); }
         .mode-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 12px; position: relative; z-index: 2; letter-spacing: 1px; white-space: nowrap; }
         .mode-desc { color: var(--text-muted); font-size: 1.1rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.6; }
+
+        /* LIVE BADGE */
+        .live-badge { position: absolute; top: 20px; right: 20px; background: rgba(255, 51, 102, 0.15); border: 1px solid rgba(255, 51, 102, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--danger); font-size: 0.85rem; font-weight: 900; padding: 6px 12px; border-radius: 50px; display: flex; align-items: center; gap: 6px; letter-spacing: 1px; z-index: 10; box-shadow: 0 5px 15px rgba(255, 51, 102, 0.2); }
+        .live-dot { width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; animation: pulseRed 1.5s infinite; }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
 
         /* STRICT VERTICAL CARDS GRID FOR GAMES (Blueprint) */
         .casino-grid { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; align-items: center; width: 100%; max-width: 1300px; margin: 0 auto; }
@@ -181,20 +194,12 @@
 
         .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 1rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-        /* BACK NAVIGATION ALIGNED */
-        .game-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center;}
-        .game-wrapper.solo-wrap { max-width: 850px; }
-        
-        .back-nav { margin-bottom: 15px; width: 100%; display: flex; justify-content: flex-start;}
-        .btn-back { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
-        .btn-back:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
-
         /* ================= IN-GAME UI PANELS ================= */
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; width: 100%;}
         .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
 
-        /* Game Box and Panels strictly fixed height so nothing grows on PC */
+        /* Fixed Game Box */
         .game-box { display: flex; flex-direction: column; width: 100%; max-width: 850px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; height: 650px;} 
         .main-panel { display: flex; flex-direction: column; height: 100%; }
         .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 20px;}
@@ -245,11 +250,11 @@
         .bank-section { display: none; flex: 1; padding-right: 15px;}
         .bank-section.active { display: block; }
         
-        .btn-ledger { background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--glass-border); border-left: 3px solid var(--ps-glow); width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 10px;}
+        .btn-ledger { background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--glass-border); border-left: 3px solid var(--ps-glow); width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 10px; flex-shrink: 0;}
         .btn-ledger:hover { background: rgba(255,255,255,0.1); border-color: white; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,162,255,0.2);}
 
         /* Quick Chips for Cashier */
-        .quick-chips { display: flex; gap: 10px; justify-content: space-between; margin-bottom: 20px; }
+        .quick-chips { display: flex; gap: 10px; justify-content: space-between; margin-bottom: 20px; flex-shrink: 0;}
         .chip-btn { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; padding: 8px 0; border-radius: 6px; font-size: 0.85rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
         .chip-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
 
@@ -266,12 +271,10 @@
         .dr-day.claimed { background: rgba(255,255,255,0.05); filter: grayscale(1); opacity: 0.6; border-color: var(--glass-border); box-shadow: none;}
         .dr-day.claimed::before { display: none; }
 
-        /* Active Day -> Huge, Gold, WITH Sunburst Animation */
         .dr-day.active { background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%); border: 2px solid #fff; transform: scale(1.1); opacity: 1; z-index: 5; box-shadow: 0 10px 25px rgba(255, 204, 0, 0.4); height: 150px; color: black; }
         .dr-day.active::before { background: repeating-conic-gradient(rgba(255,255,255,0.3) 0 15deg, transparent 15deg 30deg); opacity: 0.6; display: block;}
         .dr-day.active .dr-title, .dr-day.active .dr-coin { color: #000; text-shadow: none; }
-
-        /* Active-Claimed: Keeps Huge Size, removes gold/animation, grays out */
+        
         .dr-day.active.active-claimed { background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); filter: grayscale(1); opacity: 0.8; box-shadow: none; color: white;}
         .dr-day.active.active-claimed .dr-title, .dr-day.active.active-claimed .dr-coin { color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
         .dr-day.active.active-claimed::before { display: none; }
@@ -298,6 +301,15 @@
         .toast-success i { color: var(--ps-glow); font-size: 1.3rem;}
         .toast-error { border-left: 5px solid var(--danger); border-color: rgba(255, 51, 102, 0.4); box-shadow: 0 10px 30px rgba(255, 51, 102, 0.25); }
         .toast-error i { color: var(--danger); font-size: 1.3rem;}
+
+        /* COMPACT CASHIER LOGS */
+        .ticket-log-item { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;}
+        .ticket-log-header { display: flex; justify-content: space-between; align-items: center; font-size: 1rem;}
+        .ticket-log-id { font-family: monospace; color: var(--text-muted); font-weight: 600;}
+        .ticket-log-status { font-weight: 900; text-transform: uppercase; font-size: 0.8rem; padding: 5px 10px; border-radius: 4px; letter-spacing: 1px;}
+        .ticket-log-status.pending { background: rgba(255, 180, 0, 0.15); color: var(--credits); border: 1px solid rgba(255, 180, 0, 0.3); }
+        .ticket-log-status.approved { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .ticket-log-status.rejected { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
 
         /* EXACT GREEN/RED RESULT BOXES FOR BOTH SOLO AND SHARED */
         .result-box, .result-overlay-shared { position: absolute; bottom: 20px; right: 20px; left: auto; top: auto; transform: translateX(120%); opacity: 0; text-align: right; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; display: none; z-index: 100; min-width: 250px; text-transform: uppercase; backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -360,7 +372,7 @@
             .dr-day { min-width: 60px; height: 90px; }
             .dr-day.active { height: 110px; }
             
-            .notif-popover { width: 300px; right: 10px; }
+            .dropdown-popover { width: 300px; right: 10px; }
         }
     </style>
 </head>
@@ -438,11 +450,12 @@
                 <button class="top-icon-btn admin-btn hidden" onclick="window.location.href='/admin.html'" title="Admin Panel" style="color:var(--ps-glow);">
                     <i class="fas fa-user-shield"></i>
                 </button>
-                <button class="top-icon-btn" id="bell-btn" onclick="toggleNotifPopover(event)" title="Notifications">
+                
+                <button class="top-icon-btn" id="bell-btn" onclick="togglePopover('notif-dropdown', event)" title="Notifications">
                     <i class="fas fa-bell"></i>
                     <div class="notif-badge" id="notif-badge-display">0</div>
                     
-                    <div id="notif-dropdown" class="notif-popover hidden" onclick="event.stopPropagation()">
+                    <div id="notif-dropdown" class="dropdown-popover hidden" onclick="event.stopPropagation()">
                         <div class="notif-header">
                             <span>NOTIFICATIONS</span>
                             <div class="notif-actions">
@@ -455,12 +468,25 @@
                         </div>
                     </div>
                 </button>
+                
                 <button class="top-icon-btn" onclick="openModal('daily-reward-modal')" title="Daily Reward" style="color:var(--credits);">
                     <i class="fas fa-calendar-check"></i>
                 </button>
-                <button class="top-icon-btn" onclick="openModal('promo-modal')" title="Gift Code" style="color:var(--ps-glow);">
+                
+                <button class="top-icon-btn" id="gift-btn" onclick="togglePopover('gift-dropdown', event)" title="Gift Code" style="color:var(--ps-glow);">
                     <i class="fas fa-gift"></i>
+                    
+                    <div id="gift-dropdown" class="dropdown-popover hidden" onclick="event.stopPropagation()" style="padding: 20px;">
+                        <div style="font-weight:900; color:white; text-transform:uppercase; margin-bottom:15px; font-size:1.1rem; text-align:center; cursor:default;">Redeem Code</div>
+                        <p style="color:var(--text-muted); text-align:center; font-size:0.85rem; margin-bottom: 15px; cursor:default;">Enter your gift code below to claim free TC.</p>
+                        <div class="input-group" style="margin-bottom:10px;">
+                            <input type="text" id="promo-code" class="input-control bet-input" placeholder="XXXX-XXXX-XXXX">
+                        </div>
+                        <button class="btn-play" style="width:100%; margin-top: 10px;" onclick="submitPromo()">REDEEM</button>
+                        <div id="promo-response" style="text-align:center; font-weight:800; min-height:25px; margin-top:15px; font-size: 1rem; line-height:1.4; cursor:default;"></div>
+                    </div>
                 </button>
+                
                 <button class="top-icon-btn" id="mute-btn" onclick="toggleAudio()" title="Toggle Audio">
                     <i class="fas fa-volume-up"></i>
                 </button>
@@ -612,7 +638,7 @@
           </div>
 
           <div id="view-game-blackjack" class="view-container hidden">
-            <div class="game-wrapper solo-wrap">
+            <div class="game-wrapper solo-wrap" style="max-width:1000px;">
                 <div class="back-nav"><button class="btn-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
                 <div class="game-box">
                   <div class="main-panel">
@@ -666,7 +692,7 @@
                               <div style="display:flex; align-items:baseline;"><span id="sg-timer">15</span><span class="timer-sec">s</span></div>
                           </div>
                           <button class="btn-rules" onclick="openRules(window.activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                          <button class="btn-rules" onclick="openHistory(window.activeSharedGame)" title="History"><i class="fas fa-history"></i></button>
+                          <button class="btn-rules" onclick="openHistory(window.activeSharedGame)" title="History"><i class="fas fa-list-alt"></i></button>
                       </div>
                     </div>
                     
@@ -707,25 +733,14 @@
     </div>
   </div>
 
-  <div id="promo-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 400px; height: auto; min-height: fit-content;">
-        <i class="fas fa-times modal-close-icon" onclick="closeModal('promo-modal')"></i>
-        <h3 style="margin-top:0;">REDEEM CODE</h3>
-        <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Enter your gift code below to claim free TC.</p>
-        <div class="input-group" style="margin-bottom:10px;">
-            <input type="text" id="promo-code" class="input-control bet-input" placeholder="XXXX-XXXX-XXXX">
-        </div>
-        <button class="btn-play" style="width:100%; margin-top: 10px;" onclick="submitPromo()">REDEEM</button>
-        <div id="promo-response" style="text-align:center; font-weight:800; min-height:25px; margin-top:15px; font-size: 1.1rem; line-height:1.4;"></div>
-    </div>
-  </div>
-
   <div id="daily-reward-modal" class="modal-overlay hidden">
     <div class="modal-content" style="width: 800px; height: auto; min-height: fit-content; max-width: 95vw;">
       <i class="fas fa-times modal-close-icon" onclick="closeModal('daily-reward-modal')"></i>
       <h3 style="font-size: 2.2rem; color: var(--credits); margin-bottom: 5px; border: none; padding-bottom: 0;">Daily Reward</h3>
       <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px;">Claim credits every 24 hours!</p>
+      
       <div class="dr-days" id="dr-days-container"></div>
+      
       <div id="dr-status-container"></div>
     </div>
   </div>
@@ -744,7 +759,7 @@
       </div>
 
       <div id="sc-tab-deposit" class="bank-section active">
-        <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: left;">
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: left; flex-shrink: 0;">
             <div style="color:var(--text-muted); font-size: 0.8rem; font-weight: 800; margin-bottom: 5px;">SEND PAYMENT TO:</div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="font-weight: 900; color: white; font-size: 1.1rem;">GCash: 0912-345-6789</div>
@@ -767,11 +782,11 @@
             <input type="file" id="dep-ref" class="input-control" accept="image/*" style="padding: 10px; font-size: 0.95rem; cursor: pointer;">
         </div>
         <button class="btn-play" style="width:100%;" onclick="submitDeposit()"><i class="fas fa-arrow-down"></i> Submit Deposit</button>
-        <div id="dep-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:10px; text-transform:uppercase; font-size:0.9rem;"></div>
+        <div id="dep-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:10px; text-transform:uppercase; font-size:0.9rem; flex-shrink: 0;"></div>
       </div>
 
       <div id="sc-tab-withdraw" class="bank-section hidden">
-        <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.95rem; text-align:center;">Withdraw your credits to TC.</p>
+        <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.95rem; text-align:center; flex-shrink: 0;">Withdraw your credits to TC.</p>
         <div class="input-group" style="margin-bottom:10px;">
             <label>Withdraw Amount (TC)</label>
             <input type="number" id="wit-amount" class="input-control" placeholder="e.g. 10000">
@@ -786,7 +801,7 @@
             <input type="text" id="wit-info" class="input-control" placeholder="e.g. AshleyChan">
         </div>
         <button class="btn-play" style="width:100%;" onclick="submitWithdrawal()"><i class="fas fa-arrow-up"></i> Request Withdrawal</button>
-        <div id="wit-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:10px; text-transform:uppercase; font-size:0.9rem;"></div>
+        <div id="wit-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:10px; text-transform:uppercase; font-size:0.9rem; flex-shrink: 0;"></div>
       </div>
 
       <div id="sc-tab-requests" class="bank-section hidden">
@@ -794,12 +809,12 @@
       </div>
 
       <div id="sc-tab-ledger" class="bank-section hidden">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; flex-shrink: 0;">
             <h4 style="color:var(--ps-glow); margin:0; text-transform: uppercase; letter-spacing: 1px;">Credit Ledger</h4>
             <button class="btn-rules" style="width:auto; padding: 5px 15px; height: 35px; font-size: 0.9rem;" onclick="switchSupportCenterTab('deposit', document.querySelectorAll('#cashier-tabs-nav .bank-tab')[0])"><i class="fas fa-arrow-left"></i> BACK</button>
         </div>
         
-        <div style="background: rgba(255,180,0,0.1); border: 1px solid rgba(255,180,0,0.4); border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="background: rgba(255,180,0,0.1); border: 1px solid rgba(255,180,0,0.4); border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0;">
             <div style="color: var(--text-muted); font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">Today's Net Profit</div>
             <div id="ledger-daily-profit" style="color: white; font-weight: 900; font-size: 1.2rem;">0 TC</div>
         </div>
@@ -900,23 +915,29 @@
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
-    // --- NOTIFICATION POPOVER SYSTEM ---
+    // --- POPOVER SYSTEM (Notifications & Gifts) ---
     document.addEventListener('click', function(e) {
-        const dropdown = document.getElementById('notif-dropdown');
-        const bellBtn = document.getElementById('bell-btn');
-        if (dropdown && !dropdown.classList.contains('hidden')) {
-            if (!dropdown.contains(e.target) && !bellBtn.contains(e.target)) {
-                dropdown.classList.add('hidden');
-            }
+        const popovers = document.querySelectorAll('.dropdown-popover');
+        const btns = document.querySelectorAll('.top-icon-btn');
+        let clickedInsidePopoverOrBtn = false;
+        
+        popovers.forEach(p => { if (p.contains(e.target)) clickedInsidePopoverOrBtn = true; });
+        btns.forEach(b => { if (b.contains(e.target)) clickedInsidePopoverOrBtn = true; });
+
+        if (!clickedInsidePopoverOrBtn) {
+            popovers.forEach(p => p.classList.add('hidden'));
         }
     });
 
-    function toggleNotifPopover(e) {
+    function togglePopover(id, e) {
         e.stopPropagation();
         sfx.click();
-        const dropdown = document.getElementById('notif-dropdown');
+        document.querySelectorAll('.dropdown-popover').forEach(p => {
+            if(p.id !== id) p.classList.add('hidden');
+        });
+        const dropdown = document.getElementById(id);
         dropdown.classList.toggle('hidden');
-        renderNotifs();
+        if(id === 'notif-dropdown' && !dropdown.classList.contains('hidden')) renderNotifs();
     }
 
     function renderNotifs() {
@@ -983,8 +1004,7 @@
         showToast(data.msg, data.type || 'success');
     });
 
-    socket.on('refreshBalance', () => { socket.emit('requestBalanceRefresh'); });
-
+    // --- AUDIO SYSTEM ---
     function toggleAudio() {
         audioMuted = !audioMuted;
         sfxGainVal = audioMuted ? 0 : 0.8;
@@ -1028,6 +1048,11 @@
       lock: () => { playTone(400, 'square', 0.1, 0.1); setTimeout(() => playTone(300, 'square', 0.1, 0.1), 100); }
     };
 
+    document.addEventListener('mousedown', (e) => {
+       if(e.target.closest('button, .nav-link, .mode-card, .game-card, .bank-tab, .action-btn, .top-icon-btn, .brand, .wallet-pill')) sfx.click();
+    });
+
+    // --- AUTHENTICATION ---
     function switchAuthTab(tab) {
         document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
         if(tab === 'login') {
@@ -1933,6 +1958,7 @@
               b.style.display = 'none'; 
           } 
           
+          // Inject perfectly before sliding
           box.style.display = 'flex';
           box.style.opacity = '0';
           
@@ -2048,7 +2074,10 @@
         const amt = document.getElementById('dep-amount').value;
         const proofInput = document.getElementById('dep-ref');
         
-        if(!amt || proofInput.files.length === 0) return showToast("Please fill amount and attach proof.", "error");
+        if(!amt || proofInput.files.length === 0) {
+            document.getElementById('dep-msg').innerHTML = '<span style="color:var(--danger)">Fill amount and attach proof.</span>';
+            return;
+        }
         
         let filename = proofInput.files[0].name; 
         socket.emit('submitTransaction', { type: 'Deposit', amount: parseInt(amt), ref: filename });
@@ -2064,12 +2093,19 @@
     function submitWithdrawal() {
         const amt = parseInt(document.getElementById('wit-amount').value);
         const info = document.getElementById('wit-info').value;
-        if(!amt || !info) return showToast("Please fill all fields.", "error");
-        if(amt > myCredits) return showToast("Insufficient TC.", "error");
+        let msgBox = document.getElementById('wit-msg');
+
+        if(!amt || !info) {
+            msgBox.innerHTML = '<span style="color:var(--danger)">Please fill all fields.</span>';
+            return;
+        }
+        if(amt > myCredits) {
+            msgBox.innerHTML = '<span style="color:var(--danger)">Insufficient TC.</span>';
+            return;
+        }
         
         socket.emit('submitTransaction', { type: 'Withdrawal', amount: amt, ref: info });
         
-        let msgBox = document.getElementById('wit-msg');
         msgBox.innerHTML = '<span style="color:var(--success)">REQUEST SUBMITTED</span>';
         setTimeout(() => { if(msgBox) msgBox.innerHTML = ''; }, 3000);
 
@@ -2089,7 +2125,6 @@
     socket.on('walletLogsData', (data) => {
         const container = document.getElementById('ledger-logs-container'); container.innerHTML = '';
         
-        // Update today's profit HUD
         const pHud = document.getElementById('ledger-daily-profit');
         if(pHud) {
             let pColor = data.dailyProfit > 0 ? 'var(--success)' : (data.dailyProfit < 0 ? 'var(--danger)' : 'white');
