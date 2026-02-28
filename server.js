@@ -373,7 +373,6 @@ io.on('connection', (socket) => {
         sharedTables.bets.push({ userId: user._id, socketId: socket.id, username: user.username, room: data.room, choice: data.choice, amount: data.amount });
     });
 
-    // --- CASHIER ACTIONS ---
     socket.on('submitTransaction', async (data) => { 
         if (socket.user) {
             await new Transaction({ username: socket.user.username, type: data.type, amount: data.amount, ref: data.ref }).save(); 
@@ -392,6 +391,7 @@ io.on('connection', (socket) => {
         }
     });
 
+    // --- AUTHENTICATION & OTHER ---
     socket.on('adminLogin', async (data) => {
         const user = await User.findOne({ username: data.username, password: data.password });
         if (user && user.role === 'Admin') {
