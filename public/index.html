@@ -19,7 +19,6 @@
             --ps-blue: #00439c; 
             --ps-light-blue: #0070cc; 
             --ps-glow: #00a2ff; 
-            --glass-bg: rgba(0, 10, 25, 0.75); 
             --glass-border: rgba(255, 255, 255, 0.15); 
             --glass-hover: rgba(255, 255, 255, 0.9); 
             --danger: #ff3366; 
@@ -62,7 +61,7 @@
 
         /* ================= AUTHENTICATION ================= */
         #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
-        .auth-box { width: 420px; max-width: 95vw; background: rgba(0, 5, 15, 0.9); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(0, 162, 255, 0.4); border-top: 3px solid var(--ps-glow); box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 30px rgba(0, 162, 255, 0.1); text-align: center; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); }
+        .auth-box { width: 420px; max-width: 95vw; background: rgba(0, 8, 20, 0.85); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(0, 162, 255, 0.3); border-top: 3px solid var(--ps-glow); box-shadow: 0 30px 100px rgba(0,0,0,0.9), inset 0 0 40px rgba(0, 162, 255, 0.1); text-align: center; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); }
         .auth-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
         .auth-sub { color: var(--ps-glow); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
@@ -87,8 +86,9 @@
         .bet-input { text-align: center !important; }
         .bet-input::placeholder { text-align: center; color: rgba(255,255,255,0.4); }
         
-        .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; } 
+        .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; width: 120px;} 
         .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.05); }
+        .btn-rules span { font-size: 0.85rem; }
 
         /* ================= 1-ROW HUD TOPBAR ================= */
         #app-container { display: none; }
@@ -126,7 +126,7 @@
         .btn-back:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
         /* MAIN LOBBY & CARDS */
-        .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 100px; }
+        .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 120px; }
         .content { width: 100%; max-width: 1400px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
         .view-container { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; }
         
@@ -136,7 +136,7 @@
         .lobby-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .lobby-modes-container { display: flex; gap: 40px; justify-content: center; width: 100%; max-width: 900px; flex-wrap: wrap; }
         
-        .mode-card { flex: 1; min-width: 300px; max-width: 340px; height: 440px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; }
+        .mode-card { flex: 1; min-width: 300px; max-width: 340px; height: 440px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: rgba(0, 15, 35, 0.65); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; }
         .mode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); z-index: 1; }
         .mode-card:hover { transform: translateY(-10px); border-color: var(--ps-glow); box-shadow: 0 15px 40px rgba(0, 162, 255, 0.2); background: rgba(0, 30, 60, 0.8); }
         .mode-icon { font-size: 6rem; margin-bottom: 2rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; z-index: 2; }
@@ -152,7 +152,7 @@
         .casino-grid { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; align-items: center; margin: 0 auto; max-width: 1300px; }
         .casino-grid.solo-grid { max-width: 1000px; } 
 
-        .game-card { width: 280px; height: 400px; cursor: pointer; display: flex; flex-direction: column; position: relative; border-radius: 16px; overflow: hidden; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; }
+        .game-card { width: 280px; height: 400px; cursor: pointer; display: flex; flex-direction: column; position: relative; border-radius: 16px; overflow: hidden; background: rgba(0, 15, 35, 0.65); border: 1px solid var(--glass-border); transition: 0.3s; }
         .game-card:hover { transform: translateY(-8px); border-color: var(--glass-hover); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.1); }
         .game-img { flex: 1; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 6rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; }
         .game-card:hover .game-img { color: white; text-shadow: 0 0 25px var(--ps-glow); background: rgba(0,30,70,0.6); }
@@ -163,7 +163,7 @@
         .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 1rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
         /* ================= IN-GAME UI PANELS ================= */
-        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
+        .glass-panel { background: rgba(0, 15, 35, 0.65); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
         .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
 
@@ -190,13 +190,13 @@
         .bet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; }
         .bet-grid.perya-grid { grid-template-columns: repeat(3, 1fr); }
         .bet-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; padding: 15px 10px; border-radius: 8px; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
-        .bet-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .bet-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         .bet-btn.has-bet { border-top: 2px solid var(--tile-color, var(--ps-glow)) !important; border-left: 2px solid var(--tile-color, var(--ps-glow)) !important; border-right: 2px solid var(--tile-color, var(--ps-glow)) !important; box-shadow: inset 0 0 15px rgba(255,255,255,0.1), 0 -5px 20px rgba(0,0,0,0.6); color: #fff !important; text-shadow: 0 0 10px var(--tile-color, var(--ps-glow)); transform: translateY(-3px); }
-        .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; border-color: var(--glass-border); color: var(--text-muted); }
+        .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; border-color: var(--glass-border) !important; color: var(--text-muted); }
 
         /* MODALS (PlayStation Theme / Glassmorphism) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .modal-content { background: rgba(0, 5, 15, 0.9); width: 600px; max-width: 95vw; padding: 25px 25px; border-radius: 12px; border: 1px solid rgba(0, 162, 255, 0.4); border-top: 3px solid var(--ps-glow); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 30px rgba(0, 162, 255, 0.1); position: relative; display: flex; flex-direction: column; height: auto; max-height: 90vh; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);}
+        .modal-content { background: rgba(0, 8, 20, 0.85); width: 600px; max-width: 95vw; padding: 25px 25px; border-radius: 12px; border: 1px solid rgba(0, 162, 255, 0.3); border-top: 3px solid var(--ps-glow); color: white; box-shadow: 0 30px 100px rgba(0,0,0,0.9), inset 0 0 40px rgba(0, 162, 255, 0.1); position: relative; display: flex; flex-direction: column; height: auto; max-height: 90vh; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);}
         .modal-close-icon { position: absolute; top: 15px; right: 20px; font-size: 1.6rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 100; background: none; border: none; padding: 0; outline: none;}
         .modal-close-icon:hover { color: var(--danger); transform: scale(1.1); }
         .modal-content h3 { font-size: 1.5rem; font-weight: 900; margin-bottom: 1rem; margin-top: 0; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; text-align: center; flex-shrink: 0; color: white;}
@@ -240,9 +240,13 @@
         /* BACCARAT TEXT & IN-GAME NOTIFS */
         #bac-action-text { height: 24px; color: var(--ps-glow); font-weight: 800; text-align: center; margin-top: 40px; letter-spacing: 1px; text-transform: uppercase; font-size: 1.1rem; text-shadow: 0 0 10px rgba(0,162,255,0.5); }
 
+        /* PROMO POP ANIMATION */
+        @keyframes giftPop { 0% { transform: scale(0.8) translateY(20px); opacity: 0; filter: blur(5px); } 50% { transform: scale(1.1) translateY(-5px); filter: blur(0px); text-shadow: 0 0 30px var(--ps-glow); opacity: 1; } 100% { transform: scale(1) translateY(0); opacity: 1; text-shadow: 0 0 15px var(--ps-glow); } }
+        .anim-gift { animation: giftPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
         /* GLOBAL TOAST (Top Right) */
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: rgba(0, 5, 15, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0, 162, 255, 0.4); color: white; padding: 15px 25px; border-radius: 8px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0, 162, 255, 0.25); text-transform: uppercase; }
+        .toast { background: rgba(0, 8, 20, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0, 162, 255, 0.4); color: white; padding: 15px 25px; border-radius: 8px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0, 162, 255, 0.25); text-transform: uppercase; }
         .toast.show { transform: translateX(0); }
         .toast-success { border-left: 5px solid var(--ps-glow); } .toast-success i { color: var(--ps-glow); font-size: 1.3rem; }
         .toast-error { border-left: 5px solid var(--danger); border-color: rgba(255, 51, 102, 0.4); box-shadow: 0 10px 30px rgba(255, 51, 102, 0.25); } .toast-error i { color: var(--danger); font-size: 1.3rem; }
@@ -255,10 +259,6 @@
         .ticket-log-status.pending { background: rgba(255, 180, 0, 0.15); color: var(--credits); border: 1px solid rgba(255, 180, 0, 0.3); }
         .ticket-log-status.approved { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
         .ticket-log-status.rejected { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
-
-        /* PROMO POP ANIMATION */
-        @keyframes giftPop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.1); text-shadow: 0 0 20px var(--ps-glow); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
-        .anim-gift { animation: giftPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
         /* EXACT GREEN/RED RESULT BOXES */
         .result-box { position: absolute; bottom: 20px; right: 20px; text-align: right; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; display: none; z-index: 100; min-width: 250px; text-transform: uppercase; backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
@@ -285,11 +285,12 @@
 
         /* ================= MOBILE RESPONSIVENESS ================= */
         @media (max-width: 768px) {
-            .topbar { padding: 10px 15px; }
-            .topbar-inner { flex-direction: column; gap: 10px; }
+            .topbar { padding: 10px 15px; position: static; } /* Stops header from overlapping main content on scroll */
+            .topbar-inner { flex-direction: column; gap: 10px; justify-content: center; align-items: center;}
             .brand-title { font-size: 1.2rem; }
-            .main-wrapper { padding-top: 140px; }
+            .main-wrapper { padding-top: 20px; } /* Adjusted since topbar is static */
             .casino-title { font-size: 2.2rem; }
+            .back-nav { justify-content: center; }
             
             .shared-layout { flex-direction: column; height: auto; }
             .chat-panel { width: 100%; height: 300px; margin-top: 15px; }
@@ -476,9 +477,9 @@
               <div class="main-panel glass-panel">
                 <div class="glass-header" style="align-items: center;">
                     <h2 style="margin:0; line-height:1;">Dice Roll</h2>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-rules" onclick="openRules('dice')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openHistory('dice')" title="History"><i class="fas fa-list-alt"></i></button>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button class="btn-rules" onclick="openRules('dice')" title="How to Play" style="width: 120px;"><i class="fas fa-info-circle"></i> <span>RULES</span></button>
+                        <button class="btn-rules" onclick="openHistory('dice')" title="History" style="width: 120px;"><i class="fas fa-list-alt"></i> <span>HISTORY</span></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -505,9 +506,9 @@
               <div class="main-panel glass-panel">
                 <div class="glass-header" style="align-items: center;">
                     <h2 style="margin:0; line-height:1;">Coin Flip</h2>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-rules" onclick="openRules('coinflip')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openHistory('coinflip')" title="History"><i class="fas fa-list-alt"></i></button>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button class="btn-rules" onclick="openRules('coinflip')" title="How to Play" style="width: 120px;"><i class="fas fa-info-circle"></i> <span>RULES</span></button>
+                        <button class="btn-rules" onclick="openHistory('coinflip')" title="History" style="width: 120px;"><i class="fas fa-list-alt"></i> <span>HISTORY</span></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -539,9 +540,9 @@
               <div class="main-panel glass-panel">
                 <div class="glass-header" style="align-items: center;">
                     <h2 style="margin:0; line-height:1;">Blackjack</h2>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-rules" onclick="openRules('blackjack')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openHistory('blackjack')" title="History"><i class="fas fa-list-alt"></i></button>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button class="btn-rules" onclick="openRules('blackjack')" title="How to Play" style="width: 120px;"><i class="fas fa-info-circle"></i> <span>RULES</span></button>
+                        <button class="btn-rules" onclick="openHistory('blackjack')" title="History" style="width: 120px;"><i class="fas fa-list-alt"></i> <span>HISTORY</span></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -581,8 +582,8 @@
                           <i class="fas fa-clock"></i> 
                           <div style="display:flex; align-items:baseline;"><span id="sg-timer">15</span><span class="timer-sec">s</span></div>
                       </div>
-                      <button class="btn-rules" onclick="openRules(window.activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                      <button class="btn-rules" onclick="openHistory(window.activeSharedGame)" title="History"><i class="fas fa-list-alt"></i></button>
+                      <button class="btn-rules" onclick="openRules(window.activeSharedGame)" title="How to Play" style="width: 110px;"><i class="fas fa-info-circle"></i> <span>RULES</span></button>
+                      <button class="btn-rules" onclick="openHistory(window.activeSharedGame)" title="History" style="width: 110px;"><i class="fas fa-list-alt"></i> <span>HISTORY</span></button>
                   </div>
                 </div>
                 
@@ -656,11 +657,10 @@
         <button class="bank-tab active" onclick="switchSupportCenterTab('deposit', this)">Deposit</button>
         <button class="bank-tab" onclick="switchSupportCenterTab('withdraw', this)">Withdraw</button>
         <button class="bank-tab" onclick="switchSupportCenterTab('requests', this)">Requests</button>
-        <button class="bank-tab" onclick="switchSupportCenterTab('ledger', this)">Ledger</button>
       </div>
 
       <div id="sc-tab-deposit" class="bank-section active">
-        <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.95rem; text-align:center;">Attach proof of payment below for approval.</p>
+        <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.95rem; text-align:center;">Look for <strong>AshleyChan</strong> to top up.<br>Attach proof of payment below for approval.</p>
         <div class="input-group" style="margin-bottom:10px;">
             <label>Amount (TC)</label>
             <input type="number" id="dep-amount" class="input-control" placeholder="e.g. 5000">
@@ -690,11 +690,19 @@
       <div id="sc-tab-requests" class="bank-section hidden">
         <div id="bank-logs-container" class="custom-scroll" style="height: 250px; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; overflow-y: auto; overflow-x: hidden;"></div>
       </div>
-
-      <div id="sc-tab-ledger" class="bank-section hidden">
-        <div id="ledger-logs-container" class="custom-scroll" style="height: 250px; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; overflow-y: auto; overflow-x: hidden;"></div>
+      
+      <div style="border-top: 1px solid var(--glass-border); padding-top: 15px; margin-top: 15px;">
+          <button class="btn-play" style="width:100%; background:rgba(0,162,255,0.1); border-color:var(--ps-glow); color:var(--ps-glow);" onclick="openLedgerModal()"><i class="fas fa-book"></i> VIEW ACCOUNT LEDGER</button>
       </div>
     </div>
+  </div>
+
+  <div id="ledger-modal" class="modal-overlay hidden">
+     <div class="modal-content" style="width: 550px; height: auto;">
+        <button class="modal-close-icon" onclick="closeModal('ledger-modal'); openModal('support-center-modal');"><i class="fas fa-arrow-left"></i></button>
+        <h3 style="margin-top:0;">ACCOUNT LEDGER</h3>
+        <div id="ledger-logs-container" class="custom-scroll" style="height: 350px; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; overflow-y: auto; overflow-x: hidden;"></div>
+     </div>
   </div>
 
   <div id="history-modal" class="modal-overlay hidden">
@@ -709,7 +717,7 @@
         </div>
 
         <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 350px; padding-right:5px;">
-            <div style="display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:1px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#00050f; z-index:10;">
+            <div style="display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:1px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#000a1f; z-index:10;">
                 <div style="text-align:center;">Result</div>
                 <div style="text-align:center;">Bets</div>
                 <div style="text-align:center; color:var(--success)">Win</div>
@@ -773,7 +781,7 @@
         return str.split(',').map(c => {
             let color = c.trim().toLowerCase();
             if(!color) return '';
-            return `<div class="color-die c-${color}" style="width:16px; height:16px; border-radius:3px; display:inline-block; border:1px solid rgba(255,255,255,0.2); margin:0 2px;"></div>`;
+            return `<div class="color-die c-${color}" style="width:20px; height:20px; border-radius:3px; display:inline-block; border:1px solid rgba(255,255,255,0.2); margin:0 2px;"></div>`;
         }).join('');
     }
 
@@ -936,7 +944,6 @@
         document.getElementById('nav-credits').innerText = myCredits.toLocaleString(); 
     }
 
-    // --- DAILY REWARD LOGIC ---
     function setupDailyRewardUI(dailyData) {
         const container = document.getElementById('dr-days-container');
         container.innerHTML = '';
@@ -1051,7 +1058,7 @@
                     rHtml = `<span style="font-weight:900; color:${getBetColor(h.result.split(' ')[0])}">${h.result}</span>`;
                 }
 
-                list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:6px; border-left:4px solid ${cColor}; display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; align-items:center; font-size:0.9rem; text-transform:uppercase; text-align:center;">
+                list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:6px; border-left:4px solid ${cColor}; display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; align-items:center; font-size:1rem; text-transform:uppercase; text-align:center;">
                     <div>${rHtml}</div>
                     <div>${bHtml}</div>
                     <div>${winVal}</div>
@@ -1082,9 +1089,9 @@
                 if (key !== 'total') {
                     let perc = ((data.stats[key] / data.stats.total) * 100).toFixed(1);
                     if (data.game === 'perya') {
-                        statsHtml += `<div style="display:flex; align-items:center; gap:6px;"><div class="color-die c-${key.toLowerCase()}" style="width:16px; height:16px; border-radius:3px; border:1px solid rgba(255,255,255,0.2); font-size:0;"></div><span style="color:white; font-weight:800;">${perc}%</span></div>`;
+                        statsHtml += `<div style="display:flex; align-items:center; gap:6px;"><div class="color-die c-${key.toLowerCase()}" style="width:20px; height:20px; border-radius:3px; border:1px solid rgba(255,255,255,0.2); font-size:0;"></div><span style="color:white; font-weight:800; font-size:1.1rem;">${perc}%</span></div>`;
                     } else {
-                        statsHtml += `<span>${key.toUpperCase()}: <span style="color:${getBetColor(key)}; font-weight:800;">${perc}%</span></span>`;
+                        statsHtml += `<span style="font-size:1rem;">${key.toUpperCase()}: <span style="color:${getBetColor(key)}; font-weight:800; font-size:1.1rem;">${perc}%</span></span>`;
                     }
                 }
             });
@@ -1170,9 +1177,20 @@
         openLobbyMode('shared'); 
     }
     
-    function backToCasino() { switchView('casino'); }
+    function backToCasino() { 
+        if (window.activeSharedGame && mySBets && Object.values(mySBets).reduce((a,b)=>a+b,0) > 0 && sState.status === 'BETTING') {
+            showToast("Cannot leave with active bets. Wait for round to finish.", "error"); return;
+        }
+        if (window.activeSharedGame) {
+            socket.emit('leaveRoom', window.activeSharedGame);
+            window.activeSharedGame = null; 
+        }
+        switchView('casino'); 
+    }
+
     function confirmLogout() { if(confirm("Are you sure you want to log out of Stick N' Trade?")) { location.reload(); } }
 
+    // --- SOLO GAMES ENGINE ---
     function showEndBox(box, bet, payout, msg, newBalance) {
         let pft = payout > bet ? payout - bet : 0; 
         let loss = payout === 0 ? bet : 0;
@@ -1181,16 +1199,16 @@
         if (payout > bet) { 
             h += `<div class="res-payout" style="color:var(--success)">+${pft} TC</div>`; 
             box.className = "result-box win"; 
-            updateMyBalance(newBalance, true);
+            setTimeout(() => { updateMyBalance(newBalance, true); }, 800);
         } else if (payout === bet) { 
             h += `<div class="res-payout" style="color:white">Push</div>`; 
             box.className = "result-box push"; 
-            updateMyBalance(newBalance, false);
+            setTimeout(() => { updateMyBalance(newBalance, false); }, 800);
         } else { 
             sfx.lose(); 
             h += `<div class="res-payout" style="color:var(--danger)">Lost -${loss}</div>`; 
             box.className = "result-box lose"; 
-            updateMyBalance(newBalance, false);
+            setTimeout(() => { updateMyBalance(newBalance, false); }, 800);
         } 
         box.innerHTML = h; box.style.display = 'block'; 
         setTimeout(() => { box.classList.add('show'); }, 10);
@@ -1509,7 +1527,7 @@
                     let p = a * (w === 'Tie' ? 9 : (w === 'Banker' ? 1.95 : 2)); 
                     tp += p; wonProfit += (p - a);
                 } else if (w === 'Tie' && (b === 'Player' || b === 'Banker')) {
-                    tp += a; // Push refund, wonProfit is 0
+                    tp += a; 
                 } else { 
                     lostBet += a;
                 }
@@ -1681,7 +1699,6 @@
           box.className = "result-box push";
       }
       
-      // Always log history, even if user didn't bet (tba = 0)
       logHistory(gid, betsPlacedStr || '-', resStr, wonProfit, lostBet, tba > 0);
       
       box.innerHTML = h;
@@ -1721,6 +1738,7 @@
       }
     });
 
+    // STRICT LOCK: Physically disable betting buttons while resetting
     socket.on('lockBets', () => { 
         sState.status = 'RESOLVING'; 
         let r = document.getElementById('sg-timer-box'); 
@@ -1729,6 +1747,8 @@
         let s = document.getElementById('sg-timer');
         if (s) s.innerText = '0';
         
+        document.querySelectorAll('#sg-bet-grid .bet-btn').forEach(b => b.disabled = true);
+
         if (window.activeSharedGame) {
             let cb = document.getElementById('sg-chat');
             if (cb) {
@@ -1745,19 +1765,22 @@
         }
     });
 
+    // RESTORE BETS: Re-enable buttons only after wipe
     socket.on('newRound', () => { 
+        wipeTableVisually();
         sState.status = 'BETTING'; 
         sState.time = 15;
         let r = document.getElementById('sg-timer-box'); 
         if (r) { r.style.color = 'white'; r.style.borderColor = 'var(--glass-border)'; } 
         
+        document.querySelectorAll('#sg-bet-grid .bet-btn').forEach(b => b.disabled = false);
+
         if (window.activeSharedGame) {
             let cb = document.getElementById('sg-chat');
             if (cb) {
                 cb.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-sys">Place your bets!</div>`);
                 cb.scrollTop = cb.scrollHeight;
             }
-            wipeTableVisually();
         }
     });
 
@@ -1783,6 +1806,12 @@
       if(tab === 'ledger') socket.emit('getWalletLogs');
     }
 
+    function openLedgerModal() {
+        closeModal('support-center-modal');
+        socket.emit('getWalletLogs');
+        openModal('ledger-modal');
+    }
+
     function submitDeposit() {
         const amt = document.getElementById('dep-amount').value;
         const proofInput = document.getElementById('dep-ref');
@@ -1806,6 +1835,7 @@
         if(!amt || !info) return showToast("Please fill all fields.", "error");
         if(amt > myCredits) return showToast("Insufficient TC.", "error");
         
+        myCredits -= amt; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
         socket.emit('submitTransaction', { type: 'Withdrawal', amount: amt, ref: info });
         
         let msgBox = document.getElementById('wit-msg');
