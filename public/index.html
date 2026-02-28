@@ -91,7 +91,7 @@
         .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; } 
         .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.1); }
 
-        /* ================= 1-ROW HUD TOPBAR ================= */
+        /* 1-ROW HUD TOPBAR */
         #app-container { display: none; }
         .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 99999; background: rgba(0,0,0,0.8); border-bottom: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(16px); padding: 12px 25px; }
         .topbar-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;}
@@ -121,7 +121,7 @@
         .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); }
         .notif-badge.active { display: block; }
 
-        /* ================= MAIN LOBBY & CARDS ================= */
+        /* MAIN LOBBY & CARDS */
         .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; padding-top: 80px; }
         .content { width: 100%; max-width: 1400px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
         .view-container { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; }
@@ -157,7 +157,7 @@
 
         .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 1rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-        /* ================= IN-GAME UI PANELS ================= */
+        /* IN-GAME UI PANELS */
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
         .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
@@ -188,7 +188,7 @@
         .bet-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         .bet-btn.has-bet { border-top: 2px solid var(--tile-color, var(--ps-glow)) !important; border-left: 2px solid var(--tile-color, var(--ps-glow)) !important; border-right: 2px solid var(--tile-color, var(--ps-glow)) !important; box-shadow: inset 0 0 15px rgba(255,255,255,0.1), 0 -5px 20px rgba(0,0,0,0.6); color: #fff !important; text-shadow: 0 0 10px var(--tile-color, var(--ps-glow)); transform: translateY(-3px); }
 
-        /* ================= MODALS ================= */
+        /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-content { background: var(--glass-bg); width: 600px; max-width: 95vw; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9); position: relative; display: flex; flex-direction: column; height: auto; max-height: 90vh; }
         .modal-close-icon { position: absolute; top: 20px; right: 25px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 100; background: none; border: none; padding: 0; outline: none;}
@@ -202,7 +202,6 @@
         .bank-section { display: none; flex: 1; padding-right: 5px; }
         .bank-section.active { display: block; }
 
-        /* Solid Header Backgrounds to fix scroll overlap */
         thead th { position: sticky; top: 0; background: #000a1f; z-index: 10; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); padding: 10px 15px;}
 
         /* DAILY REWARD */
@@ -211,7 +210,6 @@
         .dr-day > * { position: relative; z-index: 1; }
         .dr-day.claimed { filter: grayscale(1); opacity: 0.6; border-color: var(--glass-border); box-shadow: none; }
         
-        /* RESTORED SUNBURST ANIMATION FOR DAILY REWARD */
         .dr-day.active { background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%); border: 2px solid #fff; transform: scale(1.15); opacity: 1; z-index: 5; box-shadow: 0 10px 25px rgba(255, 204, 0, 0.4); height: 150px; color: black; }
         .dr-day.active::before { content: ''; position: absolute; inset: -50%; background: repeating-conic-gradient(rgba(255,255,255,0.3) 0 15deg, transparent 15deg 30deg); animation: rotateBurst 20s linear infinite; opacity: 0.6; display: block;}
         @keyframes rotateBurst { 100% { transform: rotate(360deg); } }
@@ -914,6 +912,7 @@
 
         document.getElementById('auth-container').style.display = 'none';
         document.getElementById('app-container').style.display = 'block';
+        
         if (audioCtx.state === 'suspended') audioCtx.resume();
         switchView('casino');
     });
@@ -937,8 +936,19 @@
         
         for(let i=1; i<=7; i++) {
             let statClass = ''; let boxTitle = `Day ${i}`;
-            if (i < dailyData.day || (i === dailyData.day && !dailyData.canClaim)) { statClass = 'claimed'; boxTitle = "CLAIMED"; } 
-            else if (i === dailyData.day && dailyData.canClaim) { statClass = 'active'; }
+            
+            if (!dailyData.canClaim && dailyData.day === 1) {
+                // If they completed day 7, all boxes should be marked claimed while waiting for the cycle reset
+                statClass = 'claimed'; boxTitle = "CLAIMED";
+            }
+            else if (i < dailyData.day) { 
+                statClass = 'claimed'; boxTitle = "CLAIMED"; 
+            } 
+            else if (i === dailyData.day && dailyData.canClaim) { 
+                statClass = 'active'; 
+            }
+            // If i === dailyData.day && !dailyData.canClaim, it's the next day. Stays normal/locked.
+            
             container.innerHTML += `<div class="dr-day ${statClass}" id="dr-day-${i}"><div class="dr-title">${boxTitle}</div><div class="dr-coin">${rewards[i-1]}<br>Credits</div></div>`;
         }
 
