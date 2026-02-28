@@ -82,15 +82,15 @@
         .btn-play:hover:not(:disabled) { background: white; color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,255,255,0.2); border-color: white;} 
         .btn-play:disabled { background: rgba(0,0,0,0.5) !important; color: var(--text-muted) !important; cursor: not-allowed !important; border-color: transparent !important; opacity: 0.5 !important; box-shadow:none !important; transform:none !important; }
         
-        .input-group label { display: block; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; text-align: left; }
-        .input-control { width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1rem; font-weight: 600; text-align: center; }
+        .input-group label { display: block; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; text-align: left; }
+        .input-control { width: 100%; padding: 10px 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1rem; font-weight: 600; text-align: center; }
         .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
         .bet-input { text-align: center !important; }
         .bet-input::placeholder { text-align: center; color: rgba(255,255,255,0.4); }
         
-        /* PERFECTLY SQUARED ICON BUTTONS */
-        .btn-rules { background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--glass-border); width: 44px; height: 44px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0;} 
-        .btn-rules:hover { background: rgba(255,255,255,0.1); border-color: white; transform: scale(1.05); }
+        /* PERFECTLY SQUARED ICON BUTTONS FOR HEADER */
+        .btn-rules { background: rgba(0,0,0,0.5); color: var(--text-muted); border: 1px solid var(--glass-border); width: 44px; height: 44px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0;} 
+        .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.05); }
 
         /* ================= 1-ROW HUD TOPBAR ================= */
         #app-container { display: none; }
@@ -123,20 +123,23 @@
         .notif-badge.active { display: block; }
 
         /* BACK NAVIGATION ALIGNED */
-        .back-nav { width: 100%; max-width: 1400px; padding: 0 2rem; margin: 0 auto 20px auto; display: flex; justify-content: flex-start; }
+        .game-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: flex-start;}
+        .game-wrapper.solo-wrap { max-width: 850px; }
+        
+        .back-nav { margin-bottom: 15px; }
         .btn-back { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
         .btn-back:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
         /* MAIN LOBBY & CARDS */
-        /* Flex Alignment to keep PC centered and balanced */
-        .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 80px; }
-        .content { width: 100%; max-width: 1400px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; margin: 0 auto;}
-        .view-container { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; }
+        /* Flex Alignment fixed to prevent sinking on PC */
+        .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 100px; padding-bottom: 50px;}
+        .content { width: 100%; max-width: 1400px; position: relative; display: flex; flex-direction: column; align-items: center; padding: 2rem; margin: 0 auto;}
+        .view-container { width: 100%; transition: opacity 0.3s; }
         
         .header-title { font-size: 3rem; font-weight: 900; margin: 0 0 2rem 0; text-transform: uppercase; letter-spacing: 2px; color: white; text-shadow: 0 2px 15px rgba(0,0,0,0.8); text-align: center; }
         .casino-title { font-size: 4rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 3rem 0; line-height: 1.1; color: white; text-shadow: 0 0 20px rgba(255,255,255,0.2); text-align: center; }
         
-        .lobby-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .lobby-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; }
         .lobby-modes-container { display: flex; gap: 40px; justify-content: center; width: 100%; max-width: 900px; flex-wrap: wrap; }
         
         .mode-card { flex: 1; min-width: 300px; max-width: 340px; height: 440px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; }
@@ -166,26 +169,25 @@
         .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 1rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
         /* ================= IN-GAME UI PANELS ================= */
-        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; width: 100%;}
         .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
 
-        .game-box { display: flex; flex-direction: column; width: 100%; max-width: 800px; margin: 0 auto; background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; } 
-        .main-panel { display: flex; flex-direction: column; height: 100%; }
-        .game-display { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 40px 20px; min-height: 350px;}
+        .game-box { display: flex; flex-direction: column; width: 100%; max-width: 850px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; height: 650px;} 
+        .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 20px; min-height: 350px;}
         
-        .controls-grid { display: flex; justify-content: center; align-items: center; gap: 15px; padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); flex-shrink: 0; } 
+        .controls-grid { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); flex-shrink: 0; } 
         .controls-full { display: flex; gap: 15px; justify-content: center; width: 100%; }
 
-        .shared-layout { display: flex; gap: 20px; width: 100%; max-width: 1200px; margin: 0 auto; align-items: stretch; justify-content: center; }
-        .chat-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: auto; min-height: 600px;}
+        .shared-layout { display: flex; gap: 20px; width: 100%; height: 650px; align-items: stretch; justify-content: center; }
+        .chat-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; }
         .chat-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
         .chat-msg { background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 8px; border-left: 3px solid var(--ps-light-blue); animation: popIn 0.2s ease-out; flex-shrink: 0; }
         .chat-user { font-weight: 900; color: var(--ps-glow); margin-bottom: 5px; text-transform: uppercase; font-size: 0.85rem; }
         .chat-sys { border-left-color: var(--success); color: var(--success); font-style: italic; font-weight: 600; }
 
         /* TIMER */
-        .timer-box { background: rgba(0,0,0,0.8); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 8px; color: white; font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); transition: 0.3s; font-family: 'Rajdhani', monospace; } 
+        .timer-box { background: rgba(0,0,0,0.8); border: 1px solid var(--glass-border); padding: 0 15px; height: 44px; border-radius: 8px; color: white; font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); transition: 0.3s; font-family: 'Rajdhani', monospace; } 
         .timer-box.closing { border-color: var(--danger); color: var(--danger); box-shadow: 0 0 20px rgba(255, 51, 102, 0.4); animation: shake 0.5s infinite; }
         .timer-sec { font-size: 0.7em; margin-left: 2px; font-weight: 600; color: var(--text-muted); }
 
@@ -298,9 +300,9 @@
             .topbar-right { gap: 10px; }
             .player-profile { display: none; } 
             
-            .main-wrapper { padding-top: 140px; justify-content: flex-start; }
+            /* Add significant top padding so mobile doesn't overlap the fixed header */
+            .main-wrapper { padding-top: 100px; justify-content: flex-start; }
             .casino-title { font-size: 2.2rem; margin-top: 20px;}
-            .back-nav { padding: 0 15px; }
             
             .shared-layout { flex-direction: column; height: auto; }
             .chat-panel { width: 100%; height: 300px; margin-top: 15px; }
@@ -442,182 +444,194 @@
             </div>
 
             <div class="lobby-wrapper hidden" id="lobby-indiv">
-              <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
-              <h2 class="header-title">Solo Play</h2>
-              <div class="casino-grid solo-grid">
-                <div class="game-card glass-panel" onclick="openGame('dice')">
-                    <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Dice Roll</div><div class="game-desc">Roll over 50. Pays 2x.</div></div>
-                </div>
-                <div class="game-card glass-panel" onclick="openGame('coinflip')">
-                    <div class="game-img"><i class="fas fa-coins"></i></div><div class="game-info"><div class="game-title">Coin Flip</div><div class="game-desc">Heads or Tails. Pays 2x.</div></div>
-                </div>
-                <div class="game-card glass-panel" onclick="openGame('blackjack')">
-                    <div class="game-img"><i class="fas fa-spade">♠️</i></div><div class="game-info"><div class="game-title">Blackjack</div><div class="game-desc">Beat the dealer to 21.</div></div>
-                </div>
+              <div class="game-wrapper solo-wrap">
+                  <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
+                  <h2 class="header-title" style="align-self: center;">Solo Play</h2>
+                  <div class="casino-grid solo-grid">
+                    <div class="game-card glass-panel" onclick="openGame('dice')">
+                        <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Dice Roll</div><div class="game-desc">Roll over 50. Pays 2x.</div></div>
+                    </div>
+                    <div class="game-card glass-panel" onclick="openGame('coinflip')">
+                        <div class="game-img"><i class="fas fa-coins"></i></div><div class="game-info"><div class="game-title">Coin Flip</div><div class="game-desc">Heads or Tails. Pays 2x.</div></div>
+                    </div>
+                    <div class="game-card glass-panel" onclick="openGame('blackjack')">
+                        <div class="game-img"><i class="fas fa-spade">♠️</i></div><div class="game-info"><div class="game-title">Blackjack</div><div class="game-desc">Beat the dealer to 21.</div></div>
+                    </div>
+                  </div>
               </div>
             </div>
 
             <div class="lobby-wrapper hidden" id="lobby-shared">
-              <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
-              <h2 class="header-title">Shared Tables</h2>
-              <div class="casino-grid shared-grid" style="max-width: 1300px;">
-                <div class="game-card glass-panel" onclick="openSharedGame('baccarat')">
-                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                    <div class="game-img"><i class="fas fa-cards">🃏</i></div><div class="game-info"><div class="game-title">Baccarat</div><div class="game-desc">Closest to 9 wins.</div></div>
-                </div>
-                <div class="game-card glass-panel" onclick="openSharedGame('perya')">
-                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                    <div class="game-img"><i class="fas fa-dice-d6"></i></div><div class="game-info"><div class="game-title">Color Game</div><div class="game-desc">Classic 3-dice color drop.</div></div>
-                </div>
-                <div class="game-card glass-panel" onclick="openSharedGame('dt')">
-                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                    <div class="game-img"><i class="fas fa-dragon"></i></div><div class="game-info"><div class="game-title">Dragon Tiger</div><div class="game-desc">Highest card takes all.</div></div>
-                </div>
-                <div class="game-card glass-panel" onclick="openSharedGame('sicbo')">
-                    <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                    <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Sic Bo</div><div class="game-desc">Asian 3-dice betting.</div></div>
-                </div>
+              <div class="game-wrapper" style="max-width: 1200px;">
+                  <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
+                  <h2 class="header-title" style="align-self: center;">Shared Tables</h2>
+                  <div class="casino-grid shared-grid">
+                    <div class="game-card glass-panel" onclick="openSharedGame('baccarat')">
+                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                        <div class="game-img"><i class="fas fa-cards">🃏</i></div><div class="game-info"><div class="game-title">Baccarat</div><div class="game-desc">Closest to 9 wins.</div></div>
+                    </div>
+                    <div class="game-card glass-panel" onclick="openSharedGame('perya')">
+                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                        <div class="game-img"><i class="fas fa-dice-d6"></i></div><div class="game-info"><div class="game-title">Color Game</div><div class="game-desc">Classic 3-dice color drop.</div></div>
+                    </div>
+                    <div class="game-card glass-panel" onclick="openSharedGame('dt')">
+                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                        <div class="game-img"><i class="fas fa-dragon"></i></div><div class="game-info"><div class="game-title">Dragon Tiger</div><div class="game-desc">Highest card takes all.</div></div>
+                    </div>
+                    <div class="game-card glass-panel" onclick="openSharedGame('sicbo')">
+                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
+                        <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Sic Bo</div><div class="game-desc">Asian 3-dice betting.</div></div>
+                    </div>
+                  </div>
               </div>
             </div>
           </div>
 
           <div id="view-game-dice" class="view-container hidden">
-            <div class="back-nav"><button class="btn-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
-            <div class="game-box">
-              <div class="main-panel glass-panel">
-                <div class="glass-header" style="align-items: center;">
-                    <h2 style="margin:0; line-height:1;">Dice Roll</h2>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-rules" onclick="openRules('dice')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openHistory('dice')" title="History"><i class="fas fa-list-alt"></i></button>
+            <div class="game-wrapper solo-wrap">
+                <div class="back-nav"><button class="btn-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
+                <div class="game-box">
+                  <div class="main-panel">
+                    <div class="glass-header" style="align-items: center;">
+                        <h2 style="margin:0; line-height:1;">Dice Roll</h2>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-rules" onclick="openRules('dice')" title="How to Play"><i class="fas fa-info-circle"></i></button>
+                            <button class="btn-rules" onclick="openHistory('dice')" title="History"><i class="fas fa-history"></i></button>
+                        </div>
                     </div>
-                </div>
-                <div class="game-display">
-                  <i class="fas fa-dice-d20 dice-icon" id="dice-icon"></i>
-                  <div id="dice-num" style="display:none; color:white; font-weight:900;">0</div>
-                  <div id="dice-msg" class="result-box"></div>
-                </div>
-                <div class="controls-grid" style="display:flex; flex-direction:column; align-items:center; gap:15px; padding: 20px;">
-                  <div class="input-group" style="margin:0 auto; width:150px;">
-                      <label style="text-align:center">Bet Amount</label>
-                      <input type="number" id="dice-bet" class="input-control bet-input" placeholder="10">
+                    <div class="game-display">
+                      <i class="fas fa-dice-d20 dice-icon" id="dice-icon"></i>
+                      <div id="dice-num" style="display:none; color:white; font-weight:900;">0</div>
+                      <div id="dice-msg" class="result-box"></div>
+                    </div>
+                    <div class="controls-grid" style="display:flex; flex-direction:column; align-items:center; gap:15px; padding: 25px;">
+                      <div class="input-group" style="margin:0 auto; width:150px;">
+                          <label style="text-align:center">Bet Amount</label>
+                          <input type="number" id="dice-bet" class="input-control bet-input" placeholder="10">
+                      </div>
+                      <div style="display:flex; width:100%; justify-content:center;">
+                          <button class="btn-play" id="btn-dice" onclick="playDice()" style="width: 100%; max-width: 250px;">ROLL DICE</button>
+                      </div>
+                    </div>
                   </div>
-                  <div style="display:flex; width:100%; justify-content:center;">
-                      <button class="btn-play" id="btn-dice" onclick="playDice()" style="width: 100%; max-width: 250px;">ROLL DICE</button>
-                  </div>
                 </div>
-              </div>
             </div>
           </div>
 
           <div id="view-game-coinflip" class="view-container hidden">
-            <div class="back-nav"><button class="btn-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
-            <div class="game-box">
-              <div class="main-panel glass-panel">
-                <div class="glass-header" style="align-items: center;">
-                    <h2 style="margin:0; line-height:1;">Coin Flip</h2>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-rules" onclick="openRules('coinflip')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openHistory('coinflip')" title="History"><i class="fas fa-list-alt"></i></button>
+            <div class="game-wrapper solo-wrap">
+                <div class="back-nav"><button class="btn-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
+                <div class="game-box">
+                  <div class="main-panel">
+                    <div class="glass-header" style="align-items: center;">
+                        <h2 style="margin:0; line-height:1;">Coin Flip</h2>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-rules" onclick="openRules('coinflip')" title="How to Play"><i class="fas fa-info-circle"></i></button>
+                            <button class="btn-rules" onclick="openHistory('coinflip')" title="History"><i class="fas fa-history"></i></button>
+                        </div>
                     </div>
-                </div>
-                <div class="game-display">
-                  <div class="coin-wrapper" id="coin-wrapper">
-                    <div class="coin-inner" id="coin-obj">
-                      <div class="coin-face coin-heads"><i class="fas fa-coins"></i></div>
-                      <div class="coin-face coin-tails"><i class="fas fa-gem"></i></div>
+                    <div class="game-display">
+                      <div class="coin-wrapper" id="coin-wrapper">
+                        <div class="coin-inner" id="coin-obj">
+                          <div class="coin-face coin-heads"><i class="fas fa-coins"></i></div>
+                          <div class="coin-face coin-tails"><i class="fas fa-gem"></i></div>
+                        </div>
+                      </div>
+                      <div id="coin-msg" class="result-box"></div>
+                    </div>
+                    <div class="controls-grid" style="display:flex; flex-direction:column; align-items:center; gap:15px; padding: 25px;">
+                      <div class="input-group" style="margin:0 auto; width:150px;">
+                          <label style="text-align:center">Bet Amount</label>
+                          <input type="number" id="coin-bet" class="input-control bet-input" placeholder="10">
+                      </div>
+                      <div style="display:flex; gap:10px; width:100%; justify-content:center; max-width: 300px;">
+                          <button class="btn-play" id="btn-heads" onclick="playCoin('Heads')" style="flex:1; background: rgba(255,180,0,0.2); border-color: var(--credits);">Heads</button>
+                          <button class="btn-play" id="btn-tails" onclick="playCoin('Tails')" style="flex:1;">Tails</button>
+                      </div>
                     </div>
                   </div>
-                  <div id="coin-msg" class="result-box"></div>
                 </div>
-                <div class="controls-grid" style="display:flex; flex-direction:column; align-items:center; gap:15px; padding: 20px;">
-                  <div class="input-group" style="margin:0 auto; width:150px;">
-                      <label style="text-align:center">Bet Amount</label>
-                      <input type="number" id="coin-bet" class="input-control bet-input" placeholder="10">
-                  </div>
-                  <div style="display:flex; gap:10px; width:100%; justify-content:center; max-width: 300px;">
-                      <button class="btn-play" id="btn-heads" onclick="playCoin('Heads')" style="flex:1; background: rgba(255,180,0,0.2); border-color: var(--credits);">Heads</button>
-                      <button class="btn-play" id="btn-tails" onclick="playCoin('Tails')" style="flex:1;">Tails</button>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
           <div id="view-game-blackjack" class="view-container hidden">
-            <div class="back-nav"><button class="btn-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
-            <div class="game-box" style="max-width:1000px;">
-              <div class="main-panel glass-panel">
-                <div class="glass-header" style="align-items: center;">
-                    <h2 style="margin:0; line-height:1;">Blackjack</h2>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-rules" onclick="openRules('blackjack')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openHistory('blackjack')" title="History"><i class="fas fa-list-alt"></i></button>
+            <div class="game-wrapper solo-wrap">
+                <div class="back-nav"><button class="btn-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
+                <div class="game-box">
+                  <div class="main-panel">
+                    <div class="glass-header" style="align-items: center;">
+                        <h2 style="margin:0; line-height:1;">Blackjack</h2>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-rules" onclick="openRules('blackjack')" title="How to Play"><i class="fas fa-info-circle"></i></button>
+                            <button class="btn-rules" onclick="openHistory('blackjack')" title="History"><i class="fas fa-history"></i></button>
+                        </div>
                     </div>
-                </div>
-                <div class="game-display">
-                  <div class="blackjack-scores">
-                    <div class="card-area"><div class="bj-title">Dealer</div><div class="bj-score" id="bj-d-score">0</div><div class="card-hand" id="bj-d-hand"></div></div>
-                    <div class="card-area"><div class="bj-title">You</div><div class="bj-score" id="bj-p-score">0</div><div class="card-hand" id="bj-p-hand"></div></div>
+                    <div class="game-display">
+                      <div class="blackjack-scores">
+                        <div class="card-area"><div class="bj-title">Dealer</div><div class="bj-score" id="bj-d-score">0</div><div class="card-hand" id="bj-d-hand"></div></div>
+                        <div class="card-area"><div class="bj-title">You</div><div class="bj-score" id="bj-p-score">0</div><div class="card-hand" id="bj-p-hand"></div></div>
+                      </div>
+                      <div id="bj-msg" class="result-box"></div>
+                    </div>
+                    <div class="controls-grid" id="bj-start-controls" style="display:flex; flex-direction:column; align-items:center; gap:15px; padding: 25px;">
+                      <div class="input-group" style="margin:0 auto; width:150px;">
+                          <label style="text-align:center">Bet Amount</label>
+                          <input type="number" id="bj-bet" class="input-control bet-input" placeholder="10">
+                      </div>
+                      <div style="display:flex; width:100%; justify-content:center;">
+                          <button class="btn-play" onclick="startBlackjack()" id="btn-bj-deal" style="width: 100%; max-width: 250px;">DEAL CARDS</button>
+                      </div>
+                    </div>
+                    <div class="controls-grid hidden" id="bj-action-controls" style="display:flex; flex-direction:row; justify-content:center; gap:15px; padding: 25px;">
+                      <button class="btn-play" onclick="hitBlackjack()" id="btn-bj-hit" style="flex:1; max-width:150px; background: rgba(0,162,255,0.2); border-color: var(--ps-glow); color: var(--ps-glow);">HIT</button>
+                      <button class="btn-play" onclick="standBlackjack()" id="btn-bj-stand" style="flex:1; max-width:150px; background: rgba(255,51,102,0.2); border-color: var(--danger); color: var(--danger);">STAND</button>
+                    </div>
                   </div>
-                  <div id="bj-msg" class="result-box"></div>
                 </div>
-                <div class="controls-grid" id="bj-start-controls" style="display:flex; flex-direction:column; align-items:center; gap:15px; padding: 20px;">
-                  <div class="input-group" style="margin:0 auto; width:150px;">
-                      <label style="text-align:center">Bet Amount</label>
-                      <input type="number" id="bj-bet" class="input-control bet-input" placeholder="10">
-                  </div>
-                  <div style="display:flex; width:100%; justify-content:center;">
-                      <button class="btn-play" onclick="startBlackjack()" id="btn-bj-deal" style="width: 100%; max-width: 250px;">DEAL CARDS</button>
-                  </div>
-                </div>
-                <div class="controls-grid hidden" id="bj-action-controls" style="display:flex; flex-direction:row; justify-content:center; gap:15px; padding: 20px; width: 100%;">
-                  <button class="btn-play" onclick="hitBlackjack()" id="btn-bj-hit" style="flex:1; max-width:150px; background: rgba(0,162,255,0.2); border-color: var(--ps-glow); color: var(--ps-glow);"><i class="fas fa-hand-point-down"></i> HIT</button>
-                  <button class="btn-play" onclick="standBlackjack()" id="btn-bj-stand" style="flex:1; max-width:150px; background: rgba(255,51,102,0.2); border-color: var(--danger); color: var(--danger);"><i class="fas fa-hand-paper"></i> STAND</button>
-                </div>
-              </div>
             </div>
           </div>
 
           <div id="view-shared-game" class="view-container hidden">
-            <div class="back-nav"><button class="btn-back" onclick="backToSharedLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
-            
-            <div class="shared-layout">
-              <div class="main-panel glass-panel">
-                <div class="glass-header" style="align-items: center;">
-                  <h2 id="sg-title" style="margin:0; line-height:1;">Table</h2>
-                  
-                  <div style="display:flex; align-items:center; gap:10px;">
-                      <div class="timer-box" id="sg-timer-box">
-                          <i class="fas fa-clock"></i> 
-                          <div style="display:flex; align-items:baseline;"><span id="sg-timer">15</span><span class="timer-sec">s</span></div>
+            <div class="game-wrapper" style="max-width: 1200px;">
+                <div class="back-nav"><button class="btn-back" onclick="backToSharedLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
+                
+                <div class="shared-layout">
+                  <div class="main-panel glass-panel">
+                    <div class="glass-header" style="align-items: center;">
+                      <h2 id="sg-title" style="margin:0; line-height:1;">Table</h2>
+                      
+                      <div style="display:flex; align-items:center; gap:8px;">
+                          <div class="timer-box" id="sg-timer-box">
+                              <i class="fas fa-clock"></i> 
+                              <div style="display:flex; align-items:baseline;"><span id="sg-timer">15</span><span class="timer-sec">s</span></div>
+                          </div>
+                          <button class="btn-rules" onclick="openRules(window.activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
+                          <button class="btn-rules" onclick="openHistory(window.activeSharedGame)" title="History"><i class="fas fa-history"></i></button>
                       </div>
-                      <button class="btn-rules" onclick="openRules(window.activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                      <button class="btn-rules" onclick="openHistory(window.activeSharedGame)" title="History"><i class="fas fa-list-alt"></i></button>
-                  </div>
-                </div>
-                
-                <div class="game-display" id="sg-display"></div>
-                
-                <div class="controls-grid" style="padding:25px; border-top: 1px solid var(--glass-border);" id="sg-controls-container">
-                  </div>
-              </div>
-              
-              <div class="glass-panel chat-panel">
-                <div class="glass-header">
-                    <div>LIVE CHAT</div>
-                    <div style="display:flex; align-items:center; gap:10px; font-size: 0.95rem; font-weight:800;">
-                        <div style="display:flex; align-items:center; gap:6px; color:var(--success);"><i class="fas fa-users"></i> <span id="sg-active-players">0</span></div>
                     </div>
+                    
+                    <div class="game-display" id="sg-display"></div>
+                    
+                    <div class="controls-grid" style="padding:25px; border-top: 1px solid var(--glass-border);" id="sg-controls-container">
+                      </div>
+                  </div>
+                  
+                  <div class="glass-panel chat-panel">
+                    <div class="glass-header">
+                        <div>LIVE CHAT</div>
+                        <div style="display:flex; align-items:center; gap:10px; font-size: 0.95rem; font-weight:800;">
+                            <div style="display:flex; align-items:center; gap:6px; color:var(--success);"><i class="fas fa-users"></i> <span id="sg-active-players">0</span></div>
+                        </div>
+                    </div>
+                    <div class="chat-body custom-scroll" id="sg-chat">
+                        <div class="chat-msg chat-sys">Connected to server.</div>
+                    </div>
+                    <div style="padding:15px; border-top:1px solid var(--glass-border); flex-shrink: 0;">
+                        <input type="text" id="chat-input" class="input-control" placeholder="Say something..." onkeypress="if(event.key==='Enter'){sendChat();}">
+                    </div>
+                  </div>
+                  
                 </div>
-                <div class="chat-body custom-scroll" id="sg-chat">
-                    <div class="chat-msg chat-sys">Connected to server.</div>
-                </div>
-                <div style="padding:15px; border-top:1px solid var(--glass-border); flex-shrink: 0;">
-                    <input type="text" id="chat-input" class="input-control" placeholder="Say something..." onkeypress="if(event.key==='Enter'){sendChat();}">
-                </div>
-              </div>
-              
             </div>
           </div>
 
@@ -732,7 +746,7 @@
         </div>
 
         <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 350px; padding-right:5px;">
-            <div style="display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:1px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#00050f; z-index:10;">
+            <div style="display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:1px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:rgba(0, 10, 25, 0.95); z-index:10; backdrop-filter: blur(5px);">
                 <div style="text-align:center;">Result</div>
                 <div style="text-align:center;">Bets</div>
                 <div style="text-align:center; color:var(--success)">Win</div>
@@ -1130,6 +1144,7 @@
         document.getElementById('stat-recent-5').innerHTML = rHtml || '<span style="color:var(--text-muted)">No recent games</span>';
     });
 
+    // --- INTERACTIVE CURRENT BETS ---
     function openCurrentBetsModal() {
         if(!window.activeSharedGame) return;
         const list = document.getElementById('cb-list');
@@ -1227,10 +1242,15 @@
             h += `<div class="res-payout" style="color:var(--danger)">Lost -${loss}</div>`; 
             box.className = "result-box lose"; 
         } 
-        box.innerHTML = h; box.style.display = 'block'; 
-        setTimeout(() => { box.classList.add('show'); }, 10);
         
-        setTimeout(() => { updateMyBalance(newBalance, payout > bet); }, 1500);
+        // Exact 0.5s pause before showing the result box to ensure animation is completely done visually
+        setTimeout(() => {
+            box.innerHTML = h; box.style.display = 'block'; 
+            setTimeout(() => { box.classList.add('show'); }, 10);
+            
+            // Exact 1.5s pause AFTER box shows before animating credits
+            setTimeout(() => { updateMyBalance(newBalance, payout > bet); }, 1500);
+        }, 500);
     }
 
     function playDice() {
@@ -1258,11 +1278,9 @@
                 icn.style.display = 'none'; nd.style.display = 'block'; nd.innerText = data.roll;
                 nd.style.color = data.payout > 0 ? "var(--success)" : "var(--danger)";
                 
-                setTimeout(() => {
-                    showEndBox(mb, data.bet, data.payout, `Rolled ${data.roll}`, data.newBalance);
-                    logHistory('dice', data.bet + ' TC', data.roll.toString(), data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0, true);
-                }, 500);
-
+                showEndBox(mb, data.bet, data.payout, `Rolled ${data.roll}`, data.newBalance);
+                logHistory('dice', data.bet + ' TC', data.roll.toString(), data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0, true);
+                
                 setTimeout(() => {
                    icn.className = 'fas fa-dice-d20 dice-icon';
                    icn.style.display = 'block'; nd.style.display = 'none'; mb.style.display = 'none';
@@ -1294,10 +1312,8 @@
         
         setTimeout(() => {
             cw.classList.remove('tossing');
-            setTimeout(() => {
-                showEndBox(mb, data.bet, data.payout, `Landed on ${data.result}`, data.newBalance);
-                logHistory('coinflip', data.choice.toUpperCase(), data.result.toUpperCase(), data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0, true);
-            }, 500);
+            showEndBox(mb, data.bet, data.payout, `Landed on ${data.result}`, data.newBalance);
+            logHistory('coinflip', data.choice.toUpperCase(), data.result.toUpperCase(), data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0, true);
             
             setTimeout(() => { 
                 document.getElementById('btn-heads').disabled = false; 
@@ -1386,7 +1402,6 @@
                 }
             }
             
-            await delay(500); 
             showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.msg, data.newBalance);
             let wProf = data.payout > bjSt.bet ? data.payout - bjSt.bet : 0;
             let lBet = data.payout === 0 ? bjSt.bet : 0;
