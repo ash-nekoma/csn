@@ -9,7 +9,11 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Correct Express routing for deployment (Railway)
+app.use(express.static(__dirname));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // ==========================================
 // 1. MONGODB DATABASE SETUP
@@ -24,7 +28,10 @@ mongoose.connect(MONGO_URI)
             console.log('🛡️ Default Admin Account Created');
         }
     })
-    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+    .catch(err => {
+        console.error('❌ MongoDB Connection Error. Please ensure MONGO_URL is set.');
+        console.error(err);
+    });
 
 // ==========================================
 // 2. DATABASE SCHEMAS
@@ -247,6 +254,7 @@ io.on('connection', (socket) => {
         if(socket.user) {
             const logs = await CreditLog.find({ username: socket.user.username }).sort({ date: -1 }).limit(50);
             
+            // Calculate Today's Profit exactly
             const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
             const todayLogs = await CreditLog.find({ username: socket.user.username, date: { $gte: startOfDay }});
             let dailyProfit = 0;
