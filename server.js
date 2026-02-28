@@ -151,7 +151,6 @@ setInterval(() => {
                 logGlobalResult('baccarat', `${bacWin.toUpperCase()} (${pS} TO ${bS})`);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
-                // Database Payout Setup
                 let playerPayouts = {}; 
                 sharedTables.bets.forEach(b => {
                     let payout = 0;
@@ -167,12 +166,12 @@ setInterval(() => {
                     } 
                     else if (b.room === 'baccarat') {
                         if (bacWin === 'Tie') {
-                            if (b.choice === 'Tie') payout = b.amount * 9; // 8:1 payout
+                            if (b.choice === 'Tie') payout = b.amount * 9; 
                             else if (b.choice === 'Player' || b.choice === 'Banker') payout = b.amount * 1; // PUSH
                         } else if (bacWin === 'Player') {
                             if (b.choice === 'Player') payout = b.amount * 2;
                         } else if (bacWin === 'Banker') {
-                            if (b.choice === 'Banker') payout = b.amount * 1.95; // 0.95 profit
+                            if (b.choice === 'Banker') payout = b.amount * 1.95; 
                         }
                     }
 
@@ -182,7 +181,6 @@ setInterval(() => {
                     }
                 });
 
-                // Update Balances Silently. Frontend pulls true balance automatically after UI finishes.
                 Object.keys(playerPayouts).forEach(async (userId) => {
                     let user = await User.findById(userId);
                     if (user) {
@@ -228,7 +226,6 @@ async function pushAdminData(target = io.to('admin_room')) {
 io.on('connection', (socket) => {
     socket.emit('timerUpdate', sharedTables.time);
 
-    // Forces exact sync for balance updates
     socket.on('requestBalanceRefresh', async () => {
         if(socket.user) {
             let u = await User.findById(socket.user._id);
@@ -243,7 +240,7 @@ io.on('connection', (socket) => {
             socket.emit('adminLoginSuccess', { username: user.username, role: user.role });
             await pushAdminData(socket);
         } else { 
-            socket.emit('authError', 'Invalid Admin Credentials or insufficient permissions.'); 
+            socket.emit('authError', 'Invalid Admin Credentials.'); 
         }
     });
 
