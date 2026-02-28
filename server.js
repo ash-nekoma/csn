@@ -26,7 +26,7 @@ mongoose.connect(MONGO_URI)
                 role: 'Admin', 
                 credits: 10000 
             }).save();
-            console.log('🛡️ Default Admin Account Created (admin / Kenm44ashley)');
+            console.log('🛡️ Default Admin Account Created');
         }
     })
     .catch(err => console.error('❌ MongoDB Connection Error:', err));
@@ -233,7 +233,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- ADMIN MODULE ---
     socket.on('adminLogin', async (data) => {
         const user = await User.findOne({ username: data.username, password: data.password });
         if (user && user.role === 'Admin') {
@@ -258,11 +257,17 @@ io.on('connection', (socket) => {
                 io.emit('notification', { title: 'System Announcement', msg: data.msg, type: 'ps-glow' });
             }
             else if (data.type === 'giftCredits') {
-                if (data.target.toLowerCase() === 'all') {
+                if (data.target === 'all_registered') {
                     await User.updateMany({}, { $inc: { credits: data.amount } });
                     io.emit('notification', { title: 'Gift Received!', msg: `Admin has gifted everyone ${data.amount} TC!`, type: 'success' });
                     io.emit('refreshBalance'); 
-                } else {
+                } 
+                else if (data.target === 'all_active') {
+                    await User.updateMany({ status: 'Active' }, { $inc: { credits: data.amount } });
+                    io.emit('notification', { title: 'Gift Received!', msg: `Admin has gifted all active players ${data.amount} TC!`, type: 'success' });
+                    io.emit('refreshBalance');
+                } 
+                else {
                     let u = await User.findOne({ username: new RegExp('^' + data.target + '$', 'i') });
                     if (u) {
                         u.credits += data.amount; await u.save();
@@ -317,34 +322,28 @@ io.on('connection', (socket) => {
         } catch(e) { console.error("Admin Action Error:", e); }
     });
 
-    // --- AUTHENTICATION & STREAK LOGIC ---
     socket.on('login', async (data) => {
         try {
             const user = await User.findOne({ username: data.username, password: data.password });
             if (!user) return socket.emit('authError', 'Invalid login credentials.');
             if (user.status === 'Banned') return socket.emit('authError', 'This account has been banned.');
 
-            user.status = 'Active'; 
+            // Fix corrupted NaN accounts automatically
+            if (isNaN(user.credits) || user.credits === null) {
+                user.credits = 0;
+            }
+
+            user.status = 'Active'; await user.save(); socket.user = user;
             connectedUsers[user.username] = socket.id;
+            pushAdminData();
             
-            // Validate Streak Time
             let now = new Date(), canClaim = true, day = 1, nextClaim = null;
             if (user.dailyReward.lastClaim) {
                 let diffHours = (now - user.dailyReward.lastClaim) / (1000 * 60 * 60);
-                
-                if (diffHours > 48) { 
-                    user.dailyReward.streak = 0; // Break Streak
-                } 
-                else if (diffHours < 24) { 
-                    canClaim = false; 
-                    nextClaim = new Date(user.dailyReward.lastClaim.getTime() + 24 * 60 * 60 * 1000); 
-                } 
-                
+                if (diffHours < 24) { canClaim = false; nextClaim = new Date(user.dailyReward.lastClaim.getTime() + 24 * 60 * 60 * 1000); } 
+                else if (diffHours > 48) { user.dailyReward.streak = 0; }
                 day = (user.dailyReward.streak % 7) + 1;
             }
-            
-            await user.save(); // Save status and potential streak break
-            pushAdminData();
             
             socket.emit('loginSuccess', { username: user.username, credits: user.credits, role: user.role, daily: { canClaim, day, nextClaim } });
         } catch(e) { socket.emit('authError', 'Server Error.'); }
@@ -360,34 +359,22 @@ io.on('connection', (socket) => {
         } catch(e) { socket.emit('authError', 'Server Error.'); }
     });
 
-    // --- DAILY REWARD ---
     socket.on('claimDaily', async () => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
         let now = new Date();
-        
-        // Final backend streak check before granting
-        if (user.dailyReward.lastClaim) {
-            let diffHours = (now - user.dailyReward.lastClaim) / (1000 * 60 * 60);
-            if (diffHours < 24) return; // Cannot double claim
-            if (diffHours > 48) user.dailyReward.streak = 0; // Missed a day
-        }
+        if (user.dailyReward.lastClaim && (now - user.dailyReward.lastClaim) / (1000 * 60 * 60) < 24) return; 
 
         let day = (user.dailyReward.streak % 7) + 1;
         const rewards = [25, 50, 100, 200, 500, 750, 1000];
         let amt = rewards[day - 1];
 
-        user.credits += amt; 
-        user.dailyReward.lastClaim = now; 
-        user.dailyReward.streak += 1;
-        
+        user.credits += amt; user.dailyReward.lastClaim = now; user.dailyReward.streak += 1;
         await user.save();
         pushAdminData();
-        
         socket.emit('dailyClaimed', { amt, newBalance: user.credits, nextClaim: new Date(now.getTime() + 24 * 60 * 60 * 1000) });
     });
 
-    // --- PROMO CODES ---
     socket.on('redeemPromo', async (code) => {
         if (!socket.user) return;
         try {
@@ -412,9 +399,18 @@ io.on('connection', (socket) => {
     socket.on('playSolo', async (data) => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
-        if (user.credits < data.bet) return socket.emit('toast', { msg: 'Insufficient TC', type: 'error' });
         
-        user.credits -= data.bet; 
+        let isNewBet = (data.game === 'dice' || data.game === 'coinflip' || (data.game === 'blackjack' && data.action === 'start'));
+        
+        // ONLY DEDUCT BET ON THE START OF THE GAME. Fixes NaN account corruption completely.
+        if (isNewBet) {
+            if (!data.bet || data.bet <= 0 || user.credits < data.bet) {
+                return socket.emit('toast', { msg: 'Insufficient TC or Invalid Bet', type: 'error' });
+            }
+            user.credits -= data.bet; 
+            await user.save();
+        }
+
         let payout = 0;
 
         if (data.game === 'dice') {
@@ -439,7 +435,7 @@ io.on('connection', (socket) => {
         }
         else if (data.game === 'blackjack') {
             if (data.action === 'start') {
-                gameStats.blackjack.total++; await user.save(); 
+                gameStats.blackjack.total++; 
                 socket.bjState = { bet: data.bet, pHand: [drawCard(), drawCard()], dHand: [drawCard(), drawCard()] };
                 
                 let pS = getBJScore(socket.bjState.pHand);
