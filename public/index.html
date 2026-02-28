@@ -62,7 +62,7 @@
 
         /* ================= AUTHENTICATION ================= */
         #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
-        .auth-box { width: 420px; max-width: 95vw; background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.05); text-align: center; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); }
+        .auth-box { width: 420px; max-width: 95vw; background: rgba(0, 5, 15, 0.9); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(0, 162, 255, 0.4); border-top: 3px solid var(--ps-glow); box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 30px rgba(0, 162, 255, 0.1); text-align: center; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); }
         .auth-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
         .auth-sub { color: var(--ps-glow); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
@@ -89,7 +89,6 @@
         
         .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; } 
         .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.05); }
-        .btn-rules span { font-size: 0.85rem; }
 
         /* ================= 1-ROW HUD TOPBAR ================= */
         #app-container { display: none; }
@@ -121,12 +120,13 @@
         .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); }
         .notif-badge.active { display: block; }
 
+        /* BACK NAVIGATION FOR MOBILE SYNC */
         .back-nav { width: 100%; max-width: 1300px; margin: 0 auto 20px auto; display: flex; justify-content: flex-start; }
         .btn-back { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
         .btn-back:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
         /* MAIN LOBBY & CARDS */
-        .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; padding-top: 100px; }
+        .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 100px; }
         .content { width: 100%; max-width: 1400px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
         .view-container { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; }
         
@@ -194,12 +194,12 @@
         .bet-btn.has-bet { border-top: 2px solid var(--tile-color, var(--ps-glow)) !important; border-left: 2px solid var(--tile-color, var(--ps-glow)) !important; border-right: 2px solid var(--tile-color, var(--ps-glow)) !important; box-shadow: inset 0 0 15px rgba(255,255,255,0.1), 0 -5px 20px rgba(0,0,0,0.6); color: #fff !important; text-shadow: 0 0 10px var(--tile-color, var(--ps-glow)); transform: translateY(-3px); }
         .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; border-color: var(--glass-border); color: var(--text-muted); }
 
-        /* MODALS (Compact & Glassmorphism) */
+        /* MODALS (PlayStation Theme / Glassmorphism) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .modal-content { background: rgba(0, 10, 25, 0.75); width: 550px; max-width: 95vw; padding: 25px 20px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.05); position: relative; display: flex; flex-direction: column; height: auto; max-height: 90vh; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);}
+        .modal-content { background: rgba(0, 5, 15, 0.9); width: 600px; max-width: 95vw; padding: 25px 25px; border-radius: 12px; border: 1px solid rgba(0, 162, 255, 0.4); border-top: 3px solid var(--ps-glow); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 30px rgba(0, 162, 255, 0.1); position: relative; display: flex; flex-direction: column; height: auto; max-height: 90vh; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);}
         .modal-close-icon { position: absolute; top: 15px; right: 20px; font-size: 1.6rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 100; background: none; border: none; padding: 0; outline: none;}
         .modal-close-icon:hover { color: var(--danger); transform: scale(1.1); }
-        .modal-content h3 { font-size: 1.6rem; font-weight: 900; margin-bottom: 1rem; margin-top: 0; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; text-align: center; flex-shrink: 0; }
+        .modal-content h3 { font-size: 1.5rem; font-weight: 900; margin-bottom: 1rem; margin-top: 0; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; text-align: center; flex-shrink: 0; color: white;}
 
         .bank-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; flex-shrink: 0; }
         .bank-tab { flex: 1; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--text-muted); font-weight: 900; padding: 10px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1rem; letter-spacing: 1px; }
@@ -217,7 +217,6 @@
         .dr-day > * { position: relative; z-index: 1; }
         .dr-day.claimed { filter: grayscale(1); opacity: 0.6; border-color: var(--glass-border); box-shadow: none; }
         
-        /* RESTORED SUNBURST ANIMATION FOR DAILY REWARD */
         .dr-day.active { background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%); border: 2px solid #fff; transform: scale(1.15); opacity: 1; z-index: 5; box-shadow: 0 10px 25px rgba(255, 204, 0, 0.4); height: 150px; color: black; }
         .dr-day.active::before { content: ''; position: absolute; inset: -50%; background: repeating-conic-gradient(rgba(255,255,255,0.3) 0 15deg, transparent 15deg 30deg); animation: rotateBurst 20s linear infinite; opacity: 0.6; display: block;}
         @keyframes rotateBurst { 100% { transform: rotate(360deg); } }
@@ -243,7 +242,7 @@
 
         /* GLOBAL TOAST (Top Right) */
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: rgba(5, 10, 25, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0, 162, 255, 0.4); color: white; padding: 15px 25px; border-radius: 8px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0, 162, 255, 0.25); text-transform: uppercase; }
+        .toast { background: rgba(0, 5, 15, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0, 162, 255, 0.4); color: white; padding: 15px 25px; border-radius: 8px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0, 162, 255, 0.25); text-transform: uppercase; }
         .toast.show { transform: translateX(0); }
         .toast-success { border-left: 5px solid var(--ps-glow); } .toast-success i { color: var(--ps-glow); font-size: 1.3rem; }
         .toast-error { border-left: 5px solid var(--danger); border-color: rgba(255, 51, 102, 0.4); box-shadow: 0 10px 30px rgba(255, 51, 102, 0.25); } .toast-error i { color: var(--danger); font-size: 1.3rem; }
@@ -256,6 +255,10 @@
         .ticket-log-status.pending { background: rgba(255, 180, 0, 0.15); color: var(--credits); border: 1px solid rgba(255, 180, 0, 0.3); }
         .ticket-log-status.approved { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
         .ticket-log-status.rejected { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
+
+        /* PROMO POP ANIMATION */
+        @keyframes giftPop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.1); text-shadow: 0 0 20px var(--ps-glow); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        .anim-gift { animation: giftPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
         /* EXACT GREEN/RED RESULT BOXES */
         .result-box { position: absolute; bottom: 20px; right: 20px; text-align: right; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; display: none; z-index: 100; min-width: 250px; text-transform: uppercase; backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
@@ -288,12 +291,10 @@
             .main-wrapper { padding-top: 140px; }
             .casino-title { font-size: 2.2rem; }
             
-            /* Stack Shared Table Layout */
             .shared-layout { flex-direction: column; height: auto; }
             .chat-panel { width: 100%; height: 300px; margin-top: 15px; }
             .game-box { height: auto; min-height: 500px; }
             
-            /* Resize assets for small screens */
             .blackjack-scores { flex-direction: column; align-items: center; gap: 20px; }
             .color-die { width: 80px; height: 80px; font-size: 3rem; }
             .dt-arena { gap: 20px; }
@@ -392,6 +393,9 @@
                 <button class="top-icon-btn" onclick="openModal('promo-modal')" title="Gift Code" style="color:var(--ps-glow);">
                     <i class="fas fa-gift"></i>
                 </button>
+                <button class="top-icon-btn" id="mute-btn" onclick="toggleAudio()" title="Toggle Audio">
+                    <i class="fas fa-volume-up"></i>
+                </button>
                 <button class="top-icon-btn" onclick="confirmLogout()" title="Logout" style="color:var(--danger);">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
@@ -474,7 +478,7 @@
                     <h2 style="margin:0; line-height:1;">Dice Roll</h2>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-rules" onclick="openRules('dice')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openHistory('dice')" title="History"><i class="fas fa-list-alt"></i> <span>HISTORY</span></button>
+                        <button class="btn-rules" onclick="openHistory('dice')" title="History"><i class="fas fa-list-alt"></i></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -503,7 +507,7 @@
                     <h2 style="margin:0; line-height:1;">Coin Flip</h2>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-rules" onclick="openRules('coinflip')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openHistory('coinflip')" title="History"><i class="fas fa-list-alt"></i> <span>HISTORY</span></button>
+                        <button class="btn-rules" onclick="openHistory('coinflip')" title="History"><i class="fas fa-list-alt"></i></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -537,7 +541,7 @@
                     <h2 style="margin:0; line-height:1;">Blackjack</h2>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-rules" onclick="openRules('blackjack')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openHistory('blackjack')" title="History"><i class="fas fa-list-alt"></i> <span>HISTORY</span></button>
+                        <button class="btn-rules" onclick="openHistory('blackjack')" title="History"><i class="fas fa-list-alt"></i></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -578,7 +582,7 @@
                           <div style="display:flex; align-items:baseline;"><span id="sg-timer">15</span><span class="timer-sec">s</span></div>
                       </div>
                       <button class="btn-rules" onclick="openRules(window.activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                      <button class="btn-rules" onclick="openHistory(window.activeSharedGame)" title="History"><i class="fas fa-list-alt"></i> <span>HISTORY</span></button>
+                      <button class="btn-rules" onclick="openHistory(window.activeSharedGame)" title="History"><i class="fas fa-list-alt"></i></button>
                   </div>
                 </div>
                 
@@ -636,7 +640,9 @@
       <button class="modal-close-icon" onclick="closeModal('daily-reward-modal')"><i class="fas fa-times"></i></button>
       <h3 style="font-size: 2.2rem; color: var(--credits); margin-bottom: 5px; border: none; padding-bottom: 0;">Daily Reward</h3>
       <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px;">Claim credits every 24 hours!</p>
+      
       <div class="dr-days" id="dr-days-container"></div>
+      
       <div id="dr-status-container"></div>
     </div>
   </div>
@@ -645,10 +651,12 @@
     <div class="modal-content" style="width: 500px; height: auto;">
       <button class="modal-close-icon" onclick="closeModal('support-center-modal')"><i class="fas fa-times"></i></button>
       <h3>CASHIER</h3>
+
       <div class="bank-tabs">
         <button class="bank-tab active" onclick="switchSupportCenterTab('deposit', this)">Deposit</button>
         <button class="bank-tab" onclick="switchSupportCenterTab('withdraw', this)">Withdraw</button>
         <button class="bank-tab" onclick="switchSupportCenterTab('requests', this)">Requests</button>
+        <button class="bank-tab" onclick="switchSupportCenterTab('ledger', this)">Ledger</button>
       </div>
 
       <div id="sc-tab-deposit" class="bank-section active">
@@ -682,25 +690,28 @@
       <div id="sc-tab-requests" class="bank-section hidden">
         <div id="bank-logs-container" class="custom-scroll" style="height: 250px; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; overflow-y: auto; overflow-x: hidden;"></div>
       </div>
+
+      <div id="sc-tab-ledger" class="bank-section hidden">
+        <div id="ledger-logs-container" class="custom-scroll" style="height: 250px; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; overflow-y: auto; overflow-x: hidden;"></div>
+      </div>
     </div>
   </div>
 
   <div id="history-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 600px; height: auto; min-height: fit-content; max-height: 90vh;">
+     <div class="modal-content" style="width: 650px; height: auto; min-height: fit-content; max-height: 90vh;">
         <button class="modal-close-icon" onclick="closeModal('history-modal')"><i class="fas fa-times"></i></button>
         <h3 id="history-title" style="margin-top:0;">HISTORY</h3>
         
         <div id="history-stats-container" style="background:rgba(0,0,0,0.4); padding:15px; border-radius:8px; margin-bottom:15px; border: 1px solid var(--glass-border);">
             <div style="text-align:center; font-weight:900; color:white; font-size:1.1rem; margin-bottom:10px;" id="stat-total-rounds">TOTAL ROUNDS: 0</div>
-            <div style="font-size:0.85rem; color:var(--text-muted); text-align:center; margin-bottom:8px; font-weight:800; letter-spacing:1px;">PERCENTAGE OF THE BETTABLES:</div>
             <div id="stat-percentages" style="display:flex; flex-wrap:wrap; gap:15px; justify-content:center; align-items:center;">
                 </div>
         </div>
 
         <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 350px; padding-right:5px;">
-            <div style="display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:1px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#000a1f; z-index:10;">
-                <div style="text-align:center;">Bets</div>
+            <div style="display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:1px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#00050f; z-index:10;">
                 <div style="text-align:center;">Result</div>
+                <div style="text-align:center;">Bets</div>
                 <div style="text-align:center; color:var(--success)">Win</div>
                 <div style="text-align:center; color:var(--danger)">Loss</div>
             </div>
@@ -758,6 +769,7 @@
     }
 
     function colorsToDice(str) {
+        if(str === '-') return '-';
         return str.split(',').map(c => {
             let color = c.trim().toLowerCase();
             if(!color) return '';
@@ -924,6 +936,7 @@
         document.getElementById('nav-credits').innerText = myCredits.toLocaleString(); 
     }
 
+    // --- DAILY REWARD LOGIC ---
     function setupDailyRewardUI(dailyData) {
         const container = document.getElementById('dr-days-container');
         container.innerHTML = '';
@@ -980,13 +993,13 @@
 
     // --- RULES & UNIFIED HISTORY LOGIC ---
     const gameInfoMap = {
-      'dice': { title: "Dice Roll", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (2x Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
-      'coinflip': { title: "Coin Flip", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>2x</strong> your bet.</li></ul>" },
-      'baccarat': { title: "Baccarat", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Player, Banker, or Tie. Hand closest to <strong>9</strong> wins.</li><li style='margin-bottom:10px;'><strong>Card Rules:</strong> Standard 3rd card draw rules apply.</li><li style='margin-bottom:10px;'>Player pays <strong>1:1</strong>. Banker pays <strong>1:0.95</strong>.</li><li style='margin-bottom:10px;'>Tie pays <strong>8:1</strong>. Player/Banker bets push on Tie.</li></ul>" },
-      'blackjack': { title: "Blackjack", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Beat the dealer without going over 21.</li><li style='margin-bottom:10px;'>Dealer must draw to 16 and stand on <strong>17 or higher</strong>.</li><li style='margin-bottom:10px;'>Natural Blackjack pays <strong>2.5x</strong>. Standard wins pay <strong>2x</strong>. Ties push.</li></ul>" },
-      'perya': { title: "Color Game", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Red, Blue, Yellow, White, Green, or Pink.</li><li style='margin-bottom:10px;'>3 dice are rolled.</li><li style='margin-bottom:10px;'>1 Match pays <strong>1:1</strong>. 2 Matches pay <strong>2:1</strong>. 3 Matches pay <strong>3:1</strong>!</li></ul>" },
-      'dt': { title: "Dragon Tiger", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Dragon, Tiger, or Tie. Highest card wins.</li><li style='margin-bottom:10px;'>Aces are low (1). Kings are high (13).</li><li style='margin-bottom:10px;'>Dragon/Tiger pays <strong>1:1</strong>. Tie pays <strong>8:1</strong>.</li></ul>" },
-      'sicbo': { title: "Sic Bo", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Small (Sum 4-10) or Big (Sum 11-17).</li><li style='margin-bottom:10px;'>Wins pay <strong>2x</strong>.</li><li style='margin-bottom:10px;'>Any Triple roll loses all Big/Small bets.</li></ul>" }
+      'dice': { title: "Dice Roll", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (x2 Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
+      'coinflip': { title: "Coin Flip", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>x2</strong> your bet.</li></ul>" },
+      'baccarat': { title: "Baccarat", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Player, Banker, or Tie. Hand closest to <strong>9</strong> wins.</li><li style='margin-bottom:10px;'><strong>Card Rules:</strong> Standard 3rd card draw rules apply.</li><li style='margin-bottom:10px;'>Player pays <strong>x2</strong>. Banker pays <strong>x1.95</strong>.</li><li style='margin-bottom:10px;'>Tie pays <strong>x9</strong>. Player/Banker bets push on Tie.</li></ul>" },
+      'blackjack': { title: "Blackjack", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Beat the dealer without going over 21.</li><li style='margin-bottom:10px;'>Dealer must draw to 16 and stand on <strong>17 or higher</strong>.</li><li style='margin-bottom:10px;'>Natural Blackjack pays <strong>x2.5</strong>. Standard wins pay <strong>x2</strong>. Ties push.</li></ul>" },
+      'perya': { title: "Color Game", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Red, Blue, Yellow, White, Green, or Pink.</li><li style='margin-bottom:10px;'>3 dice are rolled.</li><li style='margin-bottom:10px;'>1 Match pays <strong>x2</strong>. 2 Matches pay <strong>x3</strong>. 3 Matches pay <strong>x4</strong>!</li></ul>" },
+      'dt': { title: "Dragon Tiger", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Dragon, Tiger, or Tie. Highest card wins.</li><li style='margin-bottom:10px;'>Aces are low (1). Kings are high (13).</li><li style='margin-bottom:10px;'>Dragon/Tiger pays <strong>x2</strong>. Tie pays <strong>x9</strong>.</li></ul>" },
+      'sicbo': { title: "Sic Bo", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Small (Sum 4-10) or Big (Sum 11-17).</li><li style='margin-bottom:10px;'>Wins pay <strong>x2</strong>.</li><li style='margin-bottom:10px;'>Any Triple roll loses all Big/Small bets.</li></ul>" }
     };
 
     function openRules(k) { 
@@ -1001,8 +1014,6 @@
         currentHistoryGame = id;
         
         document.getElementById('history-title').innerText = gameInfoMap[id].title.toUpperCase() + " HISTORY";
-        
-        // Wipe old data while loading
         document.getElementById('stat-total-rounds').innerText = "TOTAL ROUNDS: Loading...";
         document.getElementById('stat-percentages').innerHTML = "";
         
@@ -1015,30 +1026,34 @@
         } 
         else {
             history.forEach(h => {
-                let winVal = h.wonProfit > 0 ? `<span style="color:var(--success)">+${h.wonProfit}</span>` : '-';
-                let lossVal = h.lostBet > 0 ? `<span style="color:var(--danger)">-${h.lostBet}</span>` : '-';
+                let winVal = h.didBet ? (h.wonProfit > 0 ? `<span style="color:var(--success)">+${h.wonProfit}</span>` : '-') : '-';
+                let lossVal = h.didBet ? (h.lostBet > 0 ? `<span style="color:var(--danger)">-${h.lostBet}</span>` : '-') : '-';
                 
-                if (h.wonProfit === 0 && h.lostBet === 0) { winVal = '<span style="color:white">PUSH</span>'; lossVal = '-'; }
+                if (h.didBet && h.wonProfit === 0 && h.lostBet === 0) { winVal = '<span style="color:white">PUSH</span>'; lossVal = '-'; }
                 
                 let cColor = 'white';
-                if (h.wonProfit > h.lostBet) cColor = 'var(--success)';
-                else if (h.wonProfit < h.lostBet) cColor = 'var(--danger)';
-                else if (h.wonProfit === h.lostBet && h.wonProfit !== 0) cColor = 'var(--credits)'; 
+                if (h.didBet) {
+                    if (h.wonProfit > h.lostBet) cColor = 'var(--success)';
+                    else if (h.wonProfit < h.lostBet) cColor = 'var(--danger)';
+                    else if (h.wonProfit === h.lostBet && h.wonProfit !== 0) cColor = 'var(--credits)'; 
+                } else {
+                    cColor = 'rgba(255,255,255,0.2)';
+                }
                 
                 let bHtml = h.bet;
                 let rHtml = h.result;
                 
                 if (id === 'perya') {
-                    bHtml = `<div style="display:flex; justify-content:center; gap:4px; flex-wrap:wrap;">${colorsToDice(h.bet)}</div>`;
+                    bHtml = h.bet === '-' ? '-' : `<div style="display:flex; justify-content:center; gap:4px; flex-wrap:wrap;">${colorsToDice(h.bet)}</div>`;
                     rHtml = `<div style="display:flex; justify-content:center; gap:4px;">${colorsToDice(h.result)}</div>`;
                 } else {
-                    bHtml = `<span style="font-weight:800; color:${getBetColor(h.bet.split(',')[0])}">${h.bet}</span>`;
+                    bHtml = h.bet === '-' ? '-' : `<span style="font-weight:800; color:${getBetColor(h.bet.split(',')[0])}">${h.bet}</span>`;
                     rHtml = `<span style="font-weight:900; color:${getBetColor(h.result.split(' ')[0])}">${h.result}</span>`;
                 }
 
                 list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:6px; border-left:4px solid ${cColor}; display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr; gap:10px; align-items:center; font-size:0.9rem; text-transform:uppercase; text-align:center;">
-                    <div>${bHtml}</div>
                     <div>${rHtml}</div>
+                    <div>${bHtml}</div>
                     <div>${winVal}</div>
                     <div>${lossVal}</div>
                 </div>`;
@@ -1049,9 +1064,9 @@
         openModal('history-modal');
     }
 
-    function logHistory(gid, betStr, resultStr, wonProfit, lostBet) {
+    function logHistory(gid, betStr, resultStr, wonProfit, lostBet, didBet = true) {
         if(myGameHistory[gid]) {
-            myGameHistory[gid].unshift({ bet: betStr, result: resultStr, wonProfit: wonProfit, lostBet: lostBet });
+            myGameHistory[gid].unshift({ bet: betStr, result: resultStr, wonProfit: wonProfit, lostBet: lostBet, didBet: didBet });
             if(myGameHistory[gid].length > 50) myGameHistory[gid].pop();
         }
     }
@@ -1079,7 +1094,6 @@
         document.getElementById('stat-percentages').innerHTML = statsHtml;
     });
 
-    // --- INTERACTIVE CURRENT BETS ---
     function openCurrentBetsModal() {
         if(!window.activeSharedGame) return;
         const list = document.getElementById('cb-list');
@@ -1099,7 +1113,6 @@
         openModal('current-bets-modal');
     }
 
-    // --- NAVIGATION LOGIC ---
     function switchView(viewId) { 
       if (audioCtx.state === 'suspended') audioCtx.resume(); 
       document.querySelectorAll('.main-wrapper > .content > .view-container').forEach(d => d.classList.add('hidden')); 
@@ -1122,7 +1135,6 @@
     
     function openGame(id) { 
       switchView('game-' + id); 
-      
       document.querySelectorAll('.result-box').forEach(b => b.style.display = 'none'); 
       if(id === 'dice') {
           document.getElementById('dice-icon').className = 'fas fa-dice-d20 dice-icon';
@@ -1159,10 +1171,8 @@
     }
     
     function backToCasino() { switchView('casino'); }
-
     function confirmLogout() { if(confirm("Are you sure you want to log out of Stick N' Trade?")) { location.reload(); } }
 
-    // --- SOLO GAMES ENGINE ---
     function showEndBox(box, bet, payout, msg, newBalance) {
         let pft = payout > bet ? payout - bet : 0; 
         let loss = payout === 0 ? bet : 0;
@@ -1212,7 +1222,7 @@
                 nd.style.color = data.payout > 0 ? "var(--success)" : "var(--danger)";
                 
                 showEndBox(mb, data.bet, data.payout, `Rolled ${data.roll}`, data.newBalance);
-                logHistory('dice', data.bet + ' TC', data.roll.toString(), data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0);
+                logHistory('dice', data.bet + ' TC', data.roll.toString(), data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0, true);
                 
                 setTimeout(() => {
                    icn.className = 'fas fa-dice-d20 dice-icon';
@@ -1246,7 +1256,7 @@
         setTimeout(() => {
             cw.classList.remove('tossing');
             showEndBox(mb, data.bet, data.payout, `Landed on ${data.result}`, data.newBalance);
-            logHistory('coinflip', data.choice.toUpperCase(), data.result.toUpperCase(), data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0);
+            logHistory('coinflip', data.choice.toUpperCase(), data.result.toUpperCase(), data.payout > data.bet ? data.payout - data.bet : 0, data.payout === 0 ? data.bet : 0, true);
             document.getElementById('btn-heads').disabled = false; document.getElementById('btn-tails').disabled = false;
             setTimeout(() => { mb.style.display = 'none'; }, 3000);
         }, 2500);
@@ -1334,7 +1344,7 @@
             showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.msg, data.newBalance);
             let wProf = data.payout > bjSt.bet ? data.payout - bjSt.bet : 0;
             let lBet = data.payout === 0 ? bjSt.bet : 0;
-            logHistory('blackjack', bjSt.bet + ' TC', data.msg.toUpperCase(), wProf, lBet);
+            logHistory('blackjack', bjSt.bet + ' TC', data.msg.toUpperCase(), wProf, lBet, true);
             document.getElementById('btn-bj-deal').disabled = false;
         }
     });
@@ -1418,7 +1428,7 @@
                     }
                 }
                 let msg = rollArr.join(', ').toUpperCase();
-                processSharedPayout('perya', totWon, totBet, msg, wonProfit, lostBet, Object.keys(mySBets).join(', '));
+                processSharedPayout('perya', totWon, totBet, msg, wonProfit, lostBet, Object.keys(mySBets).join(', '), msg);
             }, 2000);
         }
       },
@@ -1667,10 +1677,12 @@
               h += `<div class="res-payout" style="color:var(--danger)">Lost -${Math.abs(net)}</div>`;
               box.className = "result-box lose";
           }
-          logHistory(gid, betsPlacedStr, resStr, wonProfit, lostBet);
       } else {
           box.className = "result-box push";
       }
+      
+      // Always log history, even if user didn't bet (tba = 0)
+      logHistory(gid, betsPlacedStr || '-', resStr, wonProfit, lostBet, tba > 0);
       
       box.innerHTML = h;
       box.style.display = 'block';
@@ -1760,7 +1772,7 @@
     function switchSupportCenterTab(tab, el) {
       document.querySelectorAll('.bank-tabs > .bank-tab').forEach(b => b.classList.remove('active'));
       if(el) el.classList.add('active');
-      ['deposit','withdraw','requests'].forEach(t => {
+      ['deposit','withdraw','requests','ledger'].forEach(t => {
         let scTab = document.getElementById('sc-tab-' + t);
         if(scTab) {
             scTab.classList.toggle('active', t === tab);
@@ -1768,6 +1780,7 @@
         }
       });
       if(tab === 'requests') socket.emit('getTransactions');
+      if(tab === 'ledger') socket.emit('getWalletLogs');
     }
 
     function submitDeposit() {
@@ -1793,7 +1806,6 @@
         if(!amt || !info) return showToast("Please fill all fields.", "error");
         if(amt > myCredits) return showToast("Insufficient TC.", "error");
         
-        myCredits -= amt; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
         socket.emit('submitTransaction', { type: 'Withdrawal', amount: amt, ref: info });
         
         let msgBox = document.getElementById('wit-msg');
@@ -1813,6 +1825,16 @@
         });
     });
 
+    socket.on('walletLogsData', (logs) => {
+        const container = document.getElementById('ledger-logs-container'); container.innerHTML = '';
+        if(logs.length === 0) return container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No ledger history found.</div>';
+        logs.forEach(l => {
+            let color = l.amount > 0 ? 'var(--success)' : (l.amount < 0 ? 'var(--danger)' : 'white'); 
+            let sign = l.amount > 0 ? '+' : '';
+            container.innerHTML += `<div class="ticket-log-item"><div class="ticket-log-header"><span style="color:white; font-weight:900; text-transform:uppercase; font-size:0.9rem;">${l.action}</span><span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">${new Date(l.date).toLocaleString()}</span></div><div style="display:flex; justify-content:space-between; align-items:center;"><div style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">${l.details}</div><div style="color:${color}; font-weight:900; font-size:1.1rem;">${sign}${l.amount} TC</div></div></div>`;
+        });
+    });
+
     function submitPromo() {
         const code = document.getElementById('promo-code').value.trim(); 
         if(!code) return document.getElementById('promo-response').innerHTML = `<span style="color:var(--danger)">Enter a code.</span>`;
@@ -1821,7 +1843,15 @@
 
     socket.on('promoResult', (res) => {
         const div = document.getElementById('promo-response');
-        if(res.success) { div.innerHTML = `<span style="color:var(--success)">Valid</span><br><span style="color:var(--ps-glow)">+${res.amt} TC</span>`; document.getElementById('promo-code').value = ''; } 
+        div.classList.remove('anim-gift');
+        void div.offsetWidth; 
+        
+        if(res.success) { 
+            div.innerHTML = `<span style="color:var(--success)">Valid</span><br><span style="color:var(--ps-glow)">+${res.amt} TC</span>`; 
+            div.classList.add('anim-gift');
+            sfx.win();
+            document.getElementById('promo-code').value = ''; 
+        } 
         else { div.innerHTML = `<span style="color:var(--danger)">${res.msg}</span>`; }
     });
 
