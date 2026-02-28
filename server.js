@@ -570,7 +570,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('getGlobalResults', (game) => {
-        socket.emit('globalResultsData', { game: game, stats: gameStats[game] || { total: 0 } });
+        socket.emit('globalResultsData', { game: game, results: globalResults[game] || [], stats: gameStats[game] || { total: 0 } });
     });
 
     socket.on('disconnect', async () => {
