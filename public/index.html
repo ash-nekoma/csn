@@ -19,7 +19,7 @@
             --ps-blue: #00439c; 
             --ps-light-blue: #0070cc; 
             --ps-glow: #00a2ff; 
-            --glass-bg: rgba(0, 15, 35, 0.65); 
+            --glass-bg: rgba(0, 10, 25, 0.75); 
             --glass-border: rgba(255, 255, 255, 0.15); 
             --glass-hover: rgba(255, 255, 255, 0.9); 
             --danger: #ff3366; 
@@ -63,32 +63,32 @@
 
         /* ================= AUTHENTICATION ================= */
         #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
-        .auth-box { width: 420px; max-width: 95vw; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 25px 80px rgba(0,0,0,0.9); text-align: center; }
+        .auth-box { width: 420px; max-width: 95vw; background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.05); text-align: center; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); }
         .auth-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
         .auth-sub { color: var(--ps-glow); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
-        .auth-tab { flex: 1; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--text-muted); font-weight: 900; padding: 10px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1.1rem; }
+        .auth-tab { flex: 1; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--text-muted); font-weight: 900; padding: 10px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1rem; }
         .auth-tab.active { border-bottom-color: var(--ps-glow); color: var(--ps-glow); }
         .auth-msg { font-size: 0.9rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; }
         .auth-error { color: var(--danger); }
         .auth-success { color: var(--success); }
         
         .pwd-input-wrapper { position: relative; width: 100%; display: block; }
-        .pwd-input-wrapper input { width: 100%; text-align: center; padding: 15px; }
+        .pwd-input-wrapper input { width: 100%; text-align: center; padding: 12px; }
         .pwd-input-wrapper i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 1.1rem; z-index: 2; transition: 0.2s; }
         .pwd-input-wrapper i:hover { color: white; }
 
         /* BUTTONS & INPUTS */
-        .btn-play { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--glass-border); padding: 15px 20px; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-play { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--glass-border); padding: 12px 15px; border-radius: 8px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-play:hover:not(:disabled) { background: white; color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,255,255,0.2); border-color: white;} 
         .btn-play:disabled { background: rgba(0,0,0,0.5) !important; color: var(--text-muted) !important; cursor: not-allowed !important; border-color: transparent !important; opacity: 0.5 !important; box-shadow:none !important; transform:none !important; }
         .input-group label { display: block; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; text-align: left; }
-        .input-control { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1.1rem; font-weight: 600; text-align: center; }
+        .input-control { width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1rem; font-weight: 600; text-align: center; }
         .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
         .bet-input { text-align: center !important; }
         .bet-input::placeholder { text-align: center; color: rgba(255,255,255,0.4); }
         
-        .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; } 
+        .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; } 
         .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.1); }
 
         /* ================= 1-ROW HUD TOPBAR ================= */
@@ -121,16 +121,17 @@
         .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); }
         .notif-badge.active { display: block; }
 
-        /* ================= MAIN LOBBY & CARDS ================= */
-        .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; padding-top: 80px; }
+        /* BACK NAVIGATION FOR MOBILE SYNC */
+        .back-nav { width: 100%; max-width: 1300px; margin: 0 auto 20px auto; display: flex; justify-content: flex-start; }
+        .btn-back { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
+        .btn-back:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+
+        /* MAIN LOBBY & CARDS */
+        .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; padding-top: 100px; }
         .content { width: 100%; max-width: 1400px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
         .view-container { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; }
         
         .header-title { font-size: 3rem; font-weight: 900; margin: 0 0 2rem 0; text-transform: uppercase; letter-spacing: 2px; color: white; text-shadow: 0 2px 15px rgba(0,0,0,0.8); text-align: center; }
-        
-        .global-back { position: fixed; top: 100px; left: max(20px, calc(50% - 680px)); z-index: 50; background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .global-back:hover { background: white; color: black; transform: translateX(-5px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
-
         .casino-title { font-size: 4rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 3rem 0; line-height: 1.1; color: white; text-shadow: 0 0 20px rgba(255,255,255,0.2); text-align: center; }
         
         .lobby-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -189,17 +190,17 @@
         .bet-btn.has-bet { border-top: 2px solid var(--tile-color, var(--ps-glow)) !important; border-left: 2px solid var(--tile-color, var(--ps-glow)) !important; border-right: 2px solid var(--tile-color, var(--ps-glow)) !important; box-shadow: inset 0 0 15px rgba(255,255,255,0.1), 0 -5px 20px rgba(0,0,0,0.6); color: #fff !important; text-shadow: 0 0 10px var(--tile-color, var(--ps-glow)); transform: translateY(-3px); }
         .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; border-color: var(--glass-border); color: var(--text-muted); }
 
-        /* MODALS */
+        /* MODALS (Highly Compact and Pure Glassmorphism) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .modal-content { background: var(--glass-bg); width: 600px; max-width: 95vw; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9); position: relative; display: flex; flex-direction: column; height: auto; max-height: 90vh; }
-        .modal-close-icon { position: absolute; top: 20px; right: 25px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 100; background: none; border: none; padding: 0; outline: none;}
+        .modal-content { background: rgba(0, 10, 25, 0.75); width: 550px; max-width: 95vw; padding: 25px 20px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.05); position: relative; display: flex; flex-direction: column; height: auto; max-height: 90vh; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);}
+        .modal-close-icon { position: absolute; top: 15px; right: 20px; font-size: 1.6rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 100; background: none; border: none; padding: 0; outline: none;}
         .modal-close-icon:hover { color: var(--danger); transform: scale(1.1); }
-        .modal-content h3 { font-size: 2rem; font-weight: 900; margin-bottom: 1.5rem; margin-top: 5px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-align: center; flex-shrink: 0; }
+        .modal-content h3 { font-size: 1.6rem; font-weight: 900; margin-bottom: 1rem; margin-top: 0; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; text-align: center; flex-shrink: 0; }
 
-        .bank-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; flex-shrink: 0; }
-        .bank-tab { flex: 1; background: transparent; border: none; border-bottom: 4px solid transparent; color: var(--text-muted); font-weight: 900; padding: 12px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1.1rem; letter-spacing: 1px; }
+        .bank-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; flex-shrink: 0; }
+        .bank-tab { flex: 1; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--text-muted); font-weight: 900; padding: 10px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1rem; letter-spacing: 1px; }
         .bank-tab:hover { color: white; }
-        .bank-tab.active { border-bottom: 4px solid var(--ps-glow); color: var(--ps-glow); }
+        .bank-tab.active { border-bottom: 3px solid var(--ps-glow); color: var(--ps-glow); }
         .bank-section { display: none; flex: 1; padding-right: 5px; }
         .bank-section.active { display: block; }
 
@@ -280,8 +281,8 @@
             .topbar { padding: 10px 15px; }
             .topbar-inner { flex-direction: column; gap: 10px; }
             .brand-title { font-size: 1.2rem; }
-            .main-wrapper { padding-top: 120px; }
-            .casino-title { font-size: 2.5rem; }
+            .main-wrapper { padding-top: 140px; }
+            .casino-title { font-size: 2.2rem; }
             
             /* Stack Shared Table Layout */
             .shared-layout { flex-direction: column; height: auto; }
@@ -296,7 +297,7 @@
             .dt-card .val { font-size: 2rem; }
             .dt-card .suit { font-size: 2.5rem; }
             
-            .modal-content { width: 95vw; padding: 25px 20px; }
+            .modal-content { width: 95vw; padding: 20px 15px; }
             .dr-days { flex-wrap: wrap; height: auto; }
             .dr-day { min-width: 60px; height: 90px; }
             .dr-day.active { height: 110px; }
@@ -387,9 +388,6 @@
                 <button class="top-icon-btn" onclick="openModal('promo-modal')" title="Gift Code" style="color:var(--ps-glow);">
                     <i class="fas fa-gift"></i>
                 </button>
-                <button class="top-icon-btn" id="mute-btn" onclick="toggleAudio()" title="Toggle Audio">
-                    <i class="fas fa-volume-up"></i>
-                </button>
                 <button class="top-icon-btn" onclick="confirmLogout()" title="Logout" style="color:var(--danger);">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
@@ -424,7 +422,7 @@
             </div>
 
             <div class="lobby-wrapper hidden" id="lobby-indiv">
-              <button class="global-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button>
+              <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
               <h2 class="header-title">Solo Play</h2>
               <div class="casino-grid solo-grid">
                 <div class="game-card glass-panel" onclick="openGame('dice')">
@@ -440,7 +438,7 @@
             </div>
 
             <div class="lobby-wrapper hidden" id="lobby-shared">
-              <button class="global-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button>
+              <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
               <h2 class="header-title">Shared Tables</h2>
               <div class="casino-grid shared-grid" style="max-width: 1300px;">
                 <div class="game-card glass-panel" onclick="openSharedGame('baccarat')">
@@ -464,15 +462,14 @@
           </div>
 
           <div id="view-game-dice" class="view-container hidden">
-            <button class="global-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button>
+            <div class="back-nav"><button class="btn-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
             <div class="game-box">
               <div class="main-panel glass-panel">
                 <div class="glass-header" style="align-items: center;">
                     <h2 style="margin:0; line-height:1;">Dice Roll</h2>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-rules" onclick="openRules('dice')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openGameHistory('dice')" title="My History"><i class="fas fa-history"></i></button>
-                        <button class="btn-rules" onclick="openGlobalResults('dice')" title="Recent Results Feed"><i class="fas fa-list-ol"></i></button>
+                        <button class="btn-rules" onclick="openHistoryFeed('dice')" title="History & Feed"><i class="fas fa-list-alt"></i></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -494,15 +491,14 @@
           </div>
 
           <div id="view-game-coinflip" class="view-container hidden">
-            <button class="global-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button>
+            <div class="back-nav"><button class="btn-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
             <div class="game-box">
               <div class="main-panel glass-panel">
                 <div class="glass-header" style="align-items: center;">
                     <h2 style="margin:0; line-height:1;">Coin Flip</h2>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-rules" onclick="openRules('coinflip')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openGameHistory('coinflip')" title="My History"><i class="fas fa-history"></i></button>
-                        <button class="btn-rules" onclick="openGlobalResults('coinflip')" title="Recent Results Feed"><i class="fas fa-list-ol"></i></button>
+                        <button class="btn-rules" onclick="openHistoryFeed('coinflip')" title="History & Feed"><i class="fas fa-list-alt"></i></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -529,15 +525,14 @@
           </div>
 
           <div id="view-game-blackjack" class="view-container hidden">
-            <button class="global-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button>
+            <div class="back-nav"><button class="btn-back" onclick="backToSoloLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
             <div class="game-box" style="max-width:1000px;">
               <div class="main-panel glass-panel">
                 <div class="glass-header" style="align-items: center;">
                     <h2 style="margin:0; line-height:1;">Blackjack</h2>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-rules" onclick="openRules('blackjack')" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                        <button class="btn-rules" onclick="openGameHistory('blackjack')" title="My History"><i class="fas fa-history"></i></button>
-                        <button class="btn-rules" onclick="openGlobalResults('blackjack')" title="Recent Results Feed"><i class="fas fa-list-ol"></i></button>
+                        <button class="btn-rules" onclick="openHistoryFeed('blackjack')" title="History & Feed"><i class="fas fa-list-alt"></i></button>
                     </div>
                 </div>
                 <div class="game-display">
@@ -565,7 +560,7 @@
           </div>
 
           <div id="view-shared-game" class="view-container hidden">
-            <button class="global-back" onclick="backToSharedLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button>
+            <div class="back-nav"><button class="btn-back" onclick="backToSharedLobby()"><i class="fas fa-arrow-left"></i> Leave Table</button></div>
             
             <div class="shared-layout">
               <div class="main-panel glass-panel">
@@ -578,8 +573,7 @@
                           <div style="display:flex; align-items:baseline;"><span id="sg-timer">15</span><span class="timer-sec">s</span></div>
                       </div>
                       <button class="btn-rules" onclick="openRules(window.activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                      <button class="btn-rules" onclick="openGameHistory(window.activeSharedGame)" title="My History"><i class="fas fa-history"></i></button>
-                      <button class="btn-rules" onclick="openGlobalResults(window.activeSharedGame)" title="Recent Results Feed"><i class="fas fa-list-ol"></i></button>
+                      <button class="btn-rules" onclick="openHistoryFeed(window.activeSharedGame)" title="History & Feed"><i class="fas fa-list-alt"></i></button>
                   </div>
                 </div>
                 
@@ -612,17 +606,15 @@
   </div>
 
   <div id="current-bets-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 400px; padding: 40px 30px 30px;">
+    <div class="modal-content" style="width: 350px;">
         <button class="modal-close-icon" onclick="closeModal('current-bets-modal')"><i class="fas fa-times"></i></button>
-        <h3 style="margin-top:0;">My Current Bets</h3>
-        <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Active wagers for this round</p>
-        
-        <div id="cb-list" class="custom-scroll" style="max-height: 300px; display: flex; flex-direction: column; gap: 10px;"></div>
+        <h3 style="margin-top:0;">My Bets</h3>
+        <div id="cb-list" class="custom-scroll" style="max-height: 300px; display: flex; flex-direction: column; gap: 8px;"></div>
     </div>
   </div>
 
   <div id="promo-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 400px; height: auto; min-height: fit-content; padding: 40px 30px 30px;">
+    <div class="modal-content" style="width: 400px; height: auto; min-height: fit-content;">
         <button class="modal-close-icon" onclick="closeModal('promo-modal')"><i class="fas fa-times"></i></button>
         <h3 style="margin-top:0;">REDEEM CODE</h3>
         <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Enter your gift code below to claim free TC.</p>
@@ -635,7 +627,7 @@
   </div>
 
   <div id="daily-reward-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 800px; height: auto; min-height: fit-content; padding: 40px 30px 30px; max-width: 95vw;">
+    <div class="modal-content" style="width: 800px; height: auto; min-height: fit-content; max-width: 95vw;">
       <button class="modal-close-icon" onclick="closeModal('daily-reward-modal')"><i class="fas fa-times"></i></button>
       <h3 style="font-size: 2.2rem; color: var(--credits); margin-bottom: 5px; border: none; padding-bottom: 0;">Daily Reward</h3>
       <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px;">Claim credits every 24 hours!</p>
@@ -647,7 +639,7 @@
   </div>
 
   <div id="support-center-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="width: 550px; height: 550px; padding: 40px 30px 30px;">
+    <div class="modal-content" style="width: 500px; height: auto;">
       <button class="modal-close-icon" onclick="closeModal('support-center-modal')"><i class="fas fa-times"></i></button>
       <h3>CASHIER</h3>
 
@@ -658,31 +650,31 @@
       </div>
 
       <div id="sc-tab-deposit" class="bank-section active">
-        <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem; text-align:center;">Attach proof of payment below for approval.</p>
-        <div class="input-group" style="margin-bottom:15px;">
+        <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.95rem; text-align:center;">Attach proof of payment below for approval.</p>
+        <div class="input-group" style="margin-bottom:10px;">
             <label>Amount (TC)</label>
             <input type="number" id="dep-amount" class="input-control" placeholder="e.g. 5000">
         </div>
-        <div class="input-group" style="margin-bottom:25px;">
+        <div class="input-group" style="margin-bottom:20px;">
             <label>Proof of Payment</label>
             <input type="file" id="dep-ref" class="input-control" accept="image/*" style="padding: 10px; font-size: 0.95rem; cursor: pointer;">
         </div>
         <button class="btn-play" style="width:100%;" onclick="submitDeposit()"><i class="fas fa-arrow-down"></i> Submit Deposit</button>
-        <div id="dep-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:15px; text-transform:uppercase; font-size:0.9rem;"></div>
+        <div id="dep-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:10px; text-transform:uppercase; font-size:0.9rem;"></div>
       </div>
 
       <div id="sc-tab-withdraw" class="bank-section hidden">
-        <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem; text-align:center;">Withdraw your credits to TC.</p>
-        <div class="input-group" style="margin-bottom:15px;">
+        <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.95rem; text-align:center;">Withdraw your credits to TC.</p>
+        <div class="input-group" style="margin-bottom:10px;">
             <label>Withdraw Amount (TC)</label>
             <input type="number" id="wit-amount" class="input-control" placeholder="e.g. 10000">
         </div>
-        <div class="input-group" style="margin-bottom:25px;">
+        <div class="input-group" style="margin-bottom:20px;">
             <label>Username</label>
             <input type="text" id="wit-info" class="input-control" placeholder="e.g. AshleyChan">
         </div>
         <button class="btn-play" style="width:100%;" onclick="submitWithdrawal()"><i class="fas fa-arrow-up"></i> Request Withdrawal</button>
-        <div id="wit-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:15px; text-transform:uppercase; font-size:0.9rem;"></div>
+        <div id="wit-msg" style="text-align:center; font-weight:800; min-height:20px; margin-top:10px; text-transform:uppercase; font-size:0.9rem;"></div>
       </div>
 
       <div id="sc-tab-requests" class="bank-section hidden">
@@ -691,46 +683,47 @@
     </div>
   </div>
 
-  <div id="game-history-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 550px; height: auto; min-height: fit-content; max-height: 80vh; padding: 40px 30px 30px;">
-        <button class="modal-close-icon" onclick="closeModal('game-history-modal')"><i class="fas fa-times"></i></button>
-        <h3 id="gh-title" style="margin-top:0;">Bet History</h3>
+  <div id="history-feed-modal" class="modal-overlay hidden">
+     <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; max-height: 80vh;">
+        <button class="modal-close-icon" onclick="closeModal('history-feed-modal')"><i class="fas fa-times"></i></button>
         
-        <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 400px; padding-right:5px;">
-            <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:2px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#000a1f; z-index:10;">
-                <div>Result</div><div style="text-align:center; color:var(--success)">Win</div><div style="text-align:right; color:var(--danger)">Loss</div>
-            </div>
-            <div id="gh-items" style="display:flex; flex-direction:column; gap:8px; margin-top:10px;"></div>
+        <div class="bank-tabs" style="margin-bottom: 15px; border-bottom: none;">
+            <button class="bank-tab active" onclick="switchHFTab('history')">My Bets</button>
+            <button class="bank-tab" onclick="switchHFTab('feed')">Live Feed</button>
         </div>
-     </div>
-  </div>
 
-  <div id="global-results-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 450px; height: auto; min-height: fit-content; max-height: 80vh; padding: 40px 30px 30px;">
-        <button class="modal-close-icon" onclick="closeModal('global-results-modal')"><i class="fas fa-times"></i></button>
-        <h3 id="gr-title" style="margin-top:0;">Recent Results</h3>
-        
-        <div id="gr-stats-header" style="background:rgba(0,0,0,0.6); padding:15px; border-radius:8px; margin-bottom:15px; font-size:0.9rem; font-weight:800; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:10px; justify-content:center; border: 1px solid var(--glass-border);"></div>
-
-        <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 300px; padding-right:5px;">
-            <div style="display:flex; padding:10px 15px; border-bottom:2px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#000a1f; z-index:10; justify-content:center;">
-                Last 25 Outcomes
+        <div id="hf-tab-history" class="bank-section active">
+            <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 400px; padding-right:5px;">
+                <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; padding:10px 15px; border-bottom:1px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#000a1f; z-index:10;">
+                    <div>Result</div><div style="text-align:center; color:var(--success)">Win</div><div style="text-align:right; color:var(--danger)">Loss</div>
+                </div>
+                <div id="combined-gh-items" style="display:flex; flex-direction:column; gap:8px; margin-top:10px;"></div>
             </div>
-            <div id="gr-items" style="display:flex; flex-direction:column; gap:8px; margin-top:10px;"></div>
         </div>
+
+        <div id="hf-tab-feed" class="bank-section hidden">
+            <div id="combined-gr-stats" style="background:rgba(0,0,0,0.4); padding:10px; border-radius:8px; margin-bottom:10px; font-size:0.85rem; font-weight:800; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:10px; justify-content:center; border: 1px solid var(--glass-border);"></div>
+            <div class="custom-scroll" style="overflow-y:auto; overflow-x:hidden; display:flex; flex-direction:column; max-height: 350px; padding-right:5px;">
+                <div style="display:flex; padding:10px 15px; border-bottom:1px solid var(--glass-border); font-weight:900; color:var(--text-muted); text-transform:uppercase; font-size:0.85rem; position:sticky; top:0; background:#000a1f; z-index:10; justify-content:center;">
+                    Last 25 Outcomes
+                </div>
+                <div id="combined-gr-items" style="display:flex; flex-direction:column; gap:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
      </div>
   </div>
 
   <div id="rules-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; padding: 40px 30px 30px;">
+     <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content;">
         <button class="modal-close-icon" onclick="closeModal('rules-modal')"><i class="fas fa-times"></i></button>
         <h3 id="rules-title" style="margin-top:0;">How to Play</h3>
-        <div id="rules-body" style="color:var(--text-muted); font-size:1.05rem; line-height:1.6; margin-left: 20px;"></div>
+        <div id="rules-body" style="color:var(--text-muted); font-size:1.05rem; line-height:1.6; padding: 0 10px;"></div>
      </div>
   </div>
 
   <div id="notif-modal" class="modal-overlay hidden">
-     <div class="modal-content" style="width: 500px; height: auto; min-height: fit-content; max-height: 80vh; padding: 40px 30px 30px;">
+     <div class="modal-content" style="width: 450px; height: auto; min-height: fit-content; max-height: 80vh;">
         <button class="modal-close-icon" onclick="closeModal('notif-modal')"><i class="fas fa-times"></i></button>
         <h3 style="margin-top:0;">Notifications</h3>
         <div id="notif-list" class="custom-scroll" style="overflow-y:auto; display:flex; flex-direction:column; gap:10px; max-height: 400px; padding-right:5px;">
@@ -750,6 +743,7 @@
     let myGameHistory = { dice: [], coinflip: [], baccarat: [], blackjack: [], perya: [], dt: [], sicbo: [] };
     
     window.activeSharedGame = null;
+    window.currentHFGame = null;
     let sState = { time: 15, status: 'BETTING' };
     let mySBets = {};
     let dailyTimerInterval = null;
@@ -767,6 +761,7 @@
         return map[betWord] || 'white';
     }
 
+    // --- UI BASICS & MODALS ---
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
@@ -781,6 +776,7 @@
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
+    // Live Socket Notifications from Admin
     socket.on('notification', (data) => {
         const list = document.getElementById('notif-list');
         const noMsg = document.getElementById('no-notif-msg');
@@ -806,6 +802,7 @@
         openModal('notif-modal');
     }
 
+    // --- AUDIO API ---
     function toggleAudio() {
         audioMuted = !audioMuted;
         sfxGainVal = audioMuted ? 0 : 0.8;
@@ -982,7 +979,7 @@
         }, 1000);
     }
 
-    // --- RULES & MY HISTORY ---
+    // --- RULES & COMBINED HISTORY/FEED ---
     const gameInfoMap = {
       'dice': { title: "Dice Roll", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (2x Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
       'coinflip': { title: "Coin Flip", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>2x</strong> your bet.</li></ul>" },
@@ -1000,30 +997,39 @@
       openModal('rules-modal'); 
     }
 
-    // UPDATED HISTORY TO SEPARATE WIN/LOSS BY PROFIT AND BET
-    function openGameHistory(id) {
-       if (!id || !gameInfoMap[id]) return; 
-       const list = document.getElementById('gh-items');
-       list.innerHTML = '';
-       const history = myGameHistory[id] || [];
-       if(history.length === 0) { list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">No history available yet.</div>`; } 
-       else {
-          history.forEach(h => {
-             let winVal = h.wonProfit > 0 ? `+${h.wonProfit}` : '-';
-             let lossVal = h.lostBet > 0 ? `-${h.lostBet}` : '-';
-             
-             if (h.wonProfit === 0 && h.lostBet === 0) { winVal = 'PUSH'; lossVal = '-'; }
-             
-             let cColor = 'white';
-             if (h.wonProfit > h.lostBet) cColor = 'var(--success)';
-             else if (h.wonProfit < h.lostBet) cColor = 'var(--danger)';
-             
-             let primaryColor = getBetColor(h.result.split(' ')[0]) || 'white';
-             
-             list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:12px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; align-items:center; font-size:0.95rem; word-break: break-all;"><span style="font-weight:900; color:${primaryColor}; text-transform:uppercase;">${h.result}</span><span style="color:var(--success); font-weight:800; text-align:center;">${winVal}</span><span style="color:var(--danger); font-weight:800; text-align:right;">${lossVal}</span></div>`;
-          });
-       }
-       openModal('game-history-modal');
+    function switchHFTab(tab) {
+        document.getElementById('hf-tab-history').classList.toggle('hidden', tab !== 'history');
+        document.getElementById('hf-tab-feed').classList.toggle('hidden', tab !== 'feed');
+        document.querySelectorAll('#history-feed-modal .bank-tab')[0].classList.toggle('active', tab === 'history');
+        document.querySelectorAll('#history-feed-modal .bank-tab')[1].classList.toggle('active', tab === 'feed');
+    }
+
+    function openHistoryFeed(id) {
+        if (!id || !gameInfoMap[id]) return; 
+        window.currentHFGame = id;
+        switchHFTab('history');
+        
+        const list = document.getElementById('combined-gh-items');
+        list.innerHTML = '';
+        const history = myGameHistory[id] || [];
+        if(history.length === 0) { list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">No history available yet.</div>`; } 
+        else {
+            history.forEach(h => {
+                let winVal = h.wonProfit > 0 ? `+${h.wonProfit}` : '-';
+                let lossVal = h.lostBet > 0 ? `-${h.lostBet}` : '-';
+                if (h.wonProfit === 0 && h.lostBet === 0) { winVal = 'PUSH'; lossVal = '-'; }
+                
+                let cColor = 'white';
+                if (h.wonProfit > h.lostBet) cColor = 'var(--success)';
+                else if (h.wonProfit < h.lostBet) cColor = 'var(--danger)';
+                
+                let primaryColor = getBetColor(h.result.split(' ')[0]) || 'white';
+                list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:10px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; align-items:center; font-size:0.9rem; word-break: break-all;"><span style="font-weight:900; color:${primaryColor}; text-transform:uppercase;">${h.result}</span><span style="color:var(--success); font-weight:800; text-align:center;">${winVal}</span><span style="color:var(--danger); font-weight:800; text-align:right;">${lossVal}</span></div>`;
+            });
+        }
+        
+        socket.emit('getGlobalResults', id);
+        openModal('history-feed-modal');
     }
 
     function logHistory(gid, bet, payout, msg, wonProfit, lostBet) {
@@ -1033,17 +1039,8 @@
         }
     }
 
-    // --- GLOBAL RESULTS FETCH WITH STATS ---
-    function openGlobalResults(game) {
-        document.getElementById('gr-title').innerText = gameInfoMap[game].title + " Feed";
-        document.getElementById('gr-items').innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">Loading...</div>`;
-        document.getElementById('gr-stats-header').innerHTML = '';
-        socket.emit('getGlobalResults', game);
-        openModal('global-results-modal');
-    }
-
     socket.on('globalResultsData', data => {
-        let statsHtml = `<div style="width:100%; text-align:center; font-size:1.1rem; color:white; margin-bottom:10px;">Total Rounds: ${data.stats.total}</div>`;
+        let statsHtml = `<div style="width:100%; text-align:center; font-size:1rem; color:white; margin-bottom:10px;">Total Rounds: ${data.stats.total}</div>`;
         if (data.stats.total > 0) {
             statsHtml += `<div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; width:100%;">`;
             Object.keys(data.stats).forEach(key => {
@@ -1054,9 +1051,9 @@
             });
             statsHtml += `</div>`;
         }
-        document.getElementById('gr-stats-header').innerHTML = statsHtml;
+        document.getElementById('combined-gr-stats').innerHTML = statsHtml;
 
-        const list = document.getElementById('gr-items');
+        const list = document.getElementById('combined-gr-items');
         list.innerHTML = '';
         if(data.results.length === 0) return list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">No recent outcomes.</div>`;
         
@@ -1064,14 +1061,14 @@
             let content = '';
             if (data.game === 'perya') {
                 let colors = r.result.split(','); 
-                let diceHtml = colors.map(c => `<div class="color-die c-${c.toLowerCase().trim()}" style="width:25px; height:25px; border-radius:4px; display:inline-block; border:1px solid rgba(255,255,255,0.2);"></div>`).join('');
+                let diceHtml = colors.map(c => `<div class="color-die c-${c.toLowerCase().trim()}" style="width:20px; height:20px; border-radius:4px; display:inline-block; border:1px solid rgba(255,255,255,0.2);"></div>`).join('');
                 content = `<div style="display:flex; gap:8px;">${diceHtml}</div>`;
             } else {
                 let word = r.result.split(' ')[0];
                 let color = getBetColor(word);
                 content = `<span style="color:${color};">${r.result}</span>`;
             }
-            list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:6px; display:flex; justify-content:center; align-items:center; font-weight:900; font-size: 1.2rem; text-transform:uppercase; letter-spacing: 1px;">${content}</div>`;
+            list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:6px; display:flex; justify-content:center; align-items:center; font-weight:900; font-size: 1.1rem; text-transform:uppercase; letter-spacing: 1px;">${content}</div>`;
         });
     });
 
@@ -1088,9 +1085,9 @@
         } else {
             entries.forEach(([choice, amount]) => {
                 total += amount; let cColor = getBetColor(choice);
-                list.innerHTML += `<div style="background:rgba(0,0,0,0.5); padding:12px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:flex; justify-content:space-between; align-items:center; font-weight:800;"><span style="text-transform:uppercase; color:${cColor};">${choice}</span><span style="color:var(--credits); font-size: 1.1rem;">${amount.toLocaleString()} TC</span></div>`;
+                list.innerHTML += `<div style="background:rgba(0,0,0,0.4); padding:10px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:flex; justify-content:space-between; align-items:center; font-weight:800;"><span style="text-transform:uppercase; color:${cColor};">${choice}</span><span style="color:var(--credits); font-size: 1rem;">${amount.toLocaleString()} TC</span></div>`;
             });
-            list.innerHTML += `<div style="border-top:1px solid var(--glass-border); padding-top:15px; margin-top:5px; display:flex; justify-content:space-between; font-weight:900; font-size:1.2rem; color:white;"><span>TOTAL WAGERED</span><span style="color:var(--credits);">${total.toLocaleString()} TC</span></div>`;
+            list.innerHTML += `<div style="border-top:1px solid var(--glass-border); padding-top:10px; margin-top:5px; display:flex; justify-content:space-between; font-weight:900; font-size:1.1rem; color:white;"><span>TOTAL WAGERED</span><span style="color:var(--credits);">${total.toLocaleString()} TC</span></div>`;
         }
         openModal('current-bets-modal');
     }
@@ -1159,7 +1156,6 @@
     function confirmLogout() { if(confirm("Are you sure you want to log out of Stick N' Trade?")) { location.reload(); } }
 
     // --- SOLO GAMES ENGINE ---
-    // Perfect Green/Red Result Box format. Triggers ONLY when animation is done.
     function showEndBox(box, bet, payout, msg, newBalance) {
         let pft = payout > bet ? payout - bet : 0; 
         let loss = payout === 0 ? bet : 0;
@@ -1403,7 +1399,6 @@
                 }
                 
                 let totBet = 0, totWon = 0;
-                let wC = 0, lC = 0;
                 let wonProfit = 0, lostBet = 0;
                 
                 for(let b in mySBets) { 
@@ -1414,16 +1409,11 @@
                         let p = a + (a * m);
                         totWon += p; 
                         wonProfit += (a * m);
-                        wC++;
                     } else {
                         lostBet += a;
-                        lC++;
                     }
                 }
                 let msg = rollArr.join(', ').toUpperCase();
-                if (Object.keys(mySBets).length > 1) {
-                    msg += ` (${wC} WIN, ${lC} LOSE)`;
-                }
                 processSharedPayout('perya', totWon, totBet, msg, wonProfit, lostBet);
             }, 2000);
         }
@@ -1453,9 +1443,9 @@
           if (cg) cg.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;grid-column:span 2"><div class="input-group" style="margin:0;text-align:left;width:150px;"><label style="text-align:center">Bet Amount</label><input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10"></div><div style="text-align:right; cursor:pointer; transition:0.2s;" onclick="openCurrentBetsModal()" title="Click to view bets" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1"><div style="color:var(--text-muted);font-size:0.85rem;font-weight:600;text-transform:uppercase;margin-bottom:5px;"><i class="fas fa-eye"></i> Total Bet</div><div id="sg-my-bet" style="color:white;font-size:1.5rem;font-weight:800;">0 TC</div></div></div><div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
-            <button class="bet-btn shared-tile" data-choice="Player" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Player')">PLAYER (1:1)</button>
-            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (8:1)</button>
-            <button class="bet-btn shared-tile" data-choice="Banker" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Banker')">BANKER (1:0.95)</button>`;
+            <button class="bet-btn shared-tile" data-choice="Player" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Player')">PLAYER (x2)</button>
+            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (x9)</button>
+            <button class="bet-btn shared-tile" data-choice="Banker" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Banker')">BANKER (x1.95)</button>`;
         },
         animateResult: async function(data) {
             let pHand = document.getElementById('bac-p-hand'), bHand = document.getElementById('bac-b-hand');
@@ -1497,22 +1487,20 @@
             await delay(1000); 
             let w = data.winner;
             let tp = 0, tba = 0; 
-            let wC = 0, lC = 0;
             let wonProfit = 0, lostBet = 0;
             
             for (let b in mySBets) { 
                 let a = mySBets[b]; tba += a; 
                 if (b === w) { 
                     let p = a * (w === 'Tie' ? 9 : (w === 'Banker' ? 1.95 : 2)); 
-                    tp += p; wC++; wonProfit += (p - a);
+                    tp += p; wonProfit += (p - a);
                 } else if (w === 'Tie' && (b === 'Player' || b === 'Banker')) {
-                    tp += a; // Push refund
+                    tp += a; // Push refund, wonProfit is 0
                 } else { 
-                    lC++; lostBet += a;
+                    lostBet += a;
                 }
             } 
             let msg = w === 'Tie' ? `TIE!` : `${w.toUpperCase()} WINS!`;
-            if (Object.keys(mySBets).length > 1) msg += ` (${wC} WIN, ${lC} LOSE)`;
             processSharedPayout('baccarat', tp, tba, msg, wonProfit, lostBet);
         }
       },
@@ -1533,9 +1521,9 @@
             <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
-            <button class="bet-btn shared-tile" data-choice="Dragon" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Dragon')">DRAGON (1:1)</button>
-            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (8:1)</button>
-            <button class="bet-btn shared-tile" data-choice="Tiger" style="--tile-color:var(--credits); border-bottom:5px solid var(--credits);" onclick="placeSharedBet('Tiger')">TIGER (1:1)</button>`; 
+            <button class="bet-btn shared-tile" data-choice="Dragon" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Dragon')">DRAGON (x2)</button>
+            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (x9)</button>
+            <button class="bet-btn shared-tile" data-choice="Tiger" style="--tile-color:var(--credits); border-bottom:5px solid var(--credits);" onclick="placeSharedBet('Tiger')">TIGER (x2)</button>`; 
         },
         animateResult: function(data) { 
           let e1 = document.getElementById('dt-c1'); 
@@ -1547,19 +1535,17 @@
             setTimeout(() => { 
               let w = data.winner;
               let tp = 0, tba = 0; 
-              let wC = 0, lC = 0;
               let wonProfit = 0, lostBet = 0;
               for (let b in mySBets) { 
                 let a = mySBets[b]; tba += a; 
                 if (b === w) { 
                     let p = a * (w === 'Tie' ? 9 : 2); 
-                    tp += p; wC++; wonProfit += (p - a);
+                    tp += p; wonProfit += (p - a);
                 } else { 
-                    lC++; lostBet += a; 
+                    lostBet += a; 
                 }
               } 
               let msg = w === 'Tie' ? `TIE!` : `${w.toUpperCase()} WINS!`;
-              if (Object.keys(mySBets).length > 1) msg += ` (${wC} WIN, ${lC} LOSE)`;
               processSharedPayout('dt', tp, tba, msg, wonProfit, lostBet); 
             }, 1000); 
           }, 500); 
@@ -1601,14 +1587,12 @@
             } 
             let w = data.winner; 
             let tp = 0, tba = 0; 
-            let wC = 0, lC = 0;
             let wonProfit = 0, lostBet = 0;
             for (let b in mySBets) { 
               let a = mySBets[b]; tba += a; 
-              if (b === w) { tp += a * 2; wC++; wonProfit += a; } else { lC++; lostBet += a;}
+              if (b === w) { tp += a * 2; wonProfit += a; } else { lostBet += a;}
             } 
             let msg = it ? `TRIPLE! HOUSE WINS` : `${w.toUpperCase()} (${s})`;
-            if (Object.keys(mySBets).length > 1) msg += ` (${wC} WIN, ${lC} LOSE)`;
             processSharedPayout('sicbo', tp, tba, msg, wonProfit, lostBet); 
           }, 2000); 
         }
