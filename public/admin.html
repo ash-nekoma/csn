@@ -13,30 +13,16 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <style>
-        /* ================= CSS VARIABLES ================= */
         :root { 
-            --ps-bg: #000814; 
-            --ps-blue: #00439c; 
-            --ps-glow: #00a2ff; 
-            --glass-bg: rgba(0, 15, 35, 0.85); 
-            --glass-border: rgba(255, 255, 255, 0.15); 
-            --danger: #ff3366; 
-            --success: #00e676; 
-            --credits: #ffb400; 
-            --text-main: #f8fafc; 
-            --text-muted: #8c9eb5; 
+            --ps-bg: #000814; --ps-blue: #00439c; --ps-glow: #00a2ff; 
+            --glass-bg: rgba(0, 15, 35, 0.85); --glass-border: rgba(255, 255, 255, 0.15); 
+            --danger: #ff3366; --success: #00e676; --credits: #ffb400; 
+            --text-main: #f8fafc; --text-muted: #8c9eb5; 
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; }
         
-        body { 
-            background: linear-gradient(135deg, #000a1f 0%, #00122e 100%); 
-            color: var(--text-main); 
-            min-height: 100vh; 
-            width: 100vw;
-            display: flex; 
-            overflow: hidden;
-        }
+        body { background: linear-gradient(135deg, #000a1f 0%, #00122e 100%); color: var(--text-main); min-height: 100vh; width: 100vw; display: flex; overflow: hidden; }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -45,44 +31,22 @@
 
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
-        /* ================= AUTHENTICATION ================= */
-        #auth-container { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            display: flex; justify-content: center; align-items: center; 
-            z-index: 999999; background: #00050d; 
-        }
-        
-        .auth-box { 
-            width: 420px; background: var(--glass-bg); padding: 3rem; 
-            border-radius: 16px; border: 1px solid var(--glass-border); 
-            text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.8); 
-            position: relative; z-index: 10; 
-        }
-        
+        /* AUTHENTICATION */
+        #auth-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 999999; background: #00050d; }
+        .auth-box { width: 420px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.8); position: relative; z-index: 10; }
         .auth-title { font-size: 2.2rem; font-weight: 900; color: white; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;}
         .auth-sub { color: var(--danger); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
         
         .input-group { margin-bottom: 15px; text-align: left; width: 100%; }
         .input-group label { display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
-        
-        .input-control { 
-            width: 100%; padding: 15px; background: rgba(0,0,0,0.5); 
-            border: 1px solid var(--glass-border); color: white; 
-            border-radius: 8px; font-size: 1.1rem; font-weight: 600; 
-            transition: 0.2s; pointer-events: auto; cursor: text;
-        }
+        .input-control { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1.1rem; font-weight: 600; transition: 0.2s; pointer-events: auto; cursor: text; }
         .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
         
-        .btn-primary { 
-            background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); 
-            padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; 
-            cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; pointer-events: auto;
-        }
+        .btn-primary { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; pointer-events: auto; }
         .btn-primary:hover { background: var(--ps-glow); color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 162, 255, 0.4); }
-        
         .auth-msg { font-size: 0.95rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; color: var(--danger); }
 
-        /* ================= DASHBOARD LAYOUT ================= */
+        /* DASHBOARD LAYOUT */
         #admin-app { display: none; width: 100%; height: 100vh; position: relative; z-index: 1;}
         
         /* SIDEBAR */
@@ -97,8 +61,8 @@
         .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
         .nav-item.active { background: rgba(0, 162, 255, 0.1); color: var(--ps-glow); border-left-color: var(--ps-glow); }
         
-        .logout-btn { padding: 20px; text-align: center; border-top: 1px solid var(--glass-border); cursor: pointer; color: var(--danger); font-weight: 800; transition: 0.2s; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;}
-        .logout-btn:hover { background: rgba(255, 51, 102, 0.1); }
+        .logout-btn { padding: 20px; text-align: center; border-top: 1px solid var(--glass-border); cursor: pointer; color: white; font-weight: 800; transition: 0.2s; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.05);}
+        .logout-btn:hover { background: rgba(255,255,255,0.15); }
 
         /* MAIN CONTENT */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: transparent; }
@@ -121,7 +85,10 @@
         
         table { width: 100%; border-collapse: collapse; text-align: left; }
         th, td { padding: 18px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        th { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; background: rgba(0,0,0,0.3); letter-spacing: 1px; }
+        
+        /* Solid Sticky Headers to prevent text overlap */
+        thead th { position: sticky; top: 0; background: #000a1f; z-index: 10; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border);}
+        
         td { font-weight: 600; font-size: 1.05rem; color: white; }
         tr:hover { background: rgba(255,255,255,0.03); }
 
@@ -131,7 +98,7 @@
         .badge.rejected, .badge.banned { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
         .badge.offline { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); border: 1px solid rgba(255, 255, 255, 0.2); }
 
-        /* ACTION BUTTONS IN TABLES */
+        /* ACTION BUTTONS */
         .action-btns { display: flex; gap: 10px; }
         .btn-sm { padding: 10px 15px; border: none; border-radius: 6px; font-weight: 800; font-size: 0.85rem; cursor: pointer; text-transform: uppercase; transition: 0.2s; color: white; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;}
         .btn-edit { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid rgba(0, 162, 255, 0.3); } .btn-edit:hover { background: var(--ps-glow); color: black; }
@@ -141,10 +108,17 @@
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-content { background: var(--glass-bg); width: 450px; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); position: relative; box-shadow: 0 25px 80px rgba(0,0,0,0.9); pointer-events: auto; }
+        .modal-content.wide { width: 700px; max-width: 95vw; }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; background: none; border: none; transition: 0.2s; outline: none; }
         .modal-close:hover { color: var(--danger); transform: scale(1.1); }
         .modal-title { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-align: center; }
 
+        /* FILTER BAR */
+        .filter-bar { display: flex; gap: 15px; background: rgba(0,0,0,0.4); padding: 15px 30px; border-bottom: 1px solid var(--glass-border); align-items: center;}
+        .filter-bar input, .filter-bar select { padding: 10px 15px; background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; border-radius: 6px; font-size: 0.95rem; font-weight: 600; outline: none; }
+        .filter-bar input:focus, .filter-bar select:focus { border-color: var(--ps-glow); }
+
+        .center-col { text-align: center; }
     </style>
 </head>
 <body>
@@ -173,13 +147,13 @@
                 <span>Master Admin</span>
             </div>
             <div class="nav-menu">
-                <div class="nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard Overview</div>
-                <div class="nav-item" onclick="switchTab('users')"><i class="fas fa-users"></i> Player Management</div>
-                <div class="nav-item" onclick="switchTab('cashier')"><i class="fas fa-money-bill-transfer"></i> Cashier & Banking</div>
+                <div class="nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
+                <div class="nav-item" onclick="switchTab('users')"><i class="fas fa-users"></i> Player DB</div>
+                <div class="nav-item" onclick="switchTab('cashier')"><i class="fas fa-money-bill-transfer"></i> Cashier logs</div>
                 <div class="nav-item" onclick="switchTab('promos')"><i class="fas fa-gift"></i> Promo Codes</div>
             </div>
-            <div class="logout-btn" onclick="location.reload()">
-                <i class="fas fa-sign-out-alt"></i> Secure Logout
+            <div class="logout-btn" onclick="window.location.href='/'">
+                <i class="fas fa-arrow-left"></i> Back to Casino
             </div>
         </div>
 
@@ -187,7 +161,7 @@
             <div class="topbar">
                 <h1 id="page-title">Dashboard Overview</h1>
                 <div style="font-weight: 800; color: var(--ps-glow); display: flex; align-items: center; gap: 10px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">
-                    <i class="fas fa-shield-alt"></i> Admin Terminal Connected
+                    <i class="fas fa-shield-alt"></i> Terminal Connected
                 </div>
             </div>
 
@@ -208,14 +182,58 @@
                             <div class="stat-info"><h3>Pending Requests</h3><div class="value" id="stat-pending">0</div></div>
                         </div>
                     </div>
+
+                    <div class="stats-grid">
+                        <div class="panel" style="margin-bottom:0; flex:1;">
+                            <div class="panel-header"><h3><i class="fas fa-bullhorn"></i> Send Global Update</h3></div>
+                            <div style="padding: 20px 30px;">
+                                <div class="input-group">
+                                    <label>Message (Notifies all active players)</label>
+                                    <input type="text" id="tool-msg" class="input-control" placeholder="Server maintenance in 5 minutes...">
+                                </div>
+                                <button class="btn-primary" onclick="sendGlobalUpdate()"><i class="fas fa-paper-plane"></i> Send Notification</button>
+                            </div>
+                        </div>
+
+                        <div class="panel" style="margin-bottom:0; flex:1;">
+                            <div class="panel-header"><h3 style="color:var(--credits)"><i class="fas fa-gift"></i> Direct Gift Credits</h3></div>
+                            <div style="padding: 20px 30px; display:flex; gap:15px; align-items:flex-end;">
+                                <div class="input-group" style="margin:0;">
+                                    <label>Username (or "All")</label>
+                                    <input type="text" id="tool-target" class="input-control" placeholder="PlayerName">
+                                </div>
+                                <div class="input-group" style="margin:0;">
+                                    <label>Amount</label>
+                                    <input type="number" id="tool-amt" class="input-control" placeholder="500">
+                                </div>
+                                <button class="btn-primary" style="width:auto; padding: 15px 25px;" onclick="sendGift()"><i class="fas fa-check"></i></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="view-users" class="tab-view hidden">
                     <div class="panel">
                         <div class="panel-header"><h3>Player Database</h3></div>
-                        <div class="custom-scroll" style="max-height: 65vh; overflow-y: auto;">
+                        <div class="filter-bar">
+                            <i class="fas fa-search" style="color:var(--text-muted)"></i>
+                            <input type="text" id="filter-search" placeholder="Search by username..." style="flex:1;" onkeyup="renderUsers()">
+                            <select id="filter-role" onchange="renderUsers()">
+                                <option value="All">All Roles</option>
+                                <option value="Player">Player</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                            <select id="filter-status" onchange="renderUsers()">
+                                <option value="All">All Statuses</option>
+                                <option value="Active">Active</option>
+                                <option value="Offline">Offline</option>
+                                <option value="Banned">Banned</option>
+                            </select>
+                        </div>
+                        <div class="custom-scroll" style="max-height: 55vh; overflow-y: auto;">
                             <table>
-                                <thead style="position: sticky; top: 0; z-index: 10;">
+                                <thead>
                                     <tr><th>Username</th><th>Credits (TC)</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
                                 </thead>
                                 <tbody id="users-tbody"></tbody>
@@ -229,7 +247,7 @@
                         <div class="panel-header"><h3 style="color: var(--credits);">Pending Transactions</h3></div>
                         <div class="custom-scroll" style="max-height: 40vh; overflow-y: auto;">
                             <table>
-                                <thead style="position: sticky; top: 0; z-index: 10;">
+                                <thead>
                                     <tr><th>Date</th><th>Player</th><th>Type</th><th>Amount</th><th>Details / Proof</th><th>Actions</th></tr>
                                 </thead>
                                 <tbody id="tx-pending-tbody"></tbody>
@@ -241,7 +259,7 @@
                         <div class="panel-header"><h3>Transaction History</h3></div>
                         <div class="custom-scroll" style="max-height: 35vh; overflow-y: auto;">
                             <table>
-                                <thead style="position: sticky; top: 0; z-index: 10;">
+                                <thead>
                                     <tr><th>Date</th><th>Player</th><th>Type</th><th>Amount</th><th>Status</th></tr>
                                 </thead>
                                 <tbody id="tx-history-tbody"></tbody>
@@ -253,13 +271,18 @@
                 <div id="view-promos" class="tab-view hidden">
                     <div class="panel">
                         <div class="panel-header">
-                            <h3>Active Gift Codes</h3>
+                            <h3>Active Promo Batches</h3>
                             <button class="btn-sm btn-approve" onclick="openModal('create-promo-modal')"><i class="fas fa-plus"></i> Generate Codes</button>
                         </div>
                         <div class="custom-scroll" style="max-height: 65vh; overflow-y: auto;">
                             <table>
-                                <thead style="position: sticky; top: 0; z-index: 10;">
-                                    <tr><th>Created Date</th><th>Batch ID</th><th>Code</th><th>Value</th><th>Status</th><th>Actions</th></tr>
+                                <thead>
+                                    <tr>
+                                        <th class="center-col">Batch ID</th>
+                                        <th class="center-col">Value per Code</th>
+                                        <th class="center-col">Quantity</th>
+                                        <th class="center-col">Actions</th>
+                                    </tr>
                                 </thead>
                                 <tbody id="promos-tbody"></tbody>
                             </table>
@@ -301,7 +324,6 @@
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('create-promo-modal')"><i class="fas fa-times"></i></button>
             <h3 class="modal-title">Generate Gift Codes</h3>
-            
             <div class="input-group">
                 <label>TC Value Per Code</label>
                 <input type="number" id="promo-amount" class="input-control" placeholder="e.g. 500">
@@ -314,92 +336,111 @@
         </div>
     </div>
 
+    <div id="view-batch-modal" class="modal-overlay hidden">
+        <div class="modal-content wide">
+            <button class="modal-close" onclick="closeModal('view-batch-modal')"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title" id="vb-title">BATCH DETAILS</h3>
+            <div style="text-align:right; margin-bottom:10px;">
+                <button class="btn-sm btn-edit" onclick="copyAllCodes()" style="display:inline-block;"><i class="fas fa-copy"></i> Copy All Codes</button>
+            </div>
+            <div class="custom-scroll" style="max-height: 400px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr><th class="center-col">Code</th><th class="center-col">Status</th><th class="center-col">Copy</th></tr>
+                    </thead>
+                    <tbody id="vb-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="proof-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('proof-modal')"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title">Attached Proof</h3>
+            <div style="padding: 20px; text-align: center; background: rgba(0,0,0,0.5); border-radius: 8px; border: 1px solid var(--glass-border); font-family: monospace; font-size: 1.2rem; word-break: break-all; color: var(--ps-glow);">
+                <i class="fas fa-file-image" style="font-size: 3rem; margin-bottom: 15px; color: white;"></i><br>
+                <span id="proof-filename">filename.jpg</span>
+            </div>
+            <p style="text-align:center; color:var(--text-muted); font-size:0.85rem; margin-top:15px;">*File viewing simulated for browser environment.</p>
+        </div>
+    </div>
+
     <script>
         const socket = io();
 
-        // Data Stores
         let gUsers = [];
         let gTxs = [];
         let gPromos = [];
+        let gBatches = {}; // Grouped batches
+        let currentViewBatch = []; // Array of codes for the open modal
 
-        // ENTER Key Login Support
         document.getElementById('admin-pass').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') loginAdmin();
         });
 
-        // --- AUTHENTICATION ---
         function loginAdmin() {
             const u = document.getElementById('admin-user').value.trim();
             const p = document.getElementById('admin-pass').value.trim();
             const msgBox = document.getElementById('auth-msg');
 
-            if (!u || !p) {
-                msgBox.innerText = "Please fill in all fields.";
-                msgBox.className = "auth-msg auth-error";
-                return;
-            }
-
-            msgBox.innerText = "Authenticating...";
-            msgBox.style.color = "white";
+            if (!u || !p) { msgBox.innerText = "Please fill in all fields."; return; }
+            msgBox.innerText = "Authenticating..."; msgBox.style.color = "white";
 
             socket.emit('adminLogin', { username: u, password: p });
         }
 
         socket.on('authError', msg => {
             const msgBox = document.getElementById('auth-msg');
-            msgBox.innerText = msg;
-            msgBox.className = "auth-msg auth-error";
-            msgBox.style.color = "var(--danger)";
+            msgBox.innerText = msg; msgBox.style.color = "var(--danger)";
         });
 
         socket.on('adminLoginSuccess', data => {
-            // Completely hide the auth wrapper so it doesn't block clicks
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('admin-app').style.display = 'flex';
         });
 
-        // --- NAVIGATION ---
         function switchTab(tabId) {
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             event.currentTarget.classList.add('active');
-            
             document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
             document.getElementById('view-' + tabId).classList.remove('hidden');
 
-            const titles = { 'dashboard': 'Dashboard Overview', 'users': 'Player Management', 'cashier': 'Cashier & Banking', 'promos': 'Promo Codes' };
+            const titles = { 'dashboard': 'Dashboard Overview', 'users': 'Player Database', 'cashier': 'Cashier & Banking', 'promos': 'Promo Codes' };
             document.getElementById('page-title').innerText = titles[tabId];
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // --- DATA SYNCHRONIZATION ---
         socket.on('adminDataSync', data => {
             gUsers = data.users;
             gTxs = data.transactions;
             gPromos = data.giftBatches;
             
-            // 1. Update Dashboard Stats
             document.getElementById('stat-economy').innerText = data.stats.economy.toLocaleString() + ' TC';
             document.getElementById('stat-users').innerText = gUsers.length;
-            
-            let pendingCount = gTxs.filter(t => t.status === 'Pending').length;
-            document.getElementById('stat-pending').innerText = pendingCount;
+            document.getElementById('stat-pending').innerText = gTxs.filter(t => t.status === 'Pending').length;
 
-            // 2. Render UI
             renderUsers();
             renderTransactions();
             renderPromos();
         });
 
-        // --- RENDERING FUNCTIONS ---
         function renderUsers() {
             const tbody = document.getElementById('users-tbody');
             tbody.innerHTML = '';
             
+            let sTerm = document.getElementById('filter-search').value.toLowerCase();
+            let rFilt = document.getElementById('filter-role').value;
+            let sFilt = document.getElementById('filter-status').value;
+
             gUsers.forEach(u => {
+                if (sTerm && !u.username.toLowerCase().includes(sTerm)) return;
+                if (rFilt !== 'All' && u.role !== rFilt) return;
+                if (sFilt !== 'All' && u.status !== sFilt) return;
+
                 let statClass = u.status === 'Active' ? 'active' : (u.status === 'Banned' ? 'banned' : 'offline');
-                
                 let actionBtn = u.status === 'Banned' 
                     ? `<button class="btn-sm btn-approve" onclick="actionUser('unban', '${u._id}')"><i class="fas fa-unlock"></i> Unban</button>`
                     : `<button class="btn-sm btn-reject" onclick="actionUser('ban', '${u._id}')"><i class="fas fa-ban"></i> Ban</button>`;
@@ -430,13 +471,14 @@
                 let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 
                 if (t.status === 'Pending') {
+                    let proofBtn = t.type === 'Deposit' ? `<button class="btn-sm btn-edit" style="margin-left:10px; display:inline-block;" onclick="viewProof('${t.ref}')"><i class="fas fa-eye"></i> View</button>` : '';
                     pBody.innerHTML += `
                         <tr>
                             <td style="color:var(--text-muted); font-size:0.95rem;">${dStr}</td>
                             <td style="font-weight:900; color:var(--ps-glow); font-size: 1.1rem;">${t.username}</td>
                             <td style="text-transform:uppercase; font-weight:800;">${t.type}</td>
                             <td style="color:${color}; font-weight: 800;">${t.amount.toLocaleString()} TC</td>
-                            <td style="font-family: monospace; color: var(--text-muted);">${t.ref}</td>
+                            <td style="font-family: monospace; color: var(--text-muted);">${t.ref} ${proofBtn}</td>
                             <td class="action-btns">
                                 <button class="btn-sm btn-approve" onclick="resolveTx('${t._id}', 'Approved')"><i class="fas fa-check"></i> Approve</button>
                                 <button class="btn-sm btn-reject" onclick="resolveTx('${t._id}', 'Rejected')"><i class="fas fa-times"></i> Reject</button>
@@ -460,42 +502,82 @@
         }
 
         function renderPromos() {
+            gBatches = {};
+            gPromos.forEach(p => {
+                if(!gBatches[p.batchId]) gBatches[p.batchId] = { id: p.batchId, amount: p.amount, codes: [] };
+                gBatches[p.batchId].codes.push(p);
+            });
+
             const tbody = document.getElementById('promos-tbody');
             tbody.innerHTML = '';
             
-            gPromos.forEach(b => {
-                let dStr = new Date(b.date).toLocaleDateString();
-                let statHtml = b.redeemedBy 
-                    ? `<span class="badge offline">Used by ${b.redeemedBy}</span>` 
-                    : `<span class="badge active">Active Code</span>`;
-                
+            Object.values(gBatches).forEach(b => {
                 tbody.innerHTML += `
                     <tr>
-                        <td style="color:var(--text-muted); font-size:0.95rem;">${dStr}</td>
-                        <td style="font-size: 0.9rem; color: var(--text-muted);">#${b.batchId}</td>
-                        <td style="font-family:monospace; font-size:1.2rem; letter-spacing:2px; font-weight: 900; color: white;">${b.code}</td>
-                        <td style="color:var(--ps-glow); font-weight: 800;">${b.amount.toLocaleString()} TC</td>
-                        <td>${statHtml}</td>
-                        <td class="action-btns">
-                            <button class="btn-sm btn-reject" onclick="deleteBatch('${b._id}')"><i class="fas fa-trash"></i> Delete</button>
+                        <td class="center-col" style="font-weight:900; color:white; font-size:1.1rem;">${b.id}</td>
+                        <td class="center-col" style="color:var(--ps-glow); font-weight: 800;">${b.amount.toLocaleString()} TC</td>
+                        <td class="center-col" style="font-weight:800;">${b.codes.length}</td>
+                        <td class="center-col">
+                            <div class="action-btns" style="justify-content:center;">
+                                <button class="btn-sm btn-edit" onclick="openBatchView('${b.id}')"><i class="fas fa-eye"></i> View</button>
+                                <button class="btn-sm btn-reject" onclick="deleteBatch('${b.id}')"><i class="fas fa-trash"></i> Delete</button>
+                            </div>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        // --- ACTION HANDLERS ---
+        function openBatchView(batchId) {
+            let b = gBatches[batchId];
+            if(!b) return;
+            document.getElementById('vb-title').innerText = `${batchId} CODES`;
+            currentViewBatch = b.codes.map(c => c.code);
+            
+            const tbody = document.getElementById('vb-tbody');
+            tbody.innerHTML = '';
+            
+            b.codes.forEach(c => {
+                let statHtml = c.redeemedBy ? `<span class="badge offline">Claimed by ${c.redeemedBy}</span>` : `<span class="badge active">Available</span>`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="center-col" style="font-family:monospace; font-size:1.1rem; font-weight:900;">${c.code}</td>
+                        <td class="center-col">${statHtml}</td>
+                        <td class="center-col"><button class="btn-sm btn-edit" style="margin:0 auto;" onclick="copySingle('${c.code}', this)"><i class="fas fa-copy"></i></button></td>
+                    </tr>
+                `;
+            });
+            openModal('view-batch-modal');
+        }
+
+        function copySingle(code, btn) {
+            navigator.clipboard.writeText(code);
+            let og = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-check"></i>`;
+            btn.style.background = 'var(--success)'; btn.style.color = 'black';
+            setTimeout(() => { btn.innerHTML = og; btn.style.background = ''; btn.style.color = ''; }, 1000);
+        }
+
+        function copyAllCodes() {
+            if(currentViewBatch.length === 0) return;
+            navigator.clipboard.writeText(currentViewBatch.join('\n'));
+            alert("Copied " + currentViewBatch.length + " codes to clipboard!");
+        }
+
+        function viewProof(filename) {
+            document.getElementById('proof-filename').innerText = filename;
+            openModal('proof-modal');
+        }
+
         function resolveTx(id, status) {
             if(confirm(`Are you sure you want to officially mark this transaction as ${status}?`)) {
                 socket.emit('adminAction', { type: 'resolveTx', id: id, status: status });
             }
         }
-
         function actionUser(type, id) {
             let msg = type === 'ban' ? "Are you sure you want to BAN this player?" : "Are you sure you want to UNBAN this player?";
             if(confirm(msg)) socket.emit('adminAction', { type: type, id: id });
         }
-
         function openEditUser(id) {
             const u = gUsers.find(x => x._id === id);
             if(!u) return;
@@ -505,13 +587,10 @@
             document.getElementById('edit-u-role').value = u.role;
             openModal('edit-user-modal');
         }
-
         function saveUserEdit() {
             socket.emit('adminAction', {
-                type: 'editUser',
-                id: document.getElementById('edit-u-id').value,
-                credits: parseInt(document.getElementById('edit-u-credits').value),
-                role: document.getElementById('edit-u-role').value
+                type: 'editUser', id: document.getElementById('edit-u-id').value,
+                credits: parseInt(document.getElementById('edit-u-credits').value), role: document.getElementById('edit-u-role').value
             });
             closeModal('edit-user-modal');
         }
@@ -520,20 +599,37 @@
             let amt = parseInt(document.getElementById('promo-amount').value);
             let cnt = parseInt(document.getElementById('promo-count').value);
             if(!amt || !cnt) return alert("Please fill out both the TC amount and quantity.");
-            
             socket.emit('adminAction', { type: 'createBatch', amount: amt, count: cnt });
             closeModal('create-promo-modal');
             document.getElementById('promo-amount').value = '';
             document.getElementById('promo-count').value = '';
         }
-
-        function deleteBatch(id) {
-            if(confirm("Permanently delete this promo code?")) {
-                socket.emit('adminAction', { type: 'deleteBatch', id: id });
+        function deleteBatch(batchId) {
+            if(confirm("Permanently delete ALL codes in this batch?")) {
+                socket.emit('adminAction', { type: 'deleteBatch', batchId: batchId });
             }
         }
 
-        // Anti-snoop Security
+        // --- GLOBAL ADMIN TOOLS ---
+        function sendGlobalUpdate() {
+            let msg = document.getElementById('tool-msg').value;
+            if(!msg) return alert("Enter a message.");
+            socket.emit('adminAction', { type: 'sendUpdate', msg: msg });
+            document.getElementById('tool-msg').value = '';
+            alert("Notification broadcasted to all active players!");
+        }
+
+        function sendGift() {
+            let target = document.getElementById('tool-target').value;
+            let amt = parseInt(document.getElementById('tool-amt').value);
+            if(!target || !amt) return alert("Enter Username (or All) and Amount.");
+            if(confirm(`Gift ${amt} TC to ${target}?`)) {
+                socket.emit('adminAction', { type: 'giftCredits', target: target, amount: amt });
+                document.getElementById('tool-target').value = '';
+                document.getElementById('tool-amt').value = '';
+            }
+        }
+
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.onkeydown = function(e) {
             if(e.keyCode === 123) return false; 
