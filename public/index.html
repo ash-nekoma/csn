@@ -50,7 +50,6 @@
 
         button i { pointer-events: none; }
 
-        /* Custom Hover Scrollbars */
         ::-webkit-scrollbar { display: none; }
         .custom-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent; min-height: 0; padding-right: 5px;}
         .custom-scroll::-webkit-scrollbar { width: 6px; display: block; }
@@ -58,14 +57,13 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
 
-        /* Remove Spinners from Number Inputs */
         input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
-        /* ================= AUTHENTICATION GATEWAY ================= */
+        /* ================= AUTHENTICATION ================= */
         #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
-        .auth-box { width: 420px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 25px 80px rgba(0,0,0,0.9); text-align: center; }
+        .auth-box { width: 420px; max-width: 95vw; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 25px 80px rgba(0,0,0,0.9); text-align: center; }
         .auth-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
         .auth-sub { color: var(--ps-glow); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
@@ -74,6 +72,7 @@
         .auth-msg { font-size: 0.9rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; }
         .auth-error { color: var(--danger); }
         .auth-success { color: var(--success); }
+        
         .pwd-input-wrapper { position: relative; width: 100%; display: block; }
         .pwd-input-wrapper input { width: 100%; text-align: center; padding: 15px; }
         .pwd-input-wrapper i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 1.1rem; z-index: 2; transition: 0.2s; }
@@ -88,46 +87,55 @@
         .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
         .bet-input { text-align: center !important; }
         .bet-input::placeholder { text-align: center; color: rgba(255,255,255,0.4); }
+        
         .btn-rules { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; } 
         .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.1); }
 
-        /* 1-ROW HUD TOPBAR */
+        /* ================= 1-ROW HUD TOPBAR ================= */
         #app-container { display: none; }
-        .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 99999; background: rgba(0,0,0,0.6); border-bottom: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(16px); padding: 12px 25px; }
-        .topbar-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+        .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 99999; background: rgba(0,0,0,0.8); border-bottom: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(16px); padding: 12px 25px; }
+        .topbar-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;}
+        
         .brand { display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; padding: 5px; border-radius: 8px;}
         .brand:hover { background: rgba(255,255,255,0.05); transform: scale(1.02); }
         .brand-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--ps-glow); box-shadow: 0 0 20px var(--ps-glow); }
         .brand-title { font-weight: 900; letter-spacing: 2px; text-transform: uppercase; font-size: 1.5rem; color: var(--text-main); line-height: 1; text-shadow: 0 0 10px rgba(0, 162, 255, 0.5); }
         .brand-sub { color: var(--ps-glow); font-weight: 800; font-size: 0.9rem; letter-spacing: 3px; margin-top: 2px; text-transform: uppercase; }
+
+        .topbar-right { display: flex; flex-direction: row; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center;}
         
-        .topbar-right { display: flex; flex-direction: row; align-items: center; gap: 20px; }
         .player-profile { display: flex; align-items: center; gap: 8px; font-weight: 800; color: white; font-size: 1rem; text-transform: uppercase; }
         .player-profile i { color: var(--ps-glow); font-size: 1.4rem; }
+
         .wallet-pill { background: rgba(0,0,0,0.8); border: 1px solid rgba(255,180,0,0.4); padding: 8px 20px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 10px rgba(255,180,0,0.1); }
         .wallet-pill:hover { border-color: var(--credits); transform: translateY(-2px); box-shadow: 0 0 15px rgba(255,180,0,0.3); }
         .wallet-pill i { color: var(--credits); font-size: 1.2rem; }
         #nav-credits { color: var(--credits); font-weight: 900; font-size: 1.1rem; }
         .wallet-unit { color: var(--text-muted); font-size: 0.8rem; font-weight: 800; }
-        
+
         .topbar-actions { display: flex; flex-direction: row; align-items: center; gap: 15px; background: rgba(0,0,0,0.8); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--glass-border); width: fit-content; }
         .top-icon-btn { position: relative; cursor: pointer; background: transparent; border: none; font-size: 1.15rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: white; width: 20px; }
         .top-icon-btn i { text-align: center; width: 100%; transition: 0.2s; }
         .top-icon-btn:hover { transform: scale(1.1); }
+        
         .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); }
         .notif-badge.active { display: block; }
 
-        /* MAIN LOBBY & CARDS */
+        /* ================= MAIN LOBBY & CARDS ================= */
         .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; padding-top: 80px; }
         .content { width: 100%; max-width: 1400px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
         .view-container { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; }
+        
         .header-title { font-size: 3rem; font-weight: 900; margin: 0 0 2rem 0; text-transform: uppercase; letter-spacing: 2px; color: white; text-shadow: 0 2px 15px rgba(0,0,0,0.8); text-align: center; }
+        
         .global-back { position: fixed; top: 100px; left: max(20px, calc(50% - 680px)); z-index: 50; background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; padding: 12px 25px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px; }
         .global-back:hover { background: white; color: black; transform: translateX(-5px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+
         .casino-title { font-size: 4rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 3rem 0; line-height: 1.1; color: white; text-shadow: 0 0 20px rgba(255,255,255,0.2); text-align: center; }
         
         .lobby-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .lobby-modes-container { display: flex; gap: 40px; justify-content: center; width: 100%; max-width: 900px; flex-wrap: wrap; }
+        
         .mode-card { flex: 1; min-width: 300px; max-width: 340px; height: 440px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; }
         .mode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); z-index: 1; }
         .mode-card:hover { transform: translateY(-10px); border-color: var(--ps-glow); box-shadow: 0 15px 40px rgba(0, 162, 255, 0.2); background: rgba(0, 30, 60, 0.8); }
@@ -135,8 +143,10 @@
         .mode-card:hover .mode-icon { transform: scale(1.1); color: white; text-shadow: 0 0 20px var(--ps-glow); }
         .mode-title { font-size: 1.9rem; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 12px; position: relative; z-index: 2; letter-spacing: 1px; white-space: nowrap; }
         .mode-desc { color: var(--text-muted); font-size: 1.05rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.6; }
+
         .casino-grid { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; align-items: center; margin: 0 auto; max-width: 1300px; }
         .casino-grid.solo-grid { max-width: 1000px; } 
+
         .game-card { width: 280px; height: 400px; cursor: pointer; display: flex; flex-direction: column; position: relative; border-radius: 16px; overflow: hidden; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; }
         .game-card:hover { transform: translateY(-8px); border-color: var(--glass-hover); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.1); }
         .game-img { flex: 1; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 6rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; }
@@ -144,17 +154,21 @@
         .game-info { padding: 20px; text-align: center; background: rgba(0,0,0,0.85); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 6px; height: 110px; justify-content: center; }
         .game-title { font-size: 1.4rem; font-weight: 900; color: white; text-transform:uppercase; letter-spacing: 1px; margin: 0; } 
         .game-desc { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; line-height: 1.3; }
+
         .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 1rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-        /* IN-GAME UI PANELS */
+        /* ================= IN-GAME UI PANELS ================= */
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
         .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
+
         .game-box { display: flex; gap: 20px; height: 650px; width: 100%; max-width: 850px; align-items: stretch; justify-content: center; margin: 0 auto; } 
         .main-panel { flex: 1; display: flex; flex-direction: column; position: relative; height: 100%; }
         .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 20px; min-height:0; }
+        
         .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); flex-shrink: 0; } 
         .controls-full { grid-column: span 2; display: flex; gap: 15px; justify-content: center; }
+
         .shared-layout { display: flex; gap: 20px; height: 650px; width: 100%; max-width: 1100px; align-items: stretch; margin: 0 auto; }
         .chat-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; }
         .chat-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
@@ -174,9 +188,9 @@
         .bet-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         .bet-btn.has-bet { border-top: 2px solid var(--tile-color, var(--ps-glow)) !important; border-left: 2px solid var(--tile-color, var(--ps-glow)) !important; border-right: 2px solid var(--tile-color, var(--ps-glow)) !important; box-shadow: inset 0 0 15px rgba(255,255,255,0.1), 0 -5px 20px rgba(0,0,0,0.6); color: #fff !important; text-shadow: 0 0 10px var(--tile-color, var(--ps-glow)); transform: translateY(-3px); }
 
-        /* MODALS */
+        /* ================= MODALS ================= */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .modal-content { background: var(--glass-bg); width: 600px; max-width: 95vw; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9); position: relative; display: flex; flex-direction: column; height: auto; min-height: fit-content; }
+        .modal-content { background: var(--glass-bg); width: 600px; max-width: 95vw; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9); position: relative; display: flex; flex-direction: column; height: auto; max-height: 90vh; }
         .modal-close-icon { position: absolute; top: 20px; right: 25px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 100; background: none; border: none; padding: 0; outline: none;}
         .modal-close-icon:hover { color: var(--danger); transform: scale(1.1); }
         .modal-content h3 { font-size: 2rem; font-weight: 900; margin-bottom: 1.5rem; margin-top: 5px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; text-align: center; flex-shrink: 0; }
@@ -188,6 +202,7 @@
         .bank-section { display: none; flex: 1; padding-right: 5px; }
         .bank-section.active { display: block; }
 
+        /* Solid Header Backgrounds to fix scroll overlap */
         thead th { position: sticky; top: 0; background: #000a1f; z-index: 10; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); padding: 10px 15px;}
 
         /* DAILY REWARD */
@@ -236,7 +251,7 @@
         .ticket-log-status.approved { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
         .ticket-log-status.rejected { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
 
-        /* EXACT GREEN/RED RESULT BOXES FOR BOTH SOLO AND SHARED */
+        /* EXACT GREEN/RED RESULT BOXES */
         .result-box { position: absolute; bottom: 20px; right: 20px; text-align: right; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; display: none; z-index: 100; min-width: 250px; text-transform: uppercase; backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
         .result-box.win { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.4); border-right: 4px solid var(--success); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
         .result-box.lose { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.4); border-right: 4px solid var(--danger); animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
@@ -258,6 +273,33 @@
         .color-dice-container { display: flex; gap: 30px; justify-content: center; font-size: 6rem; margin-bottom: 20px; } .color-die { width: 130px; height: 130px; border-radius: 16px; border: 2px solid rgba(255,255,255,0.3); box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; color: white; transition: 0.3s; background: #111; font-weight: 800;} .c-grey { background: radial-gradient(circle, #333, #0a0a0a); color: rgba(255,255,255,0.4); border-color: #444; } .c-red { background: radial-gradient(circle, #ff3366, #99002b); border-color: #ff3366;} .c-blue { background: radial-gradient(circle, #00a2ff, #003d66); border-color: #00a2ff;} .c-yellow { background: radial-gradient(circle, #ffcc00, #997a00); border-color: #ffcc00;} .c-white { background: radial-gradient(circle, #ffffff, #999999); color: #000; border-color: #fff;} .c-green { background: radial-gradient(circle, #00e676, #006634); border-color: #00e676;} .c-pink { background: radial-gradient(circle, #ff66b2, #99004d); border-color: #ff66b2;}
         .dt-arena { display: flex; justify-content: center; gap: 80px; width: 100%; align-items: center; margin-bottom: 20px; } .dt-side { display: flex; flex-direction: column; align-items: center; gap: 20px; } .dt-label { font-size: 2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; } .lbl-dragon { color: var(--danger); text-shadow: 0 0 20px rgba(255,51,102,0.6); } .lbl-tiger { color: var(--credits); text-shadow: 0 0 20px rgba(255,180,0,0.6); } .dt-card { width: 120px !important; height: 170px !important; } .dt-card .val { font-size: 3rem; } .dt-card .suit { font-size: 3.5rem; }
         .sicbo-dice { display: flex; justify-content: center; gap: 30px; font-size: 6rem; margin-bottom: 10px; } .s-die { color: white; text-shadow: 0 10px 20px rgba(0,0,0,0.8); }
+
+        /* ================= MOBILE RESPONSIVENESS ================= */
+        @media (max-width: 768px) {
+            .topbar { padding: 10px 15px; }
+            .topbar-inner { flex-direction: column; gap: 10px; }
+            .brand-title { font-size: 1.2rem; }
+            .main-wrapper { padding-top: 120px; }
+            .casino-title { font-size: 2.5rem; }
+            
+            /* Stack Shared Table Layout */
+            .shared-layout { flex-direction: column; height: auto; }
+            .chat-panel { width: 100%; height: 300px; margin-top: 15px; }
+            .game-box { height: auto; min-height: 500px; }
+            
+            /* Resize assets for small screens */
+            .blackjack-scores { flex-direction: column; align-items: center; gap: 20px; }
+            .color-die { width: 80px; height: 80px; font-size: 3rem; }
+            .dt-arena { gap: 20px; }
+            .dt-card { width: 80px !important; height: 120px !important; }
+            .dt-card .val { font-size: 2rem; }
+            .dt-card .suit { font-size: 2.5rem; }
+            
+            .modal-content { width: 95vw; padding: 25px 20px; }
+            .dr-days { flex-wrap: wrap; height: auto; }
+            .dr-day { min-width: 60px; height: 90px; }
+            .dr-day.active { height: 110px; }
+        }
     </style>
 </head>
 <body>
@@ -534,9 +576,9 @@
                           <i class="fas fa-clock"></i> 
                           <div style="display:flex; align-items:baseline;"><span id="sg-timer">15</span><span class="timer-sec">s</span></div>
                       </div>
-                      <button class="btn-rules" onclick="openRules(activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
-                      <button class="btn-rules" onclick="openGameHistory(activeSharedGame)" title="My History"><i class="fas fa-history"></i></button>
-                      <button class="btn-rules" onclick="openGlobalResults(activeSharedGame)" title="Recent Results Feed"><i class="fas fa-list-ol"></i></button>
+                      <button class="btn-rules" onclick="openRules(window.activeSharedGame)" title="How to Play"><i class="fas fa-info-circle"></i></button>
+                      <button class="btn-rules" onclick="openGameHistory(window.activeSharedGame)" title="My History"><i class="fas fa-history"></i></button>
+                      <button class="btn-rules" onclick="openGlobalResults(window.activeSharedGame)" title="Recent Results Feed"><i class="fas fa-list-ol"></i></button>
                   </div>
                 </div>
                 
@@ -706,7 +748,8 @@
     let myCredits = 0;
     let myGameHistory = { dice: [], coinflip: [], baccarat: [], blackjack: [], perya: [], dt: [], sicbo: [] };
     
-    let activeSharedGame = null;
+    // Globally defined to properly attach to rules/history buttons
+    window.activeSharedGame = null;
     let sState = { time: 15, status: 'BETTING' };
     let mySBets = {};
     let dailyTimerInterval = null;
@@ -875,10 +918,10 @@
         switchView('casino');
     });
 
-    socket.on('balanceUpdateData', (newBalance) => { updateMyBalance(newBalance); });
+    socket.on('balanceUpdateData', (newBalance) => { updateMyBalance(newBalance, true); });
 
     function updateMyBalance(newBalance, didWin = false) {
-        if(didWin) { 
+        if(didWin && newBalance > myCredits) { 
             let p1 = document.getElementById('pill-credits');
             p1.classList.remove('anim-pop'); void p1.offsetWidth; p1.classList.add('anim-pop'); sfx.win(); 
         }
@@ -1020,7 +1063,7 @@
 
     // --- INTERACTIVE CURRENT BETS ---
     function openCurrentBetsModal() {
-        if(!activeSharedGame) return;
+        if(!window.activeSharedGame) return;
         const list = document.getElementById('cb-list');
         list.innerHTML = '';
         let total = 0;
@@ -1085,16 +1128,18 @@
     }
 
     function backToSoloLobby() { switchView('casino'); openLobbyMode('indiv'); }
+    
     function backToSharedLobby() { 
-        if (activeSharedGame && mySBets && Object.values(mySBets).reduce((a,b)=>a+b,0) > 0 && sState.status === 'BETTING') {
+        if (window.activeSharedGame && mySBets && Object.values(mySBets).reduce((a,b)=>a+b,0) > 0 && sState.status === 'BETTING') {
             showToast("Cannot leave with active bets. Wait for round to finish.", "error"); return;
         }
         document.getElementById('view-shared-game').classList.add('hidden'); 
-        socket.emit('leaveRoom', activeSharedGame);
-        activeSharedGame = null; 
+        socket.emit('leaveRoom', window.activeSharedGame);
+        window.activeSharedGame = null; 
         switchView('casino'); 
         openLobbyMode('shared'); 
     }
+    
     function backToCasino() { switchView('casino'); }
 
     function confirmLogout() { if(confirm("Are you sure you want to log out of Stick N' Trade?")) { location.reload(); } }
@@ -1279,7 +1324,7 @@
     function sendChat() {
         const input = document.getElementById('chat-input');
         if(input.value.trim() === '') return;
-        socket.emit('sendChat', { room: activeSharedGame, msg: input.value });
+        socket.emit('sendChat', { room: window.activeSharedGame, msg: input.value });
         input.value = '';
     }
     
@@ -1296,7 +1341,7 @@
             if(counts[keys[index]]!==undefined) el.innerText = counts[keys[index]];
         });
         const sgCount = document.getElementById('sg-active-players');
-        if(sgCount && activeSharedGame) sgCount.innerText = counts[activeSharedGame] || 0;
+        if(sgCount && window.activeSharedGame) sgCount.innerText = counts[window.activeSharedGame] || 0;
     });
 
     const sConf = {
@@ -1511,9 +1556,12 @@
     };
     
     function openSharedGame(id) { 
-      activeSharedGame = id; 
+      window.activeSharedGame = id; 
       document.getElementById('sg-title').innerText = sConf[id].title; 
       
+      let cb = document.getElementById('sg-chat');
+      if (cb) { cb.innerHTML = `<div class="chat-msg chat-sys">Connected to ${sConf[id].title} room.</div>`; }
+
       let o = document.getElementById('sg-overlay'); 
       if (o) { o.classList.remove('show'); o.style.display = 'none'; }
       
@@ -1532,7 +1580,7 @@
       if (isNaN(a) || a <= 0) { showToast("Invalid bet.", "error"); return; } 
       if (a > myCredits) { showToast("Insufficient TC.", "error"); return; } 
       
-      socket.emit('placeSharedBet', { room: activeSharedGame, choice: c, amount: a });
+      socket.emit('placeSharedBet', { room: window.activeSharedGame, choice: c, amount: a });
       
       myCredits -= a; document.getElementById('nav-credits').innerText = myCredits.toLocaleString();
       if (!mySBets[c]) mySBets[c] = 0; mySBets[c] += a; 
@@ -1586,8 +1634,8 @@
         
         let oldBetInput = document.getElementById('sg-bet-input') ? document.getElementById('sg-bet-input').value : '';
         
-        if (sConf[activeSharedGame] && sConf[activeSharedGame].setupUI) {
-            sConf[activeSharedGame].setupUI();
+        if (window.activeSharedGame && sConf[window.activeSharedGame] && sConf[window.activeSharedGame].setupUI) {
+            sConf[window.activeSharedGame].setupUI();
         }
         
         let newBetInput = document.getElementById('sg-bet-input');
@@ -1618,16 +1666,18 @@
         let s = document.getElementById('sg-timer');
         if (s) s.innerText = '0';
         
-        let cb = document.getElementById('sg-chat');
-        if (cb) {
-            cb.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-sys">No more bets!</div>`);
-            cb.scrollTop = cb.scrollHeight;
+        if (window.activeSharedGame) {
+            let cb = document.getElementById('sg-chat');
+            if (cb) {
+                cb.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-sys">No more bets!</div>`);
+                cb.scrollTop = cb.scrollHeight;
+            }
         }
         sfx.lock(); 
     });
 
     socket.on('sharedResults', (data) => {
-        if(activeSharedGame === data.room && sConf[data.room]) {
+        if(window.activeSharedGame === data.room && sConf[data.room]) {
             sConf[data.room].animateResult(data);
         }
     });
@@ -1638,12 +1688,14 @@
         let r = document.getElementById('sg-timer-box'); 
         if (r) { r.style.color = 'white'; r.style.borderColor = 'var(--glass-border)'; } 
         
-        let cb = document.getElementById('sg-chat');
-        if (cb) {
-            cb.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-sys">Place your bets!</div>`);
-            cb.scrollTop = cb.scrollHeight;
+        if (window.activeSharedGame) {
+            let cb = document.getElementById('sg-chat');
+            if (cb) {
+                cb.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-sys">Place your bets!</div>`);
+                cb.scrollTop = cb.scrollHeight;
+            }
+            wipeTableVisually();
         }
-        wipeTableVisually();
     });
 
     // --- CASHIER & PROMOS ---
