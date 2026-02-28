@@ -126,38 +126,39 @@
         .game-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: flex-start;}
         .game-wrapper.solo-wrap { max-width: 850px; }
         
-        .back-nav { margin-bottom: 15px; }
-        .btn-back { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
+        .back-nav { margin-bottom: 15px; width: 100%; }
+        .btn-back { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
         .btn-back:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
         /* MAIN LOBBY & CARDS */
-        /* Flex Alignment fixed to prevent sinking on PC */
+        /* Flex Alignment fixed to flex-start to prevent sinking on PC */
         .main-wrapper { min-height: 100vh; position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 120px; padding-bottom: 50px;}
         .content { width: 100%; max-width: 1400px; position: relative; display: flex; flex-direction: column; align-items: center; padding: 2rem; margin: 0 auto;}
         .view-container { width: 100%; transition: opacity 0.3s; }
         
-        .header-title { font-size: 3rem; font-weight: 900; margin: 0 0 2rem 0; text-transform: uppercase; letter-spacing: 2px; color: white; text-shadow: 0 2px 15px rgba(0,0,0,0.8); text-align: center; }
+        .header-title { font-size: 3rem; font-weight: 900; margin: 0 0 2rem 0; text-transform: uppercase; letter-spacing: 2px; color: white; text-shadow: 0 2px 15px rgba(0,0,0,0.8); text-align: center; width: 100%;}
         .casino-title { font-size: 4rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 3rem 0; line-height: 1.1; color: white; text-shadow: 0 0 20px rgba(255,255,255,0.2); text-align: center; }
         
         .lobby-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .lobby-modes-container { display: flex; gap: 40px; justify-content: center; width: 100%; max-width: 900px; flex-wrap: wrap; }
         
         /* VERTICAL GAME CARDS (From Blueprint) */
-        .mode-card { width: 280px; height: 380px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; flex-shrink: 0; }
+        .mode-card { width: 360px; height: 480px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; flex-shrink: 0; }
         .mode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); z-index: 1; }
         .mode-card:hover { transform: translateY(-10px); border-color: var(--ps-glow); box-shadow: 0 15px 40px rgba(0, 162, 255, 0.2); background: rgba(0, 30, 60, 0.8); }
-        .mode-icon { font-size: 6rem; margin-bottom: 2rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; z-index: 2; }
+        .mode-icon { font-size: 7rem; margin-bottom: 2.5rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; z-index: 2; }
         .mode-card:hover .mode-icon { transform: scale(1.1); color: white; text-shadow: 0 0 20px var(--ps-glow); }
-        .mode-title { font-size: 1.9rem; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 12px; position: relative; z-index: 2; letter-spacing: 1px; white-space: nowrap; }
-        .mode-desc { color: var(--text-muted); font-size: 1.05rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.6; }
+        .mode-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 12px; position: relative; z-index: 2; letter-spacing: 1px; white-space: nowrap; }
+        .mode-desc { color: var(--text-muted); font-size: 1.1rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.6; }
 
         /* LIVE BADGE */
-        .live-badge { position: absolute; top: 15px; right: 15px; background: rgba(255, 51, 102, 0.15); border: 1px solid rgba(255, 51, 102, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--danger); font-size: 0.75rem; font-weight: 900; padding: 5px 10px; border-radius: 50px; display: flex; align-items: center; gap: 6px; letter-spacing: 1px; z-index: 10; box-shadow: 0 5px 15px rgba(255, 51, 102, 0.2); }
+        .live-badge { position: absolute; top: 20px; right: 20px; background: rgba(255, 51, 102, 0.15); border: 1px solid rgba(255, 51, 102, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--danger); font-size: 0.85rem; font-weight: 900; padding: 6px 12px; border-radius: 50px; display: flex; align-items: center; gap: 6px; letter-spacing: 1px; z-index: 10; box-shadow: 0 5px 15px rgba(255, 51, 102, 0.2); }
         .live-dot { width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; animation: pulseRed 1.5s infinite; }
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
 
         .casino-grid { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
         
+        /* Strict Blueprint Vertical Game Categories */
         .game-card { width: 240px; height: 340px; cursor: pointer; display: flex; flex-direction: column; position: relative; border-radius: 16px; overflow: hidden; background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; flex-shrink: 0;}
         .game-card:hover { transform: translateY(-8px); border-color: var(--glass-hover); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.1); }
         .game-img { flex: 1; background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; font-size: 5rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; }
@@ -173,14 +174,15 @@
         .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
 
-        .game-box { display: flex; flex-direction: column; width: 100%; max-width: 850px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; height: 650px;} 
-        .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 20px; min-height: 350px;}
+        /* Game Box now expands as needed to not cut off content */
+        .game-box { display: flex; flex-direction: column; width: 100%; max-width: 850px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; height: auto; min-height: 600px;} 
+        .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 40px 20px; min-height: 350px;}
         
         .controls-grid { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); flex-shrink: 0; } 
         .controls-full { display: flex; gap: 15px; justify-content: center; width: 100%; }
 
-        .shared-layout { display: flex; gap: 20px; width: 100%; height: 650px; align-items: stretch; justify-content: center; }
-        .chat-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; }
+        .shared-layout { display: flex; gap: 20px; width: 100%; height: auto; min-height: 650px; align-items: stretch; justify-content: center; }
+        .chat-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: auto; min-height: 600px;}
         .chat-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
         .chat-msg { background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 8px; border-left: 3px solid var(--ps-light-blue); animation: popIn 0.2s ease-out; flex-shrink: 0;}
         .chat-user { font-weight: 900; color: var(--ps-glow); margin-bottom: 5px; text-transform: uppercase; font-size: 0.85rem;}
@@ -193,7 +195,7 @@
 
         /* SHARED BET BUTTONS & ACTIVE BET OUTLINE */
         .bet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; }
-        .bet-grid.perya-grid { grid-template-columns: repeat(3, 1fr); }
+        .bet-grid.perya-grid { grid-template-columns: repeat(3, 1fr); gap: 10px;}
         .bet-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; padding: 15px 10px; border-radius: 8px; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;}
         .bet-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 
@@ -668,6 +670,14 @@
       </div>
   </div>
 
+  <div id="current-bets-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="width: 350px;">
+        <i class="fas fa-times modal-close-icon" onclick="closeModal('current-bets-modal')"></i>
+        <h3 style="margin-top:0;">My Bets</h3>
+        <div id="cb-list" class="custom-scroll" style="max-height: 300px; display: flex; flex-direction: column; gap: 8px;"></div>
+    </div>
+  </div>
+
   <div id="promo-modal" class="modal-overlay hidden">
     <div class="modal-content" style="width: 400px; height: auto; min-height: fit-content;">
         <i class="fas fa-times modal-close-icon" onclick="closeModal('promo-modal')"></i>
@@ -751,17 +761,15 @@
         <i class="fas fa-times modal-close-icon" onclick="closeModal('history-modal')"></i>
         <h3 id="history-title" style="margin-top:0;">HISTORY</h3>
         
-        <div style="background:rgba(0,0,0,0.5); padding:20px; border-radius:12px; margin-bottom:15px; border: 1px solid var(--glass-border); display:flex; flex-direction:column; gap:15px;">
+        <div id="history-stats-container" style="background:rgba(0,0,0,0.5); padding:20px; border-radius:12px; margin-bottom:15px; border: 1px solid var(--glass-border); display:flex; flex-direction:column; gap:15px;">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
                 <span style="color:var(--text-muted); font-weight:800; font-size:0.9rem; letter-spacing:1px;">TOTAL ROUNDS:</span>
                 <span id="stat-total-rounds" style="color:white; font-weight:900; font-size:1.1rem;">0</span>
             </div>
             <div style="text-align: center;">
-                <div style="color:var(--text-muted); font-weight:800; font-size:0.9rem; margin-bottom:8px; letter-spacing:1px;">PERCENTAGE OF BETTABLES:</div>
                 <div id="stat-percentages" style="display:flex; flex-wrap:wrap; gap:10px; justify-content: center;"></div>
             </div>
             <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; text-align: center;">
-                <div style="color:var(--text-muted); font-weight:800; font-size:0.9rem; margin-bottom:8px; letter-spacing:1px;">FIVE RECENT OUTCOMES:</div>
                 <div id="stat-recent-5" style="display:flex; gap:8px; align-items:center; justify-content: center;"></div>
             </div>
         </div>
@@ -832,7 +840,7 @@
         return str.split(',').map(c => {
             let color = c.trim().toLowerCase();
             if(!color) return '';
-            return `<div class="color-die c-${color}" style="width:18px; height:18px; border-radius:4px; display:inline-flex; border:1px solid rgba(255,255,255,0.2); margin:0 2px;"></div>`;
+            return `<div class="color-die c-${color}" style="width:16px; height:16px; border-radius:3px; display:inline-block; border:1px solid rgba(255,255,255,0.2); margin:0 2px;"></div>`;
         }).join('');
     }
 
@@ -1054,13 +1062,13 @@
 
     // --- RULES & UNIFIED HISTORY LOGIC ---
     const gameInfoMap = {
-      'dice': { title: "Dice Roll", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (x2 Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
-      'coinflip': { title: "Coin Flip", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>x2</strong> your bet.</li></ul>" },
-      'baccarat': { title: "Baccarat", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Player, Banker, or Tie. Hand closest to <strong>9</strong> wins.</li><li style='margin-bottom:10px;'><strong>Card Rules:</strong> Standard 3rd card draw rules apply.</li><li style='margin-bottom:10px;'>Player pays <strong>x2</strong>. Banker pays <strong>x1.95</strong>.</li><li style='margin-bottom:10px;'>Tie pays <strong>x9</strong>. Player/Banker bets push on Tie.</li></ul>" },
-      'blackjack': { title: "Blackjack", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Beat the dealer without going over 21.</li><li style='margin-bottom:10px;'>Dealer must draw to 16 and stand on <strong>17 or higher</strong>.</li><li style='margin-bottom:10px;'>Natural Blackjack pays <strong>x2.5</strong>. Standard wins pay <strong>x2</strong>. Ties push.</li></ul>" },
-      'perya': { title: "Color Game", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Red, Blue, Yellow, White, Green, or Pink.</li><li style='margin-bottom:10px;'>3 dice are rolled.</li><li style='margin-bottom:10px;'>1 Match pays <strong>x2</strong>. 2 Matches pay <strong>x3</strong>. 3 Matches pay <strong>x4</strong>!</li></ul>" },
-      'dt': { title: "Dragon Tiger", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Dragon, Tiger, or Tie. Highest card wins.</li><li style='margin-bottom:10px;'>Aces are low (1). Kings are high (13).</li><li style='margin-bottom:10px;'>Dragon/Tiger pays <strong>x2</strong>. Tie pays <strong>x9</strong>.</li></ul>" },
-      'sicbo': { title: "Sic Bo", body: "<ul style='color:var(--text-muted);'><li style='margin-bottom:10px;'>Bet on Small (Sum 4-10) or Big (Sum 11-17).</li><li style='margin-bottom:10px;'>Wins pay <strong>x2</strong>.</li><li style='margin-bottom:10px;'>Any Triple roll loses all Big/Small bets.</li></ul>" }
+      'dice': { title: "Dice Roll", body: "<ul><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (x2 Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
+      'coinflip': { title: "Coin Flip", body: "<ul><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>x2</strong> your bet.</li></ul>" },
+      'baccarat': { title: "Baccarat", body: "<ul><li style='margin-bottom:10px;'>Bet on Player, Banker, or Tie. Hand closest to <strong>9</strong> wins.</li><li style='margin-bottom:10px;'><strong>Card Rules:</strong> Standard 3rd card draw rules apply.</li><li style='margin-bottom:10px;'>Player pays <strong>x2</strong>. Banker pays <strong>x1.95</strong>.</li><li style='margin-bottom:10px;'>Tie pays <strong>x9</strong>. Player/Banker bets push on Tie.</li></ul>" },
+      'blackjack': { title: "Blackjack", body: "<ul><li style='margin-bottom:10px;'>Beat the dealer without going over 21.</li><li style='margin-bottom:10px;'>Dealer must draw to 16 and stand on <strong>17 or higher</strong>.</li><li style='margin-bottom:10px;'>Natural Blackjack pays <strong>x2.5</strong>. Standard wins pay <strong>x2</strong>. Ties push.</li></ul>" },
+      'perya': { title: "Color Game", body: "<ul><li style='margin-bottom:10px;'>Bet on Red, Blue, Yellow, White, Green, or Pink.</li><li style='margin-bottom:10px;'>3 dice are rolled.</li><li style='margin-bottom:10px;'>1 Match pays <strong>x2</strong>. 2 Matches pay <strong>x3</strong>. 3 Matches pay <strong>x4</strong>!</li></ul>" },
+      'dt': { title: "Dragon Tiger", body: "<ul><li style='margin-bottom:10px;'>Bet on Dragon, Tiger, or Tie. Highest card wins.</li><li style='margin-bottom:10px;'>Aces are low (1). Kings are high (13).</li><li style='margin-bottom:10px;'>Dragon/Tiger pays <strong>x2</strong>. Tie pays <strong>x9</strong>.</li></ul>" },
+      'sicbo': { title: "Sic Bo", body: "<ul><li style='margin-bottom:10px;'>Bet on Small (Sum 4-10) or Big (Sum 11-17).</li><li style='margin-bottom:10px;'>Wins pay <strong>x2</strong>.</li><li style='margin-bottom:10px;'>Any Triple roll loses all Big/Small bets.</li></ul>" }
     };
 
     function openRules(k) { 
@@ -1150,8 +1158,6 @@
                     }
                 }
             });
-        } else {
-            statsHtml = `<span style="color:var(--text-muted)">Waiting for rounds...</span>`;
         }
         document.getElementById('stat-percentages').innerHTML = statsHtml;
 
@@ -1164,8 +1170,28 @@
                 return `<span style="color:${getBetColor(word)}; font-weight:900; background:rgba(0,0,0,0.5); padding:4px 8px; border-radius:4px;">${word}</span>`;
             }
         }).join('');
-        document.getElementById('stat-recent-5').innerHTML = rHtml || '<span style="color:var(--text-muted)">No recent games</span>';
+        document.getElementById('stat-recent-5').innerHTML = rHtml;
     });
+
+    // --- INTERACTIVE CURRENT BETS ---
+    function openCurrentBetsModal() {
+        if(!window.activeSharedGame) return;
+        const list = document.getElementById('cb-list');
+        list.innerHTML = '';
+        let total = 0;
+        const entries = Object.entries(mySBets);
+        
+        if(entries.length === 0) {
+            list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">No active bets for this round.</div>`;
+        } else {
+            entries.forEach(([choice, amount]) => {
+                total += amount; let cColor = getBetColor(choice);
+                list.innerHTML += `<div style="background:rgba(0,0,0,0.4); padding:10px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:flex; justify-content:space-between; align-items:center; font-weight:800;"><span style="text-transform:uppercase; color:${cColor};">${choice}</span><span style="color:var(--credits); font-size: 1rem;">${amount.toLocaleString()} TC</span></div>`;
+            });
+            list.innerHTML += `<div style="border-top:1px solid var(--glass-border); padding-top:10px; margin-top:5px; display:flex; justify-content:space-between; font-weight:900; font-size:1.1rem; color:white;"><span>TOTAL WAGERED</span><span style="color:var(--credits);">${total.toLocaleString()} TC</span></div>`;
+        }
+        openModal('current-bets-modal');
+    }
 
     // --- NAVIGATION LOGIC ---
     function switchView(viewId) { 
@@ -1246,8 +1272,14 @@
             box.className = "result-box lose"; 
         } 
         
-        box.innerHTML = h; box.style.display = 'block'; 
-        setTimeout(() => { box.classList.add('show'); }, 10);
+        // Exact 0.5s pause before showing the result box to ensure animation is completely done visually
+        setTimeout(() => {
+            box.innerHTML = h; box.style.display = 'block'; 
+            setTimeout(() => { box.classList.add('show'); }, 10);
+            
+            // Exact 1.5s pause AFTER box shows before animating credits
+            setTimeout(() => { updateMyBalance(newBalance, payout > bet); }, 1500);
+        }, 500);
     }
 
     async function playDice() {
@@ -1280,10 +1312,7 @@
           showEndBox(mb, resData.bet, resData.payout, `Rolled ${resData.roll}`, resData.newBalance);
           logHistory('dice', resData.bet + ' TC', resData.roll.toString(), resData.payout > resData.bet ? resData.payout - resData.bet : 0, resData.payout === 0 ? resData.bet : 0, true);
           
-          await delay(1500); // Pause before money updates
-          updateMyBalance(resData.newBalance, resData.payout > resData.bet);
-          
-          await delay(2000); // Cooldown
+          await delay(3500); // Cooldown
           icn.className = 'fas fa-dice-d20 dice-icon';
           icn.style.display = 'block'; nd.style.display = 'none'; mb.style.display = 'none';
           btn.disabled = false;
@@ -1319,10 +1348,7 @@
           showEndBox(mb, resData.bet, resData.payout, `Landed on ${resData.result}`, resData.newBalance);
           logHistory('coinflip', choice.toUpperCase(), resData.result.toUpperCase(), resData.payout > resData.bet ? resData.payout - resData.bet : 0, resData.payout === 0 ? resData.bet : 0, true);
           
-          await delay(1500); // Pause before wallet
-          updateMyBalance(resData.newBalance, resData.payout > resData.bet);
-
-          await delay(1500); // Cooldown
+          await delay(3500); // Cooldown
           document.getElementById('btn-heads').disabled = false; 
           document.getElementById('btn-tails').disabled = false;
           mb.style.display = 'none'; 
@@ -1408,24 +1434,25 @@
                 }
             }
             
-            await delay(500); 
-            showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.msg, data.newBalance);
+            await delay(500); // Wait for the final card to sit
             
-            await delay(1500);
-            updateMyBalance(data.newBalance, data.payout > bjSt.bet);
-
+            let pS = getBJScore(data.pHand);
+            let dS = getBJScore(data.dHand);
+            let resultScoreStr = pS > 21 ? 'BUST!' : (dS > 21 ? 'DEALER BUSTS!' : `${data.msg.toUpperCase()} (${pS} TO ${dS})`);
+            
+            showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.msg, data.newBalance);
             let wProf = data.payout > bjSt.bet ? data.payout - bjSt.bet : 0;
             let lBet = data.payout === 0 ? bjSt.bet : 0;
-            logHistory('blackjack', bjSt.bet + ' TC', data.msg.toUpperCase(), wProf, lBet, true);
+            logHistory('blackjack', bjSt.bet + ' TC', resultScoreStr, wProf, lBet, true);
             
             setTimeout(() => {
                 document.getElementById('btn-bj-deal').disabled = false;
                 document.getElementById('bj-msg').style.display = 'none';
-            }, 2500);
+            }, 3500);
         }
     });
 
-    // --- SHARED LIVE TABLES ENGINE ---
+    // --- SHARED TABLES NETWORKING ---
     function sendChat() {
         const input = document.getElementById('chat-input');
         if(input.value.trim() === '') return;
@@ -1632,7 +1659,7 @@
                 }
             } 
             let msg = w === 'Tie' ? `TIE!` : `${w.toUpperCase()} WINS!`;
-            let resStr = w.toUpperCase();
+            let resStr = w === 'Tie' ? `TIE! (${pS} TO ${bS})` : `${w.toUpperCase()} WINS (${pS} TO ${bS})`;
             processSharedPayout('baccarat', tp, tba, msg, wonProfit, lostBet, Object.keys(mySBets).join(', '), resStr);
         }
       },
@@ -1684,7 +1711,7 @@
                 }
               } 
               let msg = w === 'Tie' ? `TIE!` : `${w.toUpperCase()} WINS!`;
-              let resStr = w.toUpperCase();
+              let resStr = w === 'Tie' ? `TIE! (${data.dCard.raw} TO ${data.tCard.raw})` : `${w.toUpperCase()} WINS (${data.dCard.raw} TO ${data.tCard.raw})`;
               processSharedPayout('dt', tp, tba, msg, wonProfit, lostBet, Object.keys(mySBets).join(', '), resStr); 
             }, 1000); 
           }, 500); 
@@ -1737,8 +1764,8 @@
               let a = mySBets[b]; tba += a; 
               if (b === w) { tp += a * 2; wonProfit += a; } else { lostBet += a;}
             } 
-            let msg = it ? `TRIPLE! HOUSE WINS` : `${w.toUpperCase()} (${s})`;
-            let resStr = it ? 'TRIPLE' : w.toUpperCase();
+            let msg = it ? `TRIPLE! HOUSE WINS` : `${w.toUpperCase()}`;
+            let resStr = it ? 'TRIPLE' : `${w.toUpperCase()} (${s})`;
             processSharedPayout('sicbo', tp, tba, msg, wonProfit, lostBet, Object.keys(mySBets).join(', '), resStr); 
           }, 2000); 
         }
