@@ -26,19 +26,28 @@
         input[type="number"] { -moz-appearance: textfield; }
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
-        /* AUTHENTICATION GATEWAY (Fixed Size and Alignment) */
+        /* ================= AUTHENTICATION GATEWAY ================= */
         #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
+        
+        /* Fixed Width & Padding */
         .auth-box { width: 420px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 25px 80px rgba(0,0,0,0.9); text-align: center; }
-        .auth-title { font-size: 2.8rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
+        
+        /* Reduced Font Size so it doesn't wrap/mess up */
+        .auth-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
         .auth-sub { color: var(--ps-glow); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
+        
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
         .auth-tab { flex: 1; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--text-muted); font-weight: 900; padding: 10px; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 1.1rem; }
         .auth-tab.active { border-bottom-color: var(--ps-glow); color: var(--ps-glow); }
+        
         .auth-msg { font-size: 0.9rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; }
         .auth-error { color: var(--danger); }
         .auth-success { color: var(--success); }
+        
         .pwd-input-wrapper { position: relative; width: 100%; display: block; }
-        .pwd-input-wrapper input { width: 100%; text-align: center; }
+        
+        /* True Center Math (No asymmetrical padding) */
+        .pwd-input-wrapper input { width: 100%; text-align: center; padding: 15px; }
         .pwd-input-wrapper i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 1.1rem; z-index: 2; transition: 0.2s; }
         .pwd-input-wrapper i:hover { color: white; }
 
@@ -175,7 +184,7 @@
         .dr-status-text { font-size: 1.2rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
         .dr-timer { font-size: 1.5rem; font-weight: 900; color: var(--ps-glow); font-family: 'Rajdhani', sans-serif; }
 
-        /* BACCARAT TEXT & IN-GAME NOTIFS */
+        /* BACCARAT TEXT & IN-GAME NOTIFS (NO TOP TOASTS) */
         #bac-action-text { height: 24px; color: var(--ps-glow); font-weight: 800; text-align: center; margin-top: 40px; letter-spacing: 1px; text-transform: uppercase; font-size: 1.1rem; text-shadow: 0 0 10px rgba(0,162,255,0.5); }
 
         /* GLOBAL TOAST (Top Right) */
@@ -318,6 +327,7 @@
         <div class="content">
           
           <div id="view-casino" class="view-container">
+            
             <div class="lobby-wrapper" id="lobby-modes">
               <div style="text-align: center; margin-bottom: 3rem;">
                  <h1 class="casino-title">STICK N' TRADE CASINO</h1>
@@ -530,6 +540,7 @@
         <button class="modal-close-icon" onclick="closeModal('current-bets-modal')"><i class="fas fa-times"></i></button>
         <h3 style="margin-top:0;">My Current Bets</h3>
         <p style="color:var(--text-muted); text-align:center; margin-bottom: 20px;">Active wagers for this round</p>
+        
         <div id="cb-list" class="custom-scroll" style="max-height: 300px; display: flex; flex-direction: column; gap: 10px;"></div>
     </div>
   </div>
@@ -543,7 +554,7 @@
             <input type="text" id="promo-code" class="input-control bet-input" placeholder="XXXX-XXXX-XXXX">
         </div>
         <button class="btn-play" style="width:100%; margin-top: 10px;" onclick="submitPromo()">REDEEM</button>
-        <div id="promo-response" style="text-align:center; font-weight:800; min-height:45px; margin-top:15px; font-size: 1.1rem; line-height:1.4;"></div>
+        <div id="promo-response" style="text-align:center; font-weight:800; min-height:25px; margin-top:15px; font-size: 1.1rem; line-height:1.4;"></div>
     </div>
   </div>
 
@@ -973,6 +984,7 @@
         });
     });
 
+    // --- INTERACTIVE CURRENT BETS ---
     function openCurrentBetsModal() {
         if(!activeSharedGame) return;
         const list = document.getElementById('cb-list');
@@ -992,6 +1004,7 @@
         openModal('current-bets-modal');
     }
 
+    // --- NAVIGATION LOGIC ---
     function switchView(viewId) { 
       if (audioCtx.state === 'suspended') audioCtx.resume(); 
       document.querySelectorAll('.main-wrapper > .content > .view-container').forEach(d => d.classList.add('hidden')); 
@@ -1052,16 +1065,16 @@
 
     function confirmLogout() { if(confirm("Are you sure you want to log out of Stick N' Trade?")) { location.reload(); } }
 
-    function showEndBox(box, bet, payout, msg) {
+    function showEndBox(box, bet, payout, msg, delayUpdate = 0) {
         let pft = payout - bet; let h = `<div class="res-title" style="color:white;">${msg}</div>`; 
         if (payout > bet) { 
             h += `<div class="res-payout" style="color:var(--success)">+${payout} TC</div>`; 
             box.className = "result-box win"; 
-            setTimeout(() => { updateMyBalance(myCredits + payout, true); }, 1200);
+            if(delayUpdate > 0) setTimeout(() => { updateMyBalance(myCredits + payout, true); }, delayUpdate);
         } else if (payout === bet) { 
             h += `<div class="res-payout" style="color:white">Push</div>`; 
             box.className = "result-box push"; 
-            setTimeout(() => { updateMyBalance(myCredits + payout, false); }, 1200);
+            if(delayUpdate > 0) setTimeout(() => { updateMyBalance(myCredits + payout, false); }, delayUpdate);
         } else { 
             sfx.lose(); 
             h += `<div class="res-payout" style="color:var(--danger)">Lost -${Math.abs(pft)}</div>`; 
@@ -1258,16 +1271,25 @@
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) { 
             const choices = [ {id: 'Yellow', c: '#ffcc00'}, {id: 'White', c: '#ffffff'}, {id: 'Pink', c: '#ff66b2'}, {id: 'Blue', c: '#00a2ff'}, {id: 'Red', c: '#ff3366'}, {id: 'Green', c: '#00e676'} ];
-            choices.forEach(c => { bg.innerHTML += `<button class="bet-btn perya-tile" data-choice="${c.id}" style="--tile-color:${c.c}; border-bottom:5px solid ${c.c}" onclick="placeSharedBet('${c.id}')">${c.id}</button>`; }); 
+            choices.forEach(c => { 
+              bg.innerHTML += `<button class="bet-btn perya-tile" data-choice="${c.id}" style="--tile-color:${c.c}; border-bottom:5px solid ${c.c}" onclick="placeSharedBet('${c.id}')">${c.id}</button>`; 
+            }); 
           } 
         },
         animateResult: function(data) {
             let d1 = document.getElementById('cd1'), d2 = document.getElementById('cd2'), d3 = document.getElementById('cd3'); 
-            if(d1) { d1.className = 'color-die anim-shake c-grey'; d2.className = 'color-die anim-shake c-grey'; d3.className = 'color-die anim-shake c-grey'; d1.innerText = ''; d2.innerText = ''; d3.innerText = ''; sfx.tick(); }
+            if(d1) {
+                d1.className = 'color-die anim-shake c-grey'; d2.className = 'color-die anim-shake c-grey'; d3.className = 'color-die anim-shake c-grey'; 
+                d1.innerText = ''; d2.innerText = ''; d3.innerText = ''; sfx.tick();
+            }
             
             setTimeout(() => {
                 let rollArr = Array.isArray(data.roll) ? data.roll : data.roll.split(',');
-                if (d1) { d1.className = `color-die c-${rollArr[0].toLowerCase().trim()}`; d2.className = `color-die c-${rollArr[1].toLowerCase().trim()}`; d3.className = `color-die c-${rollArr[2].toLowerCase().trim()}`; }
+                if (d1) {
+                    d1.className = `color-die c-${rollArr[0].toLowerCase().trim()}`; 
+                    d2.className = `color-die c-${rollArr[1].toLowerCase().trim()}`; 
+                    d3.className = `color-die c-${rollArr[2].toLowerCase().trim()}`; 
+                }
                 
                 let totBet = 0, totWon = 0;
                 for(let b in mySBets) { 
@@ -1329,7 +1351,9 @@
             pS = await dealTo(pHand, pScoreEl, pS, data.pCards[1]);
             bS = await dealTo(bHand, bScoreEl, bS, data.bCards[1]);
 
-            if (data.p3Drawn || data.b3Drawn) { await delay(800); }
+            if (data.p3Drawn || data.b3Drawn) {
+                await delay(800);
+            }
 
             if (data.p3Drawn) {
                 if(acText) acText.innerText = "Player draws 3rd card...";
@@ -1643,8 +1667,8 @@
     });
 
     function submitPromo() {
-        const code = document.getElementById('promo-code').value;
-        if(!code.trim()) return document.getElementById('promo-response').innerHTML = `<span style="color:var(--danger)">Enter a code.</span>`;
+        const code = document.getElementById('promo-code').value.trim(); // Notice NO toUpperCase() so it remains case-sensitive
+        if(!code) return document.getElementById('promo-response').innerHTML = `<span style="color:var(--danger)">Enter a code.</span>`;
         socket.emit('redeemPromo', code);
     }
 
