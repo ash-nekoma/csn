@@ -92,7 +92,7 @@
         .btn-rules:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: scale(1.05); }
 
         /* ================= 1-ROW HUD TOPBAR ================= */
-        #app-container { display: none; height: 100%; width: 100%; }
+        #app-container { display: none; min-height: 100vh; width: 100%; }
         .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 99999; background: rgba(0, 5, 15, 0.95); border-bottom: 1px solid var(--glass-border); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 12px 25px; height: 75px; display: flex; align-items: center;}
         .topbar-inner { width: 100%; max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
         
@@ -102,7 +102,7 @@
         .brand-title { font-weight: 900; letter-spacing: 2px; text-transform: uppercase; font-size: 1.5rem; color: var(--text-main); line-height: 1; text-shadow: 0 0 10px rgba(0, 162, 255, 0.5); }
         .brand-sub { color: var(--ps-glow); font-weight: 800; font-size: 0.9rem; letter-spacing: 3px; margin-top: 2px; text-transform: uppercase; }
 
-        .topbar-right { display: flex; flex-direction: row; align-items: center; gap: 20px; position: relative;}
+        .topbar-right { display: flex; flex-direction: row; align-items: center; gap: 20px;}
         
         .player-profile { display: flex; align-items: center; gap: 8px; font-weight: 800; color: white; font-size: 1rem; text-transform: uppercase; }
         .player-profile i { color: var(--ps-glow); font-size: 1.4rem; }
@@ -113,18 +113,17 @@
         #nav-credits { color: var(--credits); font-weight: 900; font-size: 1.1rem; }
         .wallet-unit { color: var(--text-muted); font-size: 0.8rem; font-weight: 800; }
 
-        .topbar-actions { display: flex; flex-direction: row; align-items: center; gap: 15px; background: rgba(0,0,0,0.8); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--glass-border); width: fit-content; position: relative;}
+        .topbar-actions { display: flex; flex-direction: row; align-items: center; gap: 15px; background: rgba(0,0,0,0.8); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--glass-border); width: fit-content; }
         .top-icon-btn { position: relative; cursor: pointer; background: transparent; border: none; font-size: 1.15rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: white; width: 20px; }
         .top-icon-btn i { text-align: center; width: 100%; transition: 0.2s; pointer-events: none;}
         .top-icon-btn:hover { transform: scale(1.1); }
         
         .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); pointer-events: none;}
 
-        /* DROPDOWN POPOVERS (Notifications & Gifts) */
+        /* DROPDOWN POPOVERS (Correctly placed outside buttons) */
         .dropdown-popover { position: absolute; top: 45px; right: 0; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); transform-origin: top right; transition: all 0.2s ease-out; opacity: 1; transform: scale(1); cursor: default;}
         .dropdown-popover.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
         
-        /* Notif Specific */
         .notif-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--glass-border); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;}
         .notif-actions { display: flex; gap: 10px; }
         .notif-action-btn { background: transparent; border: none; color: var(--text-muted); font-size: 0.8rem; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
@@ -142,11 +141,17 @@
         .notif-item-del { position: absolute; right: 12px; bottom: 12px; background: transparent; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .notif-item-del:hover { color: var(--danger); transform: scale(1.1); }
 
-        /* MAIN RIGID WRAPPER (Fixed Scroll Issue for Desktop) */
-        @media (min-width: 769px) {
-            .main-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: calc(100vh - 75px); margin-top: 75px;}
-            .content { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 2rem; flex: 1;}
-        }
+        /* BACK NAVIGATION ALIGNED */
+        .game-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center;}
+        .game-wrapper.solo-wrap { max-width: 850px; }
+        
+        .back-nav { margin-bottom: 15px; width: 100%; display: flex; justify-content: flex-start;}
+        .btn-back { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
+        .btn-back:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+
+        /* MAIN RIGID WRAPPER */
+        .main-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: calc(100vh - 75px); margin-top: 75px; padding-top: 40px; padding-bottom: 40px;}
+        .content { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 2rem; flex: 1;}
 
         .view-container { width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s; }
         
@@ -184,20 +189,11 @@
 
         .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 1rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-        /* BACK NAVIGATION ALIGNED */
-        .game-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center;}
-        .game-wrapper.solo-wrap { max-width: 850px; }
-        
-        .back-nav { margin-bottom: 15px; width: 100%; display: flex; justify-content: flex-start;}
-        .btn-back { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
-        .btn-back:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
-
         /* ================= IN-GAME UI PANELS ================= */
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; width: 100%;}
         .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
 
-        /* Fixed Game Box to prevent UI shifts */
         .game-box { display: flex; flex-direction: column; width: 100%; max-width: 850px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; height: 650px;} 
         .main-panel { display: flex; flex-direction: column; height: 100%; }
         .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 20px;}
@@ -832,7 +828,7 @@
         </div>
         
         <div style="padding: 20px; flex:1; display:flex; flex-direction:column; overflow:hidden;">
-            <div style="background:rgba(0,0,0,0.5); border:1px solid var(--glass-border); border-radius:8px; padding:15px; text-align:center; flex-shrink: 0; margin-bottom: 15px;">
+            <div style="background:rgba(0,0,0,0.5); border:1px solid var(--glass-border); border-radius:8px; padding:15px; text-align:center; flex-shrink: 0; margin-bottom: 20px;">
                 <div style="font-weight:900; color:white; font-size:1.1rem; margin-bottom:5px;">TOTAL ROUNDS: <span id="stat-total-rounds" style="color:var(--credits);">0</span></div>
                 <div id="stat-percentages" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; font-size:0.9rem; font-weight:800;"></div>
             </div>
