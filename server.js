@@ -9,10 +9,16 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
-// Correct Express routing for deployment (Railway)
+// ==========================================
+// RAILWAY ROUTING FIX (Handles both flat and /public folder structures)
+// ==========================================
 app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'), err => {
+        if (err) res.sendFile(path.join(__dirname, 'index.html'));
+    });
 });
 
 // ==========================================
@@ -29,7 +35,7 @@ mongoose.connect(MONGO_URI)
         }
     })
     .catch(err => {
-        console.error('❌ MongoDB Connection Error. Please ensure MONGO_URL is set.');
+        console.error('❌ MongoDB Connection Error. Please ensure MONGO_URL is set in Railway.');
         console.error(err);
     });
 
@@ -85,7 +91,7 @@ let gameStats = {
 
 function logGlobalResult(game, resultStr) {
     globalResults[game].unshift({ result: resultStr, time: new Date() });
-    if (globalResults[game].length > 5) globalResults[game].pop(); // Strict limit to 5
+    if (globalResults[game].length > 5) globalResults[game].pop();
 }
 
 function drawCard() {
@@ -253,13 +259,10 @@ io.on('connection', (socket) => {
     socket.on('getWalletLogs', async () => {
         if(socket.user) {
             const logs = await CreditLog.find({ username: socket.user.username }).sort({ date: -1 }).limit(50);
-            
-            // Calculate Today's Profit exactly
             const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
             const todayLogs = await CreditLog.find({ username: socket.user.username, date: { $gte: startOfDay }});
             let dailyProfit = 0;
             todayLogs.forEach(l => { if (l.action === 'Game') dailyProfit += l.amount; });
-            
             socket.emit('walletLogsData', { logs, dailyProfit });
         }
     });
