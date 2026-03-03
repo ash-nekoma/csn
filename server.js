@@ -10,8 +10,14 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 // ==========================================
-// RAILWAY ROUTING FIX (Handles both flat and /public folder structures)
+// CACHE-BUSTER & RAILWAY ROUTING FIX
 // ==========================================
+// Forces browsers to fetch the newest code instantly instead of using old saved versions
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    next();
+});
+
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -91,7 +97,7 @@ let gameStats = {
 
 function logGlobalResult(game, resultStr) {
     globalResults[game].unshift({ result: resultStr, time: new Date() });
-    if (globalResults[game].length > 5) globalResults[game].pop();
+    if (globalResults[game].length > 5) globalResults[game].pop(); // Strict limit to 5
 }
 
 function drawCard() {
