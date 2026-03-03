@@ -12,7 +12,6 @@ const io = new Server(server, { cors: { origin: "*" } });
 // ==========================================
 // CACHE-BUSTER & RAILWAY ROUTING FIX
 // ==========================================
-// Forces browsers to fetch the newest code instantly instead of using old saved versions
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     next();
@@ -95,9 +94,10 @@ let gameStats = {
     blackjack: { total: 0, Win: 0, Lose: 0, Push: 0 }
 };
 
+// STRICT 5-ROW CAP ON SERVER
 function logGlobalResult(game, resultStr) {
     globalResults[game].unshift({ result: resultStr, time: new Date() });
-    if (globalResults[game].length > 5) globalResults[game].pop(); // Strict limit to 5
+    if (globalResults[game].length > 5) globalResults[game].pop(); 
 }
 
 function drawCard() {
