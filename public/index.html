@@ -1402,7 +1402,7 @@
           showEndBox(mb, res.bet, res.payout, res.resStr, res.newBalance);
           logHistory('dice', res.bet + ' TC', res.resStr, res.payout > res.bet ? res.payout - res.bet : 0, res.payout === 0 ? res.bet : 0, true);
           
-          await delay(1200); // Fast cooldown to allow next play
+          await delay(1200); // Fast cooldown
           icn.className = 'fas fa-dice-d20 dice-icon';
           icn.style.display = 'block'; nd.style.display = 'none'; mb.style.display = 'none'; mb.classList.remove('show');
           btn.disabled = false;
@@ -1425,11 +1425,11 @@
       sfx.coin(); cw.classList.add('tossing');
       
       socket.once('coinResult', async (res) => {
-          // Immediately apply 3D rotation so it spins DURING the upward toss
+          // Instantly trigger the 3D rotation so it spins DURING the upward toss
           coinFlips += 5; let er = res.result === 'Tails' ? 180 : 0; 
           co.style.transform = `rotateY(${coinFlips * 360 + er}deg)`;
           
-          await delay(1200); // Wait strictly for CSS toss animation length
+          await delay(1200); // Wait exactly for the CSS toss animation length
           cw.classList.remove('tossing');
           
           await delay(300);
