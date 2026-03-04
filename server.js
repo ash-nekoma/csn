@@ -214,7 +214,8 @@ setInterval(() => {
                     playerStats[b.userId].amountWon += formatTC(payout);
                 });
 
-                let roomNames = { 'perya': 'Color Game', 'dt': 'Dragon Tiger', 'sicbo': 'Sic Bo', 'baccarat': 'Baccarat' };
+                // STRICT STATUS NAMING FOR LEDGER
+                let roomNames = { 'perya': 'COLOR GAME', 'dt': 'DRAGON TIGER', 'sicbo': 'SIC BO', 'baccarat': 'BACCARAT' };
 
                 Object.keys(playerStats).forEach(async (userId) => {
                     let st = playerStats[userId];
@@ -292,12 +293,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('fetchUserLogs', async (username) => {
-        if (!socket.rooms.has('admin_room')) return;
-        const logs = await CreditLog.find({ username }).sort({ date: -1 }).limit(100);
-        socket.emit('userLogsData', { username, logs });
-    });
-
+    // --- SOLO GAMES ENGINE ---
     socket.on('playSolo', async (data) => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
@@ -339,7 +335,7 @@ io.on('connection', (socket) => {
             let resStr = `ROLLED ${roll}`;
             logGlobalResult('d20', resStr);
             pushAdminData();
-            socket.emit('d20Result', { roll, payout, bet: data.bet, resStr: resStr, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.d20 });
+            socket.emit('d20Result', { roll, payout, bet: data.bet, guessType: data.guessType, guessValue: data.guessValue, resStr: resStr, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.d20 });
             checkResetStats('d20');
         } 
         else if (data.game === 'coinflip') {
@@ -349,11 +345,11 @@ io.on('connection', (socket) => {
             if (data.choice === result) payout = formatTC(data.bet * 1.95);
             
             user.credits = formatTC(user.credits + payout); await user.save();
-            await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `Coin Flip` }).save();
+            await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `COIN FLIP` }).save();
             let resStr = `LANDED ON ${result.toUpperCase()}`;
             logGlobalResult('coinflip', resStr);
             pushAdminData();
-            socket.emit('coinResult', { result, payout, bet: data.bet, resStr: resStr, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.coinflip });
+            socket.emit('coinResult', { result, payout, bet: data.bet, choice: data.choice, resStr: resStr, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.coinflip });
             checkResetStats('coinflip');
         }
         else if (data.game === 'blackjack') {
@@ -367,7 +363,7 @@ io.on('connection', (socket) => {
                     payout = formatTC(dS === 21 ? data.bet : data.bet * 2.5);
                     if(msg === 'Blackjack!') gameStats.blackjack.Win++; else gameStats.blackjack.Push++;
                     user.credits = formatTC(user.credits + payout); await user.save();
-                    await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `Blackjack` }).save();
+                    await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `BLACKJACK` }).save();
                     let resStr = `${msg.toUpperCase()} (${pS} TO ${dS})`;
                     logGlobalResult('blackjack', resStr);
                     pushAdminData();
@@ -385,7 +381,7 @@ io.on('connection', (socket) => {
                 
                 if (pS > 21) {
                     gameStats.blackjack.Lose++;
-                    await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(-socket.bjState.bet), details: `Blackjack` }).save();
+                    await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(-socket.bjState.bet), details: `BLACKJACK` }).save();
                     let resStr = `BUST (${pS} TO ${dS})`;
                     logGlobalResult('blackjack', resStr);
                     socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', resStr: resStr, bet: socket.bjState.bet, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.blackjack });
@@ -407,7 +403,7 @@ io.on('connection', (socket) => {
                 else { msg = 'Dealer Wins'; gameStats.blackjack.Lose++; }
                 
                 user.credits = formatTC(user.credits + payout); await user.save();
-                await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - socket.bjState.bet), details: `Blackjack` }).save();
+                await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - socket.bjState.bet), details: `BLACKJACK` }).save();
                 
                 let resStr = (dS > 21) ? `DEALER BUSTS (${pS} TO ${dS})` : `${msg.toUpperCase()} (${pS} TO ${dS})`;
                 logGlobalResult('blackjack', resStr);
@@ -419,6 +415,7 @@ io.on('connection', (socket) => {
         }
     });
 
+    // --- SHARED TABLES NETWORKING ---
     socket.on('joinRoom', (room) => { 
         if(socket.currentRoom) { socket.leave(socket.currentRoom); rooms[socket.currentRoom]--; }
         socket.join(room); socket.currentRoom = room; rooms[room]++; 
@@ -473,9 +470,9 @@ io.on('connection', (socket) => {
             let tx = await new Transaction({ username: socket.user.username, type: data.type, amount: amount, ref: data.ref }).save(); 
             
             if(data.type === 'Withdrawal') {
-                await new CreditLog({ username: socket.user.username, action: 'WITHDRAWAL', amount: -amount, details: `Pending` }).save();
+                await new CreditLog({ username: socket.user.username, action: 'WITHDRAWAL', amount: -amount, details: `PENDING` }).save();
             } else {
-                await new CreditLog({ username: socket.user.username, action: 'DEPOSIT', amount: amount, details: `Pending` }).save();
+                await new CreditLog({ username: socket.user.username, action: 'DEPOSIT', amount: amount, details: `PENDING` }).save();
             }
             const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
             socket.emit('transactionsData', txs);
@@ -509,97 +506,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('adminAction', async (data) => {
-        if (!socket.rooms.has('admin_room')) return; 
-        try {
-            if (data.type === 'editUser') { await User.findByIdAndUpdate(data.id, { credits: formatTC(data.credits), playableCredits: formatTC(data.playableCredits), role: data.role }); }
-            else if (data.type === 'ban') { await User.findByIdAndUpdate(data.id, { status: 'Banned' }); }
-            else if (data.type === 'unban') { await User.findByIdAndUpdate(data.id, { status: 'Active' }); }
-            else if (data.type === 'clearUserLogs') {
-                await CreditLog.deleteMany({ username: data.username });
-                const logs = await CreditLog.find({ username: data.username }).sort({ date: -1 }).limit(100);
-                socket.emit('userLogsData', { username: data.username, logs });
-            }
-            else if (data.type === 'sendUpdate') { 
-                io.emit('silentNotification', { id: Date.now(), title: 'System Announcement', msg: data.msg, date: new Date() }); 
-            }
-            else if (data.type === 'giftCredits') {
-                let amount = formatTC(data.amount);
-                let updateQuery = data.creditType === 'playable' ? { $inc: { playableCredits: amount } } : { $inc: { credits: amount } };
-                let notifMsg = `Admin has gifted you ${amount} ${data.creditType === 'playable' ? 'Playable TC' : 'TC'}!`;
-
-                if (data.target === 'all_registered') {
-                    await User.updateMany({}, updateQuery);
-                    io.emit('silentNotification', { id: Date.now(), title: 'Gift Received!', msg: notifMsg, date: new Date() });
-                    io.emit('refreshBalance'); 
-                } 
-                else if (data.target === 'all_active') {
-                    await User.updateMany({ status: 'Active' }, updateQuery);
-                    io.emit('silentNotification', { id: Date.now(), title: 'Gift Received!', msg: notifMsg, date: new Date() });
-                    io.emit('refreshBalance');
-                } 
-                else {
-                    let u = await User.findOne({ username: new RegExp('^' + data.target + '$', 'i') });
-                    if (u) {
-                        if(data.creditType === 'playable') u.playableCredits = formatTC(u.playableCredits + amount);
-                        else u.credits = formatTC(u.credits + amount);
-                        await u.save();
-                        await new CreditLog({ username: u.username, action: 'GIFT', amount: amount, details: `From Admin` }).save();
-                        let targetSocketId = connectedUsers[u.username];
-                        if (targetSocketId) {
-                            io.to(targetSocketId).emit('silentNotification', { id: Date.now(), title: 'Gift Received!', msg: notifMsg, date: new Date() });
-                            io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits });
-                        }
-                    }
-                }
-            }
-            else if (data.type === 'resolveTx') {
-                let tx = await Transaction.findById(data.id);
-                if (tx && tx.status === 'Pending') {
-                    tx.status = data.status; await tx.save();
-                    let targetSocketId = connectedUsers[tx.username];
-                    if (tx.type === 'Deposit' && data.status === 'Approved') {
-                        let u = await User.findOne({ username: tx.username });
-                        if (u) {
-                            u.credits = formatTC(u.credits + tx.amount); await u.save();
-                            await new CreditLog({ username: u.username, action: 'DEPOSIT', amount: tx.amount, details: `Approved` }).save();
-                            if (targetSocketId) {
-                                io.to(targetSocketId).emit('silentNotification', { id: Date.now(), title: 'Deposit Approved', msg: `Your deposit of ${tx.amount} TC has been added to your balance.`, date: new Date() });
-                                io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits });
-                            }
-                        }
-                    }
-                    else if (data.status === 'Rejected') {
-                        if (tx.type === 'Withdrawal') {
-                            let u = await User.findOne({ username: tx.username });
-                            if (u) { 
-                                u.credits = formatTC(u.credits + tx.amount); await u.save(); 
-                                await new CreditLog({ username: u.username, action: 'WITHDRAWAL', amount: tx.amount, details: `Rejected (Refund)` }).save();
-                                if (targetSocketId) io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits }); 
-                            }
-                        }
-                        if (targetSocketId) { io.to(targetSocketId).emit('silentNotification', { id: Date.now(), title: `${tx.type} Rejected`, msg: `Your request was rejected.`, date: new Date() }); }
-                    }
-                }
-            }
-            else if (data.type === 'createBatch') {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                let prefix = data.creditType === 'playable' ? 'PB-' : 'RB-';
-                let existingBatches = await GiftCode.find({ batchId: new RegExp('^' + prefix) }).distinct('batchId');
-                let nextNum = existingBatches.length + 1;
-                let batchId = prefix + String(nextNum).padStart(3, '0');
-                
-                for(let i=0; i<data.count; i++) {
-                    let code = '';
-                    for(let j=0; j<10; j++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-                    await new GiftCode({ batchId, amount: formatTC(data.amount), code, creditType: data.creditType }).save();
-                }
-            }
-            else if (data.type === 'deleteBatch') { await GiftCode.deleteMany({ batchId: data.batchId }); }
-            await pushAdminData();
-        } catch(e) { console.error("Admin Action Error:", e); }
-    });
-
     socket.on('login', async (data) => {
         try {
             const user = await User.findOne({ username: data.username, password: data.password });
@@ -611,7 +517,6 @@ io.on('connection', (socket) => {
 
             user.status = 'Active'; await user.save(); socket.user = user;
             connectedUsers[user.username] = socket.id;
-            
             pushAdminData();
             
             let now = new Date(), canClaim = true, day = 1, nextClaim = null;
@@ -650,7 +555,7 @@ io.on('connection', (socket) => {
         user.dailyReward.lastClaim = now; user.dailyReward.streak += 1;
         await user.save();
         
-        await new CreditLog({ username: user.username, action: 'GIFT', amount: amt, details: `Daily Reward` }).save();
+        await new CreditLog({ username: user.username, action: 'GIFT', amount: amt, details: `DAILY REWARD` }).save();
         pushAdminData();
         socket.emit('dailyClaimed', { amt, newBalance: { credits: user.credits, playable: user.playableCredits }, nextClaim: new Date(now.getTime() + 24 * 60 * 60 * 1000) });
     });
@@ -672,7 +577,7 @@ io.on('connection', (socket) => {
             }
             await user.save();
             
-            await new CreditLog({ username: user.username, action: 'CODE', amount: gc.amount, details: `Redeemed` }).save();
+            await new CreditLog({ username: user.username, action: 'CODE', amount: gc.amount, details: `REDEEMED` }).save();
             pushAdminData();
             socket.emit('promoResult', { success: true, amt: gc.amount, type: gc.creditType });
             socket.emit('balanceUpdateData', { credits: user.credits, playable: user.playableCredits });
