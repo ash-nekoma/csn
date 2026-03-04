@@ -111,7 +111,6 @@
         .player-profile { display: flex; align-items: center; gap: 8px; font-weight: 800; color: white; font-size: 1rem; text-transform: uppercase; }
         .player-profile i { color: var(--ps-glow); font-size: 1.4rem; }
 
-        /* Dual Wallet Layout */
         .wallet-pill { background: rgba(0,0,0,0.8); border: 1px solid rgba(255,180,0,0.4); padding: 5px 15px; border-radius: 8px; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 10px rgba(255,180,0,0.1); }
         .wallet-pill:hover { border-color: var(--credits); transform: translateY(-2px); box-shadow: 0 0 15px rgba(255,180,0,0.3); }
         .wallet-main { display: flex; align-items: center; gap: 6px; }
@@ -130,7 +129,7 @@
 
         /* DROPDOWN POPOVERS */
         .dropdown-wrapper { position: relative; display: inline-block; }
-        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
+        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
         
         .notif-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--glass-border); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;}
         .notif-actions { display: flex; gap: 10px; }
@@ -172,7 +171,7 @@
         .lobby-wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0;}
         
         /* FIXED DETACHED BACK BUTTON */
-        .btn-back-fixed { position: fixed; top: 95px; left: 25px; z-index: 1000; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
+        .btn-back-fixed { position: fixed; top: 95px; left: 25px; z-index: 1000; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 10px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
         .btn-back-fixed:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
         /* ================= REDESIGNED PLAYSTATION GRIDS & CARDS ================= */
@@ -218,59 +217,28 @@
             display: grid; grid-template-columns: repeat(4, 260px); justify-content: center; gap: 20px; width: 100%; max-width: 1200px;
         }
 
-        /* PLAYSTATION THEMED DARK GLASS CARDS */
+        /* PLAYSTATION THEMED DARK GLASS CARDS (EXACT MATCH) */
         .game-card { 
-            width: 100%; height: 380px; text-align: center; cursor: pointer; position: relative;
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-            border-radius: 12px; background: #0f121b; border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.3s; padding: 25px 20px;
+            width: 100%; height: 320px; text-align: center; cursor: pointer; position: relative;
+            display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start;
+            border-radius: 12px; background: #020813; border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s; overflow: hidden; padding: 0;
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
         }
-        .game-card:hover { transform: translateY(-8px); border-color: rgba(255,255,255,0.2); }
-
-        /* THEME COLORS */
-        .game-card[data-theme="red"] { border-top: 3px solid #ff3366; }
-        .game-card[data-theme="blue"] { border-top: 3px solid #00a2ff; }
-        .game-card[data-theme="yellow"] { border-top: 3px solid #ffb400; }
-        .game-card[data-theme="purple"] { border-top: 3px solid #b366ff; }
-        .game-card[data-theme="green"] { border-top: 3px solid #00e676; }
-        .game-card[data-theme="orange"] { border-top: 3px solid #ff6600; }
-
-        .card-badge {
-            position: absolute; top: 15px; left: 15px;
-            font-size: 0.65rem; font-weight: 900; letter-spacing: 1px;
-            padding: 4px 8px; border-radius: 4px; text-transform: uppercase;
-        }
-        .game-card[data-theme="red"] .card-badge { background: #330a15; color: #ff3366; }
-        .game-card[data-theme="blue"] .card-badge { background: #002033; color: #00a2ff; }
-        .game-card[data-theme="yellow"] .card-badge { background: #332400; color: #ffb400; }
-        .game-card[data-theme="purple"] .card-badge { background: #261433; color: #b366ff; }
-        .game-card[data-theme="green"] .card-badge { background: #00331a; color: #00e676; }
-        .game-card[data-theme="orange"] .card-badge { background: #331400; color: #ff6600; }
-
-        .game-card-icon { font-size: 4.5rem; margin: 30px 0 20px; transition: 0.3s; }
-        .game-card[data-theme="red"] .game-card-icon { color: #ff3366; text-shadow: 0 0 20px rgba(255,51,102,0.4); }
-        .game-card[data-theme="blue"] .game-card-icon { color: #00a2ff; text-shadow: 0 0 20px rgba(0,162,255,0.4); }
-        .game-card[data-theme="yellow"] .game-card-icon { color: #ffb400; text-shadow: 0 0 20px rgba(255,180,0,0.4); }
-        .game-card[data-theme="purple"] .game-card-icon { color: #b366ff; text-shadow: 0 0 20px rgba(179,102,255,0.4); }
-        .game-card[data-theme="green"] .game-card-icon { color: #00e676; text-shadow: 0 0 20px rgba(0,230,118,0.4); }
-        .game-card[data-theme="orange"] .game-card-icon { color: #ff6600; text-shadow: 0 0 20px rgba(255,102,0,0.4); }
-
-        .game-card-title { font-size: 1.4rem; font-weight: 900; color: white; margin-bottom: 10px; text-align: center; line-height: 1;}
-        .game-card-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px; flex-grow: 1; text-align: center; }
+        .game-card:hover { transform: translateY(-8px); border-color: var(--ps-glow); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0,162,255,0.2); }
         
-        .card-action-btn { width: 100%; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 1rem; border: none; cursor: pointer; transition: 0.3s; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 8px; pointer-events: none; margin-top: auto;}
-        .game-card[data-theme="red"] .card-action-btn { background: #ff3366; color: white; box-shadow: 0 5px 15px rgba(255,51,102,0.3); }
-        .game-card[data-theme="blue"] .card-action-btn { background: #00a2ff; color: black; box-shadow: 0 5px 15px rgba(0,162,255,0.3); }
-        .game-card[data-theme="yellow"] .card-action-btn { background: #ffb400; color: black; box-shadow: 0 5px 15px rgba(255,180,0,0.3); }
-        .game-card[data-theme="purple"] .card-action-btn { background: #b366ff; color: white; box-shadow: 0 5px 15px rgba(179,102,255,0.3); }
-        .game-card[data-theme="green"] .card-action-btn { background: #00e676; color: black; box-shadow: 0 5px 15px rgba(0,230,118,0.3); }
-        .game-card[data-theme="orange"] .card-action-btn { background: #ff6600; color: black; box-shadow: 0 5px 15px rgba(255,102,0,0.3); }
+        .game-img { flex: 1; display: flex; justify-content: center; align-items: center; font-size: 5.5rem; color: #0070cc; transition: 0.3s; background: transparent;}
+        .game-card:hover .game-img { color: var(--ps-glow); text-shadow: 0 0 25px var(--ps-glow); transform: scale(1.1); }
+        
+        .game-info { background: #000000; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100px; border-top: 1px solid rgba(255,255,255,0.05);}
+        .game-title { font-size: 1.2rem; font-weight: 900; color: white; text-transform:uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .game-desc { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
 
-        .game-card:hover .game-card-icon { transform: scale(1.1); }
-        .game-card:hover .card-action-btn { filter: brightness(1.2); transform: scale(1.02); }
+        .live-badge { position: absolute; top: 15px; right: 15px; background: transparent; color: var(--danger); font-size: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 4px; z-index: 10;}
+        .live-dot { width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; animation: pulseRed 1.5s infinite; }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
 
-        .active-players { position: absolute; top: 15px; right: 15px; color: var(--success); font-size: 0.9rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 0.9rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
         .game-wrapper { width: 100%; max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center;}
         
@@ -437,6 +405,7 @@
 </head>
 <body>
   
+  <div id="arcade-flash" class="hidden"></div> 
   <div id="auth-container">
       <div class="auth-box">
           <div class="auth-title">STICK N' TRADE</div>
@@ -584,7 +553,6 @@
                   <div class="mode-desc">Single-player mini games.<br>Quick rounds and instant payouts.</div>
                 </div>
                 <div class="mode-card" onclick="openLobbyMode('shared')">
-                  <div class="live-badge"><div class="live-dot"></div> LIVE</div>
                   <i class="fas fa-users mode-icon"></i>
                   <div class="mode-title" style="white-space: nowrap;">SHARED TABLES</div>
                   <div class="mode-desc">Multiplayer game rooms.<br>Play with others live.</div>
@@ -594,31 +562,31 @@
 
             <div class="lobby-wrapper hidden" id="lobby-indiv">
               <div class="game-wrapper solo-wrap">
-                  <h2 class="header-title">Solo Play</h2>
+                  <h2 class="header-title">SOLO PLAY</h2>
                   <div class="casino-grid solo-grid">
                     
-                    <div class="game-card" data-theme="red" onclick="openGame('d20')">
-                        <div class="card-badge">UP TO 18X</div>
-                        <i class="fas fa-dice-d20 game-card-icon"></i>
-                        <div class="game-card-title">D20</div>
-                        <div class="game-card-desc">Guess Exact, High/Low, or Odd/Even. Roll the 20-sided die!</div>
-                        <button class="card-action-btn"><i class="fas fa-play"></i> ROLL D20</button>
+                    <div class="game-card" onclick="openGame('d20')">
+                        <div class="game-img"><i class="fas fa-dice-d20"></i></div>
+                        <div class="game-info">
+                            <div class="game-title">D20 ROLL</div>
+                            <div class="game-desc">Guess Exact, High/Low, or Odd/Even.</div>
+                        </div>
                     </div>
 
-                    <div class="game-card" data-theme="yellow" onclick="openGame('coinflip')">
-                        <div class="card-badge">PROVABLY FAIR</div>
-                        <i class="fas fa-coins game-card-icon"></i>
-                        <div class="game-card-title">Coin Flip</div>
-                        <div class="game-card-desc">Double your credits with a single toss. Will you land on the lucky side?</div>
-                        <button class="card-action-btn"><i class="fas fa-sync"></i> START FLIPPING</button>
+                    <div class="game-card" onclick="openGame('coinflip')">
+                        <div class="game-img"><i class="fas fa-coins"></i></div>
+                        <div class="game-info">
+                            <div class="game-title">COIN FLIP</div>
+                            <div class="game-desc">Heads or Tails. Pays 2x.</div>
+                        </div>
                     </div>
 
-                    <div class="game-card" data-theme="blue" onclick="openGame('blackjack')">
-                        <div class="card-badge">PRO CHOICE</div>
-                        <i class="fas fa-spade game-card-icon"></i>
-                        <div class="game-card-title">Blackjack</div>
-                        <div class="game-card-desc">Beat the dealer to 21. Experience high-stakes strategy with professional vibes.</div>
-                        <button class="card-action-btn"><i class="fas fa-plus"></i> HIT 21</button>
+                    <div class="game-card" onclick="openGame('blackjack')">
+                        <div class="game-img"><i class="fas fa-spade"></i></div>
+                        <div class="game-info">
+                            <div class="game-title">BLACKJACK</div>
+                            <div class="game-desc">Beat the dealer to 21.</div>
+                        </div>
                     </div>
 
                   </div>
@@ -627,43 +595,43 @@
 
             <div class="lobby-wrapper hidden" id="lobby-shared">
               <div class="game-wrapper">
-                  <h2 class="header-title">Shared Tables</h2>
+                  <h2 class="header-title">SHARED TABLES</h2>
                   <div class="casino-grid shared-grid">
                     
-                    <div class="game-card" data-theme="red" onclick="openSharedGame('baccarat')">
-                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                        <div class="card-badge">LIVE DEALER</div>
-                        <i class="fas fa-cards game-card-icon">🃏</i>
-                        <div class="game-card-title">Baccarat</div>
-                        <div class="game-card-desc">Closest to 9 wins. Bet Player, Banker, or Tie.</div>
-                        <button class="card-action-btn"><i class="fas fa-door-open"></i> JOIN TABLE</button>
+                    <div class="game-card" onclick="openSharedGame('baccarat')">
+                        <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+                        <div class="game-img"><i class="fas fa-cards">🃏</i></div>
+                        <div class="game-info">
+                            <div class="game-title">BACCARAT</div>
+                            <div class="game-desc">Closest to 9 wins.</div>
+                        </div>
                     </div>
 
-                    <div class="game-card" data-theme="purple" onclick="openSharedGame('perya')">
-                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                        <div class="card-badge">MULTIPLIERS</div>
-                        <i class="fas fa-dice-d6 game-card-icon"></i>
-                        <div class="game-card-title">Color Game</div>
-                        <div class="game-card-desc">Classic 3-dice color drop. Match 3 for massive payouts!</div>
-                        <button class="card-action-btn"><i class="fas fa-play"></i> DROP DICE</button>
+                    <div class="game-card" onclick="openSharedGame('perya')">
+                        <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+                        <div class="game-img"><i class="fas fa-dice-d6"></i></div>
+                        <div class="game-info">
+                            <div class="game-title">COLOR GAME</div>
+                            <div class="game-desc">Classic 3-dice color drop.</div>
+                        </div>
                     </div>
 
-                    <div class="game-card" data-theme="orange" onclick="openSharedGame('dt')">
-                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                        <div class="card-badge">FAST PACED</div>
-                        <i class="fas fa-dragon game-card-icon"></i>
-                        <div class="game-card-title">Dragon Tiger</div>
-                        <div class="game-card-desc">Highest card takes all. Fast, brutal, and highly rewarding.</div>
-                        <button class="card-action-btn"><i class="fas fa-fire"></i> ENTER ARENA</button>
+                    <div class="game-card" onclick="openSharedGame('dt')">
+                        <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+                        <div class="game-img"><i class="fas fa-dragon"></i></div>
+                        <div class="game-info">
+                            <div class="game-title">DRAGON TIGER</div>
+                            <div class="game-desc">Highest card takes all.</div>
+                        </div>
                     </div>
 
-                    <div class="game-card" data-theme="green" onclick="openSharedGame('sicbo')">
-                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                        <div class="card-badge">ASIAN CLASSIC</div>
-                        <i class="fas fa-dice game-card-icon"></i>
-                        <div class="game-card-title">Sic Bo</div>
-                        <div class="game-card-desc">Bet Big or Small on the 3-dice sum. Avoid the triples!</div>
-                        <button class="card-action-btn"><i class="fas fa-play"></i> ROLL NOW</button>
+                    <div class="game-card" onclick="openSharedGame('sicbo')">
+                        <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+                        <div class="game-img"><i class="fas fa-dice"></i></div>
+                        <div class="game-info">
+                            <div class="game-title">SIC BO</div>
+                            <div class="game-desc">Asian 3-dice betting.</div>
+                        </div>
                     </div>
 
                   </div>
@@ -912,8 +880,7 @@
         </div>
         
         <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 15px;">
-            <div style="color:white; font-weight: 900; font-size: 1.1rem;">SNT: AshleyChan</div>
-            <div style="color:var(--text-muted); font-size: 0.95rem; margin-top: 5px; cursor:pointer; transition:0.2s;" onclick="copyDiscord(this)" id="discord-copy-text">
+            <div style="color:var(--text-muted); font-size: 0.95rem; cursor:pointer; transition:0.2s;" onclick="copyDiscord(this)" id="discord-copy-text">
                 Discord: @sr.ashley <i class="fas fa-copy" style="margin-left:5px; color:var(--ps-glow);"></i>
             </div>
         </div>
@@ -972,7 +939,7 @@
             <h4 style="color:var(--ps-glow); margin:0; text-transform: uppercase; letter-spacing: 1px;">Credit Ledger</h4>
             <div style="display:flex; gap:10px;">
                 <button class="btn-rules" style="width:auto; padding: 5px 15px; height: 35px; font-size: 0.9rem;" onclick="clearLedger()"><i class="fas fa-trash" style="margin-right:5px;"></i> CLEAR</button>
-                <button class="btn-rules" style="width:auto; padding: 5px 15px; height: 35px; font-size: 0.9rem;" onclick="switchSupportCenterTab('deposit', document.querySelectorAll('#cashier-tabs-nav .bank-tab')[0])"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> BACK</button>
+                <button class="btn-rules" style="width:auto; padding: 5px 15px; height: 35px; font-size: 0.9rem;" onclick="switchSupportCenterTab('deposit', document.querySelectorAll('#cashier-tabs-nav .bank-tab')[0])"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> <span>BACK</span></button>
             </div>
         </div>
         
@@ -1169,7 +1136,7 @@
     socket.on('silentNotification', (data) => {
         myNotifications.unshift({ id: data.id || Date.now(), title: data.title, msg: data.msg, read: false, date: data.date || new Date() });
         if(myNotifications.length > 50) myNotifications.pop();
-        renderNotifs();
+        renderNotifs(); 
     });
 
     function toggleAudio() {
@@ -1291,10 +1258,6 @@
 
         document.getElementById('nav-credits').innerText = tc; 
         
-        const pDisp = document.getElementById('nav-playable');
-        if (myPlayable > 0) { pDisp.style.display = 'block'; pDisp.innerText = `+ ${ptc} P`; }
-        else { pDisp.style.display = 'none'; }
-        
         let cb = document.getElementById('cashier-balance-display');
         if (cb) cb.innerText = tc + ' TC';
     }
@@ -1348,16 +1311,6 @@
             document.getElementById('dr-timer-display').innerText = `${h}:${m}:${s}`;
         }, 1000);
     }
-
-    const gameInfoMap = {
-      'd20': { title: "D20", body: "<ul><li>Enter your bet amount and select your guess type.</li><li><strong>Exact Number:</strong> 1 in 20 chance. Pays <strong>18x</strong>.</li><li><strong>High/Low:</strong> Low (1-10) or High (11-20). Pays <strong>1.95x</strong>.</li><li><strong>Odd/Even:</strong> Pays <strong>1.95x</strong>.</li></ul>" },
-      'coinflip': { title: "Coin Flip", body: "<ul><li>Enter your bet and choose <strong>Heads</strong> or <strong>Tails</strong>.</li><li>Winning pays <strong>1.95x</strong> your bet.</li><li>Playable Bonus is used before Main TC.</li></ul>" },
-      'baccarat': { title: "Baccarat", body: "<ul><li>Bet on Player, Banker, or Tie. Closest to <strong>9</strong> wins.</li><li>Player pays <strong>2x</strong>. Banker pays <strong>1.95x</strong>.</li><li>Tie pays <strong>9x</strong>. Player/Banker bets push.</li></ul>" },
-      'blackjack': { title: "Blackjack", body: "<ul><li>Beat the dealer without going over 21.</li><li>Dealer must stand on <strong>17 or higher</strong>.</li><li>Natural Blackjack pays <strong>2.5x</strong>. Standard wins pay <strong>2x</strong>. Ties push.</li></ul>" },
-      'perya': { title: "Color Game", body: "<ul><li>Bet on Red, Blue, Yellow, White, Green, or Pink.</li><li>3 dice are rolled.</li><li>1 Match pays <strong>2x</strong>. 2 Matches pay <strong>3x</strong>. 3 Matches pay <strong>4x</strong>!</li></ul>" },
-      'dt': { title: "Dragon Tiger", body: "<ul><li>Bet on Dragon, Tiger, or Tie. Highest card wins.</li><li>Aces are low (1). Kings are high (13).</li><li>Dragon/Tiger pays <strong>2x</strong>. Tie pays <strong>9x</strong>.</li></ul>" },
-      'sicbo': { title: "Sic Bo", body: "<ul><li>Bet on Small (Sum 4-10) or Big (Sum 11-17).</li><li>Wins pay <strong>2x</strong>.</li><li>Any Triple roll loses all Big/Small bets.</li></ul>" }
-    };
 
     function logHistory(gid, betStr, resultStr, wonProfit, lostBet, didBet = true) {
         if(!myGameHistory[gid]) myGameHistory[gid] = [];
@@ -1531,7 +1484,6 @@
         setTimeout(() => { updateMyBalance(newBalance, payout > bet); }, 800);
     }
 
-    // D20 LOGIC
     function updateD20Inputs() {
         let t = document.getElementById('d20-guess-type').value;
         document.getElementById('d20-guess-exact').classList.add('hidden');
@@ -1749,11 +1701,6 @@
         sfx.tick();
     });
 
-    socket.on('localGameError', (data) => {
-        let f = document.getElementById('flash-shared');
-        if(f) { f.innerText = data.msg; f.className = 'local-flash show error'; setTimeout(()=>f.classList.remove('show'), 2000); }
-    });
-
     const sConf = {
       'perya': {
         title: 'Color Game', 
@@ -1762,13 +1709,13 @@
           d.innerHTML = `<div class="color-dice-container" id="cg-dice"><div class="color-die c-grey" id="cd1">?</div><div class="color-die c-grey" id="cd2">?</div><div class="color-die c-grey" id="cd3">?</div></div><div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto;">
                 <div style="display: flex; gap: 10px; align-items: flex-end;">
                     <div class="input-group" style="margin: 0; width: 150px;">
                         <label>BET AMOUNT</label>
                         <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
                     </div>
-                    <button class="btn-rules" style="height: 52px; width: 52px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
+                    <button class="btn-rules" style="height: 44px; width: 44px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
                 </div>
                 <div style="text-align: right;">
                     <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom:5px;">TOTAL BET</div>
@@ -1842,13 +1789,13 @@
           
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto;">
                 <div style="display: flex; gap: 10px; align-items: flex-end;">
                     <div class="input-group" style="margin: 0; width: 150px;">
                         <label>BET AMOUNT</label>
                         <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
                     </div>
-                    <button class="btn-rules" style="height: 52px; width: 52px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
+                    <button class="btn-rules" style="height: 44px; width: 44px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
                 </div>
                 <div style="text-align: right;">
                     <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom:5px;">TOTAL BET</div>
@@ -1858,9 +1805,9 @@
             <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
-            <button class="bet-btn shared-tile" data-choice="Player" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Player')">PLAYER (x2)</button>
-            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (x9)</button>
-            <button class="bet-btn shared-tile" data-choice="Banker" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Banker')">BANKER (x1.95)</button>`;
+            <button class="bet-btn shared-tile" data-choice="Player" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Player')">PLAYER (2x)</button>
+            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (9x)</button>
+            <button class="bet-btn shared-tile" data-choice="Banker" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Banker')">BANKER (1.95x)</button>`;
         },
         animateResult: async function(data) {
             let pHand = document.getElementById('bac-p-hand'), bHand = document.getElementById('bac-b-hand');
@@ -1924,13 +1871,13 @@
           d.innerHTML = `<div class="dt-arena"><div class="dt-side"><div class="dt-label lbl-dragon">Dragon</div><div id="dt-c1" class="card-back dt-card play-card">?</div></div><div style="font-size:2.5rem;color:white;font-weight:300;">VS</div><div class="dt-side"><div class="dt-label lbl-tiger">Tiger</div><div id="dt-c2" class="card-back dt-card play-card">?</div></div></div><div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto;">
                 <div style="display: flex; gap: 10px; align-items: flex-end;">
                     <div class="input-group" style="margin: 0; width: 150px;">
                         <label>BET AMOUNT</label>
                         <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
                     </div>
-                    <button class="btn-rules" style="height: 52px; width: 52px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
+                    <button class="btn-rules" style="height: 44px; width: 44px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
                 </div>
                 <div style="text-align: right;">
                     <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom:5px;">TOTAL BET</div>
@@ -1940,9 +1887,9 @@
             <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
-            <button class="bet-btn shared-tile" data-choice="Dragon" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Dragon')">DRAGON (x2)</button>
-            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (x9)</button>
-            <button class="bet-btn shared-tile" data-choice="Tiger" style="--tile-color:var(--credits); border-bottom:5px solid var(--credits);" onclick="placeSharedBet('Tiger')">TIGER (x2)</button>`; 
+            <button class="bet-btn shared-tile" data-choice="Dragon" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Dragon')">DRAGON (2x)</button>
+            <button class="bet-btn shared-tile" data-choice="Tie" style="--tile-color:var(--success); border-bottom:5px solid var(--success);" onclick="placeSharedBet('Tie')">TIE (9x)</button>
+            <button class="bet-btn shared-tile" data-choice="Tiger" style="--tile-color:var(--credits); border-bottom:5px solid var(--credits);" onclick="placeSharedBet('Tiger')">TIGER (2x)</button>`; 
         },
         animateResult: function(data) { 
           let e1 = document.getElementById('dt-c1'); 
@@ -1980,13 +1927,13 @@
           d.innerHTML = `<div class="sicbo-dice" id="sb-dice"><i class="fas fa-dice-d6 s-die"></i><i class="fas fa-dice-d6 s-die"></i><i class="fas fa-dice-d6 s-die"></i></div><div id="sb-sum" style="font-size:2rem;color:var(--text-muted); margin-top:30px; font-weight:900; letter-spacing:2px;">Waiting for roll...</div><div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto;">
                 <div style="display: flex; gap: 10px; align-items: flex-end;">
                     <div class="input-group" style="margin: 0; width: 150px;">
                         <label>BET AMOUNT</label>
                         <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
                     </div>
-                    <button class="btn-rules" style="height: 52px; width: 52px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
+                    <button class="btn-rules" style="height: 44px; width: 44px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
                 </div>
                 <div style="text-align: right;">
                     <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom:5px;">TOTAL BET</div>
@@ -1996,9 +1943,9 @@
             <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
-            <button class="bet-btn shared-tile" data-choice="Small" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Small')">SMALL (x2)</button>
+            <button class="bet-btn shared-tile" data-choice="Small" style="--tile-color:var(--ps-glow); border-bottom:5px solid var(--ps-glow);" onclick="placeSharedBet('Small')">SMALL (2x)</button>
             <div style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-weight:800;font-size:1rem;text-align:center;">TRIPLE LOSES</div>
-            <button class="bet-btn shared-tile" data-choice="Big" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Big')">BIG (x2)</button>`; 
+            <button class="bet-btn shared-tile" data-choice="Big" style="--tile-color:var(--danger); border-bottom:5px solid var(--danger);" onclick="placeSharedBet('Big')">BIG (2x)</button>`; 
         },
         animateResult: function(data) { 
           const dc = document.getElementById('sb-dice'); 
@@ -2049,11 +1996,7 @@
       if (mb) { mb.innerHTML = `${formatTC(tot)} TC`; } 
       
       document.querySelectorAll('#sg-bet-grid .bet-btn').forEach(b => { 
-        if (b.getAttribute('data-choice') === c) { 
-            b.classList.add('has-bet');
-            let t = b.style.getPropertyValue('--tile-color'); 
-            if (t) { b.style.setProperty('--tile-color', t); }
-        } 
+        if (b.getAttribute('data-choice') === c) { b.classList.add('has-bet'); } 
       }); 
       sfx.tick(); 
     }
@@ -2087,9 +2030,9 @@
           if (t) t.innerHTML = msg; 
           if (tba > 0 && b) { 
             b.style.display = 'block'; 
-            if (net > 0) { b.innerHTML = `WON <span style="color:var(--success)">+${formatTC(net)} TC</span>`; b.style.color = "white"; } 
-            else if (net === 0) { b.innerHTML = `PUSH <span style="color:var(--text-muted)">RETURNED</span>`; b.style.color = "white"; } 
-            else { b.innerHTML = `LOST <span style="color:var(--danger)">-${formatTC(Math.abs(net))} TC</span>`; b.style.color = "white"; } 
+            if (net > 0) { b.innerHTML = `WON <span style="color:var(--success)">+${formatTC(net)} TC</span>`; } 
+            else if (net === 0) { b.innerHTML = `PUSH <span style="color:var(--text-muted)">RETURNED</span>`; } 
+            else { b.innerHTML = `LOST <span style="color:var(--danger)">-${formatTC(Math.abs(net))} TC</span>`; } 
           } else if (b) {
               b.style.display = 'none'; 
           } 
@@ -2121,7 +2064,7 @@
         
         mySBets = {}; mySBetsStack = [];
         let m = document.getElementById('sg-my-bet'); 
-        if (m) m.innerHTML = '0 TC'; 
+        if (m) m.innerHTML = '0.0 TC'; 
         
         document.querySelectorAll('#sg-bet-grid .bet-btn').forEach(btn => { btn.classList.remove('has-bet'); btn.disabled = false; }); 
     }
@@ -2201,7 +2144,7 @@
       if(tab === 'requests') socket.emit('getTransactions');
       if(tab === 'ledger') socket.emit('getWalletLogs');
     }
-
+    
     function copyDiscord(el) {
         navigator.clipboard.writeText('@sr.ashley').then(() => {
             let ogHtml = el.innerHTML;
