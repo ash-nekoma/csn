@@ -60,7 +60,9 @@
 
         input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
-        .hidden { display: none !important; opacity: 0; pointer-events: none; }
+        
+        /* Bulletproof Hidden Class */
+        .hidden { display: none !important; }
 
         /* ================= AUTHENTICATION ================= */
         #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
@@ -115,16 +117,16 @@
         #nav-credits { color: var(--credits); font-weight: 900; font-size: 1.1rem; }
         .wallet-unit { color: var(--text-muted); font-size: 0.8rem; font-weight: 800; }
 
-        .topbar-actions { display: flex; flex-direction: row; align-items: center; gap: 15px; background: rgba(0,0,0,0.8); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--glass-border); width: fit-content; position: relative;}
+        .topbar-actions { display: flex; flex-direction: row; align-items: center; gap: 15px; background: rgba(0,0,0,0.8); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--glass-border); width: fit-content; }
         .top-icon-btn { position: relative; cursor: pointer; background: transparent; border: none; font-size: 1.15rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: white; width: 20px; }
         .top-icon-btn i { text-align: center; width: 100%; transition: 0.2s; pointer-events: none;}
         .top-icon-btn:hover { transform: scale(1.1); }
         
         .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); pointer-events: none;}
 
-        /* POPOVERS - Bulletproof Positioning */
-        .dropdown-popover { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); transform-origin: top right; transition: all 0.2s ease-out; opacity: 1; visibility: visible; pointer-events: auto; cursor: default;}
-        .dropdown-popover.hidden { opacity: 0; transform: scale(0.95); visibility: hidden; pointer-events: none;}
+        /* YOUR CUSTOM DROPDOWN CSS */
+        .dropdown-wrapper { position: relative; display: inline-block; }
+        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
         
         .notif-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--glass-border); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;}
         .notif-actions { display: flex; gap: 10px; }
@@ -304,7 +306,7 @@
         .ticket-log-status.approved { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
         .ticket-log-status.rejected { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
 
-        /* RESULT BOXES */
+        /* EXACT GREEN/RED RESULT BOXES FOR BOTH SOLO AND SHARED */
         .result-box, .result-overlay-shared { position: absolute; bottom: 20px; right: 20px; left: auto; top: auto; transform: translateX(120%); opacity: 0; text-align: right; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; display: none; z-index: 100; min-width: 250px; text-transform: uppercase; backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .result-box.win, .result-overlay-shared.win { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.4); border-right: 4px solid var(--success); } 
         .result-box.lose, .result-overlay-shared.lose { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.4); border-right: 4px solid var(--danger); } 
@@ -408,7 +410,7 @@
                 <span id="player-name-display">Player</span>
             </div>
             
-            <div class="wallet-pill" id="pill-credits" onclick="openCashier()" title="Open Cashier">
+            <div class="wallet-pill" id="pill-credits" onclick="openModal('support-center-modal')" title="Open Cashier">
                 <i class="fas fa-coins"></i>
                 <span id="nav-credits">0</span>
                 <span class="wallet-unit">TC</span>
@@ -419,12 +421,12 @@
                     <i class="fas fa-user-shield"></i>
                 </button>
                 
-                <div style="position: relative; display: inline-block;">
-                    <button class="top-icon-btn" id="bell-btn" onclick="togglePopover('notif-dropdown', event)" title="Notifications">
+                <div class="dropdown-wrapper">
+                    <button class="top-icon-btn" onclick="toggleCustomDropdown('notif-dropdown', event)" title="Notifications">
                         <i class="fas fa-bell"></i>
                         <div class="notif-badge" id="notif-badge-display" style="display:none;">0</div>
                     </button>
-                    <div id="notif-dropdown" class="dropdown-popover hidden" style="opacity: 0; visibility: hidden; pointer-events: none;" onclick="event.stopPropagation()">
+                    <div id="notif-dropdown" class="custom-dropdown hidden">
                         <div class="notif-header">
                             <span>NOTIFICATIONS</span>
                             <div class="notif-actions">
@@ -442,18 +444,18 @@
                     <i class="fas fa-calendar-check"></i>
                 </button>
                 
-                <div style="position: relative; display: inline-block;">
-                    <button class="top-icon-btn" id="gift-btn" onclick="togglePopover('gift-dropdown', event)" title="Gift Code" style="color:var(--ps-glow);">
+                <div class="dropdown-wrapper">
+                    <button class="top-icon-btn" onclick="toggleCustomDropdown('gift-dropdown', event)" title="Gift Code" style="color:var(--ps-glow);">
                         <i class="fas fa-gift"></i>
                     </button>
-                    <div id="gift-dropdown" class="dropdown-popover hidden" style="padding: 20px; right: -50px; opacity: 0; visibility: hidden; pointer-events: none;" onclick="event.stopPropagation()">
-                        <div style="font-weight:900; color:white; text-transform:uppercase; margin-bottom:15px; font-size:1.1rem; text-align:center; cursor:default;">Redeem Code</div>
-                        <p style="color:var(--text-muted); text-align:center; font-size:0.85rem; margin-bottom: 15px; cursor:default;">Enter your gift code below to claim free TC.</p>
+                    <div id="gift-dropdown" class="custom-dropdown hidden" style="padding: 20px;">
+                        <div style="font-weight:900; color:white; text-transform:uppercase; margin-bottom:15px; font-size:1.1rem; text-align:center;">Redeem Code</div>
+                        <p style="color:var(--text-muted); text-align:center; font-size:0.85rem; margin-bottom: 15px;">Enter your gift code below to claim free TC.</p>
                         <div class="input-group" style="margin-bottom:10px;">
                             <input type="text" id="promo-code" class="input-control bet-input" placeholder="XXXX-XXXX-XXXX">
                         </div>
                         <button class="btn-play" style="width:100%; margin-top: 10px;" onclick="submitPromo()">REDEEM</button>
-                        <div id="promo-response" style="text-align:center; font-weight:800; min-height:25px; margin-top:15px; font-size: 1rem; line-height:1.4; cursor:default;"></div>
+                        <div id="promo-response" style="text-align:center; font-weight:800; min-height:25px; margin-top:15px; font-size: 1rem; line-height:1.4;"></div>
                     </div>
                 </div>
                 
@@ -708,9 +710,7 @@
       <i class="fas fa-times modal-close-icon" onclick="closeModal('daily-reward-modal')"></i>
       <h3 style="font-size: 2.2rem; color: var(--credits); margin-bottom: 5px; border: none; padding-bottom: 0;">Daily Reward</h3>
       <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px;">Claim credits every 24 hours!</p>
-      
       <div class="dr-days" id="dr-days-container"></div>
-      
       <div id="dr-status-container"></div>
     </div>
   </div>
@@ -871,7 +871,7 @@
         }).join('');
     }
 
-    // Modal logic rewritten to strictly command inline display to bypass CSS caches
+    // Modals rigidly hidden by display: none on start
     function openModal(id) { 
         let el = document.getElementById(id);
         el.classList.remove('hidden'); 
@@ -896,48 +896,29 @@
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
-    // --- NUCLEAR POPOVER SYSTEM (Bypasses CSS caching entirely) ---
-    function togglePopover(id, e) {
-        if(e) e.stopPropagation();
+    // --- BULLETPROOF CUSTOM DROPDOWN POPOVERS ---
+    function toggleCustomDropdown(id, e) {
+        e.stopPropagation();
         sfx.click();
         
-        let targetPop = document.getElementById(id);
-        let isHidden = targetPop.classList.contains('hidden');
-        
-        // Hide all popovers first
-        document.querySelectorAll('.dropdown-popover').forEach(p => {
-            p.classList.add('hidden');
-            p.style.opacity = '0';
-            p.style.visibility = 'hidden';
-            p.style.pointerEvents = 'none';
+        // Hide all custom dropdowns first
+        document.querySelectorAll('.custom-dropdown').forEach(d => {
+            if(d.id !== id) d.classList.add('hidden');
         });
         
-        // If the one we clicked was hidden, strictly force it open inline
-        if (isHidden) {
-            targetPop.classList.remove('hidden');
-            targetPop.style.opacity = '1';
-            targetPop.style.visibility = 'visible';
-            targetPop.style.pointerEvents = 'auto';
-            if(id === 'notif-dropdown') renderNotifs();
+        // Toggle the specific dropdown clicked
+        let target = document.getElementById(id);
+        target.classList.toggle('hidden');
+        
+        if(id === 'notif-dropdown' && !target.classList.contains('hidden')) {
+            renderNotifs();
         }
     }
 
-    // Clicking anywhere else completely hides them using inline overrides
+    // Clicking anywhere else on the screen hides the dropdowns
     document.addEventListener('click', function(e) {
-        const popovers = document.querySelectorAll('.dropdown-popover');
-        const btns = document.querySelectorAll('.top-icon-btn');
-        let clickedInside = false;
-        
-        popovers.forEach(p => { if (p.contains(e.target)) clickedInside = true; });
-        btns.forEach(b => { if (b.contains(e.target)) clickedInside = true; });
-
-        if (!clickedInside) {
-            popovers.forEach(p => {
-                p.classList.add('hidden');
-                p.style.opacity = '0';
-                p.style.visibility = 'hidden';
-                p.style.pointerEvents = 'none';
-            });
+        if (!e.target.closest('.dropdown-wrapper')) {
+            document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.add('hidden'));
         }
     });
 
@@ -1944,7 +1925,6 @@
       
       logHistory(gid, betsPlacedStr || '-', resStr, wonProfit, lostBet, tba > 0);
       
-      // Inject cleanly before sliding
       setTimeout(() => {
           if (t) t.innerHTML = msg; 
           if (tba > 0 && b) { 
