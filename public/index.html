@@ -60,7 +60,9 @@
 
         input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
-        .hidden { display: none !important; opacity: 0; pointer-events: none; }
+        
+        /* Bulletproof Hidden Class */
+        .hidden { display: none !important; }
 
         /* ================= AUTHENTICATION ================= */
         #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
@@ -156,10 +158,10 @@
 
         /* STRICT CENTERED MAIN WRAPPER */
         .main-wrapper { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; /* Dead Center */
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
             height: calc(100vh - 75px); margin-top: 75px; width: 100vw; overflow: hidden;
         }
-        .content { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 2rem; flex: 1; height: 100%;}
+        .content { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; flex: 1; height: 100%;}
         .view-container { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s; }
         
         .header-title { font-size: 3rem; font-weight: 900; margin: 0 0 2rem 0; text-transform: uppercase; letter-spacing: 2px; color: white; text-shadow: 0 2px 15px rgba(0,0,0,0.8); text-align: center; width: 100%; flex-shrink: 0;}
@@ -167,20 +169,21 @@
         
         .lobby-wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* STRICTLY HORIZONTAL CARD ALIGNMENT */
-        .lobby-modes-container, .casino-grid.solo-grid, .casino-grid.shared-grid {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            width: 100%;
-            flex-wrap: nowrap; /* FORCES horizontal alignment */
+        /* STRICTLY HORIZONTAL CARD ALIGNMENT - FIXES THE WRONG SIZING BUG */
+        .lobby-modes-container {
+            display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 20px; width: 100%; flex-wrap: nowrap;
+        }
+        .casino-grid.shared-grid {
+            display: grid; grid-template-columns: repeat(4, 240px); gap: 20px; justify-content: center; align-items: center; width: 100%; margin: 0 auto;
+        }
+        .casino-grid.solo-grid {
+            display: grid; grid-template-columns: repeat(3, 240px); gap: 20px; justify-content: center; align-items: center; width: 100%; margin: 0 auto;
         }
         
-        /* NEW NARROW/TALL SIZES TO MATCH REFERENCE IMAGE */
+        /* NEW NARROW/TALL SIZES TO MATCH REFERENCE IMAGE (Exactly 240px by 360px) */
         .mode-card, .game-card { 
             width: 240px; 
+            min-width: 240px; 
             height: 360px; 
             text-align: center; 
             cursor: pointer; 
@@ -189,13 +192,14 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            padding: 1.5rem; 
             border-radius: 16px; 
             background: var(--glass-bg); 
             border: 1px solid var(--glass-border); 
             transition: 0.3s; 
             overflow: hidden; 
             flex-shrink: 0; 
+            flex-grow: 0;
+            padding: 0;
         }
 
         .mode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); z-index: 1; }
@@ -203,13 +207,12 @@
         .mode-icon { font-size: 5rem; margin-bottom: 2rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; z-index: 2; }
         .mode-card:hover .mode-icon { transform: scale(1.1); color: white; text-shadow: 0 0 20px var(--ps-glow); }
         .mode-title { font-size: 1.8rem; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 10px; position: relative; z-index: 2; letter-spacing: 1px; white-space: nowrap; }
-        .mode-desc { color: var(--text-muted); font-size: 1rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.4; }
+        .mode-desc { color: var(--text-muted); font-size: 1rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.4; padding: 0 15px; }
 
         .live-badge { position: absolute; top: 15px; right: 15px; background: rgba(255, 51, 102, 0.15); border: 1px solid rgba(255, 51, 102, 0.4); backdrop-filter: blur(10px); color: var(--danger); font-size: 0.75rem; font-weight: 900; padding: 5px 10px; border-radius: 50px; display: flex; align-items: center; gap: 6px; letter-spacing: 1px; z-index: 10; box-shadow: 0 5px 15px rgba(255, 51, 102, 0.2); }
         .live-dot { width: 6px; height: 6px; background-color: var(--danger); border-radius: 50%; animation: pulseRed 1.5s infinite; }
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
 
-        .game-card { padding: 0; justify-content: flex-start; }
         .game-img { flex: 1; width: 100%; background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; font-size: 4.5rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; }
         .game-card:hover .game-img { color: white; text-shadow: 0 0 25px var(--ps-glow); background: rgba(0,30,70,0.4); }
         .game-info { height: 110px; width: 100%; padding: 15px; text-align: center; background: rgba(0, 5, 15, 0.95); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 5px; justify-content: center; flex-shrink: 0;}
@@ -511,7 +514,7 @@
               <div class="game-wrapper solo-wrap">
                   <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
                   <h2 class="header-title" style="align-self: center;">Solo Play</h2>
-                  <div class="casino-grid solo-grid">
+                  <div class="casino-grid solo-grid" style="display: grid; grid-template-columns: repeat(3, 240px); gap: 2.5rem; justify-content: center; width: 100%;">
                     <div class="game-card glass-panel" onclick="openGame('dice')">
                         <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Dice Roll</div><div class="game-desc">Roll over 50. Pays x2.</div></div>
                     </div>
@@ -529,7 +532,7 @@
               <div class="game-wrapper">
                   <div class="back-nav"><button class="btn-back" onclick="openLobbyMode('modes')"><i class="fas fa-arrow-left"></i> Back to Hub</button></div>
                   <h2 class="header-title" style="align-self: center;">Shared Tables</h2>
-                  <div class="casino-grid shared-grid">
+                  <div class="casino-grid shared-grid" style="display: grid; grid-template-columns: repeat(4, 240px); gap: 2.5rem; justify-content: center; width: 100%;">
                     <div class="game-card glass-panel" onclick="openSharedGame('baccarat')">
                         <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
                         <div class="game-img"><i class="fas fa-cards">🃏</i></div><div class="game-info"><div class="game-title">Baccarat</div><div class="game-desc">Closest to 9 wins.</div></div>
@@ -720,18 +723,18 @@
       </div>
   </div>
 
-  <div id="history-popover" class="custom-dropdown hidden" style="width: 400px; right: 0; top: 55px; padding: 0; overflow: hidden; cursor: default;" onclick="event.stopPropagation()">
+  <div id="history-popover" class="custom-dropdown hidden" style="width: 480px; right: 0; top: 55px; padding: 0; overflow: hidden; cursor: default;" onclick="event.stopPropagation()">
         <div style="background:rgba(0,0,0,0.5); border-bottom:1px solid var(--glass-border); padding:15px; text-align:center;">
             <div style="font-weight:900; color:white; font-size:1.1rem; margin-bottom:5px;">TOTAL ROUNDS: <span id="stat-total-rounds" style="color:var(--credits);">0</span></div>
-            <div id="stat-percentages" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; font-size:0.85rem; font-weight:800;"></div>
+            <div id="stat-percentages" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; font-size:0.95rem; font-weight:800;"></div>
         </div>
-        <div style="background: rgba(255,255,255,0.05); padding: 8px; text-align: center; border-bottom: 1px solid var(--glass-border); font-size: 0.8rem; font-weight: 900; color: white; letter-spacing: 1px; text-transform: uppercase;">
+        <div style="background: rgba(255,255,255,0.05); padding: 10px; text-align: center; border-bottom: 1px solid var(--glass-border); font-size: 0.9rem; font-weight: 900; color: white; letter-spacing: 1px; text-transform: uppercase;">
             RECENT RESULTS
         </div>
-        <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); font-size:0.75rem; font-weight:900; color:var(--text-muted); text-align:center; text-transform:uppercase; background: rgba(0,0,0,0.4);">
+        <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding:12px 15px; border-bottom:1px solid rgba(255,255,255,0.1); font-size:0.85rem; font-weight:900; color:var(--text-muted); text-align:center; text-transform:uppercase; background: rgba(0,0,0,0.4);">
             <div>Result</div><div>Bets</div><div style="color:var(--success)">Win</div><div style="color:var(--danger)">Loss</div>
         </div>
-        <div id="history-items" style="padding:10px; display:flex; flex-direction:column; gap:8px;">
+        <div id="history-items" style="padding:15px; display:flex; flex-direction:column; gap:10px;">
             </div>
   </div>
 
@@ -871,8 +874,10 @@
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
+    // The text parser for colored text. Uses safe string methods.
     function getBetColor(betWord) {
         if(!betWord) return 'white';
+        let word = betWord.toString().trim().toUpperCase();
         const map = {
             'PLAYER': 'var(--ps-glow)', 'BANKER': 'var(--danger)', 'TIE': 'var(--success)',
             'DRAGON': 'var(--danger)', 'TIGER': 'var(--credits)',
@@ -880,7 +885,7 @@
             'YELLOW': '#ffcc00', 'WHITE': '#fff', 'PINK': '#ff66b2', 'BLUE': '#00a2ff', 'RED': '#ff3366', 'GREEN': '#00e676',
             'BUST!': 'var(--danger)', 'PUSH': 'white', 'DEALER': 'var(--danger)', 'YOU': 'var(--success)'
         };
-        return map[betWord.toUpperCase()] || 'white';
+        return map[word] || 'white';
     }
 
     function colorsToDice(str) {
@@ -946,7 +951,6 @@
 
         let popover = document.getElementById('history-popover');
         
-        // Dynamically move the popover HTML directly into the button's wrapper
         if (e.currentTarget && e.currentTarget.parentElement) {
             e.currentTarget.parentElement.appendChild(popover);
         }
@@ -979,10 +983,14 @@
                     bHtml = h.bet === '-' ? '-' : `<div style="display:flex; justify-content:center; gap:4px; flex-wrap:wrap;">${colorsToDice(h.bet)}</div>`;
                     rHtml = `<div style="display:flex; justify-content:center; gap:4px;">${colorsToDice(h.result)}</div>`;
                 } else {
-                    bHtml = h.bet === '-' ? '-' : `<span style="font-weight:800; color:${getBetColor(h.bet.split(',')[0])}">${h.bet}</span>`;
-                    rHtml = `<span style="font-weight:900; color:${getBetColor(h.result.split(' ')[0])}">${h.result}</span>`;
+                    // Safe string parsing for solo games
+                    let safeB = h.bet ? h.bet.toString() : '-';
+                    let safeR = h.result ? h.result.toString() : '-';
+                    bHtml = safeB === '-' ? '-' : `<span style="font-weight:800; color:${getBetColor(safeB.split(',')[0])}">${safeB}</span>`;
+                    rHtml = `<span style="font-weight:900; color:${getBetColor(safeR.split(' ')[0])}">${safeR}</span>`;
                 }
-                list.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap:10px; align-items:center; font-size:0.85rem; text-transform:uppercase; text-align:center;"><div>${rHtml}</div><div>${bHtml}</div><div>${winVal}</div><div>${lossVal}</div></div>`;
+                // Larger font and more padding for the History items
+                list.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:8px; display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap:15px; align-items:center; font-size:1rem; text-transform:uppercase; text-align:center;"><div>${rHtml}</div><div>${bHtml}</div><div>${winVal}</div><div>${lossVal}</div></div>`;
             });
         }
     }
@@ -1233,12 +1241,15 @@
         }, 1000);
     }
 
-    function openRules(k) { 
-      if (!k || !gameInfoMap[k]) return; 
-      document.getElementById('rules-title').innerHTML = gameInfoMap[k].title + " Rules"; 
-      document.getElementById('rules-body').innerHTML = gameInfoMap[k].body; 
-      openModal('rules-modal'); 
-    }
+    const gameInfoMap = {
+      'dice': { title: "Dice Roll", body: "<ul><li style='margin-bottom:10px;'>Enter your bet amount and click <strong>Roll</strong>.</li><li style='margin-bottom:10px;'>Generates a random number between 1 and 100.</li><li style='margin-bottom:10px;'><strong>51 through 100</strong> wins (x2 Payout).</li><li style='margin-bottom:10px;'><strong>1 through 50</strong> loses.</li></ul>" },
+      'coinflip': { title: "Coin Flip", body: "<ul><li style='margin-bottom:10px;'>Enter your bet and choose either <strong>Heads</strong> or <strong>Tails</strong>.</li><li style='margin-bottom:10px;'>True 50/50 chance.</li><li style='margin-bottom:10px;'>Winning pays <strong>x2</strong> your bet.</li></ul>" },
+      'baccarat': { title: "Baccarat", body: "<ul><li style='margin-bottom:10px;'>Bet on Player, Banker, or Tie. Hand closest to <strong>9</strong> wins.</li><li style='margin-bottom:10px;'><strong>Card Rules:</strong> Standard 3rd card draw rules apply.</li><li style='margin-bottom:10px;'>Player pays <strong>x2</strong>. Banker pays <strong>x1.95</strong>.</li><li style='margin-bottom:10px;'>Tie pays <strong>x9</strong>. Player/Banker bets push on Tie.</li></ul>" },
+      'blackjack': { title: "Blackjack", body: "<ul><li style='margin-bottom:10px;'>Beat the dealer without going over 21.</li><li style='margin-bottom:10px;'>Dealer must draw to 16 and stand on <strong>17 or higher</strong>.</li><li style='margin-bottom:10px;'>Natural Blackjack pays <strong>x2.5</strong>. Standard wins pay <strong>x2</strong>. Ties push.</li></ul>" },
+      'perya': { title: "Color Game", body: "<ul><li style='margin-bottom:10px;'>Bet on Red, Blue, Yellow, White, Green, or Pink.</li><li style='margin-bottom:10px;'>3 dice are rolled.</li><li style='margin-bottom:10px;'>1 Match pays <strong>x2</strong>. 2 Matches pay <strong>x3</strong>. 3 Matches pay <strong>x4</strong>!</li></ul>" },
+      'dt': { title: "Dragon Tiger", body: "<ul><li style='margin-bottom:10px;'>Bet on Dragon, Tiger, or Tie. Highest card wins.</li><li style='margin-bottom:10px;'>Aces are low (1). Kings are high (13).</li><li style='margin-bottom:10px;'>Dragon/Tiger pays <strong>x2</strong>. Tie pays <strong>x9</strong>.</li></ul>" },
+      'sicbo': { title: "Sic Bo", body: "<ul><li style='margin-bottom:10px;'>Bet on Small (Sum 4-10) or Big (Sum 11-17).</li><li style='margin-bottom:10px;'>Wins pay <strong>x2</strong>.</li><li style='margin-bottom:10px;'>Any Triple roll loses all Big/Small bets.</li></ul>" }
+    };
 
     function logHistory(gid, betStr, resultStr, wonProfit, lostBet, didBet = true) {
         if(!myGameHistory[gid]) myGameHistory[gid] = [];
@@ -1407,14 +1418,15 @@
           const indFaces = ['fa-dice-one', 'fa-dice-two', 'fa-dice-three', 'fa-dice-four', 'fa-dice-five', 'fa-dice-six'];
           let animCycle = setInterval(() => { icn.className = `fas ${indFaces[Math.floor(Math.random() * 6)]} dice-icon anim-shake`; sfx.tick(); }, 50);
           
-          await delay(800); // Snappy animation
+          await delay(800);
           clearInterval(animCycle);
           
           icn.style.display = 'none'; nd.style.display = 'block'; nd.innerText = res.roll;
           nd.style.color = res.payout > 0 ? "var(--success)" : "var(--danger)";
           
           await delay(300);
-          showEndBox(mb, res.bet, res.payout, res.resStr, res.newBalance);
+          let historyMsg = (res.payout > 0) ? "WIN" : "LOSE";
+          showEndBox(mb, res.bet, res.payout, historyMsg, res.newBalance);
           logHistory('dice', res.bet + ' TC', res.resStr, res.payout > res.bet ? res.payout - res.bet : 0, res.payout === 0 ? res.bet : 0, true);
           
           await delay(1200); 
@@ -1447,7 +1459,8 @@
           cw.classList.remove('tossing');
           
           await delay(300);
-          showEndBox(mb, res.bet, res.payout, res.resStr, res.newBalance);
+          let historyMsg = (res.payout > 0) ? "WIN" : "LOSE";
+          showEndBox(mb, res.bet, res.payout, historyMsg, res.newBalance);
           logHistory('coinflip', choice.toUpperCase(), res.resStr, res.payout > res.bet ? res.payout - res.bet : 0, res.payout === 0 ? res.bet : 0, true);
           
           await delay(1200);
@@ -1751,7 +1764,7 @@
                     let p = a * (w === 'Tie' ? 9 : (w === 'Banker' ? 1.95 : 2)); 
                     tp += p; wonProfit += (p - a);
                 } else if (w === 'Tie' && (b === 'Player' || b === 'Banker')) {
-                    tp += a; 
+                    tp += a; // Push refund
                 } else { 
                     lostBet += a;
                 }
@@ -2066,41 +2079,39 @@
         const proofInput = document.getElementById('dep-ref');
         
         if(!amt || proofInput.files.length === 0) {
-            document.getElementById('dep-msg').innerHTML = '<span style="color:var(--danger)">Fill amount and attach proof.</span>';
+            showToast("Fill amount and attach proof", "error");
             return;
         }
         
         let filename = proofInput.files[0].name; 
         socket.emit('submitTransaction', { type: 'Deposit', amount: parseInt(amt), ref: filename });
         
-        let msgBox = document.getElementById('dep-msg');
-        msgBox.innerHTML = '<span style="color:var(--success)">REQUEST SUBMITTED</span>';
-        setTimeout(() => { if(msgBox) msgBox.innerHTML = ''; }, 3000);
+        showToast("Request Submitted", "success");
 
         document.getElementById('dep-amount').value = ''; 
         document.getElementById('dep-ref').value = '';
+        closeModal('support-center-modal');
     }
 
     function submitWithdrawal() {
         const amt = parseInt(document.getElementById('wit-amount').value);
         const info = document.getElementById('wit-info').value;
-        let msgBox = document.getElementById('wit-msg');
 
         if(!amt || !info) {
-            msgBox.innerHTML = '<span style="color:var(--danger)">Please fill all fields.</span>';
+            showToast("Please fill all fields", "error");
             return;
         }
         if(amt > myCredits) {
-            msgBox.innerHTML = '<span style="color:var(--danger)">Insufficient TC.</span>';
+            showToast("Insufficient TC", "error");
             return;
         }
         
         socket.emit('submitTransaction', { type: 'Withdrawal', amount: amt, ref: info });
         
-        msgBox.innerHTML = '<span style="color:var(--success)">REQUEST SUBMITTED</span>';
-        setTimeout(() => { if(msgBox) msgBox.innerHTML = ''; }, 3000);
+        showToast("Request Submitted", "success");
 
         document.getElementById('wit-amount').value = ''; document.getElementById('wit-info').value = '';
+        closeModal('support-center-modal');
     }
 
     socket.on('transactionsData', (txs) => {
