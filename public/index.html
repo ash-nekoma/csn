@@ -30,7 +30,7 @@
             --credits: #ffb400; 
             --text-main: #f8fafc; 
             --text-muted: #8c9eb5; 
-            --playable: #b366ff; /* Added Dual Currency Color */
+            --playable: #b366ff; 
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; -webkit-tap-highlight-color: transparent;}
@@ -110,7 +110,6 @@
         .player-profile { display: flex; align-items: center; gap: 8px; font-weight: 800; color: white; font-size: 1rem; text-transform: uppercase; }
         .player-profile i { color: var(--ps-glow); font-size: 1.4rem; }
 
-        /* Dual Wallet Layout */
         .wallet-pill { background: rgba(0,0,0,0.8); border: 1px solid rgba(255,180,0,0.4); padding: 5px 15px; border-radius: 8px; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 10px rgba(255,180,0,0.1); }
         .wallet-pill:hover { border-color: var(--credits); transform: translateY(-2px); box-shadow: 0 0 15px rgba(255,180,0,0.3); }
         .wallet-main { display: flex; align-items: center; gap: 6px; }
@@ -124,7 +123,6 @@
         .top-icon-btn i { text-align: center; width: 100%; transition: 0.2s; pointer-events: none;}
         .top-icon-btn:hover { transform: scale(1.1); }
         
-        /* Silent Bell Badge */
         .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); pointer-events: none; box-shadow: 0 0 10px var(--danger); }
         .notif-badge.pulse { animation: pulseBadge 1.5s infinite; }
         @keyframes pulseBadge { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
@@ -134,7 +132,7 @@
 
         /* DROPDOWN POPOVERS */
         .dropdown-wrapper { position: relative; display: inline-block; }
-        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
+        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
         
         .notif-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--glass-border); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;}
         .notif-actions { display: flex; gap: 10px; }
@@ -153,7 +151,6 @@
         .notif-item-del { position: absolute; right: 12px; bottom: 12px; background: transparent; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .notif-item-del:hover { color: var(--danger); transform: scale(1.1); }
 
-        /* THE ARCADE CENTER-FLASH ALERT (Now strictly for errors) */
         #arcade-flash {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.2);
             font-size: 3.5rem; font-weight: 900; text-transform: uppercase; text-align: center;
@@ -164,7 +161,6 @@
         .flash-success { color: var(--success); text-shadow: 0 0 40px var(--success), 0 5px 15px rgba(0,0,0,0.9); }
         .flash-error { color: var(--danger); text-shadow: 0 0 40px var(--danger), 0 5px 15px rgba(0,0,0,0.9); }
 
-        /* LOCAL GAME FLASH (Injected internally) */
         .local-flash { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); z-index: 1000; background: rgba(255, 51, 102, 0.95); color: white; font-size: 2.2rem; font-weight: 900; padding: 20px 40px; border-radius: 12px; border: 2px solid white; box-shadow: 0 0 30px rgba(255, 51, 102, 0.8); text-transform: uppercase; text-align: center; pointer-events: none; opacity: 0; transition: all 0.2s; display: none; white-space: nowrap;}
         .local-flash.show { display: block; animation: flashAnim 2s forwards; }
         .local-flash.success { background: rgba(0, 230, 118, 0.95); border-color: white; box-shadow: 0 0 30px rgba(0, 230, 118, 0.8); }
@@ -174,6 +170,7 @@
         .main-wrapper { 
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
             height: calc(100vh - 75px); margin-top: 75px; width: 100vw; overflow-y: auto; overflow-x: hidden; position: relative;
+            padding-bottom: 50px;
         }
         .content { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; flex: 1; height: 100%;}
         .view-container { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s; }
@@ -187,23 +184,17 @@
         .btn-back-fixed { position: fixed; top: 95px; left: 25px; z-index: 1000; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
         .btn-back-fixed:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
-        /* RESPONSIVE HORIZONTAL CARD ALIGNMENT */
-        .lobby-modes-container, .casino-grid.shared-grid, .casino-grid.solo-grid { 
-            display: flex; 
-            flex-direction: row; 
-            justify-content: center; 
-            align-items: stretch; 
-            gap: 25px; 
-            width: 100%; 
-            max-width: 1400px; 
-            flex-wrap: wrap; 
-        }
+        /* ================= REDESIGNED CARDS & GRIDS ================= */
 
-        /* THE CARDS */
-        .mode-card, .game-card { 
-            width: 240px; 
-            min-width: 240px; 
-            height: 360px; 
+        /* MAIN MENU SELECTIONS - BIGGER CARDS */
+        .lobby-modes-container { 
+            display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 40px; width: 100%; flex-wrap: wrap; 
+        }
+        
+        .mode-card { 
+            width: 340px; 
+            min-width: 340px; 
+            height: 440px; 
             text-align: center; 
             cursor: pointer; 
             position: relative; 
@@ -211,33 +202,94 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            border-radius: 16px; 
+            border-radius: 20px; 
             background: var(--glass-bg); 
             border: 1px solid var(--glass-border); 
             transition: 0.3s; 
             overflow: hidden; 
             flex-shrink: 0; 
             padding: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .mode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); z-index: 1; }
-        .mode-card:hover, .game-card:hover { transform: translateY(-8px); border-color: var(--ps-glow); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0,162,255,0.2); background: rgba(0, 30, 60, 0.8); }
-        .mode-icon { font-size: 5rem; margin-bottom: 2rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; z-index: 2; }
+        .mode-card:hover { transform: translateY(-8px); border-color: var(--ps-glow); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0,162,255,0.2); background: rgba(0, 30, 60, 0.8); }
+        .mode-icon { font-size: 6.5rem; margin-bottom: 2rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; z-index: 2; }
         .mode-card:hover .mode-icon { transform: scale(1.1); color: white; text-shadow: 0 0 20px var(--ps-glow); }
-        .mode-title { font-size: 1.8rem; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 10px; position: relative; z-index: 2; letter-spacing: 1px; white-space: nowrap; }
-        .mode-desc { color: var(--text-muted); font-size: 1rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.4; padding: 0 15px; }
+        .mode-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 10px; position: relative; z-index: 2; letter-spacing: 1px; white-space: nowrap; }
+        .mode-desc { color: var(--text-muted); font-size: 1.1rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.4; padding: 0 20px; }
 
-        .live-badge { position: absolute; top: 15px; right: 15px; background: rgba(255, 51, 102, 0.15); border: 1px solid rgba(255, 51, 102, 0.4); backdrop-filter: blur(10px); color: var(--danger); font-size: 0.75rem; font-weight: 900; padding: 5px 10px; border-radius: 50px; display: flex; align-items: center; gap: 6px; letter-spacing: 1px; z-index: 10; box-shadow: 0 5px 15px rgba(255, 51, 102, 0.2); }
-        .live-dot { width: 6px; height: 6px; background-color: var(--danger); border-radius: 50%; animation: pulseRed 1.5s infinite; }
-        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
+        /* GAME SELECTIONS - EXACT 4-COLUMN & 3-COLUMN GRIDS */
+        .casino-grid.solo-grid { 
+            display: grid; grid-template-columns: repeat(4, 260px); justify-content: center; gap: 20px; width: 100%; 
+        }
+        .casino-grid.shared-grid { 
+            display: grid; grid-template-columns: repeat(3, 260px); justify-content: center; gap: 20px; width: 100%; 
+        }
 
-        .game-img { flex: 1; width: 100%; background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; font-size: 4.5rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; }
-        .game-card:hover .game-img { color: white; text-shadow: 0 0 25px var(--ps-glow); background: rgba(0,30,70,0.4); }
-        .game-info { height: 110px; width: 100%; padding: 15px; text-align: center; background: rgba(0, 5, 15, 0.95); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 5px; justify-content: center; flex-shrink: 0;}
-        .game-title { font-size: 1.2rem; font-weight: 900; color: white; text-transform:uppercase; letter-spacing: 1px; margin: 0; } 
-        .game-desc { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; line-height: 1.3; }
+        /* PREMIUM DARK THEMED CARDS */
+        .game-card { 
+            width: 100%; 
+            min-height: 380px; 
+            padding: 25px 20px;
+            border-radius: 12px; 
+            background: #0f121b; /* Solid dark */
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-start;
+            position: relative;
+            transition: 0.3s;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+        }
 
-        .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 0.9rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        /* THEME COLORS */
+        .game-card[data-theme="red"] { border-top: 3px solid #ff3366; }
+        .game-card[data-theme="blue"] { border-top: 3px solid #00a2ff; }
+        .game-card[data-theme="yellow"] { border-top: 3px solid #ffb400; }
+        .game-card[data-theme="purple"] { border-top: 3px solid #b366ff; }
+        .game-card[data-theme="green"] { border-top: 3px solid #00e676; }
+        .game-card[data-theme="orange"] { border-top: 3px solid #ff6600; }
+
+        .card-badge {
+            position: absolute; top: 15px; left: 15px;
+            font-size: 0.65rem; font-weight: 900; letter-spacing: 1px;
+            padding: 4px 8px; border-radius: 4px; text-transform: uppercase;
+        }
+        .game-card[data-theme="red"] .card-badge { background: #330a15; color: #ff3366; }
+        .game-card[data-theme="blue"] .card-badge { background: #002033; color: #00a2ff; }
+        .game-card[data-theme="yellow"] .card-badge { background: #332400; color: #ffb400; }
+        .game-card[data-theme="purple"] .card-badge { background: #261433; color: #b366ff; }
+        .game-card[data-theme="green"] .card-badge { background: #00331a; color: #00e676; }
+        .game-card[data-theme="orange"] .card-badge { background: #331400; color: #ff6600; }
+
+        .game-card-icon { font-size: 4.5rem; margin: 35px 0 20px; transition: 0.3s; }
+        .game-card[data-theme="red"] .game-card-icon { color: #ff3366; text-shadow: 0 0 20px rgba(255,51,102,0.4); }
+        .game-card[data-theme="blue"] .game-card-icon { color: #00a2ff; text-shadow: 0 0 20px rgba(0,162,255,0.4); }
+        .game-card[data-theme="yellow"] .game-card-icon { color: #ffb400; text-shadow: 0 0 20px rgba(255,180,0,0.4); }
+        .game-card[data-theme="purple"] .game-card-icon { color: #b366ff; text-shadow: 0 0 20px rgba(179,102,255,0.4); }
+        .game-card[data-theme="green"] .game-card-icon { color: #00e676; text-shadow: 0 0 20px rgba(0,230,118,0.4); }
+        .game-card[data-theme="orange"] .game-card-icon { color: #ff6600; text-shadow: 0 0 20px rgba(255,102,0,0.4); }
+
+        .game-card-title { font-size: 1.4rem; font-weight: 900; color: white; margin-bottom: 10px; text-align: center; }
+        .game-card-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px; flex-grow: 1; text-align: center; }
+        
+        .game-card-stat { font-size: 0.85rem; font-weight: 800; display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 20px; color: var(--credits); }
+        
+        .card-action-btn { width: 100%; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 1rem; border: none; cursor: pointer; transition: 0.3s; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 8px; pointer-events: none;}
+        .game-card[data-theme="red"] .card-action-btn { background: #ff3366; color: white; box-shadow: 0 5px 15px rgba(255,51,102,0.3); }
+        .game-card[data-theme="blue"] .card-action-btn { background: #00a2ff; color: black; box-shadow: 0 5px 15px rgba(0,162,255,0.3); }
+        .game-card[data-theme="yellow"] .card-action-btn { background: #ffb400; color: black; box-shadow: 0 5px 15px rgba(255,180,0,0.3); }
+        .game-card[data-theme="purple"] .card-action-btn { background: #b366ff; color: white; box-shadow: 0 5px 15px rgba(179,102,255,0.3); }
+        .game-card[data-theme="green"] .card-action-btn { background: #00e676; color: black; box-shadow: 0 5px 15px rgba(0,230,118,0.3); }
+        .game-card[data-theme="orange"] .card-action-btn { background: #ff6600; color: black; box-shadow: 0 5px 15px rgba(255,102,0,0.3); }
+
+        .game-card:hover { transform: translateY(-8px); border-color: rgba(255,255,255,0.2); }
+        .game-card:hover .game-card-icon { transform: scale(1.1); }
+        .game-card:hover .card-action-btn { filter: brightness(1.2); transform: scale(1.02); }
+
 
         .game-wrapper { width: 100%; max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center;}
         
@@ -250,7 +302,6 @@
         .main-panel { display: flex; flex-direction: column; height: 100%; position: relative;}
         .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 20px;}
         
-        /* Z-INDEX FIX for Shared Tables */
         .controls-grid { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); flex-shrink: 0; position: relative; z-index: 100; pointer-events: auto;} 
         .controls-full { display: flex; gap: 15px; justify-content: center; width: 100%; }
 
@@ -372,6 +423,11 @@
         /* ================= MOBILE UI / MEDIA QUERIES ================= */
         #chat-floating-btn { display: none; }
         
+        @media (max-width: 1200px) {
+            .casino-grid.solo-grid { grid-template-columns: repeat(2, 260px); }
+            .casino-grid.shared-grid { grid-template-columns: repeat(2, 260px); }
+        }
+
         @media (max-width: 768px) {
             .desktop-actions { display: none; position: absolute; top: 65px; right: 20px; background: var(--glass-bg); flex-direction: column; padding: 20px; border-radius: 8px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
             .desktop-actions.show { display: flex; }
@@ -383,7 +439,7 @@
             .lobby-modes-container, .casino-grid.shared-grid, .casino-grid.solo-grid {
                 display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; padding: 0 20px 20px; width: 100vw; gap: 15px;
             }
-            .mode-card, .game-card { scroll-snap-align: center; }
+            .mode-card, .game-card { scroll-snap-align: center; min-width: 300px;}
 
             /* SHARED TABLE VERTICAL STACK & CHAT OVERLAY */
             .shared-layout { flex-direction: column; height: calc(100vh - 150px); }
@@ -403,7 +459,8 @@
 </head>
 <body>
   
-  <div id="arcade-flash" class="hidden"></div> <div id="auth-container">
+  <div id="arcade-flash" class="hidden"></div> 
+  <div id="auth-container">
       <div class="auth-box">
           <div class="auth-title">STICK N' TRADE</div>
           <div class="auth-sub">CASINO</div>
@@ -562,15 +619,34 @@
               <div class="game-wrapper solo-wrap">
                   <h2 class="header-title">Solo Play</h2>
                   <div class="casino-grid solo-grid">
-                    <div class="game-card glass-panel" onclick="openGame('dice')">
-                        <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Dice Roll</div><div class="game-desc">Roll over 50. Pays x2.</div></div>
+                    
+                    <div class="game-card" data-theme="red" onclick="openGame('dice')">
+                        <div class="card-badge">UP TO 2X</div>
+                        <i class="fas fa-dice game-card-icon"></i>
+                        <div class="game-card-title">Dice Roll</div>
+                        <div class="game-card-desc">Predict the numbers and roll for glory! Double your stake instantly.</div>
+                        <div class="game-card-stat"><i class="fas fa-coins"></i> Min Bet: 10 TC</div>
+                        <button class="card-action-btn"><i class="fas fa-play"></i> PLAY DICE</button>
                     </div>
-                    <div class="game-card glass-panel" onclick="openGame('coinflip')">
-                        <div class="game-img"><i class="fas fa-coins"></i></div><div class="game-info"><div class="game-title">Coin Flip</div><div class="game-desc">Heads or Tails. Pays x1.95.</div></div>
+
+                    <div class="game-card" data-theme="yellow" onclick="openGame('coinflip')">
+                        <div class="card-badge">PROVABLY FAIR</div>
+                        <i class="fas fa-coins game-card-icon"></i>
+                        <div class="game-card-title">Zeyiiee Coinflip</div>
+                        <div class="game-card-desc">Double your credits with a single toss. Will you land on the lucky side?</div>
+                        <div class="game-card-stat"><i class="fas fa-bolt"></i> Pays: x1.95</div>
+                        <button class="card-action-btn"><i class="fas fa-sync"></i> START FLIPPING</button>
                     </div>
-                    <div class="game-card glass-panel" onclick="openGame('blackjack')">
-                        <div class="game-img"><i class="fas fa-spade">♠️</i></div><div class="game-info"><div class="game-title">Blackjack</div><div class="game-desc">Beat the dealer to 21.</div></div>
+
+                    <div class="game-card" data-theme="blue" onclick="openGame('blackjack')">
+                        <div class="card-badge">PRO CHOICE</div>
+                        <i class="fas fa-spade game-card-icon"></i>
+                        <div class="game-card-title">SNT Blackjack</div>
+                        <div class="game-card-desc">Beat the dealer to 21. Experience high-stakes strategy with professional vibes.</div>
+                        <div class="game-card-stat" style="color:var(--ps-glow);"><i class="fas fa-bolt"></i> Pays: x2.5</div>
+                        <button class="card-action-btn"><i class="fas fa-plus"></i> HIT 21</button>
                     </div>
+
                   </div>
               </div>
             </div>
@@ -579,22 +655,43 @@
               <div class="game-wrapper">
                   <h2 class="header-title">Shared Tables</h2>
                   <div class="casino-grid shared-grid">
-                    <div class="game-card glass-panel" onclick="openSharedGame('baccarat')">
-                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                        <div class="game-img"><i class="fas fa-cards">🃏</i></div><div class="game-info"><div class="game-title">Baccarat</div><div class="game-desc">Closest to 9 wins.</div></div>
+                    
+                    <div class="game-card" data-theme="red" onclick="openSharedGame('baccarat')">
+                        <div class="card-badge">LIVE DEALER</div>
+                        <i class="fas fa-cards game-card-icon">🃏</i>
+                        <div class="game-card-title">Baccarat</div>
+                        <div class="game-card-desc">Closest to 9 wins. Bet Player, Banker, or Tie.</div>
+                        <div class="game-card-stat" style="color:var(--success);"><i class="fas fa-users"></i> <span class="ap-count">0</span> Playing</div>
+                        <button class="card-action-btn"><i class="fas fa-door-open"></i> JOIN TABLE</button>
                     </div>
-                    <div class="game-card glass-panel" onclick="openSharedGame('perya')">
-                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                        <div class="game-img"><i class="fas fa-dice-d6"></i></div><div class="game-info"><div class="game-title">Color Game</div><div class="game-desc">Classic 3-dice color drop.</div></div>
+
+                    <div class="game-card" data-theme="purple" onclick="openSharedGame('perya')">
+                        <div class="card-badge">MULTIPLIERS</div>
+                        <i class="fas fa-dice-d6 game-card-icon"></i>
+                        <div class="game-card-title">Color Game</div>
+                        <div class="game-card-desc">Classic 3-dice color drop. Match 3 for massive payouts!</div>
+                        <div class="game-card-stat" style="color:var(--success);"><i class="fas fa-users"></i> <span class="ap-count">0</span> Playing</div>
+                        <button class="card-action-btn"><i class="fas fa-play"></i> DROP DICE</button>
                     </div>
-                    <div class="game-card glass-panel" onclick="openSharedGame('dt')">
-                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                        <div class="game-img"><i class="fas fa-dragon"></i></div><div class="game-info"><div class="game-title">Dragon Tiger</div><div class="game-desc">Highest card takes all.</div></div>
+
+                    <div class="game-card" data-theme="orange" onclick="openSharedGame('dt')">
+                        <div class="card-badge">FAST PACED</div>
+                        <i class="fas fa-dragon game-card-icon"></i>
+                        <div class="game-card-title">Dragon Tiger</div>
+                        <div class="game-card-desc">Highest card takes all. Fast, brutal, and highly rewarding.</div>
+                        <div class="game-card-stat" style="color:var(--success);"><i class="fas fa-users"></i> <span class="ap-count">0</span> Playing</div>
+                        <button class="card-action-btn"><i class="fas fa-fire"></i> ENTER ARENA</button>
                     </div>
-                    <div class="game-card glass-panel" onclick="openSharedGame('sicbo')">
-                        <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                        <div class="game-img"><i class="fas fa-dice"></i></div><div class="game-info"><div class="game-title">Sic Bo</div><div class="game-desc">Asian 3-dice betting.</div></div>
+
+                    <div class="game-card" data-theme="green" onclick="openSharedGame('sicbo')">
+                        <div class="card-badge">ASIAN CLASSIC</div>
+                        <i class="fas fa-dice game-card-icon"></i>
+                        <div class="game-card-title">Sic Bo</div>
+                        <div class="game-card-desc">Bet Big or Small on the 3-dice sum. Avoid the triples!</div>
+                        <div class="game-card-stat" style="color:var(--success);"><i class="fas fa-users"></i> <span class="ap-count">0</span> Playing</div>
+                        <button class="card-action-btn"><i class="fas fa-play"></i> ROLL NOW</button>
                     </div>
+
                   </div>
               </div>
             </div>
@@ -624,7 +721,7 @@
                               <label style="text-align:center">BET AMOUNT</label>
                               <input type="number" id="dice-bet" class="input-control bet-input" placeholder="10">
                           </div>
-                          <button class="btn-play" id="btn-dice" onclick="playDice()" style="width: 100%;">ROLL DICE</button>
+                          <button class="btn-play" id="btn-dice" onclick="playDice()" style="width: 100%; background: #ff3366; border: none;">ROLL DICE</button>
                       </div>
                     </div>
                   </div>
@@ -661,7 +758,7 @@
                               <input type="number" id="coin-bet" class="input-control bet-input" placeholder="10">
                           </div>
                           <div style="display:flex; gap:10px; width:100%; justify-content:center;">
-                              <button class="btn-play" id="btn-heads" onclick="playCoin('Heads')" style="flex:1; background: rgba(255,180,0,0.2); border-color: var(--credits);">Heads</button>
+                              <button class="btn-play" id="btn-heads" onclick="playCoin('Heads')" style="flex:1; background: #ffb400; color: black; border: none;">Heads</button>
                               <button class="btn-play" id="btn-tails" onclick="playCoin('Tails')" style="flex:1; background: rgba(255,255,255,0.1); border-color: white;">Tails</button>
                           </div>
                       </div>
@@ -698,7 +795,7 @@
                               <label style="text-align:center">BET AMOUNT</label>
                               <input type="number" id="bj-bet" class="input-control bet-input" placeholder="10">
                           </div>
-                          <button class="btn-play" onclick="startBlackjack()" id="btn-bj-deal" style="width: 100%;">DEAL CARDS</button>
+                          <button class="btn-play" onclick="startBlackjack()" id="btn-bj-deal" style="width: 100%; background: #00a2ff; border: none; color: black;">DEAL CARDS</button>
                       </div>
                     </div>
 
@@ -961,7 +1058,6 @@
     function showLocalFlash(game, msg, type='error') {
         let f = document.getElementById('flash-' + game);
         if(!f) {
-            // For shared games generic fallback
             f = document.getElementById('flash-shared');
         }
         if(!f) return;
@@ -1342,7 +1438,6 @@
       if (viewId === 'casino') {
           openLobbyMode('modes'); 
       } else {
-          // If entering an actual game table, show LEAVE TABLE
           backBtn.classList.remove('hidden');
           backBtn.innerHTML = '<i class="fas fa-arrow-left"></i> LEAVE TABLE';
       }
@@ -1358,11 +1453,9 @@
       
       let backBtn = document.getElementById('global-back-btn');
       if(mode === 'modes') {
-          // Root lobby menu - hide the back button completely
           document.querySelector('.casino-title').classList.remove('hidden');
           backBtn.classList.add('hidden');
       } else { 
-          // Sub-lobby menu (Solo/Shared) - show BACK TO MODES
           document.querySelector('.casino-title').classList.add('hidden'); 
           backBtn.classList.remove('hidden');
           backBtn.innerHTML = '<i class="fas fa-arrow-left"></i> BACK TO MODES';
@@ -1401,14 +1494,11 @@
     }
 
     function backToHub() {
-        // Check if we are currently looking at the sub-lobbies (Solo/Shared selections)
         let inCasinoView = !document.getElementById('view-casino').classList.contains('hidden');
         
         if (inCasinoView) {
-            // We are in the sub-lobby, so step back to the Main Modes menu
             openLobbyMode('modes');
         } else {
-            // We are inside a game, leave the game and go to the respective sub-lobby
             if (window.activeSharedGame) {
                 backToSharedLobby();
             } else {
