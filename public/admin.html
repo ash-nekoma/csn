@@ -42,8 +42,9 @@
         .input-control { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 8px; font-size: 1.1rem; font-weight: 600; transition: 0.2s; pointer-events: auto; cursor: text; }
         .input-control:focus { border-color: var(--ps-glow); background: rgba(0,0,0,0.7); box-shadow: 0 0 15px rgba(0,162,255,0.2); }
         
-        .btn-primary { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; pointer-events: auto; }
-        .btn-primary:hover { background: var(--ps-glow); color: black; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 162, 255, 0.4); }
+        /* PREMIUM BUTTONS */
+        .btn-primary { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; pointer-events: auto; }
+        .btn-primary:hover { background: var(--ps-glow); color: black; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 162, 255, 0.4); }
         .auth-msg { font-size: 0.95rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; color: var(--danger); }
 
         /* DASHBOARD LAYOUT */
@@ -62,21 +63,22 @@
         .nav-item.active { background: rgba(0, 162, 255, 0.1); color: var(--ps-glow); border-left-color: var(--ps-glow); }
         
         .logout-btn { padding: 20px; text-align: center; border-top: 1px solid var(--glass-border); cursor: pointer; color: white; font-weight: 800; transition: 0.2s; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.05);}
-        .logout-btn:hover { background: rgba(255,255,255,0.15); }
+        .logout-btn:hover { background: rgba(255,255,255,0.15); color: var(--danger); }
 
         /* MAIN CONTENT */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: transparent; }
         .topbar { padding: 25px 40px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
         .topbar h1 { font-weight: 900; font-size: 2rem; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
         
-        .content-area { padding: 40px; overflow-y: auto; flex: 1; }
+        .content-area { padding: 40px; overflow-y: auto; flex: 1; width: 100%; }
 
-        /* STATS CARDS */
+        /* STATS CARDS (PREMIUM GLASSMORPHISM) */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .stat-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 30px; border-radius: 12px; display: flex; align-items: center; gap: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .stat-icon { width: 70px; height: 70px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; background: rgba(255,255,255,0.05); }
+        .stat-card { background: rgba(0, 15, 35, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 12px; display: flex; align-items: center; gap: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+        .stat-icon { width: 70px; height: 70px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; background: rgba(255,255,255,0.05); box-shadow: inset 0 0 15px rgba(255,255,255,0.02); }
         .stat-info h3 { color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px;}
         .stat-info .value { font-size: 2.5rem; font-weight: 900; color: white; line-height: 1; }
+        .glow-neon { text-shadow: 0 0 15px var(--ps-glow); color: var(--ps-glow); }
 
         /* DATA TABLES & PANELS */
         .panel { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column;}
@@ -87,7 +89,6 @@
         th, td { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         thead th { position: sticky; top: 0; background: #000a1f; z-index: 10; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); padding: 15px 20px;}
         td { font-weight: 600; font-size: 1rem; color: white; }
-        tr:hover { background: rgba(255,255,255,0.03); }
 
         /* CENTER ALIGNMENT UTILITY */
         .center-col { text-align: center; justify-content: center; }
@@ -105,12 +106,12 @@
         .btn-reject { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); } .btn-reject:hover { background: var(--danger); color: white; }
 
         /* SPLIT SCREEN LAYOUT FOR CASHIER */
-        .split-screen { display: flex; gap: 20px; height: 60vh; align-items: stretch; }
-        .split-col { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .split-screen { display: flex; gap: 20px; width: 100%; height: 65vh; align-items: stretch; }
+        .split-col { flex: 1; display: flex; flex-direction: column; overflow: hidden; width: 50%; }
 
-        /* CLICKABLE ROWS & CARDS */
-        .clickable-row { cursor: pointer; transition: 0.2s; }
-        .clickable-row:hover { background: rgba(0, 162, 255, 0.1); border-left: 3px solid var(--ps-glow); }
+        /* CLICKABLE ROWS (No Jitter) */
+        .clickable-row { cursor: pointer; transition: background-color 0.2s ease; border-left: 3px solid transparent; }
+        .clickable-row:hover { background-color: rgba(0, 162, 255, 0.15); border-left: 3px solid var(--ps-glow); }
 
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
@@ -124,12 +125,11 @@
         .filter-bar input, .filter-bar select { padding: 10px 15px; background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: white; border-radius: 6px; font-size: 0.95rem; font-weight: 600; outline: none; }
         .filter-bar input:focus, .filter-bar select:focus { border-color: var(--ps-glow); }
         
-        .clickable-header { cursor: pointer; transition: color 0.2s; }
-        .clickable-header:hover { color: var(--ps-glow); }
-        
         /* CUSTOM CONFIRMATION MODAL */
         .confirm-btn-container { display: flex; gap: 15px; margin-top: 25px; }
         .confirm-btn-container button { flex: 1; padding: 15px; font-size: 1.1rem; }
+        
+        .modal-error-text { color: var(--danger); font-size: 0.9rem; font-weight: bold; text-align: center; margin-bottom: 15px; min-height: 20px; }
     </style>
 </head>
 <body>
@@ -163,7 +163,7 @@
                 <div class="nav-item" onclick="switchTab('cashier')"><i class="fas fa-money-bill-transfer"></i> Cashier Logs</div>
                 <div class="nav-item" onclick="switchTab('promos')"><i class="fas fa-gift"></i> Promo Batches</div>
             </div>
-            <div class="logout-btn" onclick="window.location.href='/'">
+            <div class="logout-btn" onclick="confirmLogout()">
                 <i class="fas fa-arrow-left"></i> Back to Casino
             </div>
         </div>
@@ -184,8 +184,8 @@
                             <div class="stat-icon" style="color: var(--credits);"><i class="fas fa-coins"></i></div>
                             <div class="stat-info">
                                 <h3>Total Economy</h3>
-                                <div class="value" id="stat-economy" style="color: var(--ps-glow);">0.0</div>
-                                <span style="font-size: 0.8rem; color: var(--text-muted);">Bank: 2,000,000 TC limit</span>
+                                <div class="value glow-neon" id="stat-economy">0.0</div>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Bank: 2,000,000 limit</span>
                             </div>
                         </div>
                         <div class="stat-card">
@@ -219,6 +219,7 @@
                                         <select id="tool-target-type" class="input-control" style="appearance: auto;" onchange="toggleGiftTarget()">
                                             <option value="specific">Specific Player</option>
                                             <option value="all_active">All Active Players</option>
+                                            <option value="all_registered">All Registered Players</option>
                                         </select>
                                     </div>
                                     <div class="input-group" style="margin:0; flex:1;" id="gift-user-group">
@@ -227,9 +228,16 @@
                                     </div>
                                 </div>
                                 <div style="display:flex; gap:15px; width: 100%; align-items: flex-end;">
-                                    <div class="input-group" style="margin:0; flex:2;">
-                                        <label>Amount (TC)</label>
+                                    <div class="input-group" style="margin:0; flex:1;">
+                                        <label>Amount</label>
                                         <input type="number" id="tool-amt" class="input-control" placeholder="500">
+                                    </div>
+                                    <div class="input-group" style="margin:0; flex:1;">
+                                        <label>Credit Type</label>
+                                        <select id="tool-credit-type" class="input-control" style="appearance: auto;">
+                                            <option value="playable">Playable Bonus</option>
+                                            <option value="regular">Regular TC</option>
+                                        </select>
                                     </div>
                                     <button class="btn-primary" style="flex:1; padding: 15px;" onclick="sendGift()"><i class="fas fa-check"></i> Send Gift</button>
                                 </div>
@@ -244,6 +252,22 @@
                         <div class="filter-bar">
                             <i class="fas fa-search" style="color:var(--text-muted)"></i>
                             <input type="text" id="filter-search" placeholder="Search by username..." style="flex:1;" onkeyup="renderUsers()">
+                            <select id="filter-role" onchange="renderUsers()">
+                                <option value="All">All Roles</option>
+                                <option value="Player">Player</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                            <select id="filter-status" onchange="renderUsers()">
+                                <option value="All">All Statuses</option>
+                                <option value="Active">Active</option>
+                                <option value="Offline">Offline</option>
+                                <option value="Banned">Banned</option>
+                            </select>
+                            <select id="filter-sort" onchange="renderUsers()">
+                                <option value="desc">Credits: High to Low</option>
+                                <option value="asc">Credits: Low to High</option>
+                            </select>
                         </div>
                         <div class="custom-scroll" style="max-height: 55vh; overflow-y: auto;">
                             <table>
@@ -251,8 +275,9 @@
                                     <tr>
                                         <th class="center-col">JOINED</th>
                                         <th class="center-col">USERNAME</th>
-                                        <th class="center-col clickable-header" onclick="toggleCreditSort()"><i class="fas fa-sort"></i> CREDITS</th>
+                                        <th class="center-col">CREDITS (TC)</th>
                                         <th class="center-col">ROLE</th>
+                                        <th class="center-col">STATUS</th>
                                         <th class="center-col">ACTIONS</th>
                                     </tr>
                                 </thead>
@@ -304,6 +329,7 @@
                                     <tr>
                                         <th class="center-col">BATCH ID</th>
                                         <th class="center-col">VALUE PER CODE</th>
+                                        <th class="center-col">CREDIT TYPE</th>
                                         <th class="center-col">QUANTITY</th>
                                         <th class="center-col">ACTIONS</th>
                                     </tr>
@@ -338,9 +364,8 @@
                 <span style="color: var(--text-muted); font-size: 0.9rem;">From User: <span id="inspector-user" style="color: white;"></span></span>
             </div>
             
-            <div style="width: 100%; height: 200px; background: rgba(0,0,0,0.8); border: 1px dashed var(--glass-border); border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; color: var(--text-muted);">
-                <i class="fas fa-file-image" style="font-size: 3rem;"></i> &nbsp; <span id="inspector-proof">Proof.jpg</span>
-            </div>
+            <div id="inspector-proof-container" style="width: 100%; min-height: 150px; background: rgba(0,0,0,0.8); border: 1px dashed var(--glass-border); border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+                </div>
 
             <div class="confirm-btn-container">
                 <button class="btn-primary" style="background: rgba(255, 51, 102, 0.15); color: var(--danger); border-color: var(--danger);" id="btn-reject-tx">REJECT</button>
@@ -353,6 +378,7 @@
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('edit-user-modal')"><i class="fas fa-times"></i></button>
             <h3 class="modal-title">Edit Player</h3>
+            <div id="edit-user-err" class="modal-error-text"></div>
             <input type="hidden" id="edit-u-id">
             
             <div class="input-group">
@@ -360,8 +386,12 @@
                 <input type="text" id="edit-u-name" class="input-control" disabled style="opacity: 0.5;">
             </div>
             <div class="input-group">
-                <label>Account Balance (TC)</label>
+                <label>Main Balance (Withdrawable TC)</label>
                 <input type="number" id="edit-u-credits" class="input-control" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>Playable Bonus (TC)</label>
+                <input type="number" id="edit-u-playable" class="input-control" step="0.1">
             </div>
             <div class="input-group" style="margin-bottom: 25px;">
                 <label>Account Role</label>
@@ -379,13 +409,21 @@
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('create-promo-modal')"><i class="fas fa-times"></i></button>
             <h3 class="modal-title">Generate Gift Codes</h3>
+            <div id="promo-err" class="modal-error-text"></div>
             <div class="input-group">
                 <label>TC Value Per Code</label>
                 <input type="number" id="promo-amount" class="input-control" placeholder="e.g. 500">
             </div>
-            <div class="input-group" style="margin-bottom: 25px;">
+            <div class="input-group">
                 <label>Quantity of Codes to Generate</label>
                 <input type="number" id="promo-count" class="input-control" placeholder="e.g. 10">
+            </div>
+            <div class="input-group" style="margin-bottom: 25px;">
+                <label>Credit Type</label>
+                <select id="promo-type" class="input-control" style="appearance: auto;">
+                    <option value="playable">Playable Bonus</option>
+                    <option value="regular">Regular TC</option>
+                </select>
             </div>
             <button class="btn-primary" onclick="generatePromo()">CREATE BATCH</button>
         </div>
@@ -417,7 +455,6 @@
         let gPromos = [];
         let gBatches = {}; 
         let currentViewBatch = []; 
-        let creditSortDesc = true; // Tracks high-to-low sorting
 
         // Authentication Hook
         document.getElementById('admin-pass').addEventListener('keypress', function(e) {
@@ -445,6 +482,12 @@
             document.getElementById('admin-app').style.display = 'flex';
         });
 
+        function confirmLogout() {
+            showSNTConfirm("DISCONNECT TERMINAL", "Are you sure you want to leave the Master Admin dashboard?", () => {
+                window.location.href = '/';
+            });
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             event.currentTarget.classList.add('active');
@@ -455,15 +498,20 @@
             document.getElementById('page-title').innerText = titles[tabId];
         }
 
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function openModal(id) { 
+            // Clear any old modal errors
+            document.querySelectorAll('.modal-error-text').forEach(el => el.innerText = '');
+            document.getElementById(id).classList.remove('hidden'); 
+        }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // Custom SNT Confirm Modal Function
+        // Custom SNT Confirm Modal Function (Replaces window.confirm)
         let confirmActionCallback = null;
         function showSNTConfirm(title, message, callback) {
             document.getElementById('confirm-title').innerText = title;
             document.getElementById('confirm-msg').innerText = message;
             confirmActionCallback = callback;
+            document.getElementById('confirm-action-btn').style.display = 'block';
             openModal('snt-confirm-modal');
         }
         function closeConfirmModal() {
@@ -475,13 +523,12 @@
             closeConfirmModal();
         });
 
-        // Custom Alert Function
+        // Custom Alert Function (Replaces window.alert)
         function showSNTAlert(title, message) {
             document.getElementById('confirm-title').innerText = title;
             document.getElementById('confirm-msg').innerText = message;
-            document.getElementById('confirm-action-btn').style.display = 'none'; // Hide proceed
+            document.getElementById('confirm-action-btn').style.display = 'none'; // Hide proceed button
             openModal('snt-confirm-modal');
-            // Auto close or rely on cancel button
         }
 
         // Live Data Sync
@@ -490,7 +537,6 @@
             gTxs = data.transactions;
             gPromos = data.giftBatches;
             
-            // Format to exactly 1 decimal, remove TC text
             document.getElementById('stat-economy').innerText = data.stats.economy.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
             document.getElementById('stat-users').innerText = gUsers.length;
             document.getElementById('stat-pending').innerText = gTxs.filter(t => t.status === 'Pending').length;
@@ -500,44 +546,55 @@
             renderPromos();
         });
 
-        function toggleCreditSort() {
-            creditSortDesc = !creditSortDesc;
-            renderUsers();
-        }
-
-        // Render Users (Center Aligned, Sorted by Hierarchy & Credits, 1 Decimal)
+        // Render Users (Center Aligned, No Dots, Multi-Dropdown Sorting)
         function renderUsers() {
             const tbody = document.getElementById('users-tbody');
             tbody.innerHTML = '';
             
             let sTerm = document.getElementById('filter-search').value.toLowerCase();
+            let rFilt = document.getElementById('filter-role').value;
+            let sFilt = document.getElementById('filter-status').value;
+            let sortDir = document.getElementById('filter-sort').value;
 
-            // Filter
-            let filtered = gUsers.filter(u => !sTerm || u.username.toLowerCase().includes(sTerm));
+            let filtered = gUsers.filter(u => {
+                if (sTerm && !u.username.toLowerCase().includes(sTerm)) return false;
+                if (rFilt !== 'All' && u.role !== rFilt) return false;
+                if (sFilt !== 'All' && u.status !== sFilt) return false;
+                return true;
+            });
 
-            // Sort by Credits
-            filtered.sort((a, b) => creditSortDesc ? b.credits - a.credits : a.credits - b.credits);
+            // Primary Sort: Hierarchy (Online -> Offline -> Banned)
+            // Secondary Sort: Credits (Asc/Desc)
+            filtered.sort((a, b) => {
+                const statusOrder = { 'Active': 1, 'Offline': 2, 'Banned': 3 };
+                if (statusOrder[a.status] !== statusOrder[b.status]) {
+                    return statusOrder[a.status] - statusOrder[b.status];
+                }
+                // If status is same, sort by combined credits
+                let aBal = (a.credits || 0) + (a.playableCredits || 0);
+                let bBal = (b.credits || 0) + (b.playableCredits || 0);
+                return sortDir === 'desc' ? bBal - aBal : aBal - bBal;
+            });
 
-            // Hierarchy Sort: Online -> Offline -> Banned
-            const online = filtered.filter(p => p.status === 'Active');
-            const offline = filtered.filter(p => p.status === 'Offline');
-            const banned = filtered.filter(p => p.status === 'Banned');
-            const combined = [...online, ...offline, ...banned];
-
-            combined.forEach(u => {
+            filtered.forEach(u => {
                 let statClass = u.status === 'Active' ? 'active' : (u.status === 'Banned' ? 'banned' : 'offline');
                 
-                // Ban/Unban logic replacing native confirm
                 let actionBtn = u.status === 'Banned' 
                     ? `<button class="btn-sm btn-approve" onclick="actionUser('unban', '${u._id}', '${u.username}')"><i class="fas fa-unlock"></i> Unban</button>`
                     : `<button class="btn-sm btn-reject" onclick="actionUser('ban', '${u._id}', '${u.username}')"><i class="fas fa-ban"></i> Ban</button>`;
 
+                let displayCredits = `
+                    <div style="font-weight: 800; color: var(--credits);">${(u.credits || 0).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})}</div>
+                    <div style="font-size: 0.8rem; color: var(--ps-glow);">+ ${(u.playableCredits || 0).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} P</div>
+                `;
+
                 tbody.innerHTML += `
                     <tr>
                         <td class="center-col" style="color:var(--text-muted);">${new Date(u.joinDate).toLocaleDateString()}</td>
-                        <td class="center-col"><div style="font-weight:900; color:var(--ps-glow); font-size:1.1rem;"><span class="badge ${statClass}" style="padding: 2px 6px; font-size: 0.6rem; margin-right: 5px;">●</span>${u.username}</div></td>
-                        <td class="center-col" style="color:var(--credits); font-weight: 800;">${u.credits.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        <td class="center-col"><div style="font-weight:900; font-size:1.1rem; color: white;">${u.username}</div></td>
+                        <td class="center-col">${displayCredits}</td>
                         <td class="center-col">${u.role}</td>
+                        <td class="center-col"><span class="badge ${statClass}">${u.status}</span></td>
                         <td class="center-col">
                             <div class="action-btns">
                                 <button class="btn-sm btn-edit" onclick="openEditUser('${u._id}')"><i class="fas fa-pen"></i> Edit</button>
@@ -549,7 +606,7 @@
             });
         }
 
-        // Render Transactions (Split Screen Logic)
+        // Render Transactions (Split Screen Logic, No Hover Shift)
         function renderTransactions() {
             const pBody = document.getElementById('tx-pending-tbody');
             const hBody = document.getElementById('tx-history-tbody');
@@ -563,7 +620,6 @@
                 
                 if (t.status === 'Pending') {
                     pCount++;
-                    // Creates a clickable row that opens the Inspector Modal
                     pBody.innerHTML += `
                         <tr class="clickable-row" onclick="openInspector('${t._id}', '${t.type}', ${t.amount}, '${t.username}', '${t.ref}')">
                             <td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${dStr}</td>
@@ -590,12 +646,20 @@
             if(hCount === 0) hBody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No history found.</td></tr>`;
         }
 
-        // Open Inspector Modal for Pending Cashier Requests
+        // Open Inspector Modal (Dynamic content based on type)
         function openInspector(id, type, amount, username, proofRef) {
             document.getElementById('inspector-type').innerText = type.toUpperCase();
             document.getElementById('inspector-amt').innerText = amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) + " TC";
             document.getElementById('inspector-user').innerText = username;
-            document.getElementById('inspector-proof').innerText = proofRef; // Simulating image source
+            
+            const proofContainer = document.getElementById('inspector-proof-container');
+            if (type === 'Deposit') {
+                // For deposits, show the image
+                proofContainer.innerHTML = `<img src="${proofRef}" style="max-width:100%; max-height:200px; border-radius:8px;" alt="Proof of Payment" onerror="this.src='https://via.placeholder.com/400x200/111/fff?text=Image+Not+Found'">`;
+            } else {
+                // For withdrawals, just display the text (Bank details)
+                proofContainer.innerHTML = `<div style="font-size: 1.2rem; color: var(--text-main); text-align: center; padding: 20px;">Payout Details Provided:<br><span style="color: var(--credits); font-family: monospace;">${proofRef}</span></div>`;
+            }
 
             document.getElementById('btn-approve-tx').onclick = () => {
                 socket.emit('adminAction', { type: 'resolveTx', id: id, status: 'Approved' });
@@ -613,7 +677,7 @@
         function renderPromos() {
             gBatches = {};
             gPromos.forEach(p => {
-                if(!gBatches[p.batchId]) gBatches[p.batchId] = { id: p.batchId, amount: p.amount, codes: [] };
+                if(!gBatches[p.batchId]) gBatches[p.batchId] = { id: p.batchId, amount: p.amount, type: p.creditType || 'playable', codes: [] };
                 gBatches[p.batchId].codes.push(p);
             });
 
@@ -621,10 +685,13 @@
             tbody.innerHTML = '';
             
             Object.values(gBatches).forEach(b => {
+                let tColor = b.type === 'playable' ? 'var(--ps-glow)' : 'var(--credits)';
+                let tName = b.type === 'playable' ? 'Playable' : 'Regular';
                 tbody.innerHTML += `
                     <tr>
                         <td class="center-col" style="font-weight:900; color:white; font-size:1.1rem;">${b.id}</td>
                         <td class="center-col" style="color:var(--ps-glow); font-weight: 800;">${b.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        <td class="center-col" style="font-weight:800; color:${tColor};">${tName}</td>
                         <td class="center-col" style="font-weight:800; font-size:1.1rem;">${b.codes.length}</td>
                         <td class="center-col">
                             <div class="action-btns" style="justify-content:center;">
@@ -671,7 +738,6 @@
             if(currentViewBatch.length === 0) return;
             navigator.clipboard.writeText(currentViewBatch.join('\n'));
             showSNTAlert("SUCCESS", `Copied ${currentViewBatch.length} codes to your clipboard!`);
-            document.getElementById('confirm-action-btn').style.display = 'block'; // Reset for next use
         }
 
         // Actions using custom SNT Confirm Modals
@@ -687,14 +753,19 @@
             if(!u) return;
             document.getElementById('edit-u-id').value = u._id;
             document.getElementById('edit-u-name').value = u.username;
-            document.getElementById('edit-u-credits').value = u.credits;
+            document.getElementById('edit-u-credits').value = u.credits || 0;
+            document.getElementById('edit-u-playable').value = u.playableCredits || 0;
             document.getElementById('edit-u-role').value = u.role;
             openModal('edit-user-modal');
         }
         function saveUserEdit() {
+            let cr = parseFloat(document.getElementById('edit-u-credits').value);
+            let pcr = parseFloat(document.getElementById('edit-u-playable').value);
+            if(isNaN(cr) || isNaN(pcr)) return document.getElementById('edit-user-err').innerText = 'Please enter valid numbers.';
+            
             socket.emit('adminAction', {
                 type: 'editUser', id: document.getElementById('edit-u-id').value,
-                credits: parseFloat(document.getElementById('edit-u-credits').value), role: document.getElementById('edit-u-role').value
+                credits: cr, playableCredits: pcr, role: document.getElementById('edit-u-role').value
             });
             closeModal('edit-user-modal');
         }
@@ -702,12 +773,13 @@
         function generatePromo() {
             let amt = parseFloat(document.getElementById('promo-amount').value);
             let cnt = parseInt(document.getElementById('promo-count').value);
+            let cType = document.getElementById('promo-type').value;
+
             if(!amt || !cnt) {
-                showSNTAlert("ERROR", "Please fill out both the TC amount and quantity.");
-                document.getElementById('confirm-action-btn').style.display = 'block';
+                document.getElementById('promo-err').innerText = 'Please fill out both the TC amount and quantity.';
                 return;
             }
-            socket.emit('adminAction', { type: 'createBatch', amount: amt, count: cnt });
+            socket.emit('adminAction', { type: 'createBatch', amount: amt, count: cnt, creditType: cType });
             closeModal('create-promo-modal');
             document.getElementById('promo-amount').value = '';
             document.getElementById('promo-count').value = '';
@@ -738,16 +810,18 @@
             let type = document.getElementById('tool-target-type').value;
             let targetUser = document.getElementById('tool-target-user').value;
             let amt = parseFloat(document.getElementById('tool-amt').value);
+            let cType = document.getElementById('tool-credit-type').value;
             
             if (!amt) return;
-            
-            let target = type === 'specific' ? targetUser : 'all_active';
-            let confirmMsg = type === 'specific' ? `Gift ${amt} TC to ${target}?` : `Gift ${amt} TC to ALL ACTIVE players?`;
-
             if (type === 'specific' && !targetUser) return;
+            
+            let target = type === 'specific' ? targetUser : type; // 'all_active' or 'all_registered'
+            let tName = cType === 'playable' ? 'Playable TC' : 'Regular TC';
+
+            let confirmMsg = type === 'specific' ? `Gift ${amt} ${tName} to ${target}?` : `Gift ${amt} ${tName} to ${target.replace('_', ' ').toUpperCase()}?`;
 
             showSNTConfirm("AUTHORIZE GIFT", confirmMsg, () => {
-                socket.emit('adminAction', { type: 'giftCredits', target: target, amount: amt });
+                socket.emit('adminAction', { type: 'giftCredits', target: target, amount: amt, creditType: cType });
                 document.getElementById('tool-target-user').value = '';
                 document.getElementById('tool-amt').value = '';
             });
