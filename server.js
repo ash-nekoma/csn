@@ -32,7 +32,6 @@ app.get('/', (req, res) => {
 const formatTC = (amount) => Math.round(amount * 10) / 10;
 
 // HELPER: Dual-Currency Bet Deductor
-// Drains playable bonus first, then dips into withdrawable TC.
 async function deductBet(user, betAmount) {
     let amt = formatTC(betAmount);
     let totalBal = formatTC(user.credits + user.playableCredits);
@@ -60,6 +59,10 @@ mongoose.connect(MONGO_URI)
             await new User({ username: 'admin', password: 'Kenm44ashley', role: 'Admin', credits: 10000, playableCredits: 0 }).save();
             console.log('🛡️ Default Admin Account Created');
         }
+        
+        // Reset Gift Codes for Fresh Start
+        await GiftCode.deleteMany({});
+        console.log('🎁 Gift Codes Reset for Fresh Start');
     })
     .catch(err => {
         console.error('❌ MongoDB Connection Error. Please ensure MONGO_URL is set in Railway.');
@@ -73,8 +76,8 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, default: 'Player' },
-    credits: { type: Number, default: 0 }, // Withdrawable
-    playableCredits: { type: Number, default: 0 }, // Bonus/Locked
+    credits: { type: Number, default: 0 }, 
+    playableCredits: { type: Number, default: 0 }, 
     status: { type: String, default: 'Offline' },
     joinDate: { type: Date, default: Date.now },
     dailyReward: { lastClaim: { type: Date, default: null }, streak: { type: Number, default: 0 } }
@@ -210,14 +213,13 @@ setInterval(() => {
                 logGlobalResult('baccarat', bacResStr);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
-                // PAYOUT CALCULATIONS (1-Decimal & 8:1 Push Logic)
                 let playerStats = {}; 
                 sharedTables.bets.forEach(b => {
                     let payout = 0;
                     if (b.room === 'dt') { 
                         if (dtWin === 'Tie') {
-                            if (b.choice === 'Tie') payout = b.amount * 9; // 8x profit + 1x original = 9x
-                            else payout = b.amount; // Push (1x return)
+                            if (b.choice === 'Tie') payout = b.amount * 9; 
+                            else payout = b.amount; 
                         } else {
                             if (b.choice === dtWin) payout = b.amount * 2;
                         }
@@ -229,8 +231,8 @@ setInterval(() => {
                     } 
                     else if (b.room === 'baccarat') {
                         if (bacWin === 'Tie') { 
-                            if (b.choice === 'Tie') payout = b.amount * 9; // 8:1 Tie
-                            else if (b.choice === 'Player' || b.choice === 'Banker') payout = b.amount; // Push
+                            if (b.choice === 'Tie') payout = b.amount * 9; 
+                            else if (b.choice === 'Player' || b.choice === 'Banker') payout = b.amount; 
                         } 
                         else if (bacWin === 'Player') { if (b.choice === 'Player') payout = b.amount * 2; } 
                         else if (bacWin === 'Banker') { if (b.choice === 'Banker') payout = b.amount * 1.95; }
@@ -245,7 +247,6 @@ setInterval(() => {
                     let st = playerStats[userId];
                     let user = await User.findById(userId);
                     if (user && st.amountWon > 0) {
-                        // All winnings convert to fully withdrawable credits
                         user.credits = formatTC(user.credits + st.amountWon);
                         await user.save();
                         let net = formatTC(st.amountWon - st.amountBet);
@@ -281,9 +282,16 @@ async function pushAdminData(target = io.to('admin_room')) {
         const users = await User.find(); 
         const txs = await Transaction.find().sort({ date: -1 }); 
         const gcs = await GiftCode.find().sort({ date: -1 });
-        // Total Economy includes both Main and Playable credits
+        
         let totalEconomy = formatTC(users.reduce((a, b) => a + (b.credits || 0) + (b.playableCredits || 0), 0));
-        target.emit('adminDataSync', { users, transactions: txs, giftBatches: gcs, stats: { economy: totalEconomy, limit: 2000000 } });
+        let approvedDeposits = txs.filter(t => t.type === 'Deposit' && t.status === 'Approved').reduce((a, b) => a + b.amount, 0);
+
+        target.emit('adminDataSync', { 
+            users, 
+            transactions: txs, 
+            giftBatches: gcs, 
+            stats: { economy: totalEconomy, approvedDeposits: formatTC(approvedDeposits), limit: 2000000 } 
+        });
     } catch(e) { console.error(e); }
 }
 
@@ -311,6 +319,13 @@ io.on('connection', (socket) => {
         }
     });
 
+    // --- ADMIN: FETCH & CLEAR USER LOGS ---
+    socket.on('fetchUserLogs', async (username) => {
+        if (!socket.rooms.has('admin_room')) return;
+        const logs = await CreditLog.find({ username }).sort({ date: -1 }).limit(100);
+        socket.emit('userLogsData', { username, logs });
+    });
+
     // --- SOLO GAMES ENGINE ---
     socket.on('playSolo', async (data) => {
         if (!socket.user) return;
@@ -320,10 +335,8 @@ io.on('connection', (socket) => {
         
         if (isNewBet) {
             if (!data.bet || isNaN(data.bet) || data.bet <= 0) return;
-            // Drain playable credits first, then main credits
             let betSuccess = await deductBet(user, data.bet);
             if (!betSuccess) {
-                // Sends local flash error inside the specific game DOM
                 return socket.emit('localGameError', { msg: 'INSUFFICIENT TC', game: data.game });
             }
             await user.save();
@@ -349,7 +362,6 @@ io.on('connection', (socket) => {
             gameStats.coinflip.total++;
             let result = Math.random() < 0.5 ? 'Heads' : 'Tails';
             gameStats.coinflip[result]++;
-            // 1.95 Math accuracy fix
             if (data.choice === result) payout = formatTC(data.bet * 1.95);
             
             user.credits = formatTC(user.credits + payout); await user.save();
@@ -461,7 +473,6 @@ io.on('connection', (socket) => {
             if (b.userId.toString() === socket.user._id.toString() && b.room === data.room) {
                 let user = await User.findById(socket.user._id);
                 if (user) {
-                    // Undo always refunds to withdrawable credits for simplicity
                     user.credits = formatTC(user.credits + b.amount);
                     await user.save();
                     socket.emit('balanceUpdateData', { credits: user.credits, playable: user.playableCredits });
@@ -493,7 +504,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- AUTHENTICATION & OTHER ---
+    // --- AUTHENTICATION & ADMIN ACTIONS ---
     socket.on('adminLogin', async (data) => {
         const user = await User.findOne({ username: data.username, password: data.password });
         if (user && user.role === 'Admin') {
@@ -508,16 +519,19 @@ io.on('connection', (socket) => {
     socket.on('adminAction', async (data) => {
         if (!socket.rooms.has('admin_room')) return; 
         try {
-            if (data.type === 'editUser') { await User.findByIdAndUpdate(data.id, { credits: formatTC(data.credits), role: data.role }); }
+            if (data.type === 'editUser') { await User.findByIdAndUpdate(data.id, { credits: formatTC(data.credits), playableCredits: formatTC(data.playableCredits), role: data.role }); }
             else if (data.type === 'ban') { await User.findByIdAndUpdate(data.id, { status: 'Banned' }); }
             else if (data.type === 'unban') { await User.findByIdAndUpdate(data.id, { status: 'Active' }); }
+            else if (data.type === 'clearUserLogs') {
+                await CreditLog.deleteMany({ username: data.username });
+                const logs = await CreditLog.find({ username: data.username }).sort({ date: -1 }).limit(100);
+                socket.emit('userLogsData', { username: data.username, logs });
+            }
             
-            // SILENT NOTIFICATION FIX
             else if (data.type === 'sendUpdate') { 
                 io.emit('silentNotification', { id: Date.now(), title: 'System Announcement', msg: data.msg, date: new Date() }); 
             }
             
-            // DUAL CURRENCY GIFTS
             else if (data.type === 'giftCredits') {
                 let amount = formatTC(data.amount);
                 let updateQuery = data.creditType === 'playable' ? { $inc: { playableCredits: amount } } : { $inc: { credits: amount } };
@@ -579,10 +593,10 @@ io.on('connection', (socket) => {
             }
             else if (data.type === 'createBatch') {
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                let existingBatches = await GiftCode.distinct('batchId');
+                let prefix = data.creditType === 'playable' ? 'PB-' : 'RB-';
+                let existingBatches = await GiftCode.find({ batchId: new RegExp('^' + prefix) }).distinct('batchId');
                 let nextNum = existingBatches.length + 1;
-                // STRICT B-001 BATCH NAMING FIX
-                let batchId = 'B-' + String(nextNum).padStart(3, '0');
+                let batchId = prefix + String(nextNum).padStart(3, '0');
                 
                 for(let i=0; i<data.count; i++) {
                     let code = '';
@@ -606,6 +620,10 @@ io.on('connection', (socket) => {
 
             user.status = 'Active'; await user.save(); socket.user = user;
             connectedUsers[user.username] = socket.id;
+            
+            // Check-In Log
+            await new CreditLog({ username: user.username, action: 'System', amount: 0, details: `Check In` }).save();
+
             pushAdminData();
             
             let now = new Date(), canClaim = true, day = 1, nextClaim = null;
@@ -640,7 +658,6 @@ io.on('connection', (socket) => {
         const rewards = [25, 50, 100, 200, 500, 750, 1000];
         let amt = formatTC(rewards[day - 1]);
 
-        // Daily rewards count as playable credits
         user.playableCredits = formatTC(user.playableCredits + amt); 
         user.dailyReward.lastClaim = now; user.dailyReward.streak += 1;
         await user.save();
@@ -654,7 +671,6 @@ io.on('connection', (socket) => {
         if (!socket.user) return;
         try {
             const gc = await GiftCode.findOne({ code: code });
-            // Localized Popover Error (No arcade flashes)
             if (!gc) return socket.emit('promoResult', { success: false, msg: 'Invalid Code' });
             if (gc.redeemedBy) return socket.emit('promoResult', { success: false, msg: 'Code already used' });
 
@@ -682,6 +698,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', async () => {
         if (socket.user) { 
             await User.findByIdAndUpdate(socket.user._id, { status: 'Offline' }); 
+            await new CreditLog({ username: socket.user.username, action: 'System', amount: 0, details: `Check Out` }).save();
             delete connectedUsers[socket.user.username];
         }
         if(socket.currentRoom && rooms[socket.currentRoom] > 0) {
