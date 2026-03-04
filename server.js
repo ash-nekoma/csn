@@ -339,7 +339,7 @@ io.on('connection', (socket) => {
             let resStr = `ROLLED ${roll}`;
             logGlobalResult('d20', resStr);
             pushAdminData();
-            socket.emit('d20Result', { roll, payout, bet: data.bet, guessType: data.guessType, guessValue: data.guessValue, resStr: resStr, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.d20 });
+            socket.emit('d20Result', { roll, payout, bet: data.bet, resStr: resStr, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.d20 });
             checkResetStats('d20');
         } 
         else if (data.game === 'coinflip') {
@@ -353,7 +353,7 @@ io.on('connection', (socket) => {
             let resStr = `LANDED ON ${result.toUpperCase()}`;
             logGlobalResult('coinflip', resStr);
             pushAdminData();
-            socket.emit('coinResult', { result, payout, bet: data.bet, choice: data.choice, resStr: resStr, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.coinflip });
+            socket.emit('coinResult', { result, payout, bet: data.bet, resStr: resStr, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.coinflip });
             checkResetStats('coinflip');
         }
         else if (data.game === 'blackjack') {
@@ -611,6 +611,7 @@ io.on('connection', (socket) => {
 
             user.status = 'Active'; await user.save(); socket.user = user;
             connectedUsers[user.username] = socket.id;
+            
             pushAdminData();
             
             let now = new Date(), canClaim = true, day = 1, nextClaim = null;
