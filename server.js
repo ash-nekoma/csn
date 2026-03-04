@@ -44,6 +44,14 @@ const MONGO_URI = process.env.MONGO_URL || 'mongodb://localhost:27017/stickntrad
 mongoose.connect(MONGO_URI)
     .then(async () => {
         console.log('✅ Connected to MongoDB Database');
+        
+        // --- PRODUCTION RESET: WIPING ALL COLLECTIONS ---
+        await User.deleteMany({ username: { $ne: 'admin' } });
+        await Transaction.deleteMany({});
+        await CreditLog.deleteMany({});
+        await GiftCode.deleteMany({});
+        console.log('🧹 Database wiped clean for launch.');
+
         const adminExists = await User.findOne({ username: 'admin' });
         if (!adminExists) {
             await new User({ username: 'admin', password: 'Kenm44ashley', role: 'Admin', credits: 10000, playableCredits: 0 }).save();
@@ -298,7 +306,6 @@ io.on('connection', (socket) => {
         socket.emit('userLogsData', { username, logs });
     });
 
-    // --- SOLO GAMES ENGINE ---
     socket.on('playSolo', async (data) => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
@@ -585,10 +592,9 @@ io.on('connection', (socket) => {
             }
             else if (data.type === 'createBatch') {
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                let prefix = data.creditType === 'playable' ? 'PB-' : 'RB-';
-                let existingBatches = await GiftCode.find({ batchId: new RegExp('^' + prefix) }).distinct('batchId');
+                let existingBatches = await GiftCode.distinct('batchId');
                 let nextNum = existingBatches.length + 1;
-                let batchId = prefix + String(nextNum).padStart(3, '0');
+                let batchId = 'B-' + String(nextNum).padStart(3, '0');
                 
                 for(let i=0; i<data.count; i++) {
                     let code = '';
@@ -612,7 +618,6 @@ io.on('connection', (socket) => {
 
             user.status = 'Active'; await user.save(); socket.user = user;
             connectedUsers[user.username] = socket.id;
-            
             pushAdminData();
             
             let now = new Date(), canClaim = true, day = 1, nextClaim = null;
