@@ -187,17 +187,37 @@
         .btn-back-fixed { position: fixed; top: 95px; left: 25px; z-index: 1000; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
         .btn-back-fixed:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
-        /* RESPONSIVE CARD ALIGNMENT - 240x360 Proportions */
+        /* RESPONSIVE HORIZONTAL CARD ALIGNMENT */
         .lobby-modes-container, .casino-grid.shared-grid, .casino-grid.solo-grid { 
-            display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 20px; width: 100%; max-width: 1200px; flex-wrap: wrap; 
+            display: flex; 
+            flex-direction: row; 
+            justify-content: center; 
+            align-items: stretch; 
+            gap: 25px; 
+            width: 100%; 
+            max-width: 1400px; 
+            flex-wrap: wrap; 
         }
-        
-        /* THE 240x360 RULE */
+
+        /* THE CARDS */
         .mode-card, .game-card { 
-            width: 240px; min-width: 240px; height: 360px; text-align: center; cursor: pointer; position: relative; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; 
-            background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; 
-            flex-shrink: 0; flex-grow: 0; padding: 0;
+            width: 240px; 
+            min-width: 240px; 
+            height: 360px; 
+            text-align: center; 
+            cursor: pointer; 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 16px; 
+            background: var(--glass-bg); 
+            border: 1px solid var(--glass-border); 
+            transition: 0.3s; 
+            overflow: hidden; 
+            flex-shrink: 0; 
+            padding: 0;
         }
 
         .mode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); z-index: 1; }
@@ -1317,11 +1337,14 @@
       document.querySelectorAll('.main-wrapper > .content > .view-container').forEach(d => d.classList.add('hidden')); 
       let v = document.getElementById('view-' + viewId); 
       if (v) v.classList.remove('hidden'); 
+      
+      let backBtn = document.getElementById('global-back-btn');
       if (viewId === 'casino') {
           openLobbyMode('modes'); 
-          document.getElementById('global-back-btn').classList.add('hidden');
       } else {
-          document.getElementById('global-back-btn').classList.remove('hidden');
+          // If entering an actual game table, show LEAVE TABLE
+          backBtn.classList.remove('hidden');
+          backBtn.innerHTML = '<i class="fas fa-arrow-left"></i> LEAVE TABLE';
       }
     }
 
@@ -1333,12 +1356,16 @@
       let target = document.getElementById('lobby-' + mode);
       if(target) target.classList.remove('hidden'); 
       
+      let backBtn = document.getElementById('global-back-btn');
       if(mode === 'modes') {
+          // Root lobby menu - hide the back button completely
           document.querySelector('.casino-title').classList.remove('hidden');
-          document.getElementById('global-back-btn').classList.add('hidden');
+          backBtn.classList.add('hidden');
       } else { 
+          // Sub-lobby menu (Solo/Shared) - show BACK TO MODES
           document.querySelector('.casino-title').classList.add('hidden'); 
-          document.getElementById('global-back-btn').classList.remove('hidden');
+          backBtn.classList.remove('hidden');
+          backBtn.innerHTML = '<i class="fas fa-arrow-left"></i> BACK TO MODES';
       }
     }
     
@@ -1374,8 +1401,20 @@
     }
 
     function backToHub() {
-        if(window.activeSharedGame) backToSharedLobby();
-        else backToSoloLobby();
+        // Check if we are currently looking at the sub-lobbies (Solo/Shared selections)
+        let inCasinoView = !document.getElementById('view-casino').classList.contains('hidden');
+        
+        if (inCasinoView) {
+            // We are in the sub-lobby, so step back to the Main Modes menu
+            openLobbyMode('modes');
+        } else {
+            // We are inside a game, leave the game and go to the respective sub-lobby
+            if (window.activeSharedGame) {
+                backToSharedLobby();
+            } else {
+                backToSoloLobby();
+            }
+        }
     }
     
     function backToSoloLobby() { switchView('casino'); openLobbyMode('indiv'); }
