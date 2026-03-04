@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 // ==========================================
-// CACHE-BUSTER & RAILWAY ROUTING FIX
+// CACHE-BUSTER & RAILWAY ROUTING
 // ==========================================
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -94,10 +94,16 @@ let gameStats = {
     blackjack: { total: 0, Win: 0, Lose: 0, Push: 0 }
 };
 
-// STRICT 5-ROW CAP ON SERVER
 function logGlobalResult(game, resultStr) {
     globalResults[game].unshift({ result: resultStr, time: new Date() });
     if (globalResults[game].length > 5) globalResults[game].pop(); 
+}
+
+// Resets Stats cleanly after 100 rounds
+function checkResetStats(game) {
+    if (gameStats[game].total >= 100) {
+        Object.keys(gameStats[game]).forEach(key => { gameStats[game][key] = 0; });
+    }
 }
 
 function drawCard() {
@@ -181,25 +187,16 @@ setInterval(() => {
                 let playerStats = {}; 
                 sharedTables.bets.forEach(b => {
                     let payout = 0;
-                    if (b.room === 'dt') {
-                        if (b.choice === dtWin) payout = b.amount * (dtWin === 'Tie' ? 9 : 2);
-                    } 
-                    else if (b.room === 'sicbo') {
-                        if (b.choice === sbWin) payout = b.amount * 2;
-                    } 
+                    if (b.room === 'dt') { if (b.choice === dtWin) payout = b.amount * (dtWin === 'Tie' ? 9 : 2); } 
+                    else if (b.room === 'sicbo') { if (b.choice === sbWin) payout = b.amount * 2; } 
                     else if (b.room === 'perya') {
                         let matches = pyR.filter(c => c === b.choice).length;
                         if (matches > 0) payout = b.amount + (b.amount * matches);
                     } 
                     else if (b.room === 'baccarat') {
-                        if (bacWin === 'Tie') {
-                            if (b.choice === 'Tie') payout = b.amount * 9; 
-                            else if (b.choice === 'Player' || b.choice === 'Banker') payout = b.amount * 1; 
-                        } else if (bacWin === 'Player') {
-                            if (b.choice === 'Player') payout = b.amount * 2;
-                        } else if (bacWin === 'Banker') {
-                            if (b.choice === 'Banker') payout = b.amount * 1.95; 
-                        }
+                        if (bacWin === 'Tie') { if (b.choice === 'Tie') payout = b.amount * 9; else if (b.choice === 'Player' || b.choice === 'Banker') payout = b.amount * 1; } 
+                        else if (bacWin === 'Player') { if (b.choice === 'Player') payout = b.amount * 2; } 
+                        else if (bacWin === 'Banker') { if (b.choice === 'Banker') payout = b.amount * 1.95; }
                     }
 
                     if (!playerStats[b.userId]) playerStats[b.userId] = { socketId: b.socketId, username: b.username, amountWon: 0, amountBet: 0, room: b.room };
@@ -222,6 +219,9 @@ setInterval(() => {
                 io.to('sicbo').emit('sharedResults', { room: 'sicbo', roll: sbR, sum: sbSum, winner: sbWin, resStr: sbResStr, stats: gameStats.sicbo });
                 io.to('perya').emit('sharedResults', { room: 'perya', roll: pyR, stats: gameStats.perya });
                 io.to('baccarat').emit('sharedResults', { room: 'baccarat', pCards: pC, bCards: bC, pScore: pS, bScore: bS, winner: bacWin, resStr: bacResStr, p3Drawn: p3Drawn, b3Drawn: b3Drawn, stats: gameStats.baccarat });
+
+                // Reset stats natively if limits hit
+                checkResetStats('dt'); checkResetStats('sicbo'); checkResetStats('perya'); checkResetStats('baccarat');
 
             }, 500);
 
@@ -301,6 +301,7 @@ io.on('connection', (socket) => {
             logGlobalResult('dice', resStr);
             pushAdminData();
             socket.emit('diceResult', { roll, payout, bet: data.bet, resStr: resStr, newBalance: user.credits, stats: gameStats.dice });
+            checkResetStats('dice');
         } 
         else if (data.game === 'coinflip') {
             gameStats.coinflip.total++;
@@ -313,6 +314,7 @@ io.on('connection', (socket) => {
             logGlobalResult('coinflip', resStr);
             pushAdminData();
             socket.emit('coinResult', { result, payout, bet: data.bet, resStr: resStr, newBalance: user.credits, stats: gameStats.coinflip });
+            checkResetStats('coinflip');
         }
         else if (data.game === 'blackjack') {
             if (data.action === 'start') {
@@ -331,6 +333,7 @@ io.on('connection', (socket) => {
                     pushAdminData();
                     socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, resStr: resStr, bet: data.bet, newBalance: user.credits, stats: gameStats.blackjack });
                     socket.bjState = null;
+                    checkResetStats('blackjack');
                 } else {
                     socket.emit('bjUpdate', { event: 'deal', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand });
                 }
@@ -347,6 +350,7 @@ io.on('connection', (socket) => {
                     logGlobalResult('blackjack', resStr);
                     socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', resStr: resStr, bet: socket.bjState.bet, newBalance: user.credits, stats: gameStats.blackjack });
                     socket.bjState = null;
+                    checkResetStats('blackjack');
                 } else {
                     socket.emit('bjUpdate', { event: 'hit', pHand: socket.bjState.pHand });
                 }
@@ -370,6 +374,7 @@ io.on('connection', (socket) => {
                 pushAdminData();
                 socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, resStr: resStr, bet: socket.bjState.bet, newBalance: user.credits, stats: gameStats.blackjack });
                 socket.bjState = null;
+                checkResetStats('blackjack');
             }
         }
     });
