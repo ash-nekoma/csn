@@ -9,9 +9,6 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
-// ==========================================
-// CACHE-BUSTER & RAILWAY ROUTING
-// ==========================================
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     next();
@@ -26,12 +23,8 @@ app.get('/', (req, res) => {
     });
 });
 
-// ==========================================
-// UTILITY: STRICT 1-DECIMAL ROUNDING
-// ==========================================
 const formatTC = (amount) => Math.round(amount * 10) / 10;
 
-// HELPER: Dual-Currency Bet Deductor
 async function deductBet(user, betAmount) {
     let amt = formatTC(betAmount);
     let totalBal = formatTC(user.credits + user.playableCredits);
@@ -48,12 +41,20 @@ async function deductBet(user, betAmount) {
 }
 
 // ==========================================
-// 1. MONGODB DATABASE SETUP
+// 1. MONGODB DATABASE SETUP & WIPE
 // ==========================================
 const MONGO_URI = process.env.MONGO_URL || 'mongodb://localhost:27017/stickntrade';
 mongoose.connect(MONGO_URI)
     .then(async () => {
         console.log('✅ Connected to MongoDB Database');
+        
+        // --- PRODUCTION RESET: WIPING ALL COLLECTIONS ---
+        await User.deleteMany({ username: { $ne: 'admin' } });
+        await Transaction.deleteMany({});
+        await CreditLog.deleteMany({});
+        await GiftCode.deleteMany({});
+        console.log('🧹 Database wiped clean for launch.');
+
         const adminExists = await User.findOne({ username: 'admin' });
         if (!adminExists) {
             await new User({ username: 'admin', password: 'Kenm44ashley', role: 'Admin', credits: 10000, playableCredits: 0 }).save();
@@ -132,12 +133,10 @@ function drawCard() {
     const ss = ['♠','♣','♥','♦'];
     let v = vs[Math.floor(Math.random() * vs.length)];
     let s = ss[Math.floor(Math.random() * ss.length)];
-    
     let bac = isNaN(parseInt(v)) ? (v === 'A' ? 1 : 0) : (v === '10' ? 0 : parseInt(v));
     let bj = isNaN(parseInt(v)) ? (v === 'A' ? 11 : 10) : parseInt(v);
     let dt = 0;
     if (v === 'A') dt = 1; else if (v === 'K') dt = 13; else if (v === 'Q') dt = 12; else if (v === 'J') dt = 11; else dt = parseInt(v);
-
     let suitHtml = (s === '♥' || s === '♦') ? `<span class="card-red">${s}</span>` : s;
     return { val: v, suit: s, bacVal: bac, bjVal: bj, dtVal: dt, raw: v, suitHtml: suitHtml };
 }
@@ -162,14 +161,12 @@ setInterval(() => {
             io.emit('lockBets');
 
             setTimeout(async () => {
-                // DRAGON TIGER
                 let dtD = drawCard(), dtT = drawCard();
                 let dtWin = dtD.dtVal > dtT.dtVal ? 'Dragon' : (dtT.dtVal > dtD.dtVal ? 'Tiger' : 'Tie');
                 let dtResStr = dtWin === 'Tie' ? `TIE (${dtD.raw} TO ${dtT.raw})` : `${dtWin.toUpperCase()} WINS (${dtD.raw} TO ${dtT.raw})`;
                 logGlobalResult('dt', dtResStr);
                 gameStats.dt.total++; gameStats.dt[dtWin]++;
                 
-                // SIC BO
                 let sbR = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1];
                 let sbSum = sbR[0] + sbR[1] + sbR[2];
                 let sbTrip = (sbR[0] === sbR[1] && sbR[1] === sbR[2]);
@@ -178,13 +175,11 @@ setInterval(() => {
                 logGlobalResult('sicbo', sbResStr);
                 gameStats.sicbo.total++; gameStats.sicbo[sbWin]++;
 
-                // PERYA
                 const cols = ['Yellow','White','Pink','Blue','Red','Green'];
                 let pyR = [cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)], cols[Math.floor(Math.random() * 6)]];
                 logGlobalResult('perya', pyR.join(','));
                 gameStats.perya.total++; pyR.forEach(c => gameStats.perya[c]++);
 
-                // BACCARAT
                 let pC = [drawCard(), drawCard()], bC = [drawCard(), drawCard()];
                 let pS = (pC[0].bacVal + pC[1].bacVal) % 10;
                 let bS = (bC[0].bacVal + bC[1].bacVal) % 10;
@@ -329,7 +324,6 @@ io.on('connection', (socket) => {
         socket.emit('userLogsData', { username, logs });
     });
 
-    // --- SOLO GAMES ENGINE ---
     socket.on('playSolo', async (data) => {
         if (!socket.user) return;
         const user = await User.findById(socket.user._id);
@@ -451,7 +445,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- SHARED TABLES NETWORKING ---
     socket.on('joinRoom', (room) => { 
         if(socket.currentRoom) { socket.leave(socket.currentRoom); rooms[socket.currentRoom]--; }
         socket.join(room); socket.currentRoom = room; rooms[room]++; 
@@ -500,7 +493,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- CASHIER ACTIONS ---
     socket.on('submitTransaction', async (data) => { 
         if (socket.user) {
             let amount = formatTC(data.amount);
@@ -523,7 +515,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- AUTHENTICATION & ADMIN ACTIONS ---
     socket.on('adminLogin', async (data) => {
         const user = await User.findOne({ username: data.username, password: data.password });
         if (user && user.role === 'Admin') {
@@ -546,11 +537,9 @@ io.on('connection', (socket) => {
                 const logs = await CreditLog.find({ username: data.username }).sort({ date: -1 }).limit(100);
                 socket.emit('userLogsData', { username: data.username, logs });
             }
-            
             else if (data.type === 'sendUpdate') { 
                 io.emit('silentNotification', { id: Date.now(), title: 'System Announcement', msg: data.msg, date: new Date() }); 
             }
-            
             else if (data.type === 'giftCredits') {
                 let amount = formatTC(data.amount);
                 let updateQuery = data.creditType === 'playable' ? { $inc: { playableCredits: amount } } : { $inc: { credits: amount } };
@@ -602,7 +591,7 @@ io.on('connection', (socket) => {
                             let u = await User.findOne({ username: tx.username });
                             if (u) { 
                                 u.credits = formatTC(u.credits + tx.amount); await u.save(); 
-                                await new CreditLog({ username: u.username, action: 'Withdrawal', amount: tx.amount, details: `Rejected (Refund)` }).save();
+                                await new CreditLog({ username: u.username, action: 'Refund', amount: tx.amount, details: `Withdrawal Rejected` }).save();
                                 if (targetSocketId) io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits }); 
                             }
                         }
@@ -640,6 +629,7 @@ io.on('connection', (socket) => {
             user.status = 'Active'; await user.save(); socket.user = user;
             connectedUsers[user.username] = socket.id;
             
+            await new CreditLog({ username: user.username, action: 'System', amount: 0, details: `Check In` }).save();
             pushAdminData();
             
             let now = new Date(), canClaim = true, day = 1, nextClaim = null;
@@ -714,6 +704,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', async () => {
         if (socket.user) { 
             await User.findByIdAndUpdate(socket.user._id, { status: 'Offline' }); 
+            await new CreditLog({ username: socket.user.username, action: 'System', amount: 0, details: `Check Out` }).save();
             delete connectedUsers[socket.user.username];
         }
         if(socket.currentRoom && rooms[socket.currentRoom] > 0) {
