@@ -214,7 +214,7 @@ setInterval(() => {
                     playerStats[b.userId].amountWon += formatTC(payout);
                 });
 
-                let roomNames = { 'perya': 'COLOR GAME', 'dt': 'DRAGON TIGER', 'sicbo': 'SIC BO', 'baccarat': 'BACCARAT' };
+                let roomNames = { 'perya': 'Color Game', 'dt': 'Dragon Tiger', 'sicbo': 'Sic Bo', 'baccarat': 'Baccarat' };
 
                 Object.keys(playerStats).forEach(async (userId) => {
                     let st = playerStats[userId];
@@ -349,7 +349,7 @@ io.on('connection', (socket) => {
             if (data.choice === result) payout = formatTC(data.bet * 1.95);
             
             user.credits = formatTC(user.credits + payout); await user.save();
-            await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `COIN FLIP` }).save();
+            await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `Coin Flip` }).save();
             let resStr = `LANDED ON ${result.toUpperCase()}`;
             logGlobalResult('coinflip', resStr);
             pushAdminData();
@@ -367,7 +367,7 @@ io.on('connection', (socket) => {
                     payout = formatTC(dS === 21 ? data.bet : data.bet * 2.5);
                     if(msg === 'Blackjack!') gameStats.blackjack.Win++; else gameStats.blackjack.Push++;
                     user.credits = formatTC(user.credits + payout); await user.save();
-                    await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `BLACKJACK` }).save();
+                    await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `Blackjack` }).save();
                     let resStr = `${msg.toUpperCase()} (${pS} TO ${dS})`;
                     logGlobalResult('blackjack', resStr);
                     pushAdminData();
@@ -385,7 +385,7 @@ io.on('connection', (socket) => {
                 
                 if (pS > 21) {
                     gameStats.blackjack.Lose++;
-                    await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(-socket.bjState.bet), details: `BLACKJACK` }).save();
+                    await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(-socket.bjState.bet), details: `Blackjack` }).save();
                     let resStr = `BUST (${pS} TO ${dS})`;
                     logGlobalResult('blackjack', resStr);
                     socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', resStr: resStr, bet: socket.bjState.bet, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.blackjack });
@@ -407,7 +407,7 @@ io.on('connection', (socket) => {
                 else { msg = 'Dealer Wins'; gameStats.blackjack.Lose++; }
                 
                 user.credits = formatTC(user.credits + payout); await user.save();
-                await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - socket.bjState.bet), details: `BLACKJACK` }).save();
+                await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - socket.bjState.bet), details: `Blackjack` }).save();
                 
                 let resStr = (dS > 21) ? `DEALER BUSTS (${pS} TO ${dS})` : `${msg.toUpperCase()} (${pS} TO ${dS})`;
                 logGlobalResult('blackjack', resStr);
@@ -470,12 +470,12 @@ io.on('connection', (socket) => {
     socket.on('submitTransaction', async (data) => { 
         if (socket.user) {
             let amount = formatTC(data.amount);
-            await new Transaction({ username: socket.user.username, type: data.type, amount: amount, ref: data.ref }).save(); 
+            let tx = await new Transaction({ username: socket.user.username, type: data.type, amount: amount, ref: data.ref }).save(); 
             
             if(data.type === 'Withdrawal') {
-                await new CreditLog({ username: socket.user.username, action: 'WITHDRAWAL', amount: -amount, details: `PENDING` }).save();
+                await new CreditLog({ username: socket.user.username, action: 'WITHDRAWAL', amount: -amount, details: `Pending` }).save();
             } else {
-                await new CreditLog({ username: socket.user.username, action: 'DEPOSIT', amount: amount, details: `PENDING` }).save();
+                await new CreditLog({ username: socket.user.username, action: 'DEPOSIT', amount: amount, details: `Pending` }).save();
             }
             const txs = await Transaction.find({ username: socket.user.username }).sort({ date: -1 });
             socket.emit('transactionsData', txs);
@@ -544,7 +544,7 @@ io.on('connection', (socket) => {
                         if(data.creditType === 'playable') u.playableCredits = formatTC(u.playableCredits + amount);
                         else u.credits = formatTC(u.credits + amount);
                         await u.save();
-                        await new CreditLog({ username: u.username, action: 'GIFT', amount: amount, details: `ADMIN GIFT` }).save();
+                        await new CreditLog({ username: u.username, action: 'GIFT', amount: amount, details: `From Admin` }).save();
                         let targetSocketId = connectedUsers[u.username];
                         if (targetSocketId) {
                             io.to(targetSocketId).emit('silentNotification', { id: Date.now(), title: 'Gift Received!', msg: notifMsg, date: new Date() });
@@ -562,7 +562,7 @@ io.on('connection', (socket) => {
                         let u = await User.findOne({ username: tx.username });
                         if (u) {
                             u.credits = formatTC(u.credits + tx.amount); await u.save();
-                            await new CreditLog({ username: u.username, action: 'DEPOSIT', amount: tx.amount, details: `APPROVED` }).save();
+                            await new CreditLog({ username: u.username, action: 'DEPOSIT', amount: tx.amount, details: `Approved` }).save();
                             if (targetSocketId) {
                                 io.to(targetSocketId).emit('silentNotification', { id: Date.now(), title: 'Deposit Approved', msg: `Your deposit of ${tx.amount} TC has been added to your balance.`, date: new Date() });
                                 io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits });
@@ -574,7 +574,7 @@ io.on('connection', (socket) => {
                             let u = await User.findOne({ username: tx.username });
                             if (u) { 
                                 u.credits = formatTC(u.credits + tx.amount); await u.save(); 
-                                await new CreditLog({ username: u.username, action: 'WITHDRAWAL', amount: tx.amount, details: `REJECTED (REFUND)` }).save();
+                                await new CreditLog({ username: u.username, action: 'WITHDRAWAL', amount: tx.amount, details: `Rejected (Refund)` }).save();
                                 if (targetSocketId) io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits }); 
                             }
                         }
@@ -611,6 +611,7 @@ io.on('connection', (socket) => {
 
             user.status = 'Active'; await user.save(); socket.user = user;
             connectedUsers[user.username] = socket.id;
+            
             pushAdminData();
             
             let now = new Date(), canClaim = true, day = 1, nextClaim = null;
@@ -649,7 +650,7 @@ io.on('connection', (socket) => {
         user.dailyReward.lastClaim = now; user.dailyReward.streak += 1;
         await user.save();
         
-        await new CreditLog({ username: user.username, action: 'GIFT', amount: amt, details: `DAILY REWARD` }).save();
+        await new CreditLog({ username: user.username, action: 'GIFT', amount: amt, details: `Daily Reward` }).save();
         pushAdminData();
         socket.emit('dailyClaimed', { amt, newBalance: { credits: user.credits, playable: user.playableCredits }, nextClaim: new Date(now.getTime() + 24 * 60 * 60 * 1000) });
     });
@@ -671,7 +672,7 @@ io.on('connection', (socket) => {
             }
             await user.save();
             
-            await new CreditLog({ username: user.username, action: 'CODE', amount: gc.amount, details: `REDEEMED` }).save();
+            await new CreditLog({ username: user.username, action: 'CODE', amount: gc.amount, details: `Redeemed` }).save();
             pushAdminData();
             socket.emit('promoResult', { success: true, amt: gc.amount, type: gc.creditType });
             socket.emit('balanceUpdateData', { credits: user.credits, playable: user.playableCredits });
