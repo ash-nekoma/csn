@@ -172,8 +172,8 @@
 
         /* STRICT CENTERED MAIN WRAPPER */
         .main-wrapper { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            height: calc(100vh - 75px); margin-top: 75px; width: 100vw; overflow: hidden; position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
+            height: calc(100vh - 75px); margin-top: 75px; width: 100vw; overflow-y: auto; overflow-x: hidden; position: relative;
         }
         .content { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; flex: 1; height: 100%;}
         .view-container { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s; }
@@ -187,9 +187,9 @@
         .btn-back-fixed { position: fixed; top: 95px; left: 25px; z-index: 1000; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
         .btn-back-fixed:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
-        /* STRICTLY HORIZONTAL CARD ALIGNMENT - 240x360 Proportions */
+        /* RESPONSIVE CARD ALIGNMENT - 240x360 Proportions */
         .lobby-modes-container, .casino-grid.shared-grid, .casino-grid.solo-grid { 
-            display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 20px; width: 100%; flex-wrap: nowrap; 
+            display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 20px; width: 100%; max-width: 1200px; flex-wrap: wrap; 
         }
         
         /* THE 240x360 RULE */
