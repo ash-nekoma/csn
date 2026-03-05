@@ -104,7 +104,6 @@ const creditLogSchema = new mongoose.Schema({
 });
 const CreditLog = mongoose.model('CreditLog', creditLogSchema);
 
-// RESTORED: Admin Audit Log Schema
 const adminLogSchema = new mongoose.Schema({
     adminName: String, action: String, details: String, date: { type: Date, default: Date.now }
 });
@@ -178,7 +177,7 @@ setInterval(() => {
                 // DRAGON TIGER
                 let dtD = drawCard(), dtT = drawCard();
                 let dtWin = dtD.dtVal > dtT.dtVal ? 'Dragon' : (dtT.dtVal > dtD.dtVal ? 'Tiger' : 'Tie');
-                let dtResStr = dtWin === 'Tie' ? `TIE (${dtD.raw} TO ${dtT.raw})` : `${dtWin.toUpperCase()} WINS (${dtD.raw} TO ${dtT.raw})`;
+                let dtResStr = dtWin === 'Tie' ? `TIE (${dtD.raw} TO ${dtT.raw})` : `${dtWin.toUpperCase()} (${dtD.raw} TO ${dtT.raw})`;
                 logGlobalResult('dt', dtResStr);
                 gameStats.dt.total++; gameStats.dt[dtWin]++;
                 
@@ -218,7 +217,7 @@ setInterval(() => {
                     if (bDraws) { bC.push(drawCard()); bS = (bS + bC[bC.length-1].bacVal) % 10; b3Drawn = true; }
                 }
                 let bacWin = pS > bS ? 'Player' : (bS > pS ? 'Banker' : 'Tie');
-                let bacResStr = bacWin === 'Tie' ? `TIE (${pS} TO ${bS})` : `${bacWin.toUpperCase()} WINS (${pS} TO ${bS})`;
+                let bacResStr = bacWin === 'Tie' ? `TIE (${pS} TO ${bS})` : `${bacWin.toUpperCase()} (${pS} TO ${bS})`;
                 logGlobalResult('baccarat', bacResStr);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
@@ -254,7 +253,6 @@ setInterval(() => {
 
                 let roomNames = { 'perya': 'Color Game', 'dt': 'Dragon Tiger', 'sicbo': 'Sic Bo', 'baccarat': 'Baccarat' };
 
-                // LOSS LOGGING FIX: Moved CreditLog outside the > 0 check so net negative bets are recorded
                 Object.keys(playerStats).forEach(async (userId) => {
                     let st = playerStats[userId];
                     let user = await User.findById(userId);
@@ -439,7 +437,6 @@ io.on('connection', (socket) => {
                     if(msg === 'Blackjack!') gameStats.blackjack.Win++; else gameStats.blackjack.Push++;
                     
                     if (msg === 'Push') {
-                        // LAUNDERING FIX: Push returns Exact Playable and Main splits.
                         user.playableCredits = formatTC(user.playableCredits + socket.bjState.fromPlayable);
                         user.credits = formatTC(user.credits + socket.bjState.fromMain);
                     } else {
@@ -466,7 +463,7 @@ io.on('connection', (socket) => {
                 if (pS > 21) {
                     gameStats.blackjack.Lose++;
                     await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(-socket.bjState.bet), details: `Blackjack` }).save();
-                    let resStr = `BUST (${pS} TO ${dS})`;
+                    let resStr = `PLAYER BUSTS! (${pS})`;
                     
                     socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', resStr: resStr, bet: socket.bjState.bet, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.blackjack });
                     socket.bjState = null;
@@ -487,7 +484,6 @@ io.on('connection', (socket) => {
                 else { msg = 'Dealer Wins'; gameStats.blackjack.Lose++; }
                 
                 if (msg === 'Push') {
-                    // LAUNDERING FIX: Push returns Exact Playable and Main splits.
                     user.playableCredits = formatTC(user.playableCredits + socket.bjState.fromPlayable);
                     user.credits = formatTC(user.credits + socket.bjState.fromMain);
                 } else {
@@ -497,7 +493,11 @@ io.on('connection', (socket) => {
 
                 await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - socket.bjState.bet), details: `Blackjack` }).save();
                 
-                let resStr = (dS > 21) ? `DEALER BUSTS (${pS} TO ${dS})` : `${msg.toUpperCase()} (${pS} TO ${dS})`;
+                let resStr = "";
+                if (dS > 21) { resStr = `DEALER BUSTS! (${dS} TO ${pS})`; } 
+                else if (msg === 'Push') { resStr = `TIE (${dS} TO ${pS})`; } 
+                else if (msg === 'You Win!') { resStr = `PLAYER (${dS} TO ${pS})`; } 
+                else { resStr = `DEALER (${dS} TO ${pS})`; }
                 
                 pushAdminData();
                 socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, resStr: resStr, bet: socket.bjState.bet, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.blackjack });
@@ -582,7 +582,6 @@ io.on('connection', (socket) => {
             let amount = formatTC(data.amount);
             if(isNaN(amount) || amount <= 0) return;
 
-            // ATOMIC WITHDRAWAL EXPLOIT FIX
             if(data.type === 'Withdrawal') {
                 const user = await User.findOneAndUpdate(
                     { _id: socket.user._id, credits: { $gte: amount } },
@@ -645,7 +644,7 @@ io.on('connection', (socket) => {
             }
         } catch(e) {
             console.error("Admin Login Error:", e);
-            socket.emit('authError', 'Server Connection Error.'); 
+            socket.emit('authError', 'System Error: ' + e.message); 
         }
     });
 
@@ -799,7 +798,7 @@ io.on('connection', (socket) => {
             socket.emit('loginSuccess', { username: user.username, credits: formatTC(user.credits), playable: formatTC(user.playableCredits), role: user.role, daily: { canClaim, day, nextClaim } });
         } catch(e) { 
             console.error("Player Login Error:", e);
-            socket.emit('authError', 'Server Connection Error.'); 
+            socket.emit('authError', 'System Error: ' + e.message); 
         }
     });
 
@@ -819,7 +818,7 @@ io.on('connection', (socket) => {
             socket.emit('registerSuccess', 'Account created! You may now login.');
         } catch(e) { 
             console.error("Registration Error:", e);
-            socket.emit('authError', 'Server Connection Error.'); 
+            socket.emit('authError', 'System Error: ' + e.message); 
         }
     });
 
@@ -842,7 +841,6 @@ io.on('connection', (socket) => {
         socket.emit('dailyClaimed', { amt, newBalance: { credits: user.credits, playable: user.playableCredits }, nextClaim: new Date(now.getTime() + 24 * 60 * 60 * 1000) });
     });
 
-    // ATOMIC PROMO REDEMPTION FIX
     socket.on('redeemPromo', async (code) => {
         if (!socket.user) return;
         try {
