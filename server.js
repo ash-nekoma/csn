@@ -110,6 +110,25 @@ const adminLogSchema = new mongoose.Schema({
 const AdminLog = mongoose.model('AdminLog', adminLogSchema);
 
 // ==========================================
+// AUTO-SANITIZER: FIXES MONGODB JSON IMPORTS
+// ==========================================
+const sanitizeDates = function(next) {
+    if (this.joinDate && this.joinDate.$date) this.joinDate = new Date(this.joinDate.$date);
+    if (this.dailyReward && this.dailyReward.lastClaim && this.dailyReward.lastClaim.$date) {
+        this.dailyReward.lastClaim = new Date(this.dailyReward.lastClaim.$date);
+    }
+    if (this.date && this.date.$date) this.date = new Date(this.date.$date);
+    next();
+};
+
+userSchema.pre('validate', sanitizeDates);
+txSchema.pre('validate', sanitizeDates);
+codeSchema.pre('validate', sanitizeDates);
+creditLogSchema.pre('validate', sanitizeDates);
+adminLogSchema.pre('validate', sanitizeDates);
+
+
+// ==========================================
 // 3. CASINO ENGINE & GLOBAL HISTORY / STATS
 // ==========================================
 let rooms = { baccarat: 0, perya: 0, dt: 0, sicbo: 0 };
@@ -177,7 +196,7 @@ setInterval(() => {
                 // DRAGON TIGER
                 let dtD = drawCard(), dtT = drawCard();
                 let dtWin = dtD.dtVal > dtT.dtVal ? 'Dragon' : (dtT.dtVal > dtD.dtVal ? 'Tiger' : 'Tie');
-                let dtResStr = dtWin === 'Tie' ? `TIE (${dtD.raw} TO ${dtT.raw})` : `${dtWin.toUpperCase()} (${dtD.raw} TO ${dtT.raw})`;
+                let dtResStr = dtWin === 'Tie' ? `TIE (${dtD.raw} TO ${dtT.raw})` : `${dtWin.toUpperCase()} WINS (${dtD.raw} TO ${dtT.raw})`;
                 logGlobalResult('dt', dtResStr);
                 gameStats.dt.total++; gameStats.dt[dtWin]++;
                 
@@ -217,7 +236,7 @@ setInterval(() => {
                     if (bDraws) { bC.push(drawCard()); bS = (bS + bC[bC.length-1].bacVal) % 10; b3Drawn = true; }
                 }
                 let bacWin = pS > bS ? 'Player' : (bS > pS ? 'Banker' : 'Tie');
-                let bacResStr = bacWin === 'Tie' ? `TIE (${pS} TO ${bS})` : `${bacWin.toUpperCase()} (${pS} TO ${bS})`;
+                let bacResStr = bacWin === 'Tie' ? `TIE (${pS} TO ${bS})` : `${bacWin.toUpperCase()} WINS (${pS} TO ${bS})`;
                 logGlobalResult('baccarat', bacResStr);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
@@ -507,6 +526,7 @@ io.on('connection', (socket) => {
         }
     });
 
+    // --- SHARED TABLES NETWORKING ---
     socket.on('joinRoom', (room) => { 
         if(socket.currentRoom) { socket.leave(socket.currentRoom); rooms[socket.currentRoom]--; }
         socket.join(room); socket.currentRoom = room; rooms[room]++; 
