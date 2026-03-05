@@ -27,6 +27,7 @@
             --ps-glow: #00a2ff; 
             --glass-bg: rgba(0, 10, 25, 0.75); 
             --glass-border: rgba(255, 255, 255, 0.15); 
+            --glass-hover: rgba(255, 255, 255, 0.9); 
             --danger: #ff3366; 
             --success: #00e676; 
             --credits: #ffb400; 
@@ -68,11 +69,7 @@
         .hidden { display: none !important; }
 
         /* ================= AUTHENTICATION ================= */
-        #auth-container { 
-            position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; 
-            background: linear-gradient(rgba(0, 5, 15, 0.8), rgba(0, 5, 15, 0.95)), url('https://images.unsplash.com/photo-1596838132731-3301c3fd4317?auto=format&fit=crop&q=80') center/cover no-repeat;
-            backdrop-filter: blur(15px); 
-        }
+        #auth-container { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); }
         .auth-box { width: 420px; max-width: 95vw; background: rgba(0, 5, 15, 0.9); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(0, 162, 255, 0.4); border-top: 3px solid var(--ps-glow); box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 30px rgba(0, 162, 255, 0.1); text-align: center; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); }
         .auth-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap;}
         .auth-sub { color: var(--ps-glow); font-weight: 800; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
@@ -140,7 +137,7 @@
 
         /* DROPDOWN POPOVERS */
         .dropdown-wrapper { position: relative; display: inline-block; }
-        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
+        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
         
         .notif-header, .popover-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--glass-border); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;}
         .notif-actions { display: flex; gap: 10px; }
@@ -183,7 +180,10 @@
 
         /* ================= REDESIGNED PLAYSTATION GRIDS & CARDS ================= */
 
-        .lobby-modes-container { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 40px; width: 100%; flex-wrap: wrap; }
+        /* MAIN MENU SELECTIONS - BIGGER CARDS */
+        .lobby-modes-container { 
+            display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 40px; width: 100%; flex-wrap: wrap; 
+        }
         
         .mode-card { 
             width: 340px; min-width: 340px; height: 440px; text-align: center; cursor: pointer; position: relative; 
@@ -198,8 +198,13 @@
         .mode-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 10px; position: relative; z-index: 2; letter-spacing: 1px; white-space: nowrap; }
         .mode-desc { color: var(--text-muted); font-size: 1.1rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.4; padding: 0 20px; }
 
-        .casino-grid.solo-grid { display: grid; grid-template-columns: repeat(3, 260px); justify-content: center; gap: 20px; width: 100%; max-width: 900px; }
-        .casino-grid.shared-grid { display: grid; grid-template-columns: repeat(4, 260px); justify-content: center; gap: 20px; width: 100%; max-width: 1200px; }
+        /* EXACT 3-COLUMN (SOLO) & 4-COLUMN (SHARED) GRIDS */
+        .casino-grid.solo-grid { 
+            display: grid; grid-template-columns: repeat(3, 260px); justify-content: center; gap: 20px; width: 100%; max-width: 900px;
+        }
+        .casino-grid.shared-grid { 
+            display: grid; grid-template-columns: repeat(4, 260px); justify-content: center; gap: 20px; width: 100%; max-width: 1200px;
+        }
 
         .game-card { 
             width: 100%; height: 320px; text-align: center; cursor: pointer; position: relative;
@@ -218,6 +223,7 @@
 
         .live-badge { position: absolute; top: 15px; right: 15px; background: transparent; color: var(--danger); font-size: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 4px; z-index: 10;}
         .live-dot { width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; animation: pulseRed 1.5s infinite; }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
 
         .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 0.9rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
@@ -316,22 +322,16 @@
         .ticket-log-status.approved { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
         .ticket-log-status.rejected { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
 
-        /* EXACT CENTER-SCREEN GREEN/RED RESULT BOXES */
-        .result-box, .result-overlay-shared { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); 
-            opacity: 0; text-align: center; padding: 25px 40px; border-radius: 16px; display: none; 
-            z-index: 2000; min-width: 300px; text-transform: uppercase; backdrop-filter: blur(20px); 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            flex-direction: column; align-items: center; justify-content: center; pointer-events: none;
-        }
-        .result-box.win, .result-overlay-shared.win { background: rgba(0, 230, 118, 0.2); border: 2px solid var(--success); color: var(--success); } 
-        .result-box.lose, .result-overlay-shared.lose { background: rgba(255, 51, 102, 0.2); border: 2px solid var(--danger); color: var(--danger); } 
-        .result-box.push, .result-overlay-shared.push { background: rgba(255, 255, 255, 0.1); border: 2px solid var(--text-muted); color: white; }
+        /* EXACT GREEN/RED RESULT BOXES FOR BOTH SOLO AND SHARED */
+        .result-box, .result-overlay-shared { position: absolute; bottom: 20px; right: 20px; left: auto; top: auto; transform: translateX(120%); opacity: 0; text-align: right; padding: 15px 30px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; display: none; z-index: 100; min-width: 250px; text-transform: uppercase; backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .result-box.win, .result-overlay-shared.win { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.4); border-right: 4px solid var(--success); } 
+        .result-box.lose, .result-overlay-shared.lose { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.4); border-right: 4px solid var(--danger); } 
+        .result-box.push, .result-overlay-shared.push { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); border-right: 4px solid var(--text-muted); }
         
-        .result-box.show, .result-overlay-shared.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: all; }
+        .result-overlay-shared { display: flex; flex-direction: column; pointer-events: none; background: rgba(0, 10, 30, 0.85); border: 1px solid rgba(0, 162, 255, 0.4); border-right: 4px solid var(--ps-glow); transform: translateX(120%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } .result-overlay-shared.show { opacity: 1; pointer-events: all; transform: translateX(0); }
         
-        .res-title { font-size: 1.5rem; font-weight: 900; color: white; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; text-align: center; width: 100%; } 
-        .res-payout { font-size: 2.2rem; font-weight: 900; text-align: center; width: 100%; }
+        .res-title { font-size: 1.2rem; font-weight: 900; color: white; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; text-align: right; width: 100%; } 
+        .res-payout { font-size: 1.4rem; font-weight: 800; text-align: right; width: 100%; }
 
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes popBalance { 0% { transform: scale(1); } 50% { transform: scale(1.1); background: rgba(0, 230, 118, 0.3); border-color: var(--success); } 100% { transform: scale(1); } } .anim-pop { animation: popBalance 0.6s ease-out; }
@@ -340,7 +340,7 @@
         /* GAME ASSETS */
         .blackjack-scores { display: flex; justify-content: center; gap: 40px; width: 100%; align-items: flex-start; } .card-area { min-width: 250px; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 240px; } .bj-title { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; } .bj-score { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 15px; line-height: 1; } .card-hand { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; width: 100%; } .play-card { background: white; color: black; border-radius: 6px; width: 65px; height: 95px; border: 1px solid #ccc; box-shadow: 2px 5px 15px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; } .play-card .val { font-size: 1.6rem; line-height: 1; margin-bottom: 2px; } .play-card .suit { font-size: 1.8rem; line-height: 1; } .card-red { color: #e60000; } .card-back { background: repeating-linear-gradient(45deg, #001f4d, #001f4d 10px, #000a1f 10px, #000a1f 20px); border: 2px solid rgba(255,255,255,0.8); color: transparent; }
         .anim-deal { animation: dealCard 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: center; } @keyframes dealCard { 0% { opacity: 0; transform: translate(0, -200px) scale(0.5) rotateY(180deg); } 100% { opacity: 1; transform: translate(0, 0) scale(1) rotateY(0deg); } } .anim-flip { animation: flipCard 0.4s ease-in-out forwards; } @keyframes flipCard { 0% { transform: rotateY(180deg); } 50% { transform: rotateY(90deg); color: transparent; } 51% { color: inherit; background: white; } 100% { transform: rotateY(0deg); background: white; color: black; } }
-        .dice-icon { font-size: 7rem; color: var(--text-muted); text-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: 0.1s; line-height: 1; } #d20-num { font-size: 6rem !important; line-height: 1; text-shadow: 0 10px 30px rgba(0,0,0,0.8); font-weight: 900 !important; }
+        .dice-icon { font-size: 7rem; color: var(--text-muted); text-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: 0.1s; line-height: 1; }
         
         /* STRICT 3D COIN FLIP FIX */
         .coin-wrapper { perspective: 1000px; width: 150px; height: 150px; margin: 0 auto; display: flex; justify-content: center; align-items: center; } 
@@ -1539,7 +1539,7 @@
             box.className = "result-box lose"; 
         } 
         
-        box.innerHTML = h; box.style.display = 'flex'; box.style.opacity = '0'; 
+        box.innerHTML = h; box.style.display = 'block'; box.style.opacity = '0'; 
         
         requestAnimationFrame(() => { 
             box.style.opacity = '1'; box.classList.add('show'); 
@@ -1547,7 +1547,6 @@
             else if (payout === 0) sfx.lose();
         });
 
-        // 1.5 SECOND DELAY BEFORE HUD UPDATES
         setTimeout(() => { updateMyBalance(newBalance, payout > bet); }, 1500);
     }
 
@@ -2247,4 +2246,215 @@
 
     socket.on('lockBets', () => { 
         sState.status = 'RESOLVING'; 
-        let r = document.getElementById
+        let r = document.getElementById('sg-timer-box'); 
+        if (r) { r.classList.remove('closing'); r.style.color = 'var(--danger)'; r.style.borderColor = 'var(--danger)'; } 
+        let s = document.getElementById('sg-timer'); if (s) s.innerText = '0';
+        
+        if (window.activeSharedGame) {
+            let cb = document.getElementById('sg-chat');
+            if (cb) { cb.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-sys">No more bets!</div>`); cb.scrollTop = cb.scrollHeight; }
+        }
+        disableInputs(true); sfx.lock(); 
+    });
+
+    socket.on('sharedResults', (data) => {
+        if(window.activeSharedGame === data.room && sConf[data.room]) { sConf[data.room].animateResult(data); }
+    });
+
+    socket.on('newRound', () => { 
+        sState.status = 'BETTING'; sState.time = 15;
+        let r = document.getElementById('sg-timer-box'); 
+        if (r) { r.style.color = 'white'; r.style.borderColor = 'var(--glass-border)'; } 
+        
+        if (window.activeSharedGame) {
+            let cb = document.getElementById('sg-chat');
+            if (cb) { cb.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-sys">Place your bets!</div>`); cb.scrollTop = cb.scrollHeight; }
+            wipeTableVisually();
+        }
+        disableInputs(false);
+    });
+
+    // --- CASHIER ACTIONS ---
+    function openCashier() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      sfx.click();
+      document.querySelectorAll('.cashier-balance-display').forEach(el => el.innerText = formatTC(myCredits) + ' TC');
+      document.querySelectorAll('.cashier-playable-display').forEach(el => {
+          if (myPlayable > 0) { el.style.display = 'block'; el.innerText = `+ ${formatTC(myPlayable)} P`; }
+          else { el.style.display = 'none'; }
+      });
+      switchSupportCenterTab('deposit', document.querySelectorAll('#cashier-tabs-nav .bank-tab')[0]);
+      openModal('support-center-modal');
+    }
+
+    function switchSupportCenterTab(tab, el) {
+      if(el) {
+          document.querySelectorAll('#cashier-tabs-nav .bank-tab').forEach(b => b.classList.remove('active'));
+          el.classList.add('active');
+      }
+      
+      if (tab === 'ledger') {
+          document.getElementById('cashier-tabs-nav').style.display = 'none';
+          document.getElementById('btn-view-ledger').style.display = 'none';
+          document.getElementById('cashier-balance-header').style.display = 'none';
+      } else {
+          document.getElementById('cashier-tabs-nav').style.display = 'flex';
+          document.getElementById('btn-view-ledger').style.display = 'block';
+          document.getElementById('cashier-balance-header').style.display = 'block';
+      }
+
+      ['deposit','withdraw','requests','ledger'].forEach(t => {
+        let scTab = document.getElementById('sc-tab-' + t);
+        if(scTab) {
+            scTab.classList.toggle('active', t === tab);
+            scTab.classList.toggle('hidden', t !== tab);
+        }
+      });
+      if(tab === 'requests') socket.emit('getTransactions');
+      if(tab === 'ledger') socket.emit('getWalletLogs');
+    }
+
+    function copyDiscord(el) {
+        navigator.clipboard.writeText('@sr.ashley').then(() => {
+            let ogHtml = el.innerHTML;
+            el.innerHTML = '✓ COPIED TO CLIPBOARD';
+            el.style.color = 'var(--success)';
+            setTimeout(() => {
+                el.innerHTML = ogHtml;
+                el.style.color = 'var(--text-muted)';
+            }, 2000);
+        });
+    }
+
+    function submitDeposit() {
+        const amt = document.getElementById('dep-amount').value;
+        const snt = document.getElementById('dep-snt').value.trim();
+        const discord = document.getElementById('dep-discord').value.trim();
+        const msgBox = document.getElementById('deposit-msg');
+        
+        if(!amt || !snt || !discord) { 
+            msgBox.innerHTML = '<span style="color:var(--danger)">Please fill all fields.</span>';
+            return; 
+        }
+        
+        if(parseFloat(amt) < 1000) { 
+            msgBox.innerHTML = '<span style="color:var(--danger)">Minimum deposit is 1,000 TC.</span>';
+            return; 
+        }
+        
+        let combinedRef = `SNT: ${snt} | Discord: ${discord}`; 
+        socket.emit('submitTransaction', { type: 'Deposit', amount: parseFloat(amt), ref: combinedRef });
+        
+        msgBox.innerHTML = '<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Deposit Request Submitted!</span>';
+
+        document.getElementById('dep-amount').value = ''; 
+        document.getElementById('dep-snt').value = '';
+        document.getElementById('dep-discord').value = '';
+        
+        setTimeout(() => { msgBox.innerHTML = ''; }, 3500);
+    }
+
+    function submitWithdrawal() {
+        const amt = parseFloat(document.getElementById('wit-amount').value);
+        const snt = document.getElementById('wit-snt').value.trim();
+        const discord = document.getElementById('wit-discord').value.trim();
+        const msgBox = document.getElementById('withdraw-msg');
+
+        if(!amt || !snt || !discord) { 
+            msgBox.innerHTML = '<span style="color:var(--danger)">Please fill all fields.</span>';
+            return; 
+        }
+        if(amt < 10000) { 
+            msgBox.innerHTML = '<span style="color:var(--danger)">Minimum withdrawal is 10,000 TC.</span>';
+            return; 
+        }
+        if(amt > myCredits) { 
+            msgBox.innerHTML = '<span style="color:var(--danger)">Insufficient Withdrawable TC.</span>';
+            return; 
+        }
+        
+        let combinedRef = `SNT: ${snt} | Discord: ${discord}`;
+        socket.emit('submitTransaction', { type: 'Withdrawal', amount: amt, ref: combinedRef });
+        
+        msgBox.innerHTML = '<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Withdrawal Request Submitted!</span>';
+
+        document.getElementById('wit-amount').value = ''; 
+        document.getElementById('wit-snt').value = '';
+        document.getElementById('wit-discord').value = '';
+        
+        setTimeout(() => { msgBox.innerHTML = ''; }, 3500);
+    }
+
+    socket.on('transactionsData', (txs) => {
+        const container = document.getElementById('bank-logs-container'); container.innerHTML = '';
+        if(txs.length === 0) return container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No requests found.</div>';
+        txs.forEach(t => {
+            let statClass = t.status === 'Approved' ? 'approved' : (t.status === 'Rejected' ? 'rejected' : 'pending');
+            let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)'; let sign = t.type === 'Deposit' ? '+' : '-';
+            container.innerHTML += `<div class="ticket-log-item"><div class="ticket-log-header"><span class="ticket-log-id">${t._id.substring(0,8)}... - ${new Date(t.date).toLocaleDateString()}</span><span class="ticket-log-status ${statClass}">${t.status}</span></div><div style="display:flex; justify-content:space-between; align-items:center;"><div style="font-weight:900; font-size:1.1rem; text-transform:uppercase;">${t.type}</div><div style="color:${color}; font-weight:900; font-size:1.2rem;">${sign}${formatTC(t.amount)} TC</div></div></div>`;
+        });
+    });
+
+    function clearLedger() {
+        if(confirm("Are you sure you want to clear your ledger history?")) {
+            socket.emit('clearWalletLogs');
+        }
+    }
+
+    socket.on('walletLogsData', (data) => {
+        const container = document.getElementById('ledger-logs-container'); container.innerHTML = '';
+        
+        const pHud = document.getElementById('ledger-daily-profit');
+        if(pHud) {
+            let pColor = data.dailyProfit > 0 ? 'var(--success)' : (data.dailyProfit < 0 ? 'var(--danger)' : 'white');
+            let pSign = data.dailyProfit > 0 ? '+' : '';
+            pHud.innerHTML = `<span style="color:${pColor}">${pSign}${formatTC(data.dailyProfit)} TC</span>`;
+        }
+
+        if(data.logs.length === 0) return container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; grid-column: span 4;">No ledger history found.</div>';
+        
+        data.logs.forEach(l => {
+            let color = l.amount > 0 ? 'var(--success)' : (l.amount < 0 ? 'var(--danger)' : 'white'); 
+            let sign = l.amount > 0 ? '+' : '';
+            container.innerHTML += `
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; padding:10px; border-bottom:1px solid rgba(255,255,255,0.05); align-items:center; text-align:center; font-size:0.9rem; white-space:nowrap;">
+                <div style="color:white; font-weight:900; text-transform:uppercase;">${l.action}</div>
+                <div style="color:${color}; font-weight:900;">${sign}${formatTC(l.amount)}</div>
+                <div style="color:var(--text-muted); font-weight:600; text-transform:uppercase;">${l.details}</div>
+                <div style="color:var(--text-muted); font-weight:600; font-size:0.8rem;">${new Date(l.date).toLocaleDateString([], {month:'short', day:'numeric'})}</div>
+            </div>`;
+        });
+    });
+
+    function submitPromo() {
+        const code = document.getElementById('promo-code').value.trim(); 
+        if(!code) {
+            document.getElementById('promo-response').innerHTML = '<span style="color:var(--danger)">Enter a code</span>';
+            return;
+        }
+        socket.emit('redeemPromo', code);
+    }
+
+    socket.on('promoResult', (res) => {
+        let respDiv = document.getElementById('promo-response');
+        if(res.success) { 
+            respDiv.innerHTML = `<span style="color:var(--success)">Valid: +${formatTC(res.amt)} ${res.type === 'playable' ? 'P TC' : 'TC'}</span>`;
+            document.getElementById('promo-code').value = ''; 
+            socket.emit('requestBalanceRefresh');
+        } else { 
+            respDiv.innerHTML = `<span style="color:var(--danger)">${res.msg}</span>`; 
+        }
+    });
+
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.onkeydown = function(e) {
+        if(e.keyCode === 123) return false; 
+        if(e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) return false; 
+        if(e.ctrlKey && e.shiftKey && e.keyCode === 'C'.charCodeAt(0)) return false; 
+        if(e.ctrlKey && e.shiftKey && e.keyCode === 'J'.charCodeAt(0)) return false; 
+        if(e.ctrlKey && e.keyCode === 'U'.charCodeAt(0)) return false; 
+    };
+
+  </script>
+</body>
+</html>
