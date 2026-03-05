@@ -81,6 +81,7 @@ const userSchema = new mongoose.Schema({
     credits: { type: Number, default: 0 }, 
     playableCredits: { type: Number, default: 0 }, 
     status: { type: String, default: 'Offline' },
+    ipAddress: { type: String, default: 'Unknown' }, // Smurf Detection Tracking
     joinDate: { type: Date, default: Date.now },
     dailyReward: { lastClaim: { type: Date, default: null }, streak: { type: Number, default: 0 } }
 });
@@ -103,6 +104,12 @@ const creditLogSchema = new mongoose.Schema({
 });
 const CreditLog = mongoose.model('CreditLog', creditLogSchema);
 
+// THE WATCHER PROTOCOL: Admin Audit Trail
+const adminLogSchema = new mongoose.Schema({
+    adminName: String, action: String, details: String, date: { type: Date, default: Date.now }
+});
+const AdminLog = mongoose.model('AdminLog', adminLogSchema);
+
 // ==========================================
 // 3. CASINO ENGINE & GLOBAL HISTORY / STATS
 // ==========================================
@@ -110,7 +117,7 @@ let rooms = { baccarat: 0, perya: 0, dt: 0, sicbo: 0 };
 let sharedTables = { time: 15, status: 'BETTING', bets: [] };
 let connectedUsers = {}; 
 
-let globalResults = { baccarat: [], perya: [], dt: [], sicbo: [] }; // Only Shared Games broadcast globally
+let globalResults = { baccarat: [], perya: [], dt: [], sicbo: [] }; 
 
 let gameStats = {
     baccarat: { total: 0, Player: 0, Banker: 0, Tie: 0 },
@@ -215,7 +222,6 @@ setInterval(() => {
                 logGlobalResult('baccarat', bacResStr);
                 gameStats.baccarat.total++; gameStats.baccarat[bacWin]++;
 
-                // PAYOUT RESOLUTION (Winnings exclusively to Main TC)
                 let playerStats = {}; 
                 sharedTables.bets.forEach(b => {
                     let payout = 0;
@@ -287,14 +293,24 @@ async function pushAdminData(target = io.to('admin_room')) {
         const users = await User.find(); 
         const txs = await Transaction.find().sort({ date: -1 }); 
         const gcs = await GiftCode.find().sort({ date: -1 });
+        
         let totalEconomy = formatTC(users.reduce((a, b) => a + (b.credits || 0) + (b.playableCredits || 0), 0));
         let approvedDeposits = txs.filter(t => t.type === 'Deposit' && t.status === 'Approved').reduce((a, b) => a + b.amount, 0);
+
+        // Calculate 24h House Profit Analytics
+        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const gameLogs = await CreditLog.find({ action: 'GAME', date: { $gte: oneDayAgo } });
+        let playerNet = gameLogs.reduce((sum, l) => sum + l.amount, 0);
+        let houseProfit24h = formatTC(-playerNet); // If players net positive, house profit is negative
+
+        const adminLogs = await AdminLog.find().sort({ date: -1 }).limit(100);
 
         target.emit('adminDataSync', { 
             users, 
             transactions: txs, 
             giftBatches: gcs, 
-            stats: { economy: totalEconomy, approvedDeposits: formatTC(approvedDeposits), limit: 2000000 } 
+            adminLogs,
+            stats: { economy: totalEconomy, approvedDeposits: formatTC(approvedDeposits), limit: 2000000, houseProfit: houseProfit24h } 
         });
     } catch(e) { console.error(e); }
 }
@@ -354,7 +370,6 @@ io.on('connection', (socket) => {
             }
             await user.save();
 
-            // Store bet components for Ghost Blackjack
             if (data.game === 'blackjack') {
                 socket.bjState = { 
                     bet: amt, 
@@ -424,7 +439,6 @@ io.on('connection', (socket) => {
                     let resStr = `${msg.toUpperCase()} (${pS} TO ${dS})`;
                     
                     pushAdminData();
-                    // GHOST BLACKJACK FIX: Emit 'deal' with a natural flag so client animates before revealing result
                     socket.emit('bjUpdate', { event: 'deal', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, naturalBJ: true, payout, msg, resStr: resStr, bet: socket.bjState.bet, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.blackjack });
                     socket.bjState = null;
                     checkResetStats('blackjack');
@@ -473,7 +487,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- SHARED TABLES NETWORKING ---
     socket.on('joinRoom', (room) => { 
         if(socket.currentRoom) { socket.leave(socket.currentRoom); rooms[socket.currentRoom]--; }
         socket.join(room); socket.currentRoom = room; rooms[room]++; 
@@ -499,7 +512,6 @@ io.on('connection', (socket) => {
         let amt = formatTC(data.amount);
         if (isNaN(amt) || amt <= 0) return socket.emit('localGameError', { msg: 'INVALID BET', game: data.room });
 
-        // 50,000 TC Tile Cap Fix
         let currentTileBet = sharedTables.bets
             .filter(b => b.userId.toString() === user._id.toString() && b.room === data.room && b.choice === data.choice)
             .reduce((sum, b) => sum + b.amount, 0);
@@ -514,7 +526,6 @@ io.on('connection', (socket) => {
         }
         await user.save();
         
-        // Save the breakdown so UNDO knows exactly where to return the money
         sharedTables.bets.push({ 
             userId: user._id, 
             socketId: socket.id, 
@@ -534,7 +545,6 @@ io.on('connection', (socket) => {
             if (b.userId.toString() === socket.user._id.toString() && b.room === data.room) {
                 let user = await User.findById(socket.user._id);
                 if (user) {
-                    // LAUNDERING FIX: Return exact amounts to their original wallet origins
                     user.playableCredits = formatTC(user.playableCredits + b.fromPlayable);
                     user.credits = formatTC(user.credits + b.fromMain);
                     await user.save();
@@ -547,13 +557,11 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- CASHIER ACTIONS ---
     socket.on('submitTransaction', async (data) => { 
         if (socket.user) {
             let amount = formatTC(data.amount);
             if(isNaN(amount) || amount <= 0) return;
 
-            // WITHDRAWAL EXPLOIT FIX: Deduct instantly upon pending request.
             if(data.type === 'Withdrawal') {
                 let user = await User.findById(socket.user._id);
                 if(user.credits < amount) return;
@@ -590,11 +598,16 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- AUTHENTICATION & ADMIN ACTIONS ---
     socket.on('adminLogin', async (data) => {
         const user = await User.findOne({ username: data.username, password: data.password });
         if (user && user.role === 'Admin') {
             socket.join('admin_room'); 
+            
+            let ip = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
+            user.ipAddress = ip;
+            await user.save();
+            
+            socket.user = user; 
             socket.emit('adminLoginSuccess', { username: user.username, role: user.role });
             await pushAdminData(socket);
         } else { 
@@ -605,16 +618,30 @@ io.on('connection', (socket) => {
     socket.on('adminAction', async (data) => {
         if (!socket.rooms.has('admin_room')) return; 
         try {
-            if (data.type === 'editUser') { await User.findByIdAndUpdate(data.id, { credits: formatTC(data.credits), playableCredits: formatTC(data.playableCredits), role: data.role }); }
-            else if (data.type === 'ban') { await User.findByIdAndUpdate(data.id, { status: 'Banned' }); }
-            else if (data.type === 'unban') { await User.findByIdAndUpdate(data.id, { status: 'Active' }); }
+            const adminName = socket.user ? socket.user.username : 'System';
+
+            if (data.type === 'editUser') { 
+                let u = await User.findById(data.id);
+                await User.findByIdAndUpdate(data.id, { credits: formatTC(data.credits), playableCredits: formatTC(data.playableCredits), role: data.role }); 
+                await new AdminLog({ adminName, action: 'EDIT USER', details: `Updated balances for ${u.username}` }).save();
+            }
+            else if (data.type === 'ban') { 
+                let u = await User.findByIdAndUpdate(data.id, { status: 'Banned' }); 
+                await new AdminLog({ adminName, action: 'BAN', details: `Banned user ${u.username}` }).save();
+            }
+            else if (data.type === 'unban') { 
+                let u = await User.findByIdAndUpdate(data.id, { status: 'Active' }); 
+                await new AdminLog({ adminName, action: 'UNBAN', details: `Unbanned user ${u.username}` }).save();
+            }
             else if (data.type === 'clearUserLogs') {
                 await CreditLog.deleteMany({ username: data.username });
                 const logs = await CreditLog.find({ username: data.username }).sort({ date: -1 }).limit(100);
                 socket.emit('userLogsData', { username: data.username, logs });
+                await new AdminLog({ adminName, action: 'CLEAR LOGS', details: `Cleared logs for ${data.username}` }).save();
             }
             else if (data.type === 'sendUpdate') { 
                 io.emit('silentNotification', { id: Date.now(), title: 'System Announcement', msg: data.msg, date: new Date() }); 
+                await new AdminLog({ adminName, action: 'BROADCAST', details: `Msg: ${data.msg}` }).save();
             }
             else if (data.type === 'giftCredits') {
                 let amount = formatTC(data.amount);
@@ -625,11 +652,13 @@ io.on('connection', (socket) => {
                     await User.updateMany({}, updateQuery);
                     io.emit('silentNotification', { id: Date.now(), title: 'Gift Received!', msg: notifMsg, date: new Date() });
                     io.emit('refreshBalance'); 
+                    await new AdminLog({ adminName, action: 'GIFT', details: `Mass gifted ${amount} to All Registered` }).save();
                 } 
                 else if (data.target === 'all_active') {
                     await User.updateMany({ status: 'Active' }, updateQuery);
                     io.emit('silentNotification', { id: Date.now(), title: 'Gift Received!', msg: notifMsg, date: new Date() });
                     io.emit('refreshBalance');
+                    await new AdminLog({ adminName, action: 'GIFT', details: `Mass gifted ${amount} to All Active` }).save();
                 } 
                 else {
                     let u = await User.findOne({ username: new RegExp('^' + data.target + '$', 'i') });
@@ -638,6 +667,9 @@ io.on('connection', (socket) => {
                         else u.credits = formatTC(u.credits + amount);
                         await u.save();
                         await new CreditLog({ username: u.username, action: 'GIFT', amount: amount, details: `From Admin` }).save();
+                        
+                        await new AdminLog({ adminName, action: 'GIFT', details: `Gifted ${amount} to ${u.username}` }).save();
+                        
                         let targetSocketId = connectedUsers[u.username];
                         if (targetSocketId) {
                             io.to(targetSocketId).emit('silentNotification', { id: Date.now(), title: 'Gift Received!', msg: notifMsg, date: new Date() });
@@ -650,6 +682,9 @@ io.on('connection', (socket) => {
                 let tx = await Transaction.findById(data.id);
                 if (tx && tx.status === 'Pending') {
                     tx.status = data.status; await tx.save();
+                    
+                    await new AdminLog({ adminName, action: 'RESOLVE TX', details: `Marked ${tx.type} for ${tx.username} as ${data.status}` }).save();
+                    
                     let targetSocketId = connectedUsers[tx.username];
                     if (tx.type === 'Deposit' && data.status === 'Approved') {
                         let u = await User.findOne({ username: tx.username });
@@ -666,7 +701,6 @@ io.on('connection', (socket) => {
                         if (tx.type === 'Withdrawal') {
                             let u = await User.findOne({ username: tx.username });
                             if (u) { 
-                                // WITHDRAWAL EXPLOIT FIX: Refund the deducted amount if rejected
                                 u.credits = formatTC(u.credits + tx.amount); await u.save(); 
                                 await new CreditLog({ username: u.username, action: 'REFUND', amount: tx.amount, details: `Withdrawal Rejected` }).save();
                                 if (targetSocketId) io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits }); 
@@ -688,8 +722,12 @@ io.on('connection', (socket) => {
                     for(let j=0; j<10; j++) code += chars.charAt(Math.floor(Math.random() * chars.length));
                     await new GiftCode({ batchId, amount: formatTC(data.amount), code, creditType: data.creditType }).save();
                 }
+                await new AdminLog({ adminName, action: 'CREATE BATCH', details: `Created batch ${batchId} (${data.count} codes)` }).save();
             }
-            else if (data.type === 'deleteBatch') { await GiftCode.deleteMany({ batchId: data.batchId }); }
+            else if (data.type === 'deleteBatch') { 
+                await GiftCode.deleteMany({ batchId: data.batchId }); 
+                await new AdminLog({ adminName, action: 'DELETE BATCH', details: `Deleted batch ${data.batchId}` }).save();
+            }
             await pushAdminData();
         } catch(e) { console.error("Admin Action Error:", e); }
     });
@@ -703,7 +741,11 @@ io.on('connection', (socket) => {
             if (isNaN(user.credits) || user.credits === null) user.credits = 0;
             if (isNaN(user.playableCredits) || user.playableCredits === null) user.playableCredits = 0;
 
-            user.status = 'Active'; await user.save(); socket.user = user;
+            let ip = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
+            user.ipAddress = ip;
+            user.status = 'Active'; 
+            await user.save(); 
+            socket.user = user;
             connectedUsers[user.username] = socket.id;
             
             pushAdminData();
@@ -724,7 +766,10 @@ io.on('connection', (socket) => {
         try {
             const exists = await User.findOne({ username: data.username });
             if (exists) return socket.emit('authError', 'Username is already taken.');
-            await new User({ username: data.username, password: data.password }).save();
+            
+            let ip = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
+            await new User({ username: data.username, password: data.password, ipAddress: ip }).save();
+            
             pushAdminData();
             socket.emit('registerSuccess', 'Account created! You may now login.');
         } catch(e) { socket.emit('authError', 'Server Error.'); }
