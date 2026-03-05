@@ -117,7 +117,7 @@ let rooms = { baccarat: 0, perya: 0, dt: 0, sicbo: 0 };
 let sharedTables = { time: 15, status: 'BETTING', bets: [] };
 let connectedUsers = {}; 
 
-let globalResults = { baccarat: [], perya: [], dt: [], sicbo: [] }; 
+let globalResults = { baccarat: [], perya: [], dt: [], sicbo: [] }; // Only Shared Games broadcast globally
 
 let gameStats = {
     baccarat: { total: 0, Player: 0, Banker: 0, Tie: 0 },
@@ -439,6 +439,7 @@ io.on('connection', (socket) => {
                     let resStr = `${msg.toUpperCase()} (${pS} TO ${dS})`;
                     
                     pushAdminData();
+                    // GHOST BLACKJACK FIX: Emit 'deal' with a natural flag so client animates before revealing result
                     socket.emit('bjUpdate', { event: 'deal', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, naturalBJ: true, payout, msg, resStr: resStr, bet: socket.bjState.bet, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.blackjack });
                     socket.bjState = null;
                     checkResetStats('blackjack');
@@ -487,6 +488,7 @@ io.on('connection', (socket) => {
         }
     });
 
+    // --- SHARED TABLES NETWORKING ---
     socket.on('joinRoom', (room) => { 
         if(socket.currentRoom) { socket.leave(socket.currentRoom); rooms[socket.currentRoom]--; }
         socket.join(room); socket.currentRoom = room; rooms[room]++; 
@@ -526,6 +528,7 @@ io.on('connection', (socket) => {
         }
         await user.save();
         
+        // Save the breakdown so UNDO knows exactly where to return the money
         sharedTables.bets.push({ 
             userId: user._id, 
             socketId: socket.id, 
@@ -545,6 +548,7 @@ io.on('connection', (socket) => {
             if (b.userId.toString() === socket.user._id.toString() && b.room === data.room) {
                 let user = await User.findById(socket.user._id);
                 if (user) {
+                    // LAUNDERING FIX: Return exact amounts to their original wallet origins
                     user.playableCredits = formatTC(user.playableCredits + b.fromPlayable);
                     user.credits = formatTC(user.credits + b.fromMain);
                     await user.save();
@@ -557,11 +561,13 @@ io.on('connection', (socket) => {
         }
     });
 
+    // --- CASHIER ACTIONS ---
     socket.on('submitTransaction', async (data) => { 
         if (socket.user) {
             let amount = formatTC(data.amount);
             if(isNaN(amount) || amount <= 0) return;
 
+            // WITHDRAWAL EXPLOIT FIX: Deduct instantly upon pending request.
             if(data.type === 'Withdrawal') {
                 let user = await User.findById(socket.user._id);
                 if(user.credits < amount) return;
@@ -598,20 +604,31 @@ io.on('connection', (socket) => {
         }
     });
 
+    // --- AUTHENTICATION & ADMIN ACTIONS ---
     socket.on('adminLogin', async (data) => {
-        const user = await User.findOne({ username: data.username, password: data.password });
-        if (user && user.role === 'Admin') {
-            socket.join('admin_room'); 
-            
-            let ip = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
-            user.ipAddress = ip;
-            await user.save();
-            
-            socket.user = user; 
-            socket.emit('adminLoginSuccess', { username: user.username, role: user.role });
-            await pushAdminData(socket);
-        } else { 
-            socket.emit('authError', 'Invalid Admin Credentials.'); 
+        try {
+            // Anti-Freeze Database Check
+            if (mongoose.connection.readyState !== 1) {
+                return socket.emit('authError', 'Database Offline. Check Server Console.');
+            }
+
+            const user = await User.findOne({ username: data.username, password: data.password });
+            if (user && user.role === 'Admin') {
+                socket.join('admin_room'); 
+                
+                let ip = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
+                user.ipAddress = ip;
+                await user.save();
+                
+                socket.user = user; 
+                socket.emit('adminLoginSuccess', { username: user.username, role: user.role });
+                await pushAdminData(socket);
+            } else { 
+                socket.emit('authError', 'Invalid Admin Credentials.'); 
+            }
+        } catch(e) {
+            console.error("Admin Login Error:", e);
+            socket.emit('authError', 'Server Connection Error.'); 
         }
     });
 
@@ -701,6 +718,7 @@ io.on('connection', (socket) => {
                         if (tx.type === 'Withdrawal') {
                             let u = await User.findOne({ username: tx.username });
                             if (u) { 
+                                // WITHDRAWAL EXPLOIT FIX: Refund the deducted amount if rejected
                                 u.credits = formatTC(u.credits + tx.amount); await u.save(); 
                                 await new CreditLog({ username: u.username, action: 'REFUND', amount: tx.amount, details: `Withdrawal Rejected` }).save();
                                 if (targetSocketId) io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits }); 
@@ -734,6 +752,11 @@ io.on('connection', (socket) => {
 
     socket.on('login', async (data) => {
         try {
+            // Anti-Freeze Database Check
+            if (mongoose.connection.readyState !== 1) {
+                return socket.emit('authError', 'Database Offline. Try again later.');
+            }
+
             const user = await User.findOne({ username: data.username, password: data.password });
             if (!user) return socket.emit('authError', 'Invalid login credentials.');
             if (user.status === 'Banned') return socket.emit('authError', 'This account has been banned.');
@@ -759,11 +782,19 @@ io.on('connection', (socket) => {
             }
             
             socket.emit('loginSuccess', { username: user.username, credits: formatTC(user.credits), playable: formatTC(user.playableCredits), role: user.role, daily: { canClaim, day, nextClaim } });
-        } catch(e) { socket.emit('authError', 'Server Error.'); }
+        } catch(e) { 
+            console.error("Player Login Error:", e);
+            socket.emit('authError', 'Server Connection Error.'); 
+        }
     });
 
     socket.on('register', async (data) => {
         try {
+            // Anti-Freeze Database Check
+            if (mongoose.connection.readyState !== 1) {
+                return socket.emit('authError', 'Database Offline. Try again later.');
+            }
+
             const exists = await User.findOne({ username: data.username });
             if (exists) return socket.emit('authError', 'Username is already taken.');
             
@@ -772,7 +803,10 @@ io.on('connection', (socket) => {
             
             pushAdminData();
             socket.emit('registerSuccess', 'Account created! You may now login.');
-        } catch(e) { socket.emit('authError', 'Server Error.'); }
+        } catch(e) { 
+            console.error("Registration Error:", e);
+            socket.emit('authError', 'Server Connection Error.'); 
+        }
     });
 
     socket.on('claimDaily', async () => {
