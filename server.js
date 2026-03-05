@@ -54,12 +54,45 @@ async function deductBet(user, betAmount) {
 }
 
 // ==========================================
-// 1. MONGODB DATABASE SETUP
+// 1. MONGODB DATABASE SETUP & AUTO-HEAL
 // ==========================================
 const MONGO_URI = process.env.MONGO_URL || 'mongodb://localhost:27017/stickntrade';
 mongoose.connect(MONGO_URI)
     .then(async () => {
         console.log('✅ Connected to MongoDB Database');
+
+        // 🛠️ THE MONGODB NATIVE AUTO-HEALER
+        // This bypasses Mongoose CastErrors and fixes JSON date corruptions directly in the DB
+        try {
+            const db = mongoose.connection.db;
+            
+            const badJoinDates = await db.collection('users').find({ "joinDate.$date": { $exists: true } }).toArray();
+            for (let u of badJoinDates) {
+                await db.collection('users').updateOne({ _id: u._id }, { $set: { joinDate: new Date(u.joinDate.$date) } });
+            }
+
+            const badDaily = await db.collection('users').find({ "dailyReward.lastClaim.$date": { $exists: true } }).toArray();
+            for (let u of badDaily) {
+                await db.collection('users').updateOne({ _id: u._id }, { $set: { "dailyReward.lastClaim": new Date(u.dailyReward.lastClaim.$date) } });
+            }
+
+            const badTxs = await db.collection('transactions').find({ "date.$date": { $exists: true } }).toArray();
+            for (let t of badTxs) {
+                await db.collection('transactions').updateOne({ _id: t._id }, { $set: { date: new Date(t.date.$date) } });
+            }
+
+            const badLogs = await db.collection('creditlogs').find({ "date.$date": { $exists: true } }).toArray();
+            for (let l of badLogs) {
+                await db.collection('creditlogs').updateOne({ _id: l._id }, { $set: { date: new Date(l.date.$date) } });
+            }
+
+            if (badJoinDates.length > 0 || badDaily.length > 0 || badTxs.length > 0 || badLogs.length > 0) {
+                console.log(`🔧 DATABASE HEALED: Successfully converted corrupted JSON dates into native ISODates.`);
+            }
+        } catch (healErr) {
+            console.error("Auto-heal skipped or failed.", healErr);
+        }
+
         const adminExists = await User.findOne({ username: 'admin' });
         if (!adminExists) {
             await new User({ username: 'admin', password: 'Kenm44ashley', role: 'Admin', credits: 10000, playableCredits: 0 }).save();
@@ -108,25 +141,6 @@ const adminLogSchema = new mongoose.Schema({
     adminName: String, action: String, details: String, date: { type: Date, default: Date.now }
 });
 const AdminLog = mongoose.model('AdminLog', adminLogSchema);
-
-// ==========================================
-// AUTO-SANITIZER: FIXES MONGODB JSON IMPORTS
-// ==========================================
-const sanitizeDates = function(next) {
-    if (this.joinDate && this.joinDate.$date) this.joinDate = new Date(this.joinDate.$date);
-    if (this.dailyReward && this.dailyReward.lastClaim && this.dailyReward.lastClaim.$date) {
-        this.dailyReward.lastClaim = new Date(this.dailyReward.lastClaim.$date);
-    }
-    if (this.date && this.date.$date) this.date = new Date(this.date.$date);
-    next();
-};
-
-userSchema.pre('validate', sanitizeDates);
-txSchema.pre('validate', sanitizeDates);
-codeSchema.pre('validate', sanitizeDates);
-creditLogSchema.pre('validate', sanitizeDates);
-adminLogSchema.pre('validate', sanitizeDates);
-
 
 // ==========================================
 // 3. CASINO ENGINE & GLOBAL HISTORY / STATS
@@ -512,11 +526,7 @@ io.on('connection', (socket) => {
 
                 await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - socket.bjState.bet), details: `Blackjack` }).save();
                 
-                let resStr = "";
-                if (dS > 21) { resStr = `DEALER BUSTS! (${dS} TO ${pS})`; } 
-                else if (msg === 'Push') { resStr = `TIE (${dS} TO ${pS})`; } 
-                else if (msg === 'You Win!') { resStr = `PLAYER (${dS} TO ${pS})`; } 
-                else { resStr = `DEALER (${dS} TO ${pS})`; }
+                let resStr = (dS > 21) ? `DEALER BUSTS (${pS} TO ${dS})` : `${msg.toUpperCase()} (${pS} TO ${dS})`;
                 
                 pushAdminData();
                 socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, resStr: resStr, bet: socket.bjState.bet, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.blackjack });
