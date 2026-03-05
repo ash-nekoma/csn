@@ -141,7 +141,7 @@
 
         /* DROPDOWN POPOVERS */
         .dropdown-wrapper { position: relative; display: inline-block; }
-        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
+        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
         
         .notif-header, .popover-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--glass-border); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;}
         .notif-actions { display: flex; gap: 10px; }
@@ -160,56 +160,49 @@
         .notif-item-del { position: absolute; right: 12px; bottom: 12px; background: transparent; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .notif-item-del:hover { color: var(--danger); transform: scale(1.1); }
 
-        /* CENTER RESULTS UI */
+        /* BOTTOM RIGHT RESULTS UI */
         .result-box, .result-overlay-shared { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); 
-            opacity: 0; text-align: center; padding: 25px 40px; border-radius: 16px; display: none; 
-            z-index: 2000; min-width: 300px; text-transform: uppercase; backdrop-filter: blur(20px); 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            flex-direction: column; align-items: center; justify-content: center; pointer-events: none;
+            position: absolute; bottom: 20px; right: 20px; 
+            opacity: 0; text-align: right; padding: 20px 30px; border-radius: 12px; display: none; 
+            z-index: 2000; min-width: 250px; text-transform: uppercase; backdrop-filter: blur(20px); 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            flex-direction: column; align-items: flex-end; justify-content: center; pointer-events: none;
+            transform: translateX(50px);
         }
-        .result-box.win, .result-overlay-shared.win { background: rgba(0, 230, 118, 0.2); border: 2px solid var(--success); color: var(--success); } 
-        .result-box.lose, .result-overlay-shared.lose { background: rgba(255, 51, 102, 0.2); border: 2px solid var(--danger); color: var(--danger); } 
-        .result-box.push, .result-overlay-shared.push { background: rgba(255, 255, 255, 0.1); border: 2px solid var(--text-muted); color: white; }
-        .result-box.show, .result-overlay-shared.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: all; display: flex !important; }
+        .result-box.win, .result-overlay-shared.win { background: rgba(0, 230, 118, 0.15); border-right: 4px solid var(--success); color: var(--success); } 
+        .result-box.lose, .result-overlay-shared.lose { background: rgba(255, 51, 102, 0.15); border-right: 4px solid var(--danger); color: var(--danger); } 
+        .result-box.push, .result-overlay-shared.push { background: rgba(255, 255, 255, 0.1); border-right: 4px solid var(--text-muted); color: white; }
+        .result-box.show, .result-overlay-shared.show { opacity: 1; transform: translateX(0); pointer-events: all; display: flex !important; }
         
-        .res-title { font-size: 1.5rem; font-weight: 900; color: white; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; text-align: center; width: 100%; } 
-        .res-payout { font-size: 2.2rem; font-weight: 900; text-align: center; width: 100%; }
+        .res-title { font-size: 1.2rem; font-weight: 900; color: white; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; text-align: right; width: 100%; } 
+        .res-payout { font-size: 1.8rem; font-weight: 900; text-align: right; width: 100%; }
 
-        /* LOCAL FLASH - BOTTOM RIGHT CORNER FIX */
+        /* SUBTLE ARCADE FLASH - BOTTOM RIGHT */
         .local-flash { 
             position: absolute; 
             bottom: 25px; 
             right: 25px; 
-            top: auto; 
-            left: auto; 
-            transform: scale(0.8); 
             z-index: 2500; 
-            background: rgba(255, 51, 102, 0.95); 
-            color: white; 
-            font-size: 1.6rem; 
+            color: var(--danger); 
+            font-size: 1.2rem; 
             font-weight: 900; 
-            padding: 15px 30px; 
-            border-radius: 12px; 
-            border: 2px solid white; 
-            box-shadow: 0 0 30px rgba(255, 51, 102, 0.8); 
             text-transform: uppercase; 
             text-align: right; 
             pointer-events: none; 
             opacity: 0; 
-            transition: all 0.2s; 
+            transition: all 0.3s; 
             display: none; 
             white-space: nowrap;
-            transform-origin: bottom right;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8), 0 0 15px var(--danger);
+            transform: translateY(20px);
         }
-        .local-flash.show { display: block; animation: flashAnim 2s forwards; }
-        .local-flash.success { background: rgba(0, 230, 118, 0.95); border-color: white; box-shadow: 0 0 30px rgba(0, 230, 118, 0.8); }
-        @keyframes flashAnim { 
-            0% { opacity: 0; transform: scale(0.8); } 
-            10% { opacity: 1; transform: scale(1.05); } 
-            20% { transform: scale(1); } 
+        .local-flash.show { display: block; animation: flashAnimSubtle 2s forwards; }
+        .local-flash.success { color: var(--success); text-shadow: 0 2px 10px rgba(0,0,0,0.8), 0 0 15px var(--success); }
+        @keyframes flashAnimSubtle { 
+            0% { opacity: 0; transform: translateY(20px); } 
+            15% { opacity: 1; transform: translateY(0); } 
             80% { opacity: 1; } 
-            100% { opacity: 0; } 
+            100% { opacity: 0; transform: translateY(-10px); } 
         }
 
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -822,7 +815,7 @@
           </div>
 
           <div id="view-shared-game" class="view-container hidden">
-            <div class="game-wrapper" style="max-width: 1200px;">
+            <div class="game-wrapper">
                 <div class="shared-layout">
                   <div class="main-panel glass-panel">
                     <div class="glass-header">
