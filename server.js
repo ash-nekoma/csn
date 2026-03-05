@@ -49,7 +49,7 @@ const rateLimits = {};
 function checkRateLimit(socketId) {
     const now = Date.now();
     if (!rateLimits[socketId]) rateLimits[socketId] = [];
-    rateLimits[socketId] = rateLimits[socketId].filter(t => now - t < 1000); // Max 10 requests per second
+    rateLimits[socketId] = rateLimits[socketId].filter(t => now - t < 1000); // Max 10 requests per sec
     if (rateLimits[socketId].length >= 10) return false;
     rateLimits[socketId].push(now);
     return true;
@@ -60,8 +60,10 @@ function sanitizeHTML(str) {
 }
 
 async function deductBet(user, betAmount) {
+    // Security 1 & 2: NaN Exploit Block and Max Bet Ceiling
+    if (typeof betAmount !== 'number' || isNaN(betAmount)) return false;
     let amt = formatTC(betAmount);
-    if (amt <= 0) return false; // Security: Negative bet block
+    if (amt <= 0 || amt > 50000) return false; 
     
     let totalBal = formatTC(user.credits + user.playableCredits);
     if (totalBal < amt) return false;
@@ -90,8 +92,7 @@ mongoose.connect(MONGO_URI)
         }
     })
     .catch(err => {
-        console.error('❌ MongoDB Connection Error.');
-        console.error(err);
+        console.error('❌ MongoDB Connection Error.', err);
     });
 
 // ==========================================
@@ -99,8 +100,8 @@ mongoose.connect(MONGO_URI)
 // ==========================================
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
-    password: { type: String, required: true }, // Plain text per request
-    sessionToken: { type: String, default: null }, // Persistent sessions
+    password: { type: String, required: true }, 
+    sessionToken: { type: String, default: null }, 
     role: { type: String, default: 'Player' },
     credits: { type: Number, default: 0 }, 
     playableCredits: { type: Number, default: 0 }, 
@@ -285,14 +286,13 @@ setInterval(() => {
 
                 let roomNames = { 'perya': 'COLOR GAME', 'dt': 'DRAGON TIGER', 'sicbo': 'SIC BO', 'baccarat': 'BACCARAT' };
 
+                // SECURITY 5: ATOMIC $inc OPERATOR
                 Object.keys(playerStats).forEach(async (userId) => {
                     let st = playerStats[userId];
-                    let user = await User.findById(userId);
-                    if (user && st.amountWon > 0) {
-                        user.credits = formatTC(user.credits + st.amountWon);
-                        await user.save();
+                    if (st.amountWon > 0) {
+                        await User.findByIdAndUpdate(userId, { $inc: { credits: formatTC(st.amountWon) } });
                         let net = formatTC(st.amountWon - st.amountBet);
-                        if(net !== 0) await new CreditLog({ username: user.username, action: 'GAME', amount: net, details: roomNames[st.room] }).save();
+                        if(net !== 0) await new CreditLog({ username: st.username, action: 'GAME', amount: net, details: roomNames[st.room] }).save();
                     }
                 });
 
@@ -336,7 +336,6 @@ async function pushAdminData(target = io.to('admin_room')) {
 io.on('connection', (socket) => {
     socket.emit('timerUpdate', sharedTables.time);
 
-    // --- SECURE SESSION LOGIN ---
     socket.on('tokenLogin', async (token) => {
         if(!checkRateLimit(socket.id)) return;
         const user = await User.findOne({ sessionToken: token, status: { $ne: 'Banned' } });
@@ -390,7 +389,7 @@ io.on('connection', (socket) => {
         if (!socket.user || !checkRateLimit(socket.id)) return;
         
         const uid = socket.user._id.toString();
-        if (activeUserLocks.has(uid)) return socket.emit('localGameError', { msg: 'ACTION PENDING', game: data.game }); // Rapid-fire lock
+        if (activeUserLocks.has(uid)) return socket.emit('localGameError', { msg: 'ACTION PENDING', game: data.game }); 
         activeUserLocks.add(uid);
 
         try {
@@ -398,7 +397,7 @@ io.on('connection', (socket) => {
             let isNewBet = (data.game === 'd20' || data.game === 'coinflip' || (data.game === 'blackjack' && data.action === 'start'));
             
             if (isNewBet) {
-                if (!data.bet || isNaN(data.bet) || data.bet <= 0) throw {msg: 'INVALID BET'}; // Security block
+                if (!data.bet || isNaN(data.bet) || data.bet <= 0 || data.bet > 50000) throw {msg: 'INVALID BET LIMIT'}; 
                 let betSuccess = await deductBet(user, data.bet);
                 if (!betSuccess) throw {msg: 'INSUFFICIENT TC'};
                 await user.save();
@@ -409,8 +408,7 @@ io.on('connection', (socket) => {
             if (data.game === 'd20') {
                 gameStats.d20.total++;
                 let roll = getSecureRNG(1, 20);
-                let win = false;
-                let multiplier = 0;
+                let win = false; let multiplier = 0;
                 
                 if (data.guessType === 'exact') {
                     if (roll === parseInt(data.guessValue)) { win = true; multiplier = 18; }
@@ -425,7 +423,10 @@ io.on('connection', (socket) => {
                 if (win) { payout = formatTC(data.bet * multiplier); gameStats.d20.Win++; } 
                 else { gameStats.d20.Lose++; }
                 
-                user.credits = formatTC(user.credits + payout); await user.save();
+                if (payout > 0) {
+                    await User.findByIdAndUpdate(uid, { $inc: { credits: payout } });
+                    user.credits = formatTC(user.credits + payout); 
+                }
                 await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `D20` }).save();
                 let resStr = `ROLLED ${roll}`;
                 logGlobalResult('d20', resStr);
@@ -439,7 +440,10 @@ io.on('connection', (socket) => {
                 gameStats.coinflip[result]++;
                 if (data.choice === result) payout = formatTC(data.bet * 1.95);
                 
-                user.credits = formatTC(user.credits + payout); await user.save();
+                if (payout > 0) {
+                    await User.findByIdAndUpdate(uid, { $inc: { credits: payout } });
+                    user.credits = formatTC(user.credits + payout); 
+                }
                 await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `COIN FLIP` }).save();
                 let resStr = `LANDED ${result.toUpperCase()}`;
                 logGlobalResult('coinflip', resStr);
@@ -450,7 +454,7 @@ io.on('connection', (socket) => {
             else if (data.game === 'blackjack') {
                 if (data.action === 'start') {
                     gameStats.blackjack.total++; 
-                    let dCard1 = drawCard(), dCardHidden = drawCard(); // Store real card
+                    let dCard1 = drawCard(), dCardHidden = drawCard(); 
                     socket.bjState = { bet: data.bet, pHand: [drawCard(), drawCard()], dHand: [dCard1, dCardHidden] };
                     let pS = getBJScore(socket.bjState.pHand); let dS = getBJScore(socket.bjState.dHand);
                     
@@ -458,7 +462,11 @@ io.on('connection', (socket) => {
                         let msg = dS === 21 ? 'Push' : 'Blackjack!';
                         payout = formatTC(dS === 21 ? data.bet : data.bet * 2.5);
                         if(msg === 'Blackjack!') gameStats.blackjack.Win++; else gameStats.blackjack.Push++;
-                        user.credits = formatTC(user.credits + payout); await user.save();
+                        
+                        if (payout > 0) {
+                            await User.findByIdAndUpdate(uid, { $inc: { credits: payout } });
+                            user.credits = formatTC(user.credits + payout); 
+                        }
                         await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `BLACKJACK` }).save();
                         
                         let resStr = `BLACKJACK! (21 TO ${dS})`;
@@ -468,7 +476,6 @@ io.on('connection', (socket) => {
                         socket.bjState = null;
                         checkResetStats('blackjack');
                     } else {
-                        // Send masked card array to client (Dealer Tell security fix)
                         let maskedDHand = [dCard1, {val: '?', suit: '?', raw: '?', suitHtml: `<div class="card-back" style="width:100%;height:100%;border-radius:6px;"></div>`, bacVal: 0, bjVal: 0, dtVal: 0}];
                         socket.emit('bjUpdate', { event: 'deal', pHand: socket.bjState.pHand, dHand: maskedDHand });
                     }
@@ -483,7 +490,6 @@ io.on('connection', (socket) => {
                         await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(-socket.bjState.bet), details: `BLACKJACK` }).save();
                         let resStr = `BUST (${pS} TO ${dS})`;
                         logGlobalResult('blackjack', resStr);
-                        // Send unmasked hand since game over
                         socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout: 0, msg: 'Bust!', resStr: resStr, bet: socket.bjState.bet, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.blackjack });
                         socket.bjState = null;
                         checkResetStats('blackjack');
@@ -502,7 +508,10 @@ io.on('connection', (socket) => {
                     else if (pS === dS) { payout = formatTC(socket.bjState.bet); msg = 'Push'; gameStats.blackjack.Push++; } 
                     else { msg = 'Dealer Wins'; gameStats.blackjack.Lose++; }
                     
-                    user.credits = formatTC(user.credits + payout); await user.save();
+                    if (payout > 0) {
+                        await User.findByIdAndUpdate(uid, { $inc: { credits: payout } });
+                        user.credits = formatTC(user.credits + payout); 
+                    }
                     await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - socket.bjState.bet), details: `BLACKJACK` }).save();
                     
                     let resStr = (dS > 21) ? `DEALER BUSTS (${pS} TO ${dS})` : `PLAYER (${pS} TO ${dS})`;
@@ -511,7 +520,6 @@ io.on('connection', (socket) => {
 
                     logGlobalResult('blackjack', resStr);
                     pushAdminData();
-                    // Send unmasked hand
                     socket.emit('bjUpdate', { event: 'resolved', pHand: socket.bjState.pHand, dHand: socket.bjState.dHand, payout, msg, resStr: resStr, bet: socket.bjState.bet, newBalance: { credits: user.credits, playable: user.playableCredits }, stats: gameStats.blackjack });
                     socket.bjState = null;
                     checkResetStats('blackjack');
@@ -520,7 +528,7 @@ io.on('connection', (socket) => {
         } catch (err) {
             if(err.msg) socket.emit('localGameError', { msg: err.msg, game: data.game });
         } finally {
-            activeUserLocks.delete(uid); // Unlock
+            activeUserLocks.delete(uid); 
         }
     });
 
@@ -536,7 +544,6 @@ io.on('connection', (socket) => {
         io.emit('playerCount', rooms); 
     });
     
-    // --- CHAT WITH XSS SANITIZATION ---
     socket.on('sendChat', (data) => { 
         if (socket.user && socket.currentRoom && checkRateLimit(socket.id)) { 
             let safeText = sanitizeHTML(data.msg);
@@ -544,10 +551,23 @@ io.on('connection', (socket) => {
         } 
     });
     
-    // --- SHARED BETS WITH LOCKS ---
     socket.on('placeSharedBet', async (data) => {
         if (!socket.user || sharedTables.status !== 'BETTING' || !checkRateLimit(socket.id)) return;
-        if (data.amount <= 0) return socket.emit('localGameError', { msg: 'INVALID BET', game: data.room }); // Negative block
+        
+        // SECURITY 4: Payload Validation
+        const validGames = {
+            'baccarat': ['Player', 'Banker', 'Tie'],
+            'dt': ['Dragon', 'Tiger', 'Tie'],
+            'sicbo': ['Small', 'Big'],
+            'perya': ['Yellow', 'White', 'Pink', 'Blue', 'Red', 'Green']
+        };
+        if (!validGames[data.room] || !validGames[data.room].includes(data.choice)) {
+            return socket.emit('localGameError', { msg: 'INVALID BET CHOICE', game: data.room });
+        }
+        
+        if (typeof data.amount !== 'number' || isNaN(data.amount) || data.amount <= 0 || data.amount > 50000) {
+            return socket.emit('localGameError', { msg: 'INVALID BET (MAX 50,000 TC)', game: data.room });
+        }
         
         const uid = socket.user._id.toString();
         if (activeUserLocks.has(uid)) return; 
@@ -735,7 +755,7 @@ io.on('connection', (socket) => {
             if (isNaN(user.playableCredits) || user.playableCredits === null) user.playableCredits = 0;
 
             user.status = 'Active'; 
-            user.sessionToken = crypto.randomUUID(); // Set persistent token
+            user.sessionToken = crypto.randomUUID(); 
             await user.save(); 
             socket.user = user;
             connectedUsers[user.username] = socket.id;
@@ -813,6 +833,9 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', async () => {
+        // SECURITY 3: Anti-Spam Memory Leak Fix
+        delete rateLimits[socket.id]; 
+
         if (socket.user) { 
             await User.findByIdAndUpdate(socket.user._id, { status: 'Offline' }); 
             delete connectedUsers[socket.user.username];
