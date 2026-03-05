@@ -27,6 +27,7 @@
             --ps-glow: #00a2ff; 
             --glass-bg: rgba(0, 10, 25, 0.75); 
             --glass-border: rgba(255, 255, 255, 0.15); 
+            --glass-hover: rgba(255, 255, 255, 0.9); 
             --danger: #ff3366; 
             --success: #00e676; 
             --credits: #ffb400; 
@@ -159,7 +160,7 @@
         .notif-item-del { position: absolute; right: 12px; bottom: 12px; background: transparent; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .notif-item-del:hover { color: var(--danger); transform: scale(1.1); }
 
-        /* CENTER RESULTS UI & ARCADE FLASH */
+        /* CENTER RESULTS UI */
         .result-box, .result-overlay-shared { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); 
             opacity: 0; text-align: center; padding: 25px 40px; border-radius: 16px; display: none; 
@@ -175,10 +176,41 @@
         .res-title { font-size: 1.5rem; font-weight: 900; color: white; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; text-align: center; width: 100%; } 
         .res-payout { font-size: 2.2rem; font-weight: 900; text-align: center; width: 100%; }
 
-        .local-flash { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); z-index: 1000; background: rgba(255, 51, 102, 0.95); color: white; font-size: 2.2rem; font-weight: 900; padding: 20px 40px; border-radius: 12px; border: 2px solid white; box-shadow: 0 0 30px rgba(255, 51, 102, 0.8); text-transform: uppercase; text-align: center; pointer-events: none; opacity: 0; transition: all 0.2s; display: none; white-space: nowrap;}
+        /* LOCAL FLASH - BOTTOM RIGHT CORNER FIX */
+        .local-flash { 
+            position: absolute; 
+            bottom: 25px; 
+            right: 25px; 
+            top: auto; 
+            left: auto; 
+            transform: scale(0.8); 
+            z-index: 2500; 
+            background: rgba(255, 51, 102, 0.95); 
+            color: white; 
+            font-size: 1.6rem; 
+            font-weight: 900; 
+            padding: 15px 30px; 
+            border-radius: 12px; 
+            border: 2px solid white; 
+            box-shadow: 0 0 30px rgba(255, 51, 102, 0.8); 
+            text-transform: uppercase; 
+            text-align: right; 
+            pointer-events: none; 
+            opacity: 0; 
+            transition: all 0.2s; 
+            display: none; 
+            white-space: nowrap;
+            transform-origin: bottom right;
+        }
         .local-flash.show { display: block; animation: flashAnim 2s forwards; }
         .local-flash.success { background: rgba(0, 230, 118, 0.95); border-color: white; box-shadow: 0 0 30px rgba(0, 230, 118, 0.8); }
-        @keyframes flashAnim { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } 10% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 20% { transform: translate(-50%, -50%) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes flashAnim { 
+            0% { opacity: 0; transform: scale(0.8); } 
+            10% { opacity: 1; transform: scale(1.05); } 
+            20% { transform: scale(1); } 
+            80% { opacity: 1; } 
+            100% { opacity: 0; } 
+        }
 
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes popBalance { 0% { transform: scale(1); } 50% { transform: scale(1.1); background: rgba(0, 230, 118, 0.3); border-color: var(--success); } 100% { transform: scale(1); } } .anim-pop { animation: popBalance 0.6s ease-out; }
@@ -249,12 +281,17 @@
 
         .game-box { display: flex; flex-direction: column; width: 100%; max-width: 850px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; height: 600px; flex-shrink: 0; position: relative;} 
         .main-panel { display: flex; flex-direction: column; height: 100%; position: relative;}
+        
+        /* Ensures the flash anchors to the bottom right of the board */
         .game-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; perspective: 1000px; padding: 20px;}
         
         .controls-grid { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 25px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--glass-border); flex-shrink: 0; position: relative; z-index: 100; pointer-events: auto;} 
         .controls-full { display: flex; gap: 15px; justify-content: center; width: 100%; }
 
-        .shared-layout { display: flex; gap: 20px; width: 100%; height: 600px; align-items: stretch; justify-content: center; flex-shrink: 0;}
+        /* SHARED LAYOUT WIDTH FIX */
+        .shared-layout { display: flex; gap: 20px; width: 100%; max-width: 1200px; height: 600px; align-items: stretch; justify-content: center; flex-shrink: 0;}
+        .shared-layout .main-panel { max-width: 850px; width: 100%; flex: 1; }
+        
         .chat-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .chat-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto;}
         .chat-msg { background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 8px; border-left: 3px solid var(--ps-light-blue); animation: popIn 0.2s ease-out; flex-shrink: 0;}
@@ -661,10 +698,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="game-display" id="d20-display-container">
+                    <div class="game-display">
+                      <div id="d20-display-container" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                          <i class="fas fa-dice-d20 dice-icon" id="d20-icon"></i>
+                          <div id="d20-num" style="display:none; color:white; font-weight:900; font-size:6rem; line-height:1; text-shadow:0 10px 30px rgba(0,0,0,0.8);">0</div>
+                      </div>
                       <div id="flash-d20" class="local-flash"></div> 
-                      <i class="fas fa-dice-d20 dice-icon" id="d20-icon"></i>
-                      <div id="d20-num" style="display:none; color:white; font-weight:900; font-size:6rem; line-height:1; text-shadow:0 10px 30px rgba(0,0,0,0.8);">0</div>
                       <div id="d20-msg" class="result-box"></div>
                     </div>
                     <div class="controls-grid" style="display:flex; flex-direction:column; align-items:center; gap:10px; padding: 15px;">
@@ -712,14 +751,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="game-display" id="coin-display-container">
-                      <div id="flash-coinflip" class="local-flash"></div> 
-                      <div class="coin-wrapper" id="coin-wrapper">
-                        <div class="coin-inner" id="coin-obj">
-                          <div class="coin-face coin-heads"><i class="fas fa-coins"></i></div>
-                          <div class="coin-face coin-tails" style="transform: rotateY(180deg);"><i class="fas fa-gem"></i></div>
-                        </div>
+                    <div class="game-display">
+                      <div id="coin-display-container" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                          <div class="coin-wrapper" id="coin-wrapper">
+                            <div class="coin-inner" id="coin-obj">
+                              <div class="coin-face coin-heads"><i class="fas fa-coins"></i></div>
+                              <div class="coin-face coin-tails" style="transform: rotateY(180deg);"><i class="fas fa-gem"></i></div>
+                            </div>
+                          </div>
                       </div>
+                      <div id="flash-coinflip" class="local-flash"></div> 
                       <div id="coin-msg" class="result-box"></div>
                     </div>
                     <div class="controls-grid" style="display:flex; flex-direction:column; align-items:center; gap:15px; padding: 20px;">
@@ -750,12 +791,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="game-display" id="bj-display-container">
-                      <div id="flash-blackjack" class="local-flash"></div> 
-                      <div class="blackjack-scores">
-                        <div class="card-area"><div class="bj-title">Dealer</div><div class="bj-score" id="bj-d-score">0</div><div class="card-hand" id="bj-d-hand"></div></div>
-                        <div class="card-area"><div class="bj-title">You</div><div class="bj-score" id="bj-p-score">0</div><div class="card-hand" id="bj-p-hand"></div></div>
+                    <div class="game-display">
+                      <div id="bj-display-container" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                          <div class="blackjack-scores">
+                            <div class="card-area"><div class="bj-title">Dealer</div><div class="bj-score" id="bj-d-score">0</div><div class="card-hand" id="bj-d-hand"></div></div>
+                            <div class="card-area"><div class="bj-title">You</div><div class="bj-score" id="bj-p-score">0</div><div class="card-hand" id="bj-p-hand"></div></div>
+                          </div>
                       </div>
+                      <div id="flash-blackjack" class="local-flash"></div> 
                       <div id="bj-msg" class="result-box"></div>
                     </div>
                     
@@ -769,7 +812,7 @@
                         </div>
                     </div>
 
-                    <div class="controls-grid hidden" id="bj-action-controls" style="display:flex; flex-direction:row; justify-content:center; gap:15px; padding: 20px; flex-wrap: nowrap; width: 100%;">
+                    <div class="controls-grid hidden" id="bj-action-controls">
                         <button class="btn-play" onclick="hitBlackjack()" id="btn-bj-hit" style="flex:1; max-width:150px; background: rgba(0,162,255,0.2); border-color: var(--ps-glow); color: var(--ps-glow); white-space: nowrap;">HIT</button>
                         <button class="btn-play" onclick="standBlackjack()" id="btn-bj-stand" style="flex:1; max-width:150px; background: rgba(255,51,102,0.2); border-color: var(--danger); color: var(--danger); white-space: nowrap;">STAND</button>
                     </div>
@@ -796,9 +839,11 @@
                       </div>
                     </div>
                     
-                    <div class="game-display" id="sg-display"></div>
-
-                    <div id="flash-shared" class="local-flash"></div> 
+                    <div class="game-display">
+                        <div id="sg-display" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>
+                        <div id="flash-shared" class="local-flash"></div> 
+                        <div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>
+                    </div>
 
                     <div class="controls-grid" style="padding:25px; border-top: 1px solid var(--glass-border);" id="sg-controls-container">
                       </div>
@@ -1823,7 +1868,7 @@
         title: 'Color Game', 
         setupUI: function() { 
           let d = document.getElementById('sg-display'); if (!d) return; 
-          d.innerHTML = `<div class="color-dice-container" id="cg-dice"><div class="color-die c-grey" id="cd1">?</div><div class="color-die c-grey" id="cd2">?</div><div class="color-die c-grey" id="cd3">?</div></div><div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
+          d.innerHTML = `<div class="color-dice-container" id="cg-dice"><div class="color-die c-grey" id="cd1">?</div><div class="color-die c-grey" id="cd2">?</div><div class="color-die c-grey" id="cd3">?</div></div>`; 
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
@@ -1911,8 +1956,7 @@
                     <div id="bac-b-hand" style="display:flex; gap:5px; justify-content:center; min-height:100px; width:210px;"></div>
                 </div>
             </div>
-            <div id="bac-action-text" style="height: 24px; color: var(--ps-glow); font-weight: 800; text-align: center; margin-top: 40px; letter-spacing: 1px; text-transform: uppercase; font-size: 1.1rem; text-shadow: 0 0 10px rgba(0,162,255,0.5);"></div>
-            <div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
+            <div id="bac-action-text" style="height: 24px; color: var(--ps-glow); font-weight: 800; text-align: center; margin-top: 40px; letter-spacing: 1px; text-transform: uppercase; font-size: 1.1rem; text-shadow: 0 0 10px rgba(0,162,255,0.5);"></div>`; 
           
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
@@ -2005,7 +2049,7 @@
         title: 'Dragon Tiger',
         setupUI: function() { 
           let d = document.getElementById('sg-display'); if (!d) return; 
-          d.innerHTML = `<div class="dt-arena"><div class="dt-side"><div class="dt-label lbl-dragon">Dragon</div><div id="dt-c1" class="card-back dt-card play-card">?</div></div><div style="font-size:2.5rem;color:white;font-weight:300;">VS</div><div class="dt-side"><div class="dt-label lbl-tiger">Tiger</div><div id="dt-c2" class="card-back dt-card play-card">?</div></div></div><div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
+          d.innerHTML = `<div class="dt-arena"><div class="dt-side"><div class="dt-label lbl-dragon">Dragon</div><div id="dt-c1" class="card-back dt-card play-card">?</div></div><div style="font-size:2.5rem;color:white;font-weight:300;">VS</div><div class="dt-side"><div class="dt-label lbl-tiger">Tiger</div><div id="dt-c2" class="card-back dt-card play-card">?</div></div></div>`; 
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
@@ -2071,7 +2115,7 @@
         title: 'Sic Bo',
         setupUI: function() { 
           let d = document.getElementById('sg-display'); if (!d) return; 
-          d.innerHTML = `<div class="sicbo-dice" id="sb-dice"><i class="fas fa-dice-d6 s-die"></i><i class="fas fa-dice-d6 s-die"></i><i class="fas fa-dice-d6 s-die"></i></div><div id="sb-sum" style="font-size:2rem;color:var(--text-muted); margin-top:30px; font-weight:900; letter-spacing:2px;">Waiting for roll...</div><div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
+          d.innerHTML = `<div class="sicbo-dice" id="sb-dice"><i class="fas fa-dice-d6 s-die"></i><i class="fas fa-dice-d6 s-die"></i><i class="fas fa-dice-d6 s-die"></i></div><div id="sb-sum" style="font-size:2rem;color:var(--text-muted); margin-top:30px; font-weight:900; letter-spacing:2px;">Waiting for roll...</div>`; 
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
