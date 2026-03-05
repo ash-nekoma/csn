@@ -442,8 +442,8 @@
                 <input type="text" id="tool-target-user" class="input-control" placeholder="PlayerName">
             </div>
             <div class="input-group">
-                <label>Amount</label>
-                <input type="number" id="tool-amt" class="input-control" placeholder="500">
+                <label>Amount (Max 500,000)</label>
+                <input type="number" id="tool-amt" class="input-control" placeholder="500" min="1" max="500000">
             </div>
             <div class="input-group" style="margin-bottom: 25px;">
                 <label>Credit Type</label>
@@ -543,11 +543,11 @@
             <div id="promo-err" class="modal-error-text"></div>
             <div class="input-group">
                 <label>TC Value Per Code</label>
-                <input type="number" id="promo-amount" class="input-control" placeholder="e.g. 500">
+                <input type="number" id="promo-amount" class="input-control" placeholder="e.g. 500" min="10" max="100000">
             </div>
             <div class="input-group">
                 <label>Quantity of Codes to Generate</label>
-                <input type="number" id="promo-count" class="input-control" placeholder="e.g. 10">
+                <input type="number" id="promo-count" class="input-control" placeholder="e.g. 10" min="1" max="100">
             </div>
             <div class="input-group" style="margin-bottom: 25px;">
                 <label>Credit Type</label>
