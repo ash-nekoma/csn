@@ -27,7 +27,6 @@
             --ps-glow: #00a2ff; 
             --glass-bg: rgba(0, 10, 25, 0.75); 
             --glass-border: rgba(255, 255, 255, 0.15); 
-            --glass-hover: rgba(255, 255, 255, 0.9); 
             --danger: #ff3366; 
             --success: #00e676; 
             --credits: #ffb400; 
@@ -71,7 +70,7 @@
         /* ================= AUTHENTICATION ================= */
         #auth-container { 
             position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 9999999; 
-            background: linear-gradient(rgba(0, 5, 15, 0.85), rgba(0, 5, 15, 0.95)), url('https://images.unsplash.com/photo-1596838132731-3301c3fd4317?auto=format&fit=crop&q=80') center/cover no-repeat;
+            background: linear-gradient(rgba(0, 5, 15, 0.8), rgba(0, 5, 15, 0.95)), url('https://images.unsplash.com/photo-1596838132731-3301c3fd4317?auto=format&fit=crop&q=80') center/cover no-repeat;
             backdrop-filter: blur(15px); 
         }
         .auth-box { width: 420px; max-width: 95vw; background: rgba(0, 5, 15, 0.9); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(0, 162, 255, 0.4); border-top: 3px solid var(--ps-glow); box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 30px rgba(0, 162, 255, 0.1); text-align: center; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); }
@@ -160,7 +159,7 @@
         .notif-item-del { position: absolute; right: 12px; bottom: 12px; background: transparent; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .notif-item-del:hover { color: var(--danger); transform: scale(1.1); }
 
-        /* CENTER RESULTS UI */
+        /* CENTER RESULTS UI & ARCADE FLASH */
         .result-box, .result-overlay-shared { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); 
             opacity: 0; text-align: center; padding: 25px 40px; border-radius: 16px; display: none; 
@@ -172,21 +171,35 @@
         .result-box.lose, .result-overlay-shared.lose { background: rgba(255, 51, 102, 0.2); border: 2px solid var(--danger); color: var(--danger); } 
         .result-box.push, .result-overlay-shared.push { background: rgba(255, 255, 255, 0.1); border: 2px solid var(--text-muted); color: white; }
         .result-box.show, .result-overlay-shared.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: all; display: flex !important; }
-
-        .local-flash { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; padding: 20px; font-weight: 900; font-size: 2rem; border-radius: 12px; display: none; pointer-events: none; }
-        .local-flash.show { display: block; }
-
-        /* MODAL & POPOVER LAYOUTS */
-        .main-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: calc(100vh - 75px); margin-top: 75px; width: 100vw; overflow-y: auto; overflow-x: hidden; position: relative; padding-bottom: 50px;}
         
-        .btn-rules.undo-btn { height: 48px; width: 48px; align-self: flex-end; flex-shrink: 0; }
+        .res-title { font-size: 1.5rem; font-weight: 900; color: white; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; text-align: center; width: 100%; } 
+        .res-payout { font-size: 2.2rem; font-weight: 900; text-align: center; width: 100%; }
 
-        /* BLACKJACK BUTTONS BESIDE EACH OTHER */
-        #bj-action-controls { display: flex; flex-direction: row !important; gap: 10px; width: 100%; justify-content: center; }
+        .local-flash { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); z-index: 1000; background: rgba(255, 51, 102, 0.95); color: white; font-size: 2.2rem; font-weight: 900; padding: 20px 40px; border-radius: 12px; border: 2px solid white; box-shadow: 0 0 30px rgba(255, 51, 102, 0.8); text-transform: uppercase; text-align: center; pointer-events: none; opacity: 0; transition: all 0.2s; display: none; white-space: nowrap;}
+        .local-flash.show { display: block; animation: flashAnim 2s forwards; }
+        .local-flash.success { background: rgba(0, 230, 118, 0.95); border-color: white; box-shadow: 0 0 30px rgba(0, 230, 118, 0.8); }
+        @keyframes flashAnim { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } 10% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 20% { transform: translate(-50%, -50%) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; } }
 
-        /* CURRENT BETS POPOVER */
-        #current-bets-popover { bottom: 100%; top: auto; right: 0; margin-bottom: 15px; width: 300px; z-index: 2500; cursor: default; display: flex; flex-direction: column;}
-        .cb-item { display: flex; justify-content: space-between; align-items: center; font-weight: 800; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 5px; white-space: nowrap; }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes popBalance { 0% { transform: scale(1); } 50% { transform: scale(1.1); background: rgba(0, 230, 118, 0.3); border-color: var(--success); } 100% { transform: scale(1); } } .anim-pop { animation: popBalance 0.6s ease-out; }
+        @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } 75% { transform: rotate(-15deg); } 100% { transform: rotate(0deg); } } .anim-shake { animation: shake 0.3s infinite; }
+
+        /* STRICT CENTERED MAIN WRAPPER */
+        .main-wrapper { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            height: calc(100vh - 75px); margin-top: 75px; width: 100vw; overflow-y: auto; overflow-x: hidden; position: relative; padding-bottom: 50px;
+        }
+        .content { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; flex: 1; min-height: 700px;}
+        .view-container { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s; flex-shrink: 0;}
+        
+        .header-title { font-size: 3rem; font-weight: 900; margin: 0 0 2rem 0; text-transform: uppercase; letter-spacing: 2px; color: white; text-shadow: 0 2px 15px rgba(0,0,0,0.8); text-align: center; width: 100%; flex-shrink: 0;}
+        .casino-title { font-size: 4rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 3rem 0; line-height: 1.1; color: white; text-shadow: 0 0 20px rgba(255,255,255,0.2); text-align: center; flex-shrink: 0;}
+        
+        .lobby-wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; flex-shrink: 0;}
+        
+        /* FIXED DETACHED BACK BUTTON */
+        .btn-back-fixed { position: fixed; top: 95px; left: 25px; z-index: 1000; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 10px; backdrop-filter: blur(10px); text-transform: uppercase; letter-spacing: 1px; }
+        .btn-back-fixed:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
         /* ================= REDESIGNED PLAYSTATION GRIDS & CARDS ================= */
         .lobby-modes-container { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 40px; width: 100%; flex-wrap: wrap; }
@@ -211,27 +224,26 @@
             width: 100%; height: 320px; text-align: center; cursor: pointer; position: relative;
             display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start;
             border-radius: 12px; background: #020813; border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.3s; overflow: hidden; padding: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            transition: 0.3s; overflow: hidden; padding: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.6); flex-shrink: 0;
         }
         .game-card:hover { transform: translateY(-8px); border-color: var(--ps-glow); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0,162,255,0.2); }
         
         .game-img { flex: 1; display: flex; justify-content: center; align-items: center; font-size: 5.5rem; color: #0070cc; transition: 0.3s; background: transparent;}
         .game-card:hover .game-img { color: var(--ps-glow); text-shadow: 0 0 25px var(--ps-glow); transform: scale(1.1); }
         
-        .game-info { background: #000000; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100px; border-top: 1px solid rgba(255,255,255,0.05);}
+        .game-info { background: #000000; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100px; border-top: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;}
         .game-title { font-size: 1.2rem; font-weight: 900; color: white; text-transform:uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         .game-desc { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
 
         .live-badge { position: absolute; top: 15px; right: 15px; background: transparent; color: var(--danger); font-size: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 4px; z-index: 10;}
         .live-dot { width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; animation: pulseRed 1.5s infinite; }
-        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
 
         .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 0.9rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-        .game-wrapper { width: 100%; max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center;}
+        .game-wrapper { width: 100%; max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center; flex-shrink: 0;}
         
         /* ================= IN-GAME UI PANELS ================= */
-        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; width: 100%; position: relative;}
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; width: 100%; position: relative; flex-shrink: 0;}
         .glass-header { background: rgba(0,0,0,0.7); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); color: white; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .glass-header h2 { margin:0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
 
@@ -262,7 +274,7 @@
         .bet-btn.has-bet { border-top: 2px solid var(--tile-color, var(--ps-glow)) !important; border-left: 2px solid var(--tile-color, var(--ps-glow)) !important; border-right: 2px solid var(--tile-color, var(--ps-glow)) !important; box-shadow: inset 0 0 15px rgba(255,255,255,0.1), 0 -5px 20px rgba(0,0,0,0.6); color: #fff !important; text-shadow: 0 0 10px var(--tile-color, var(--ps-glow)); transform: translateY(-3px); }
         .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; border-color: var(--glass-border) !important; color: var(--text-muted) !important; }
 
-        /* MODALS & BOTTOM SHEETS (NATIVE APP FEEL) */
+        /* MODALS & BOTTOM SHEETS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 1000000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-content { background: rgba(0, 5, 15, 0.95); width: 500px; max-width: 95vw; padding: 2.5rem; border-radius: 12px; border: 1px solid rgba(0, 162, 255, 0.4); border-top: 3px solid var(--ps-glow); color: white; box-shadow: 0 25px 80px rgba(0,0,0,0.9), inset 0 0 30px rgba(0, 162, 255, 0.1); position: relative; display: flex; flex-direction: column; height: auto; max-height: 90vh; backdrop-filter: blur(20px);}
         .modal-close-icon { position: absolute; top: 25px; right: 25px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; z-index: 10;}
@@ -340,6 +352,12 @@
         .color-dice-container { display: flex; gap: 30px; justify-content: center; font-size: 6rem; margin-bottom: 20px; } .color-die { width: 130px; height: 130px; border-radius: 16px; border: 2px solid rgba(255,255,255,0.3); box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; color: white; transition: 0.3s; background: #111; font-weight: 800;} .c-grey { background: radial-gradient(circle, #333, #0a0a0a); color: rgba(255,255,255,0.4); border-color: #444; } .c-red { background: radial-gradient(circle, #ff3366, #99002b); border-color: #ff3366;} .c-blue { background: radial-gradient(circle, #00a2ff, #003d66); border-color: #00a2ff;} .c-yellow { background: radial-gradient(circle, #ffcc00, #997a00); border-color: #ffcc00;} .c-white { background: radial-gradient(circle, #ffffff, #999999); color: #000; border-color: #fff;} .c-green { background: radial-gradient(circle, #00e676, #006634); border-color: #00e676;} .c-pink { background: radial-gradient(circle, #ff66b2, #99004d); border-color: #ff66b2;}
         .dt-arena { display: flex; justify-content: center; gap: 80px; width: 100%; align-items: center; margin-bottom: 20px; } .dt-side { display: flex; flex-direction: column; align-items: center; gap: 20px; } .dt-label { font-size: 2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; } .lbl-dragon { color: var(--danger); text-shadow: 0 0 20px rgba(255,51,102,0.6); } .lbl-tiger { color: var(--credits); text-shadow: 0 0 20px rgba(255,180,0,0.6); } .dt-card { width: 120px !important; height: 170px !important; } .dt-card .val { font-size: 3rem; } .dt-card .suit { font-size: 3.5rem; }
         .sicbo-dice { display: flex; justify-content: center; gap: 30px; font-size: 6rem; margin-bottom: 10px; } .s-die { color: white; text-shadow: 0 10px 20px rgba(0,0,0,0.8); }
+
+        /* BUTTON FIXES & POPOVERS */
+        #bj-action-controls { display: flex; flex-direction: row !important; gap: 10px; width: 100%; justify-content: center; }
+        .btn-rules.undo-btn { height: 48px; width: 48px; align-self: flex-end; flex-shrink: 0; }
+        #current-bets-popover { bottom: 100%; top: auto; right: 0; margin-bottom: 15px; width: 300px; z-index: 2500; cursor: default; display: flex; flex-direction: column;}
+        .cb-item { display: flex; justify-content: space-between; align-items: center; font-weight: 800; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 5px; white-space: nowrap; }
 
         /* ================= MOBILE UI / MEDIA QUERIES ================= */
         #chat-floating-btn { display: none; }
@@ -1020,6 +1038,7 @@
 
     function addAmount(inputId, val) { let i = document.getElementById(inputId); i.value = (parseInt(i.value) || 0) + val; }
 
+    let flashTimeout;
     function showLocalFlash(game, msg, type='error') {
         let f = document.getElementById('flash-' + game);
         if(!f) { f = document.getElementById('flash-shared'); }
@@ -1027,7 +1046,8 @@
         f.innerText = msg;
         f.className = `local-flash show ${type}`;
         if(type === 'error') sfx.lose(); else sfx.win();
-        setTimeout(() => f.classList.remove('show'), 2000);
+        clearTimeout(flashTimeout);
+        flashTimeout = setTimeout(() => f.classList.remove('show'), 2000);
     }
 
     function toggleCustomDropdown(id, e) {
@@ -1335,12 +1355,7 @@
         updateMyBalance(data.newBalance, true);
         startDailyTimer(data.nextClaim);
         
-        let f = document.getElementById('arcade-flash');
-        if(f) { 
-            f.innerText = `+${formatTC(data.amt)} PLAYABLE`; 
-            f.className = 'flash-success show'; 
-            setTimeout(()=>f.classList.remove('show'), 2000); 
-        }
+        showLocalFlash('shared', `+${formatTC(data.amt)} PLAYABLE`, 'success');
         setTimeout(() => { closeModal('daily-reward-modal'); }, 1500);
     });
 
@@ -1495,9 +1510,7 @@
     function backToSoloLobby() { switchView('casino'); openLobbyMode('indiv'); }
     function backToSharedLobby() { 
         if (window.activeSharedGame && mySBets && Object.values(mySBets).reduce((a,b)=>a+b,0) > 0 && sState.status === 'BETTING') {
-            let f = document.getElementById('flash-shared');
-            if(f) { f.innerText = "Wait for round to finish."; f.className = 'local-flash show error'; setTimeout(()=>f.classList.remove('show'), 2000); }
-            return;
+            showLocalFlash('shared', "Wait for round to finish.", "error"); return;
         }
         document.getElementById('view-shared-game').classList.add('hidden'); 
         socket.emit('leaveRoom', window.activeSharedGame);
@@ -1509,6 +1522,7 @@
 
     // --- SOLO GAMES ENGINE ---
     
+    let soloResultTimeout;
     function showEndBox(box, bet, payout, msg, newBalance) {
         let pft = payout > bet ? payout - bet : 0; 
         let loss = payout === 0 ? bet : 0;
@@ -1531,6 +1545,12 @@
             box.style.opacity = '1'; box.classList.add('show'); 
             if (payout > bet) sfx.win();
             else if (payout === 0) sfx.lose();
+            
+            clearTimeout(soloResultTimeout);
+            soloResultTimeout = setTimeout(() => {
+                box.classList.remove('show');
+                setTimeout(() => { box.style.display = 'none'; }, 400);
+            }, 3500);
         });
 
         setTimeout(() => { updateMyBalance(newBalance, payout > bet); }, 1500);
@@ -1574,9 +1594,9 @@
           showEndBox(mb, res.bet, res.payout, historyMsg, res.newBalance);
           logHistory('d20', formatTC(res.bet) + ' TC', res.resStr, res.payout > res.bet ? res.payout - res.bet : 0, res.payout === 0 ? res.bet : 0, true);
           
-          await delay(1200); 
+          await delay(1500); 
           icn.className = 'fas fa-dice-d20 dice-icon';
-          icn.style.display = 'block'; nd.style.display = 'none'; mb.style.display = 'none'; mb.classList.remove('show');
+          icn.style.display = 'block'; nd.style.display = 'none'; 
           btn.disabled = false;
       });
       
@@ -1690,7 +1710,7 @@
                 let lBet = data.payout === 0 ? bjSt.bet : 0;
                 logHistory('blackjack', formatTC(bjSt.bet) + ' TC', histStr, wProf, lBet, true);
                 
-                setTimeout(() => { document.getElementById('btn-bj-deal').disabled = false; document.getElementById('bj-msg').style.display = 'none'; }, 2500);
+                setTimeout(() => { document.getElementById('btn-bj-deal').disabled = false; }, 2500);
                 bjSt.active = false;
             } else {
                 document.getElementById('bj-action-controls').classList.remove('hidden');
@@ -1743,7 +1763,7 @@
             let lBet = data.payout === 0 ? bjSt.bet : 0;
             logHistory('blackjack', formatTC(bjSt.bet) + ' TC', histStr, wProf, lBet, true);
             
-            setTimeout(() => { document.getElementById('btn-bj-deal').disabled = false; document.getElementById('bj-msg').style.display = 'none'; }, 2500);
+            setTimeout(() => { document.getElementById('btn-bj-deal').disabled = false; }, 2500);
         }
     });
 
@@ -2014,6 +2034,72 @@
             <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) bg.innerHTML = `
+            <button class="bet-btn shared-tile" data-choice="Dragon" style="border-bottom-color:var(--danger);" onclick="placeSharedBet('Dragon')">DRAGON (2x)</button>
+            <button class="bet-btn shared-tile" data-choice="Tie" style="border-bottom-color:var(--success);" onclick="placeSharedBet('Tie')">TIE (9x)</button>
+            <button class="bet-btn shared-tile" data-choice="Tiger" style="border-bottom-color:var(--credits);" onclick="placeSharedBet('Tiger')">TIGER (2x)</button>`; 
+        },
+        animateResult: function(data) { 
+          let e1 = document.getElementById('dt-c1'); 
+          if (e1) { e1.outerHTML = `<div class="play-card anim-deal dt-card" id="dt-c1"><div class="val">${data.dCard.raw}</div><div class="suit">${data.dCard.suitHtml}</div></div>`; sfx.deal(); } 
+          setTimeout(() => { 
+            let e2 = document.getElementById('dt-c2'); 
+            if (e2) { e2.outerHTML = `<div class="play-card anim-deal dt-card" id="dt-c2"><div class="val">${data.tCard.raw}</div><div class="suit">${data.tCard.suitHtml}</div></div>`; sfx.deal(); } 
+            
+            setTimeout(() => { 
+              let w = data.winner;
+              let tp = 0, tba = 0; 
+              let wonProfit = 0, lostBet = 0;
+              for (let b in mySBets) { 
+                let a = mySBets[b]; tba += a; 
+                if (w === 'Tie') {
+                    if (b === 'Tie') { tp += a * 9; wonProfit += (a * 8); }
+                    else { tp += a; } 
+                } else if (b === w) { 
+                    let p = a * 2; 
+                    tp += p; wonProfit += (p - a);
+                } else { 
+                    lostBet += a; 
+                }
+              } 
+              let msg = w === 'Tie' ? `TIE` : `${w.toUpperCase()}`;
+              processSharedPayout('dt', tp, tba, msg, wonProfit, lostBet, Object.keys(mySBets).join(', '), data.resStr); 
+            }, 1000); 
+          }, 500); 
+        }
+      },
+      'sicbo': {
+        title: 'Sic Bo',
+        setupUI: function() { 
+          let d = document.getElementById('sg-display'); if (!d) return; 
+          d.innerHTML = `<div class="sicbo-dice" id="sb-dice"><i class="fas fa-dice-d6 s-die"></i><i class="fas fa-dice-d6 s-die"></i><i class="fas fa-dice-d6 s-die"></i></div><div id="sb-sum" style="font-size:2rem;color:var(--text-muted); margin-top:30px; font-weight:900; letter-spacing:2px;">Waiting for roll...</div><div class="result-overlay-shared" id="sg-overlay"><div class="res-title" id="sg-res-title"></div><div class="res-payout" id="sg-res-payout" style="display:none"></div></div>`; 
+          let cg = document.getElementById('sg-controls-container'); 
+          if (cg) cg.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
+                <div style="display: flex; gap: 10px; align-items: stretch;">
+                    <div class="input-group" style="margin: 0; width: 150px;">
+                        <label>BET AMOUNT</label>
+                        <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10" style="height: 48px; padding: 0 15px;">
+                    </div>
+                    <button class="btn-rules" style="height: 48px; width: 48px; align-self: flex-end; flex-shrink: 0;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
+                </div>
+                
+                <div style="text-align: right; position: relative;" class="dropdown-wrapper">
+                    <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom:5px;">TOTAL BET</div>
+                    <div id="sg-my-bet" style="color: white; font-size: 1.5rem; font-weight: 900; line-height: 1; cursor:pointer;" onclick="toggleCurrentBets(event)">0 TC</div>
+                    <div id="current-bets-popover" class="custom-dropdown hidden" style="bottom: 100%; top: auto; right: 0; margin-bottom: 15px; width: 300px; z-index: 2500; cursor: default; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
+                        <div class="popover-header" style="display:flex; justify-content:space-between; align-items:center; padding: 15px; border-bottom: 1px solid var(--glass-border);">
+                            <span style="font-weight: 900; color: white;">CURRENT BETS</span>
+                            <button onclick="document.getElementById('current-bets-popover').classList.add('hidden')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:1.2rem;"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="popover-body" id="cb-list" style="padding: 15px; max-height: 250px; overflow-y: auto;">
+                            <div style="text-align:center; color:var(--text-muted);">No active bets.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
+          let bg = document.getElementById('sg-bet-grid'); 
+          if (bg) bg.innerHTML = `
             <button class="bet-btn shared-tile" data-choice="Small" style="border-bottom-color:var(--ps-glow);" onclick="placeSharedBet('Small')">SMALL (2x)</button>
             <div style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-weight:800;font-size:1rem;text-align:center;">TRIPLE LOSES</div>
             <button class="bet-btn shared-tile" data-choice="Big" style="border-bottom-color:var(--danger);" onclick="placeSharedBet('Big')">BIG (2x)</button>`; 
@@ -2082,6 +2168,7 @@
       sfx.tick(); 
     }
 
+    let sharedResultTimeout;
     function processSharedPayout(gid, pa, tba, msg, wonProfit = 0, lostBet = 0, betsPlacedStr = "", resStr = "") { 
       const box = document.getElementById('sg-overlay'); 
       const t = document.getElementById('sg-res-title');
@@ -2124,6 +2211,12 @@
               box.style.opacity = '1'; box.classList.add('show'); 
               if (tba > 0 && net > 0) sfx.win();
               else if (tba > 0 && net < 0) sfx.lose();
+              
+              clearTimeout(sharedResultTimeout);
+              sharedResultTimeout = setTimeout(() => {
+                  box.classList.remove('show');
+                  setTimeout(() => { box.style.display = 'none'; }, 400);
+              }, 3500);
           });
           
           setTimeout(() => { socket.emit('requestBalanceRefresh'); }, 1500);
