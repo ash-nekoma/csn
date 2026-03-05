@@ -61,6 +61,7 @@ mongoose.connect(MONGO_URI)
     .then(async () => {
         console.log('✅ Connected to MongoDB Database');
 
+        // 🛠️ THE MONGODB NATIVE AUTO-HEALER
         try {
             const db = mongoose.connection.db;
             const badJoinDates = await db.collection('users').find({ "joinDate.$date": { $exists: true } }).toArray();
@@ -755,8 +756,7 @@ io.on('connection', (socket) => {
         let amt = formatTC(rewards[day - 1]);
 
         user.playableCredits = formatTC(user.playableCredits + amt); 
-        user.dailyReward.lastClaim = now; user.dailyReward.streak += 1;
-        await user.save();
+        user.dailyReward.lastClaim = now; user.dailyReward.streak += 1; await user.save();
         
         await new CreditLog({ username: user.username, action: 'GIFT', amount: amt, details: `Daily Reward` }).save();
         pushAdminData();
@@ -766,143 +766,17 @@ io.on('connection', (socket) => {
     socket.on('redeemPromo', async (code) => {
         if (!socket.user) return;
         try {
-            const gc = await GiftCode.findOneAndUpdate(
-                { code: code, redeemedBy: null },
-                { redeemedBy: socket.user.username },
-                { new: true }
-            );
+            const gc = await GiftCode.findOneAndUpdate({ code: code, redeemedBy: null }, { redeemedBy: socket.user.username }, { new: true });
             if (!gc) return socket.emit('promoResult', { success: false, msg: 'Invalid or already used' });
-
             const user = await User.findById(socket.user._id);
-            if(gc.creditType === 'playable') {
-                user.playableCredits = formatTC(user.playableCredits + gc.amount);
-            } else {
-                user.credits = formatTC(user.credits + gc.amount);
-            }
+            if(gc.creditType === 'playable') { user.playableCredits = formatTC(user.playableCredits + gc.amount); } 
+            else { user.credits = formatTC(user.credits + gc.amount); }
             await user.save();
-            
             await new CreditLog({ username: user.username, action: 'CODE', amount: gc.amount, details: `Redeemed` }).save();
             pushAdminData();
             socket.emit('promoResult', { success: true, amt: gc.amount, type: gc.creditType });
             socket.emit('balanceUpdateData', { credits: user.credits, playable: user.playableCredits });
         } catch(e) { socket.emit('promoResult', { success: false, msg: 'Server error' }); }
-    });
-
-    socket.on('adminAction', async (data) => {
-        if (!socket.rooms.has('admin_room')) return; 
-        try {
-            const adminName = socket.user ? socket.user.username : 'System';
-
-            if (data.type === 'editUser') { 
-                let u = await User.findById(data.id);
-                await User.findByIdAndUpdate(data.id, { credits: formatTC(data.credits), playableCredits: formatTC(data.playableCredits), role: data.role }); 
-                await new AdminLog({ adminName, action: 'EDIT USER', details: `Updated balances for ${u.username}` }).save();
-            }
-            else if (data.type === 'ban') { 
-                let u = await User.findByIdAndUpdate(data.id, { status: 'Banned' }); 
-                await new AdminLog({ adminName, action: 'BAN', details: `Banned user ${u.username}` }).save();
-            }
-            else if (data.type === 'unban') { 
-                let u = await User.findByIdAndUpdate(data.id, { status: 'Active' }); 
-                await new AdminLog({ adminName, action: 'UNBAN', details: `Unbanned user ${u.username}` }).save();
-            }
-            else if (data.type === 'clearUserLogs') {
-                await CreditLog.deleteMany({ username: data.username });
-                const logs = await CreditLog.find({ username: data.username }).sort({ date: -1 }).limit(100);
-                socket.emit('userLogsData', { username: data.username, logs });
-                await new AdminLog({ adminName, action: 'CLEAR LOGS', details: `Cleared logs for ${data.username}` }).save();
-            }
-            else if (data.type === 'sendUpdate') { 
-                io.emit('silentNotification', { id: Date.now(), title: 'System Announcement', msg: data.msg, date: new Date() }); 
-                await new AdminLog({ adminName, action: 'BROADCAST', details: `Msg: ${data.msg}` }).save();
-            }
-            else if (data.type === 'giftCredits') {
-                let amount = formatTC(data.amount);
-                let updateQuery = data.creditType === 'playable' ? { $inc: { playableCredits: amount } } : { $inc: { credits: amount } };
-                let notifMsg = `Admin has gifted you ${amount} ${data.creditType === 'playable' ? 'Playable TC' : 'TC'}!`;
-
-                if (data.target === 'all_registered') {
-                    await User.updateMany({}, updateQuery);
-                    io.emit('silentNotification', { id: Date.now(), title: 'Gift Received!', msg: notifMsg, date: new Date() });
-                    io.emit('refreshBalance'); 
-                    await new AdminLog({ adminName, action: 'GIFT', details: `Mass gifted ${amount} to All Registered` }).save();
-                } 
-                else if (data.target === 'all_active') {
-                    await User.updateMany({ status: 'Active' }, updateQuery);
-                    io.emit('silentNotification', { id: Date.now(), title: 'Gift Received!', msg: notifMsg, date: new Date() });
-                    io.emit('refreshBalance');
-                    await new AdminLog({ adminName, action: 'GIFT', details: `Mass gifted ${amount} to All Active` }).save();
-                } 
-                else {
-                    let u = await User.findOne({ username: new RegExp('^' + data.target + '$', 'i') });
-                    if (u) {
-                        if(data.creditType === 'playable') u.playableCredits = formatTC(u.playableCredits + amount);
-                        else u.credits = formatTC(u.credits + amount);
-                        await u.save();
-                        await new CreditLog({ username: u.username, action: 'GIFT', amount: amount, details: `From Admin` }).save();
-                        
-                        await new AdminLog({ adminName, action: 'GIFT', details: `Gifted ${amount} to ${u.username}` }).save();
-                        
-                        let targetSocketId = connectedUsers[u.username];
-                        if (targetSocketId) {
-                            io.to(targetSocketId).emit('silentNotification', { id: Date.now(), title: 'Gift Received!', msg: notifMsg, date: new Date() });
-                            io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits });
-                        }
-                    }
-                }
-            }
-            else if (data.type === 'resolveTx') {
-                let tx = await Transaction.findById(data.id);
-                if (tx && tx.status === 'Pending') {
-                    tx.status = data.status; await tx.save();
-                    
-                    await new AdminLog({ adminName, action: 'RESOLVE TX', details: `Marked ${tx.type} for ${tx.username} as ${data.status}` }).save();
-                    
-                    let targetSocketId = connectedUsers[tx.username];
-                    if (tx.type === 'Deposit' && data.status === 'Approved') {
-                        let u = await User.findOne({ username: tx.username });
-                        if (u) {
-                            u.credits = formatTC(u.credits + tx.amount); await u.save();
-                            await new CreditLog({ username: u.username, action: 'DEPOSIT', amount: tx.amount, details: `Approved` }).save();
-                            if (targetSocketId) {
-                                io.to(targetSocketId).emit('silentNotification', { id: Date.now(), title: 'Deposit Approved', msg: `Your deposit of ${tx.amount} TC has been added to your balance.`, date: new Date() });
-                                io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits });
-                            }
-                        }
-                    }
-                    else if (data.status === 'Rejected') {
-                        if (tx.type === 'Withdrawal') {
-                            let u = await User.findOne({ username: tx.username });
-                            if (u) { 
-                                u.credits = formatTC(u.credits + tx.amount); await u.save(); 
-                                await new CreditLog({ username: u.username, action: 'REFUND', amount: tx.amount, details: `Withdrawal Rejected` }).save();
-                                if (targetSocketId) io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits }); 
-                            }
-                        }
-                        if (targetSocketId) { io.to(targetSocketId).emit('silentNotification', { id: Date.now(), title: `${tx.type} Rejected`, msg: `Your request was rejected.`, date: new Date() }); }
-                    }
-                }
-            }
-            else if (data.type === 'createBatch') {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                let prefix = data.creditType === 'playable' ? 'PB-' : 'RB-';
-                let existingBatches = await GiftCode.find({ batchId: new RegExp('^' + prefix) }).distinct('batchId');
-                let nextNum = existingBatches.length + 1;
-                let batchId = prefix + String(nextNum).padStart(3, '0');
-                
-                for(let i=0; i<data.count; i++) {
-                    let code = '';
-                    for(let j=0; j<10; j++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-                    await new GiftCode({ batchId, amount: formatTC(data.amount), code, creditType: data.creditType }).save();
-                }
-                await new AdminLog({ adminName, action: 'CREATE BATCH', details: `Created batch ${batchId} (${data.count} codes)` }).save();
-            }
-            else if (data.type === 'deleteBatch') { 
-                await GiftCode.deleteMany({ batchId: data.batchId }); 
-                await new AdminLog({ adminName, action: 'DELETE BATCH', details: `Deleted batch ${data.batchId}` }).save();
-            }
-            await pushAdminData();
-        } catch(e) { console.error("Admin Action Error:", e); }
     });
 
     socket.on('getGlobalResults', (game) => {
