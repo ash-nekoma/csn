@@ -27,7 +27,6 @@
             --ps-glow: #00a2ff; 
             --glass-bg: rgba(0, 10, 25, 0.75); 
             --glass-border: rgba(255, 255, 255, 0.15); 
-            --glass-hover: rgba(255, 255, 255, 0.9); 
             --danger: #ff3366; 
             --success: #00e676; 
             --credits: #ffb400; 
@@ -36,10 +35,7 @@
             --playable: #b366ff; 
         }
         
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; 
-            -webkit-tap-highlight-color: transparent; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; outline: none; -webkit-tap-highlight-color: transparent; }
         
         body { 
             background: linear-gradient(135deg, #000a1f 0%, #001f4d 50%, #000000 100%); 
@@ -49,7 +45,6 @@
             height: 100vh !important; 
             width: 100vw !important; 
             overflow: hidden !important; 
-            /* Strict PWA Native App Protections */
             -webkit-user-select: none; user-select: none; touch-action: manipulation;
             padding-bottom: env(safe-area-inset-bottom);
         }
@@ -57,7 +52,6 @@
         @keyframes AmbientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         .chip, .anim-deal, .play-card, .wheelPanel, canvas, .flying-obj, .coin, .dice-icon, .mode-card, .game-card { will-change: transform, opacity; transform: translateZ(0); backface-visibility: hidden; }
-
         button i { pointer-events: none; }
 
         ::-webkit-scrollbar { display: none; }
@@ -120,7 +114,6 @@
         .player-profile { display: flex; align-items: center; gap: 8px; font-weight: 800; color: white; font-size: 1rem; text-transform: uppercase; }
         .player-profile i { color: var(--ps-glow); font-size: 1.4rem; }
 
-        /* Dual Wallet Layout */
         .wallet-pill { background: rgba(0,0,0,0.8); border: 1px solid rgba(255,180,0,0.4); padding: 5px 15px; border-radius: 8px; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 10px rgba(255,180,0,0.1); }
         .wallet-pill:hover { border-color: var(--credits); transform: translateY(-2px); box-shadow: 0 0 15px rgba(255,180,0,0.3); }
         .wallet-main { display: flex; align-items: center; gap: 6px; }
@@ -134,12 +127,16 @@
         .top-icon-btn i { text-align: center; width: 100%; transition: 0.2s; pointer-events: none;}
         .top-icon-btn:hover { transform: scale(1.1); }
         
+        .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); pointer-events: none; box-shadow: 0 0 10px var(--danger); }
+        .notif-badge.pulse { animation: pulseBadge 1.5s infinite; }
+        @keyframes pulseBadge { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
+        
         .mobile-menu-btn { display: none; }
         .desktop-actions { display: flex; gap: 15px; align-items: center; }
 
         /* DROPDOWN POPOVERS */
         .dropdown-wrapper { position: relative; display: inline-block; }
-        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
+        .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
         
         .notif-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--glass-border); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;}
         .notif-actions { display: flex; gap: 10px; }
@@ -157,10 +154,6 @@
         .notif-item-body { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; padding-right: 20px; pointer-events: none;}
         .notif-item-del { position: absolute; right: 12px; bottom: 12px; background: transparent; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .notif-item-del:hover { color: var(--danger); transform: scale(1.1); }
-
-        .notif-badge { display: none; position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 50px; border: 2px solid var(--ps-bg); pointer-events: none; box-shadow: 0 0 10px var(--danger); }
-        .notif-badge.pulse { animation: pulseBadge 1.5s infinite; }
-        @keyframes pulseBadge { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
 
         .local-flash { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); z-index: 1000; background: rgba(255, 51, 102, 0.95); color: white; font-size: 2.2rem; font-weight: 900; padding: 20px 40px; border-radius: 12px; border: 2px solid white; box-shadow: 0 0 30px rgba(255, 51, 102, 0.8); text-transform: uppercase; text-align: center; pointer-events: none; opacity: 0; transition: all 0.2s; display: none; white-space: nowrap;}
         .local-flash.show { display: block; animation: flashAnim 2s forwards; }
@@ -185,10 +178,7 @@
         .btn-back-fixed:hover { background: white; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
         /* ================= REDESIGNED PLAYSTATION GRIDS & CARDS ================= */
-
-        .lobby-modes-container { 
-            display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 40px; width: 100%; flex-wrap: wrap; 
-        }
+        .lobby-modes-container { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 40px; width: 100%; flex-wrap: wrap; }
         
         .mode-card { 
             width: 340px; min-width: 340px; height: 440px; text-align: center; cursor: pointer; position: relative; 
@@ -196,7 +186,6 @@
             background: var(--glass-bg); border: 1px solid var(--glass-border); transition: 0.3s; overflow: hidden; 
             flex-shrink: 0; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
         .mode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); z-index: 1; }
         .mode-card:hover { transform: translateY(-8px); border-color: var(--ps-glow); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0,162,255,0.2); background: rgba(0, 30, 60, 0.8); }
         .mode-icon { font-size: 6.5rem; margin-bottom: 2rem; color: var(--ps-light-blue); transition: 0.3s; position: relative; z-index: 2; }
@@ -204,34 +193,24 @@
         .mode-title { font-size: 2.2rem; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 10px; position: relative; z-index: 2; letter-spacing: 1px; white-space: nowrap; }
         .mode-desc { color: var(--text-muted); font-size: 1.1rem; position: relative; z-index: 2; font-weight: 600; line-height: 1.4; padding: 0 20px; }
 
-        /* EXACT 3-COLUMN (SOLO) & 4-COLUMN (SHARED) GRIDS - Strict sizes */
-        .casino-grid.solo-grid { 
-            display: grid; grid-template-columns: repeat(3, 260px); justify-content: center; gap: 20px; width: 100%; max-width: 900px;
-        }
-        .casino-grid.shared-grid { 
-            display: grid; grid-template-columns: repeat(4, 260px); justify-content: center; gap: 20px; width: 100%; max-width: 1200px;
-        }
+        .casino-grid.solo-grid { display: grid; grid-template-columns: repeat(3, 260px); justify-content: center; gap: 20px; width: 100%; max-width: 900px; }
+        .casino-grid.shared-grid { display: grid; grid-template-columns: repeat(4, 260px); justify-content: center; gap: 20px; width: 100%; max-width: 1200px; }
 
-        /* EXACT 240x360 SIZING for Games */
         .game-card { 
             width: 240px; height: 360px; min-width: 240px; text-align: center; cursor: pointer; position: relative;
             display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start;
             border-radius: 12px; background: #020813; border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.3s; overflow: hidden; padding: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            margin: 0 auto;
+            transition: 0.3s; overflow: hidden; padding: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.6); margin: 0 auto;
         }
         .game-card:hover { transform: translateY(-8px); border-color: var(--ps-glow); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0,162,255,0.2); }
-        
         .game-img { flex: 1; display: flex; justify-content: center; align-items: center; font-size: 5.5rem; color: #0070cc; transition: 0.3s; background: transparent;}
         .game-card:hover .game-img { color: var(--ps-glow); text-shadow: 0 0 25px var(--ps-glow); transform: scale(1.1); }
-        
         .game-info { background: #000000; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100px; border-top: 1px solid rgba(255,255,255,0.05);}
         .game-title { font-size: 1.2rem; font-weight: 900; color: white; text-transform:uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         .game-desc { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
 
         .live-badge { position: absolute; top: 15px; right: 15px; background: transparent; color: var(--danger); font-size: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 4px; z-index: 10;}
         .live-dot { width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; animation: pulseRed 1.5s infinite; }
-
         .active-players { position: absolute; top: 15px; left: 15px; color: var(--success); font-size: 0.9rem; font-weight: 800; z-index: 10; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
         .game-wrapper { width: 100%; max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center;}
@@ -349,13 +328,14 @@
         .anim-deal { animation: dealCard 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: center; } @keyframes dealCard { 0% { opacity: 0; transform: translate(0, -200px) scale(0.5) rotateY(180deg); } 100% { opacity: 1; transform: translate(0, 0) scale(1) rotateY(0deg); } } .anim-flip { animation: flipCard 0.4s ease-in-out forwards; } @keyframes flipCard { 0% { transform: rotateY(180deg); } 50% { transform: rotateY(90deg); color: transparent; } 51% { color: inherit; background: white; } 100% { transform: rotateY(0deg); background: white; color: black; } }
         .dice-icon { font-size: 7rem; color: var(--text-muted); text-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: 0.1s; line-height: 1; } #d20-num { font-size: 6rem !important; line-height: 1; text-shadow: 0 10px 30px rgba(0,0,0,0.8); font-weight: 900 !important; }
         
-        .coin-wrapper { perspective: 1000px; width: 200px; height: 200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; } 
-        .coin-inner { width: 100%; height: 100%; transform-style: preserve-3d; position: relative; transition: transform 1.2s cubic-bezier(0.25, 1, 0.2, 1); } 
-        .coin-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 5rem; font-weight: 900; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 15px 40px rgba(0,0,0,0.9); border: 8px solid; } 
-        .coin-heads { background: radial-gradient(circle at 30% 30%, #fde047, #b45309); color: #78350f; border-color: #f59e0b; } 
+        /* STRICT 3D COIN FLIP FIX */
+        .coin-wrapper { perspective: 1000px; width: 150px; height: 150px; margin: 0 auto; display: flex; justify-content: center; align-items: center; } 
+        .coin-inner { width: 100%; height: 100%; transform-style: preserve-3d; position: relative; transition: transform 2s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
+        .coin-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 4rem; font-weight: 900; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 15px 40px rgba(0,0,0,0.9); border: 6px solid; } 
+        .coin-heads { background: radial-gradient(circle at 30% 30%, #fde047, #b45309); color: #78350f; border-color: #f59e0b; transform: rotateY(0deg); } 
         .coin-tails { background: radial-gradient(circle at 30% 30%, #e2e8f0, #475569); color: #0f172a; border-color: #94a3b8; transform: rotateY(180deg); } 
-        .tossing { animation: toss 1.2s cubic-bezier(0.25, 1, 0.2, 1); } 
-        @keyframes toss { 0% { transform: scale(1) translateY(0); } 50% { transform: scale(1.5) translateY(-80px); } 100% { transform: scale(1) translateY(0); } }
+        .tossing { animation: toss 2s ease-in-out forwards; } 
+        @keyframes toss { 0% { transform: translateY(0); } 50% { transform: translateY(-100px) scale(1.2); } 100% { transform: translateY(0); } }
 
         .color-dice-container { display: flex; gap: 30px; justify-content: center; font-size: 6rem; margin-bottom: 20px; } .color-die { width: 130px; height: 130px; border-radius: 16px; border: 2px solid rgba(255,255,255,0.3); box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; color: white; transition: 0.3s; background: #111; font-weight: 800;} .c-grey { background: radial-gradient(circle, #333, #0a0a0a); color: rgba(255,255,255,0.4); border-color: #444; } .c-red { background: radial-gradient(circle, #ff3366, #99002b); border-color: #ff3366;} .c-blue { background: radial-gradient(circle, #00a2ff, #003d66); border-color: #00a2ff;} .c-yellow { background: radial-gradient(circle, #ffcc00, #997a00); border-color: #ffcc00;} .c-white { background: radial-gradient(circle, #ffffff, #999999); color: #000; border-color: #fff;} .c-green { background: radial-gradient(circle, #00e676, #006634); border-color: #00e676;} .c-pink { background: radial-gradient(circle, #ff66b2, #99004d); border-color: #ff66b2;}
         .dt-arena { display: flex; justify-content: center; gap: 80px; width: 100%; align-items: center; margin-bottom: 20px; } .dt-side { display: flex; flex-direction: column; align-items: center; gap: 20px; } .dt-label { font-size: 2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; } .lbl-dragon { color: var(--danger); text-shadow: 0 0 20px rgba(255,51,102,0.6); } .lbl-tiger { color: var(--credits); text-shadow: 0 0 20px rgba(255,180,0,0.6); } .dt-card { width: 120px !important; height: 170px !important; } .dt-card .val { font-size: 3rem; } .dt-card .suit { font-size: 3.5rem; }
@@ -390,7 +370,7 @@
             #chat-floating-btn { display: flex; align-items: center; justify-content: center; position: fixed; bottom: 80px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--ps-glow); color: black; font-size: 1.5rem; z-index: 1001; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5); cursor: pointer; }
             
             /* Game Board Scaling for Mobile (Blackjack/Dragon Tiger Fix) */
-            .blackjack-scores, .dt-arena { flex-direction: column !important; gap: 15px !important; }
+            .blackjack-scores, .dt-arena { flex-direction: column !important; gap: 15px !important; align-items: center;}
             .card-area { min-height: auto; padding: 10px; width: 100%; min-width: unset; }
             .play-card { transform: scale(0.85); margin: -5px; } 
 
@@ -593,7 +573,7 @@
                     </div>
 
                     <div class="game-card" onclick="openGame('blackjack')">
-                        <div class="game-img"><i class="fas fa-suit-spade game-card-icon">♠️</i></div>
+                        <div class="game-img"><i class="fas fa-suit-spade game-card-icon" style="color:#0070cc;">♠️</i></div>
                         <div class="game-info">
                             <div class="game-title">BLACKJACK</div>
                             <div class="game-desc">Beat the dealer to 21.</div>
@@ -611,7 +591,7 @@
                     
                     <div class="game-card" onclick="openSharedGame('baccarat')">
                         <div class="active-players"><i class="fas fa-users"></i> <span class="ap-count">0</span></div>
-                        <div class="game-img"><i class="fas fa-cards">🃏</i></div>
+                        <div class="game-img"><i class="fas fa-cards" style="color:#0070cc;">🃏</i></div>
                         <div class="game-info">
                             <div class="game-title">BACCARAT</div>
                             <div class="game-desc">Closest to 9 wins.</div>
@@ -719,7 +699,7 @@
                       <div class="coin-wrapper" id="coin-wrapper">
                         <div class="coin-inner" id="coin-obj">
                           <div class="coin-face coin-heads"><i class="fas fa-coins"></i></div>
-                          <div class="coin-face coin-tails"><i class="fas fa-gem"></i></div>
+                          <div class="coin-face coin-tails" style="transform: rotateY(180deg);"><i class="fas fa-gem"></i></div>
                         </div>
                       </div>
                       <div id="coin-msg" class="result-box"></div>
@@ -771,9 +751,9 @@
                         </div>
                     </div>
 
-                    <div class="controls-grid hidden" id="bj-action-controls" style="display:flex; justify-content:center; gap:15px; padding: 20px;">
-                        <button class="btn-play" onclick="hitBlackjack()" id="btn-bj-hit" style="flex:1; max-width:150px; background: rgba(0,162,255,0.2); border-color: var(--ps-glow); color: var(--ps-glow);">HIT</button>
-                        <button class="btn-play" onclick="standBlackjack()" id="btn-bj-stand" style="flex:1; max-width:150px; background: rgba(255,51,102,0.2); border-color: var(--danger); color: var(--danger);">STAND</button>
+                    <div class="controls-grid hidden" id="bj-action-controls" style="display:flex; flex-direction:row; justify-content:center; gap:15px; padding: 20px; flex-wrap: nowrap; width: 100%;">
+                        <button class="btn-play" onclick="hitBlackjack()" id="btn-bj-hit" style="flex:1; max-width:150px; background: rgba(0,162,255,0.2); border-color: var(--ps-glow); color: var(--ps-glow); white-space: nowrap;">HIT</button>
+                        <button class="btn-play" onclick="standBlackjack()" id="btn-bj-stand" style="flex:1; max-width:150px; background: rgba(255,51,102,0.2); border-color: var(--danger); color: var(--danger); white-space: nowrap;">STAND</button>
                     </div>
                   </div>
                 </div>
@@ -832,19 +812,19 @@
       </div>
   </div>
 
-  <div id="history-popover" class="custom-dropdown hidden" style="width: 450px; padding: 0; overflow: hidden; cursor: default;" onclick="event.stopPropagation()">
+  <div id="history-popover" class="custom-dropdown hidden" style="width: 450px; padding: 0; overflow: hidden; cursor: default; z-index: 2500;" onclick="event.stopPropagation()">
         <div style="background:rgba(0,0,0,0.5); border-bottom:1px solid var(--glass-border); padding:15px; text-align:center;">
-            <div style="font-weight:900; color:white; font-size:1.1rem; margin-bottom:5px;">TOTAL ROUNDS: <span id="stat-total-rounds" style="color:var(--credits);">0</span></div>
+            <div style="font-weight:900; color:white; font-size:1.1rem; margin-bottom:5px;">GLOBAL TOTAL ROUNDS: <span id="stat-total-rounds" style="color:var(--credits);">0</span></div>
             <div id="stat-percentages" style="display:flex; flex-wrap:nowrap; justify-content:center; align-items:center; gap:8px; font-size:0.95rem; font-weight:800;"></div>
         </div>
         <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding:12px 15px; border-bottom:1px solid rgba(255,255,255,0.1); font-size:0.85rem; font-weight:900; color:var(--text-muted); text-align:center; text-transform:uppercase; background: rgba(0,0,0,0.4);">
             <div>Result</div><div>Bet</div><div style="color:var(--success)">Win</div><div style="color:var(--danger)">Loss</div>
         </div>
         <div id="history-items" style="padding:15px; display:flex; flex-direction:column; gap:10px;">
-            </div>
+        </div>
   </div>
 
-  <div id="rules-popover" class="custom-dropdown hidden" style="width: 350px; padding: 20px; cursor: default;" onclick="event.stopPropagation()">
+  <div id="rules-popover" class="custom-dropdown hidden" style="width: 350px; padding: 20px; cursor: default; z-index: 2500;" onclick="event.stopPropagation()">
         <div style="font-weight:900; color:white; text-transform:uppercase; margin-bottom:15px; font-size:1.1rem; text-align:center; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;" id="rules-title">How to Play</div>
         <div id="rules-body" class="rules-text"></div>
   </div>
@@ -857,14 +837,6 @@
             <button class="btn-play" style="flex: 1; background: rgba(255,255,255,0.1); border-color: transparent;" onclick="closeModal('admin-confirm-modal')">CANCEL</button>
             <button class="btn-play" style="flex: 1; background: rgba(0, 162, 255, 0.2); border-color: var(--ps-glow); color: var(--ps-glow);" onclick="window.location.href='/admin.html'">PROCEED</button>
         </div>
-    </div>
-  </div>
-
-  <div id="current-bets-modal" class="modal-overlay hidden" style="display: none;" onclick="if(event.target===this) closeModal('current-bets-modal')">
-    <div class="modal-content" style="width: 350px;">
-        <i class="fas fa-times modal-close-icon" onclick="closeModal('current-bets-modal')"></i>
-        <h3 style="margin-top:0;">My Bets</h3>
-        <div id="cb-list" class="custom-scroll" style="max-height: 300px; display: flex; flex-direction: column; gap: 8px;"></div>
     </div>
   </div>
 
@@ -982,7 +954,12 @@
     let myUsername = '';
     let myCredits = 0;
     let myPlayable = 0;
+    
+    // myGameHistory tracks strictly what you've played while online
     let myGameHistory = { d20: [], coinflip: [], baccarat: [], blackjack: [], perya: [], dt: [], sicbo: [] };
+    // globalFallback tracks the last 5 results of every game from the server
+    let globalFallback = { baccarat: [], perya: [], dt: [], sicbo: [] };
+    
     let myNotifications = [];
     
     window.activeSharedGame = null;
@@ -1063,6 +1040,29 @@
         if(id === 'gift-dropdown') document.getElementById('promo-response').innerText = '';
     }
 
+    // CURRENT BETS POPOVER LOGIC
+    function toggleCurrentBets(e) {
+        toggleCustomDropdown('current-bets-popover', e);
+    }
+
+    function updateCurrentBetsPopover() {
+        const list = document.getElementById('cb-list');
+        if(!list) return;
+        list.innerHTML = '';
+        let total = 0;
+        const entries = Object.entries(mySBets);
+        
+        if(entries.length === 0) {
+            list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:10px;">No active bets for this round.</div>`;
+        } else {
+            entries.forEach(([choice, amount]) => {
+                total += amount; let cColor = getBetColor(choice);
+                list.innerHTML += `<div style="background:rgba(0,0,0,0.4); padding:10px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:flex; justify-content:space-between; align-items:center; font-weight:800; margin-bottom:5px;"><span style="text-transform:uppercase; color:${cColor};">${choice}</span><span style="color:var(--credits); font-size: 1rem;">${formatTC(amount)} TC</span></div>`;
+            });
+            list.innerHTML += `<div style="border-top:1px solid var(--glass-border); padding-top:10px; margin-top:5px; display:flex; justify-content:space-between; font-weight:900; font-size:1.1rem; color:white;"><span>TOTAL</span><span style="color:var(--credits);">${formatTC(total)} TC</span></div>`;
+        }
+    }
+
     function toggleHistory(id, e) {
         if(e) e.stopPropagation(); sfx.click();
         document.querySelectorAll('.custom-dropdown').forEach(d => { if(d.id !== 'history-popover') d.classList.add('hidden'); });
@@ -1087,29 +1087,41 @@
     function updateHistoryUI(id) {
         const list = document.getElementById('history-items');
         list.innerHTML = '';
-        const history = myGameHistory[id] || [];
         
-        if(history.length === 0) { 
-            list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">No history available yet.</div>`; 
-        } 
-        else {
-            history.forEach(h => {
-                let winVal = h.didBet ? (h.wonProfit > 0 ? `<span style="color:var(--success)">+${formatTC(h.wonProfit)}</span>` : '-') : '-';
-                let lossVal = h.didBet ? (h.lostBet > 0 ? `<span style="color:var(--danger)">-${formatTC(h.lostBet)}</span>` : '-') : '-';
-                if (h.didBet && h.wonProfit === 0 && h.lostBet === 0) { winVal = '<span style="color:white">PUSH</span>'; lossVal = '-'; }
-                
-                let bHtml = h.bet; let rHtml = h.result;
-                if (id === 'perya') {
-                    bHtml = h.bet === '-' ? '-' : `<div style="display:flex; justify-content:center; align-items:center; gap:1px; flex-wrap:nowrap;">${colorsToDice(h.bet)}</div>`;
-                    rHtml = `<div style="display:flex; justify-content:center; align-items:center; gap:1px; flex-wrap:nowrap;">${colorsToDice(h.result)}</div>`;
-                } else {
-                    let safeB = h.bet ? h.bet.toString() : '-'; let safeR = h.result ? h.result.toString() : '-';
-                    bHtml = safeB === '-' ? '-' : `<span style="font-weight:800; color:${getBetColor(safeB.split(',')[0])}">${safeB}</span>`;
-                    rHtml = `<span style="font-weight:900; color:${getBetColor(safeR.split(' ')[0])}">${safeR}</span>`;
-                }
-                list.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap:10px; align-items:center; font-size:0.95rem; text-transform:uppercase; text-align:center; white-space:nowrap;"><div>${rHtml}</div><div>${bHtml}</div><div>${winVal}</div><div>${lossVal}</div></div>`;
-            });
+        let localH = myGameHistory[id] || [];
+        let merged = [...localH];
+        
+        // GLOBAL PAD: If player just joined and local history has < 5, pad with server global results
+        let gRes = globalFallback[id];
+        if (gRes && merged.length < 5) {
+            for(let i=0; i < gRes.length; i++) {
+                if(merged.length >= 5) break;
+                let cleanRes = gRes[i].result.replace(' WINS!', '').replace(' WINS', '');
+                merged.push({ result: cleanRes, bet: '-', wonProfit: 0, lostBet: 0, didBet: false });
+            }
         }
+        
+        if(merged.length === 0) { 
+            list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding: 20px;">No history available yet.</div>`; 
+            return;
+        } 
+        
+        merged.slice(0,5).forEach(h => {
+            let winVal = h.didBet ? (h.wonProfit > 0 ? `<span style="color:var(--success)">+${formatTC(h.wonProfit)}</span>` : '-') : '-';
+            let lossVal = h.didBet ? (h.lostBet > 0 ? `<span style="color:var(--danger)">-${formatTC(h.lostBet)}</span>` : '-') : '-';
+            if (h.didBet && h.wonProfit === 0 && h.lostBet === 0) { winVal = '<span style="color:white">PUSH</span>'; lossVal = '-'; }
+            
+            let bHtml = h.bet; let rHtml = h.result;
+            if (id === 'perya') {
+                bHtml = h.bet === '-' ? '-' : `<div style="display:flex; justify-content:center; align-items:center; gap:2px; flex-wrap:nowrap;">${colorsToDice(h.bet)}</div>`;
+                rHtml = `<div style="display:flex; justify-content:center; align-items:center; gap:2px; flex-wrap:nowrap;">${colorsToDice(h.result)}</div>`;
+            } else {
+                let safeB = h.bet ? h.bet.toString() : '-'; let safeR = h.result ? h.result.toString() : '-';
+                bHtml = safeB === '-' ? '-' : `<span style="font-weight:800; color:${getBetColor(safeB.split(',')[0])}">${safeB}</span>`;
+                rHtml = `<span style="font-weight:900; color:${getBetColor(safeR.split(' ')[0])}">${safeR}</span>`;
+            }
+            list.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap:10px; align-items:center; font-size:0.95rem; text-transform:uppercase; text-align:center; white-space:nowrap;"><div>${rHtml}</div><div>${bHtml}</div><div>${winVal}</div><div>${lossVal}</div></div>`;
+        });
     }
 
     document.addEventListener('click', function(e) {
@@ -1357,7 +1369,10 @@
 
     function logHistory(gid, betStr, resultStr, wonProfit, lostBet, didBet = true) {
         if(!myGameHistory[gid]) myGameHistory[gid] = [];
-        myGameHistory[gid].unshift({ bet: betStr, result: resultStr, wonProfit: wonProfit, lostBet: lostBet, didBet: didBet });
+        // STRIP THE WORD "WINS!" OR "WINS" LOCALLY BEFORE PUSHING TO HISTORY
+        let cleanRes = resultStr.replace(' WINS!', '').replace(' WINS', '');
+        
+        myGameHistory[gid].unshift({ bet: betStr, result: cleanRes, wonProfit: wonProfit, lostBet: lostBet, didBet: didBet });
         if(myGameHistory[gid].length > 5) myGameHistory[gid].pop();
         if(currentHistoryGame === gid && !document.getElementById('history-popover').classList.contains('hidden')) {
             updateHistoryUI(gid);
@@ -1369,6 +1384,10 @@
     });
 
     socket.on('globalResultsData', data => {
+        if (data.game === 'baccarat' || data.game === 'perya' || data.game === 'dt' || data.game === 'sicbo') {
+            globalFallback[data.game] = data.results;
+        }
+        
         if(data.game !== currentHistoryGame) return;
         
         document.getElementById('stat-total-rounds').innerText = data.stats.total;
@@ -1392,26 +1411,8 @@
             }
         }
         document.getElementById('stat-percentages').innerHTML = statsHtml;
+        updateHistoryUI(data.game);
     });
-
-    function openCurrentBetsModal() {
-        if(!window.activeSharedGame) return;
-        const list = document.getElementById('cb-list');
-        list.innerHTML = '';
-        let total = 0;
-        const entries = Object.entries(mySBets);
-        
-        if(entries.length === 0) {
-            list.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">No active bets for this round.</div>`;
-        } else {
-            entries.forEach(([choice, amount]) => {
-                total += amount; let cColor = getBetColor(choice);
-                list.innerHTML += `<div style="background:rgba(0,0,0,0.4); padding:10px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:flex; justify-content:space-between; align-items:center; font-weight:800; margin-bottom:5px;"><span style="text-transform:uppercase; color:${cColor};">${choice}</span><span style="color:var(--credits); font-size: 1rem;">${formatTC(amount)} TC</span></div>`;
-            });
-            list.innerHTML += `<div style="border-top:1px solid var(--glass-border); padding-top:10px; margin-top:5px; display:flex; justify-content:space-between; font-weight:900; font-size:1.1rem; color:white;"><span>TOTAL WAGERED</span><span style="color:var(--credits);">${formatTC(total)} TC</span></div>`;
-        }
-        openModal('current-bets-modal');
-    }
 
     function switchView(viewId) { 
       if (audioCtx.state === 'suspended') audioCtx.resume(); 
@@ -1502,6 +1503,8 @@
     function backToCasino() { switchView('casino'); }
 
     // --- SOLO GAMES ENGINE ---
+    
+    // UPDATED DELAYED ANIMATION LOGIC FOR RESULT BOX & HUD
     function showEndBox(box, bet, payout, msg, newBalance) {
         let pft = payout > bet ? payout - bet : 0; 
         let loss = payout === 0 ? bet : 0;
@@ -1510,19 +1513,24 @@
         if (payout > bet) { 
             h += `<div class="res-payout" style="color:var(--success)">WON +${formatTC(pft)} TC</div>`; 
             box.className = "result-box win"; 
-            sfx.win(); triggerWinAnim();
         } else if (payout === bet) { 
             h += `<div class="res-payout" style="color:white">PUSH - BET RETURNED</div>`; 
             box.className = "result-box push"; 
         } else { 
-            sfx.lose(); 
             h += `<div class="res-payout" style="color:var(--danger)">LOST -${formatTC(loss)} TC</div>`; 
             box.className = "result-box lose"; 
         } 
         
         box.innerHTML = h; box.style.display = 'block'; box.style.opacity = '0'; 
-        requestAnimationFrame(() => { box.style.opacity = '1'; box.classList.add('show'); });
-        setTimeout(() => { updateMyBalance(newBalance, payout > bet); }, 800);
+        
+        requestAnimationFrame(() => { 
+            box.style.opacity = '1'; box.classList.add('show'); 
+            if (payout > bet) sfx.win();
+            else if (payout === 0) sfx.lose();
+        });
+
+        // 1.5 SECOND DELAY BEFORE HUD UPDATES
+        setTimeout(() => { updateMyBalance(newBalance, payout > bet); }, 1500);
     }
 
     function updateD20Inputs() {
@@ -1572,7 +1580,7 @@
       socket.emit('playSolo', { game: 'd20', bet: bet, guessType: type, guessValue: val });
     }
 
-    let coinFlips = 0;
+    let currentCoinRot = 0;
     function playCoin(choice) {
       let betEl = document.getElementById('coin-bet');
       let bet = parseFloat(betEl.value);
@@ -1585,10 +1593,15 @@
       
       socket.once('coinResult', async (res) => {
           sfx.coin(); cw.classList.add('tossing');
-          coinFlips += 5; let er = res.result === 'Tails' ? 180 : 0; 
-          co.style.transform = `rotateY(${coinFlips * 360 + er}deg)`;
+          let isHeads = res.result === 'Heads';
           
-          await delay(1200); cw.classList.remove('tossing');
+          currentCoinRot += 1800; // spin 5 full times
+          if (isHeads && currentCoinRot % 360 !== 0) currentCoinRot += 180;
+          if (!isHeads && currentCoinRot % 360 === 0) currentCoinRot += 180;
+          
+          co.style.transform = `rotateY(${currentCoinRot}deg)`;
+          
+          await delay(2000); cw.classList.remove('tossing');
           
           await delay(300);
           let historyMsg = res.resStr;
@@ -1597,7 +1610,6 @@
           
           await delay(1200);
           document.getElementById('btn-heads').disabled = false; document.getElementById('btn-tails').disabled = false;
-          mb.style.display = 'none'; mb.classList.remove('show');
       });
 
       socket.on('localGameError', (data) => { if(data.game==='coinflip') { showLocalFlash('coinflip', data.msg, "error"); document.getElementById('btn-heads').disabled = false; document.getElementById('btn-tails').disabled = false; } });
@@ -1651,7 +1663,6 @@
             await appendCard('bj-p-hand', 'bj-p-score', data.pHand[1], data.pHand);
             await appendCard('bj-d-hand', 'bj-d-score', data.dHand[1], data.dHand, true); 
             
-            // GHOST BLACKJACK FIX (Animate deal first, then reveal)
             if (data.naturalBJ) {
                 await delay(500);
                 let hidden = document.getElementById('hidden-card');
@@ -1706,10 +1717,20 @@
             
             await delay(300); 
             
-            showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.resStr, data.newBalance);
+            // EXACT STRING FORMATTING REWRITE
+            let pS = getBJScore(data.pHand);
+            let dS = getBJScore(data.dHand);
+            let histStr = "";
+            if (pS > 21) { histStr = `PLAYER BUSTS! (${pS})`; } 
+            else if (dS > 21) { histStr = `DEALER BUSTS! (${dS} TO ${pS})`; } 
+            else if (data.msg === 'Push') { histStr = `TIE (${dS} TO ${pS})`; } 
+            else if (data.msg === 'You Win!' || data.msg === 'Blackjack!') { histStr = `PLAYER (${dS} TO ${pS})`; } 
+            else { histStr = `DEALER (${dS} TO ${pS})`; }
+            
+            showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, histStr, data.newBalance);
             let wProf = data.payout > bjSt.bet ? data.payout - bjSt.bet : 0;
             let lBet = data.payout === 0 ? bjSt.bet : 0;
-            logHistory('blackjack', formatTC(bjSt.bet) + ' TC', data.resStr, wProf, lBet, true);
+            logHistory('blackjack', formatTC(bjSt.bet) + ' TC', histStr, wProf, lBet, true);
             
             setTimeout(() => { document.getElementById('btn-bj-deal').disabled = false; document.getElementById('bj-msg').style.display = 'none'; }, 2500);
         }
@@ -1761,6 +1782,8 @@
         let tot = Object.values(mySBets).reduce((sum, val) => sum + val, 0);
         let mb = document.getElementById('sg-my-bet');
         if(mb) mb.innerHTML = `${formatTC(tot)} TC`;
+        
+        updateCurrentBetsPopover();
         sfx.tick();
     });
 
@@ -1773,16 +1796,23 @@
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
-                <div style="display: flex; gap: 10px; align-items: flex-end;">
+                <div style="display: flex; gap: 10px; align-items: stretch;">
                     <div class="input-group" style="margin: 0; width: 150px;">
                         <label>BET AMOUNT</label>
-                        <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
+                        <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10" style="height: 48px; padding: 0 15px;">
                     </div>
-                    <button class="btn-rules" style="height: 52px; width: 52px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
+                    <button class="btn-rules" style="height: 48px; width: 48px; align-self: flex-end;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
                 </div>
-                <div style="text-align: right;">
+                
+                <div style="text-align: right; position: relative;" class="dropdown-wrapper">
                     <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom:5px;">TOTAL BET</div>
-                    <div id="sg-my-bet" style="color: white; font-size: 1.5rem; font-weight: 900; line-height: 1;">0 TC</div>
+                    <div id="sg-my-bet" style="color: white; font-size: 1.5rem; font-weight: 900; line-height: 1; cursor:pointer;" onclick="toggleCurrentBets(event)">0 TC</div>
+                    <div id="current-bets-popover" class="custom-dropdown hidden" style="bottom: 100%; top: auto; right: 0; margin-bottom: 15px; width: 280px; z-index: 2500;">
+                        <div class="popover-header">CURRENT BETS</div>
+                        <div class="popover-body" id="cb-list" style="padding: 15px;">
+                            <div style="text-align:center; color:var(--text-muted);">No active bets.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="bet-grid perya-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
@@ -1853,16 +1883,23 @@
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
-                <div style="display: flex; gap: 10px; align-items: flex-end;">
+                <div style="display: flex; gap: 10px; align-items: stretch;">
                     <div class="input-group" style="margin: 0; width: 150px;">
                         <label>BET AMOUNT</label>
-                        <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
+                        <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10" style="height: 48px; padding: 0 15px;">
                     </div>
-                    <button class="btn-rules" style="height: 52px; width: 52px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
+                    <button class="btn-rules" style="height: 48px; width: 48px; align-self: flex-end;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
                 </div>
-                <div style="text-align: right;">
+                
+                <div style="text-align: right; position: relative;" class="dropdown-wrapper">
                     <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom:5px;">TOTAL BET</div>
-                    <div id="sg-my-bet" style="color: white; font-size: 1.5rem; font-weight: 900; line-height: 1;">0 TC</div>
+                    <div id="sg-my-bet" style="color: white; font-size: 1.5rem; font-weight: 900; line-height: 1; cursor:pointer;" onclick="toggleCurrentBets(event)">0 TC</div>
+                    <div id="current-bets-popover" class="custom-dropdown hidden" style="bottom: 100%; top: auto; right: 0; margin-bottom: 15px; width: 280px; z-index: 2500;">
+                        <div class="popover-header">CURRENT BETS</div>
+                        <div class="popover-body" id="cb-list" style="padding: 15px;">
+                            <div style="text-align:center; color:var(--text-muted);">No active bets.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
@@ -1923,7 +1960,7 @@
                     lostBet += a;
                 }
             } 
-            let msg = w === 'Tie' ? `TIE!` : `${w.toUpperCase()} WINS!`;
+            let msg = w === 'Tie' ? `TIE` : `${w.toUpperCase()}`;
             processSharedPayout('baccarat', tp, tba, msg, wonProfit, lostBet, Object.keys(mySBets).join(', '), data.resStr);
         }
       },
@@ -1935,16 +1972,23 @@
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
-                <div style="display: flex; gap: 10px; align-items: flex-end;">
+                <div style="display: flex; gap: 10px; align-items: stretch;">
                     <div class="input-group" style="margin: 0; width: 150px;">
                         <label>BET AMOUNT</label>
-                        <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
+                        <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10" style="height: 48px; padding: 0 15px;">
                     </div>
-                    <button class="btn-rules" style="height: 52px; width: 52px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
+                    <button class="btn-rules" style="height: 48px; width: 48px; align-self: flex-end;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
                 </div>
-                <div style="text-align: right;">
+                
+                <div style="text-align: right; position: relative;" class="dropdown-wrapper">
                     <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom:5px;">TOTAL BET</div>
-                    <div id="sg-my-bet" style="color: white; font-size: 1.5rem; font-weight: 900; line-height: 1;">0 TC</div>
+                    <div id="sg-my-bet" style="color: white; font-size: 1.5rem; font-weight: 900; line-height: 1; cursor:pointer;" onclick="toggleCurrentBets(event)">0 TC</div>
+                    <div id="current-bets-popover" class="custom-dropdown hidden" style="bottom: 100%; top: auto; right: 0; margin-bottom: 15px; width: 280px; z-index: 2500;">
+                        <div class="popover-header">CURRENT BETS</div>
+                        <div class="popover-body" id="cb-list" style="padding: 15px;">
+                            <div style="text-align:center; color:var(--text-muted);">No active bets.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
@@ -1977,7 +2021,7 @@
                     lostBet += a; 
                 }
               } 
-              let msg = w === 'Tie' ? `TIE!` : `${w.toUpperCase()} WINS!`;
+              let msg = w === 'Tie' ? `TIE` : `${w.toUpperCase()}`;
               processSharedPayout('dt', tp, tba, msg, wonProfit, lostBet, Object.keys(mySBets).join(', '), data.resStr); 
             }, 1000); 
           }, 500); 
@@ -1991,16 +2035,23 @@
           let cg = document.getElementById('sg-controls-container'); 
           if (cg) cg.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 600px; margin: 0 auto 15px auto; grid-column:span 2;">
-                <div style="display: flex; gap: 10px; align-items: flex-end;">
+                <div style="display: flex; gap: 10px; align-items: stretch;">
                     <div class="input-group" style="margin: 0; width: 150px;">
                         <label>BET AMOUNT</label>
-                        <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10">
+                        <input type="number" id="sg-bet-input" class="input-control bet-input" placeholder="10" style="height: 48px; padding: 0 15px;">
                     </div>
-                    <button class="btn-rules" style="height: 52px; width: 52px;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
+                    <button class="btn-rules" style="height: 48px; width: 48px; align-self: flex-end;" onclick="undoSharedBet()" title="Undo Last Bet"><i class="fas fa-undo"></i></button>
                 </div>
-                <div style="text-align: right;">
+                
+                <div style="text-align: right; position: relative;" class="dropdown-wrapper">
                     <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom:5px;">TOTAL BET</div>
-                    <div id="sg-my-bet" style="color: white; font-size: 1.5rem; font-weight: 900; line-height: 1;">0 TC</div>
+                    <div id="sg-my-bet" style="color: white; font-size: 1.5rem; font-weight: 900; line-height: 1; cursor:pointer;" onclick="toggleCurrentBets(event)">0 TC</div>
+                    <div id="current-bets-popover" class="custom-dropdown hidden" style="bottom: 100%; top: auto; right: 0; margin-bottom: 15px; width: 280px; z-index: 2500;">
+                        <div class="popover-header">CURRENT BETS</div>
+                        <div class="popover-body" id="cb-list" style="padding: 15px;">
+                            <div style="text-align:center; color:var(--text-muted);">No active bets.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="bet-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
@@ -2058,6 +2109,8 @@
       let mb = document.getElementById('sg-my-bet'); 
       if (mb) { mb.innerHTML = `${formatTC(tot)} TC`; } 
       
+      updateCurrentBetsPopover();
+
       document.querySelectorAll('#sg-bet-grid .bet-btn').forEach(b => { 
         if (b.getAttribute('data-choice') === c) { 
             b.classList.add('has-bet');
@@ -2093,7 +2146,7 @@
       
       logHistory(gid, betsPlacedStr || '-', resStr, wonProfit, lostBet, tba > 0);
       
-      setTimeout(() => {
+      requestAnimationFrame(() => {
           if (t) t.innerHTML = msg; 
           if (tba > 0 && b) { 
             b.style.display = 'block'; 
@@ -2113,7 +2166,7 @@
           });
           
           setTimeout(() => { socket.emit('requestBalanceRefresh'); }, 1500);
-      }, 500);
+      });
     }
 
     function wipeTableVisually() {
@@ -2133,6 +2186,8 @@
         let m = document.getElementById('sg-my-bet'); 
         if (m) m.innerHTML = '0 TC'; 
         
+        updateCurrentBetsPopover();
+
         document.querySelectorAll('#sg-bet-grid .bet-btn').forEach(btn => { btn.classList.remove('has-bet'); btn.disabled = false; }); 
     }
 
