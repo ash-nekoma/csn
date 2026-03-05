@@ -331,10 +331,11 @@ async function pushAdminData(target = io.to('admin_room')) {
 io.on('connection', (socket) => {
     socket.emit('timerUpdate', sharedTables.time);
 
-    // SERVER SIDE CONCURRENCY LOCKS
+    // ANTI-SPAM LOCKS
     socket.isBetting = false;
     socket.isSharedBetting = false;
     socket.isCashier = false;
+    socket.isAuth = false;
 
     socket.on('requestBalanceRefresh', async () => {
         if(socket.user) {
@@ -370,7 +371,7 @@ io.on('connection', (socket) => {
     // --- SOLO GAMES ENGINE ---
     socket.on('playSolo', async (data) => {
         if (!socket.user) return;
-        if (socket.isBetting) return; 
+        if (socket.isBetting) return; // Spam Prevention
         socket.isBetting = true;
 
         try {
@@ -754,7 +755,8 @@ io.on('connection', (socket) => {
         let amt = formatTC(rewards[day - 1]);
 
         user.playableCredits = formatTC(user.playableCredits + amt); 
-        user.dailyReward.lastClaim = now; user.dailyReward.streak += 1; await user.save();
+        user.dailyReward.lastClaim = now; user.dailyReward.streak += 1;
+        await user.save();
         
         await new CreditLog({ username: user.username, action: 'GIFT', amount: amt, details: `Daily Reward` }).save();
         pushAdminData();
@@ -764,12 +766,21 @@ io.on('connection', (socket) => {
     socket.on('redeemPromo', async (code) => {
         if (!socket.user) return;
         try {
-            const gc = await GiftCode.findOneAndUpdate({ code: code, redeemedBy: null }, { redeemedBy: socket.user.username }, { new: true });
+            const gc = await GiftCode.findOneAndUpdate(
+                { code: code, redeemedBy: null },
+                { redeemedBy: socket.user.username },
+                { new: true }
+            );
             if (!gc) return socket.emit('promoResult', { success: false, msg: 'Invalid or already used' });
+
             const user = await User.findById(socket.user._id);
-            if(gc.creditType === 'playable') { user.playableCredits = formatTC(user.playableCredits + gc.amount); } 
-            else { user.credits = formatTC(user.credits + gc.amount); }
+            if(gc.creditType === 'playable') {
+                user.playableCredits = formatTC(user.playableCredits + gc.amount);
+            } else {
+                user.credits = formatTC(user.credits + gc.amount);
+            }
             await user.save();
+            
             await new CreditLog({ username: user.username, action: 'CODE', amount: gc.amount, details: `Redeemed` }).save();
             pushAdminData();
             socket.emit('promoResult', { success: true, amt: gc.amount, type: gc.creditType });
