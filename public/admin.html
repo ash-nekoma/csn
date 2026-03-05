@@ -85,7 +85,6 @@
         /* BENTO BOX GRID DASHBOARD & HOVER GLOW FIX */
         .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; }
         .bento-item { background: rgba(0, 15, 35, 0.6); border: 1px solid var(--glass-border); padding: 30px; border-radius: 12px; display: flex; align-items: center; gap: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); backdrop-filter: blur(5px); transition: all 0.3s ease; cursor: pointer; }
-        /* 360-DEGREE FULL PANEL GLOW */
         .bento-item:hover { transform: translateY(-5px); border-color: var(--ps-glow); box-shadow: 0 0 25px rgba(0,162,255,0.3), inset 0 0 15px rgba(0, 162, 255, 0.15); }
         
         .bento-span-2 { grid-column: span 2; }
@@ -155,13 +154,19 @@
         .confirm-btn-container button { flex: 1; padding: 15px; font-size: 1.1rem; }
         .modal-error-text { color: var(--danger); font-size: 0.9rem; font-weight: bold; text-align: center; margin-bottom: 15px; min-height: 20px; }
 
-        /* LIGHTBOX UX */
-        #lightbox-modal { z-index: 10000000; cursor: zoom-out; }
-        .lightbox-img { max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 15px 50px rgba(0,0,0,0.9); cursor: default; border: 2px solid var(--glass-border); }
+        /* LIVE TOAST NOTIFICATIONS */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;}
+        .toast { background: rgba(0,0,0,0.9); border-left: 4px solid var(--ps-glow); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 800; text-transform: uppercase; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: toastIn 0.3s forwards, toastOut 0.3s forwards 3s; pointer-events: auto;}
+        .toast.success { border-left-color: var(--success); color: var(--success); }
+        .toast.error { border-left-color: var(--danger); color: var(--danger); }
+        @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
     </style>
 </head>
 <body>
+
+    <div id="toast-container"></div>
 
     <div id="auth-container">
         <div class="auth-box">
@@ -398,8 +403,53 @@
         </div>
     </div>
 
-    <div id="lightbox-modal" class="modal-overlay hidden" onclick="closeModal('lightbox-modal')">
-        <img id="lightbox-img" class="lightbox-img" src="" alt="Proof Receipt" onclick="event.stopPropagation();">
+    <div id="edit-user-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('edit-user-modal')"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title">Edit Player</h3>
+            <div id="edit-user-err" class="modal-error-text"></div>
+            <input type="hidden" id="edit-u-id">
+            
+            <div class="input-group">
+                <label>Username (Read Only)</label>
+                <input type="text" id="edit-u-name" class="input-control" disabled style="opacity: 0.5;">
+            </div>
+            <div class="input-group">
+                <label>Main Balance (Withdrawable TC)</label>
+                <input type="number" id="edit-u-credits" class="input-control" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>Playable Bonus (TC)</label>
+                <input type="number" id="edit-u-playable" class="input-control" step="0.1">
+            </div>
+            <div class="input-group" style="margin-bottom: 25px;">
+                <label>Account Role</label>
+                <select id="edit-u-role" class="input-control">
+                    <option value="Player">Player</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <button class="btn-primary" onclick="saveUserEdit()">SAVE CHANGES</button>
+        </div>
+    </div>
+
+    <div id="player-logs-modal" class="modal-overlay hidden">
+        <div class="modal-content wide">
+            <button class="modal-close" onclick="closeModal('player-logs-modal')"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title" id="pl-title">PLAYER LOGS</h3>
+            <div style="text-align:right; margin-bottom:15px;">
+                <button class="btn-sm btn-reject" onclick="clearPlayerLogs()" style="display:inline-flex; font-size: 1rem; padding: 10px 20px;"><i class="fas fa-trash"></i> Clear Logs</button>
+            </div>
+            <div class="table-wrapper" style="max-height: 400px;">
+                <table>
+                    <thead>
+                        <tr><th class="center-col">Date</th><th class="center-col">Action</th><th class="center-col">Amount</th><th class="center-col">Details</th></tr>
+                    </thead>
+                    <tbody id="pl-tbody"></tbody>
+                </table>
+            </div>
+            <div class="pagination" id="pag-pl"></div>
+        </div>
     </div>
 
     <div id="snt-confirm-modal" class="modal-overlay hidden">
@@ -456,86 +506,6 @@
         </div>
     </div>
 
-    <div id="inspector-modal" class="modal-overlay hidden">
-        <div class="modal-content" style="width: 500px; border-top: 4px solid var(--ps-glow);">
-            <button class="modal-close" onclick="closeModal('inspector-modal')"><i class="fas fa-times"></i></button>
-            <h3 class="modal-title" style="border: none; margin-bottom: 5px;">REQUEST INSPECTOR</h3>
-            
-            <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid var(--glass-border); margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: var(--text-muted); font-weight: 800;">TYPE:</span>
-                    <span id="inspector-type" style="font-weight: 900; color: white;">DEPOSIT</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: var(--text-muted); font-weight: 800;">USER:</span>
-                    <span id="inspector-user" style="font-weight: 900; color: white;"></span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: var(--text-muted); font-weight: 800;">AMOUNT:</span>
-                    <span id="inspector-amt" style="font-weight: 900; color: var(--credits); font-size: 1.2rem;">0 TC</span>
-                </div>
-                <div style="display: flex; flex-direction: column; margin-top: 20px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.2);">
-                    <span style="color: var(--text-muted); font-weight: 800; margin-bottom: 5px;">DETAILS PROVIDED:</span>
-                    <span id="inspector-proof-container" style="font-family: monospace; color: var(--ps-glow); word-break: break-all; font-size: 1.1rem; text-align: center; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;"></span>
-                </div>
-            </div>
-
-            <div class="confirm-btn-container">
-                <button class="btn-primary" style="background: rgba(255, 51, 102, 0.15); color: var(--danger); border-color: var(--danger);" id="btn-reject-tx">REJECT</button>
-                <button class="btn-primary" style="background: rgba(0, 230, 118, 0.15); color: var(--success); border-color: var(--success);" id="btn-approve-tx">APPROVE</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="edit-user-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('edit-user-modal')"><i class="fas fa-times"></i></button>
-            <h3 class="modal-title">Edit Player</h3>
-            <div id="edit-user-err" class="modal-error-text"></div>
-            <input type="hidden" id="edit-u-id">
-            
-            <div class="input-group">
-                <label>Username (Read Only)</label>
-                <input type="text" id="edit-u-name" class="input-control" disabled style="opacity: 0.5;">
-            </div>
-            <div class="input-group">
-                <label>Main Balance (Withdrawable TC)</label>
-                <input type="number" id="edit-u-credits" class="input-control" step="0.1">
-            </div>
-            <div class="input-group">
-                <label>Playable Bonus (TC)</label>
-                <input type="number" id="edit-u-playable" class="input-control" step="0.1">
-            </div>
-            <div class="input-group" style="margin-bottom: 25px;">
-                <label>Account Role</label>
-                <select id="edit-u-role" class="input-control">
-                    <option value="Player">Player</option>
-                    <option value="Admin">Admin</option>
-                </select>
-            </div>
-            <button class="btn-primary" onclick="saveUserEdit()">SAVE CHANGES</button>
-        </div>
-    </div>
-
-    <div id="player-logs-modal" class="modal-overlay hidden">
-        <div class="modal-content wide">
-            <button class="modal-close" onclick="closeModal('player-logs-modal')"><i class="fas fa-times"></i></button>
-            <h3 class="modal-title" id="pl-title">PLAYER LOGS</h3>
-            <div style="text-align:right; margin-bottom:15px;">
-                <button class="btn-sm btn-reject" onclick="clearPlayerLogs()" style="display:inline-flex; font-size: 1rem; padding: 10px 20px;"><i class="fas fa-trash"></i> Clear Logs</button>
-            </div>
-            <div class="table-wrapper" style="max-height: 400px;">
-                <table>
-                    <thead>
-                        <tr><th class="center-col">Date</th><th class="center-col">Action</th><th class="center-col">Amount</th><th class="center-col">Details</th></tr>
-                    </thead>
-                    <tbody id="pl-tbody"></tbody>
-                </table>
-            </div>
-            <div class="pagination" id="pag-pl"></div>
-        </div>
-    </div>
-
     <div id="create-promo-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('create-promo-modal')"><i class="fas fa-times"></i></button>
@@ -579,6 +549,41 @@
         </div>
     </div>
 
+    <div id="inspector-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="width: 500px; border-top: 4px solid var(--ps-glow);">
+            <button class="modal-close" onclick="closeModal('inspector-modal')"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title" style="border: none; margin-bottom: 5px;">REQUEST INSPECTOR</h3>
+            
+            <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid var(--glass-border); margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: var(--text-muted); font-weight: 800;">TYPE:</span>
+                    <span id="inspector-type" style="font-weight: 900; color: white;">DEPOSIT</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: var(--text-muted); font-weight: 800;">USER:</span>
+                    <span id="inspector-user" style="font-weight: 900; color: white;"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: var(--text-muted); font-weight: 800;">AMOUNT:</span>
+                    <span id="inspector-amt" style="font-weight: 900; color: var(--credits); font-size: 1.2rem;">0 TC</span>
+                </div>
+                <div style="display: flex; flex-direction: column; margin-top: 20px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.2);">
+                    <span style="color: var(--text-muted); font-weight: 800; margin-bottom: 5px;">DETAILS PROVIDED:</span>
+                    <span id="inspector-proof-container" style="font-family: monospace; color: var(--ps-glow); word-break: break-all; font-size: 1.1rem; text-align: center; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;"></span>
+                </div>
+            </div>
+
+            <div class="confirm-btn-container">
+                <button class="btn-primary" style="background: rgba(255, 51, 102, 0.15); color: var(--danger); border-color: var(--danger);" id="btn-reject-tx">REJECT</button>
+                <button class="btn-primary" style="background: rgba(0, 230, 118, 0.15); color: var(--success); border-color: var(--success);" id="btn-approve-tx">APPROVE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="lightbox-modal" class="modal-overlay hidden" onclick="closeModal('lightbox-modal')">
+        <img id="lightbox-img" class="lightbox-img" src="" alt="Proof Receipt" onclick="event.stopPropagation();">
+    </div>
+
     <script>
         const socket = io();
         
@@ -596,6 +601,18 @@
             o.connect(g); g.connect(audioCtx.destination);
             o.start(); o.stop(audioCtx.currentTime + 0.5);
         }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = msg;
+            container.appendChild(t);
+            setTimeout(() => { if(t.parentElement) t.remove(); }, 3500);
+        }
+
+        socket.on('adminSuccess', msg => showToast(msg, 'success'));
+        socket.on('adminError', msg => showToast(msg, 'error'));
 
         let gUsers = []; let pgUsers = 1;
         let gTxs = []; let pgPend = 1; let pgHist = 1;
