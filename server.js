@@ -363,6 +363,21 @@ io.on('connection', (socket) => {
                 }
                 
                 if (amt > 50000) { socket.emit('localGameError', { msg: 'MAX TOTAL BET IS 50K TC', game: data.game }); return; }
+
+                // --- ANTI-MARTINGALE DYNAMIC SPREAD LIMITER ---
+                if (!socket.soloBaseline) socket.soloBaseline = { game: null, amount: 0, active: false };
+
+                if (!socket.soloBaseline.active || socket.soloBaseline.game !== data.game) {
+                    // New sequence
+                    socket.soloBaseline = { game: data.game, amount: amt, active: true };
+                } else {
+                    // Continuing a loss streak, cap next bet at 20x their initial baseline
+                    let spreadLimit = socket.soloBaseline.amount * 20; 
+                    if (amt > spreadLimit && amt > 500) { 
+                        socket.emit('localGameError', { msg: `MARTINGALE CAP: MAX ${formatTC(spreadLimit)} TC ON THIS STREAK`, game: data.game });
+                        return;
+                    }
+                }
                 
                 // VAULT SECURITY CHECK
                 if ((amt * maxPotentialMultiplier) > globalBankVault) {
@@ -409,6 +424,8 @@ io.on('connection', (socket) => {
                 }
                 payout = formatTC(payout);
                 
+                if (payout > 0 && socket.soloBaseline) socket.soloBaseline.active = false; // Reset streak if win
+
                 user.credits = formatTC(user.credits + payout); await user.save();
                 let net = formatTC(payout - data.bet);
                 await new CreditLog({ username: user.username, action: 'GAME', amount: net, details: `D20` }).save();
@@ -424,7 +441,10 @@ io.on('connection', (socket) => {
             } 
             else if (data.game === 'coinflip') {
                 let result = crypto.randomInt(2) === 0 ? 'Heads' : 'Tails';
-                if (data.choice === result) payout = formatTC(data.bet * 1.95);
+                if (data.choice === result) {
+                    payout = formatTC(data.bet * 1.95);
+                    if (socket.soloBaseline) socket.soloBaseline.active = false; // Reset streak if win
+                }
                 
                 user.credits = formatTC(user.credits + payout); await user.save();
                 await new CreditLog({ username: user.username, action: 'GAME', amount: formatTC(payout - data.bet), details: `Coin Flip` }).save();
@@ -442,6 +462,8 @@ io.on('connection', (socket) => {
                     let pS = getBJScore(socket.bjState.pHand); let dS = getBJScore(socket.bjState.dHand);
                     
                     if (pS === 21) {
+                        if (socket.soloBaseline) socket.soloBaseline.active = false; // Reset streak if win/push
+
                         let msg = dS === 21 ? 'Push' : 'Blackjack!';
                         payout = formatTC(dS === 21 ? socket.bjState.bet : socket.bjState.bet * 2.5);
                         
@@ -494,6 +516,10 @@ io.on('connection', (socket) => {
                     else if (pS === dS) { payout = formatTC(socket.bjState.bet); msg = 'Push'; } 
                     else { msg = 'Dealer Wins'; }
                     
+                    if (msg === 'You Win!' || msg === 'Push') {
+                        if (socket.soloBaseline) socket.soloBaseline.active = false; // Reset streak if win/push
+                    }
+
                     if (msg === 'Push') {
                         user.playableCredits = formatTC(user.playableCredits + socket.bjState.fromPlayable);
                         user.credits = formatTC(user.credits + socket.bjState.fromMain);
