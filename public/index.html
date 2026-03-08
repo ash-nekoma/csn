@@ -492,6 +492,9 @@
                       <i class="fas fa-eye" onclick="toggleInputPwd('reg-pass', this)"></i>
                   </div>
               </div>
+              <div class="input-group" style="margin-bottom:15px;">
+                  <input type="text" id="reg-ref" class="input-control" placeholder="Referral Code (Optional)">
+              </div>
               <div id="auth-error-register" class="auth-msg auth-error"></div>
               <button class="btn-play" style="width:100%; border-color:var(--success); color:var(--success);" onclick="submitAuth('register')">CREATE ACCOUNT</button>
           </div>
@@ -1201,33 +1204,30 @@
 
     function formatBetHistory(id, betStr) {
         if (!betStr || betStr === '-') return '-';
-        if (id === 'baccarat') {
-            return betStr.split(', ').map(b => {
-                if (b === 'Player') return `<span style="color:var(--ps-glow); font-weight:900;">P</span>`;
-                if (b === 'Banker') return `<span style="color:var(--danger); font-weight:900;">B</span>`;
-                if (b === 'Tie') return `<span style="color:var(--success); font-weight:900;">T</span>`;
-                return b;
-            }).join(' ');
-        }
-        if (id === 'dt') {
-            return betStr.split(', ').map(b => {
-                if (b === 'Dragon') return `<div style="width:14px; height:14px; border-radius:50%; background:var(--danger); display:inline-block; box-shadow: 0 0 5px var(--danger);"></div>`;
-                if (b === 'Tiger') return `<div style="width:14px; height:14px; border-radius:50%; background:var(--credits); display:inline-block; box-shadow: 0 0 5px var(--credits);"></div>`;
-                if (b === 'Tie') return `<div style="width:14px; height:14px; border-radius:50%; background:var(--success); display:inline-block; box-shadow: 0 0 5px var(--success);"></div>`;
-                return b;
-            }).join(' ');
-        }
-        if (id === 'sicbo') {
-            return betStr.split(', ').map(b => {
-                if (b === 'Small') return `<span style="color:var(--ps-glow); font-weight:900;">S</span>`;
-                if (b === 'Big') return `<span style="color:var(--danger); font-weight:900;">B</span>`;
-                return b;
-            }).join(' ');
-        }
-        if (id === 'perya') {
-            return `<div style="display:flex; justify-content:center; align-items:center; gap:2px; flex-wrap:nowrap;">${colorsToDice(betStr)}</div>`;
-        }
-        return `<span style="font-weight:800; color:${getBetColor(betStr.split(',')[0])}">${betStr}</span>`;
+        return betStr.split(',').map(b => {
+            let baseChoice = b.trim(); // E.g., removes any extra spacing from "Player"
+            if (id === 'baccarat') {
+                if (baseChoice === 'Player') return `<span style="color:var(--ps-glow); font-weight:900;">P</span>`;
+                if (baseChoice === 'Banker') return `<span style="color:var(--danger); font-weight:900;">B</span>`;
+                if (baseChoice === 'Tie') return `<span style="color:var(--success); font-weight:900;">T</span>`;
+                return baseChoice;
+            }
+            if (id === 'dt') {
+                if (baseChoice === 'Dragon') return `<div style="width:14px; height:14px; border-radius:50%; background:var(--danger); display:inline-block; box-shadow: 0 0 5px var(--danger);"></div>`;
+                if (baseChoice === 'Tiger') return `<div style="width:14px; height:14px; border-radius:50%; background:var(--credits); display:inline-block; box-shadow: 0 0 5px var(--credits);"></div>`;
+                if (baseChoice === 'Tie') return `<div style="width:14px; height:14px; border-radius:50%; background:var(--success); display:inline-block; box-shadow: 0 0 5px var(--success);"></div>`;
+                return baseChoice;
+            }
+            if (id === 'sicbo') {
+                if (baseChoice === 'Small') return `<span style="color:var(--ps-glow); font-weight:900;">S</span>`;
+                if (baseChoice === 'Big') return `<span style="color:var(--danger); font-weight:900;">B</span>`;
+                return baseChoice;
+            }
+            if (id === 'perya') {
+                return `<div style="display:flex; justify-content:center; align-items:center; gap:2px; flex-wrap:nowrap;">${colorsToDice(baseChoice)}</div>`;
+            }
+            return `<span style="font-weight:800; color:${getBetColor(baseChoice)}">${baseChoice}</span>`;
+        }).join(' ');
     }
 
     function openModal(id) { 
@@ -1499,6 +1499,8 @@
         const pId = mode === 'login' ? 'login-pass' : 'reg-pass';
         const user = document.getElementById(uId).value.trim();
         const pass = document.getElementById(pId).value;
+        const ref = mode === 'register' ? document.getElementById('reg-ref').value.trim() : null;
+
         if(!user || !pass) return document.getElementById(mode === 'login' ? 'auth-error-login' : 'auth-error-register').innerText = "Please fill all fields.";
         
         if (mode === 'login') {
@@ -1506,7 +1508,7 @@
             window.tempLoginPass = pass;
         }
         
-        socket.emit(mode, { username: user, password: pass });
+        socket.emit(mode, { username: user, password: pass, referral: ref });
     }
 
     socket.on('authError', (msg) => {
@@ -1912,7 +1914,10 @@
           let net = formatTC(res.payout - res.bet);
           let wP = net > 0 ? net : 0;
           let lB = net < 0 ? Math.abs(net) : 0;
-          logHistory('d20', fmtTC(betAmt) + ' TC/ea', res.resStr, wP, lB, true);
+          
+          // Log clean names instead of amounts for multiple bets
+          let d20Choices = activeBets.map(b => b.guessValue.toUpperCase()).join(', ');
+          logHistory('d20', d20Choices, res.resStr, wP, lB, true);
           
           await delay(800); 
           icn.className = 'fas fa-dice-d20 dice-icon';
@@ -2039,7 +2044,7 @@
 
                 showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, histStr, data.newBalance);
                 let net = formatTC(data.payout - bjSt.bet);
-                logHistory('blackjack', fmtTC(bjSt.bet) + ' TC', histStr, net > 0 ? net : 0, net < 0 ? Math.abs(net) : 0, true);
+                logHistory('blackjack', 'HAND', histStr, net > 0 ? net : 0, net < 0 ? Math.abs(net) : 0, true);
                 
                 setTimeout(() => { 
                     document.getElementById('btn-bj-deal').disabled = false; 
@@ -2085,7 +2090,7 @@
             await delay(300); 
             showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.resStr, data.newBalance);
             let net2 = formatTC(data.payout - bjSt.bet);
-            logHistory('blackjack', fmtTC(bjSt.bet) + ' TC', data.resStr, net2 > 0 ? net2 : 0, net2 < 0 ? Math.abs(net2) : 0, true);
+            logHistory('blackjack', 'HAND', data.resStr, net2 > 0 ? net2 : 0, net2 < 0 ? Math.abs(net2) : 0, true);
             
             setTimeout(() => { document.getElementById('btn-bj-deal').disabled = false; }, 1500);
         }
