@@ -97,8 +97,9 @@
         .bento-span-row-2 { grid-row: span 2; flex-direction: column; align-items: flex-start; justify-content: center; }
         
         .stat-icon { width: 70px; height: 70px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; background: rgba(255,255,255,0.05); box-shadow: inset 0 0 15px rgba(255,255,255,0.02); flex-shrink:0;}
-        .stat-info h3 { color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px;}
-        .stat-info .value { font-size: 2.5rem; font-weight: 900; color: white; line-height: 1; }
+        .stat-info { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+        .stat-info h3 { color: var(--text-muted); font-size: 0.95rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .stat-info .value { font-size: 2rem; font-weight: 900; color: white; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .glow-neon { text-shadow: 0 0 15px var(--ps-glow); color: var(--ps-glow); }
         .glow-success { text-shadow: 0 0 15px var(--success); color: var(--success); }
 
@@ -176,6 +177,8 @@
         @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
+        /* POPOVERS */
+        .glass-popover { position: fixed; background: rgba(0, 15, 35, 0.95); border: 1px solid var(--ps-glow); border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); z-index: 9999999; padding: 10px; display: flex; flex-direction: column; gap: 5px; backdrop-filter: blur(20px); }
         .smurf-icon { color: var(--danger); margin-left: 8px; cursor: help; font-size: 1.1rem; animation: pulseRed 2s infinite; }
     </style>
 </head>
@@ -236,11 +239,11 @@
                     <div class="bento-container">
                         <div class="bento-grid">
                             <div class="bento-item bento-span-2 bento-span-row-2" onclick="openBentoModal('economy')">
-                                <div style="display:flex; align-items:center; gap:20px;">
+                                <div style="display:flex; align-items:center; gap:20px; width:100%;">
                                     <div class="stat-icon" style="color: var(--credits); font-size:3rem; width:80px; height:80px;"><i class="fas fa-coins"></i></div>
                                     <div class="stat-info">
                                         <h3 style="font-size:1.1rem;">Total Economy (Main TC)</h3>
-                                        <div class="value glow-neon" id="stat-economy" style="font-size:3.5rem;">0</div>
+                                        <div class="value glow-neon" id="stat-economy" style="font-size:2.8rem;">0</div>
                                     </div>
                                 </div>
                             </div>
@@ -319,8 +322,8 @@
                                 <thead>
                                     <tr>
                                         <th class="center-col" style="width: 10%;">#</th>
-                                        <th class="left-col" style="width: 40%; padding-left: 0;">PLAYER</th>
-                                        <th class="center-col" style="width: 25%;">CREDITS (TC)</th>
+                                        <th class="left-col" style="width: 35%; padding-left: 20px;">PLAYER</th>
+                                        <th class="center-col" style="width: 30%;">CREDITS (TC)</th>
                                         <th class="center-col" style="width: 25%;">ROLE</th>
                                     </tr>
                                 </thead>
@@ -477,9 +480,9 @@
         </div>
     </div>
 
-    <div id="player-details-modal" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('player-details-modal')">
+    <div id="player-details-modal" class="modal-overlay hidden" onclick="if(event.target===this) { closeModal('player-details-modal'); hideSmurfPop(); }">
         <div class="modal-content" style="width: 500px;">
-            <button class="modal-close" onclick="closeModal('player-details-modal')"><i class="fas fa-times"></i></button>
+            <button class="modal-close" onclick="closeModal('player-details-modal'); hideSmurfPop();"><i class="fas fa-times"></i></button>
             <h3 class="modal-title" style="border:none; margin-bottom: 10px;">Player Details</h3>
             
             <input type="hidden" id="pd-id">
@@ -496,7 +499,7 @@
 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
                     <span style="color:var(--text-muted); font-weight:800; font-size:0.9rem;">IP ADDRESS</span>
-                    <span id="pd-ip" style="font-weight:800; color:white;"></span>
+                    <span id="pd-ip" style="font-weight:800; color:white; display:flex; align-items:center;"></span>
                 </div>
                 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
@@ -688,6 +691,8 @@
     <div id="lightbox-modal" class="modal-overlay hidden" onclick="closeModal('lightbox-modal')">
         <img id="lightbox-img" class="lightbox-img" src="" alt="Proof Receipt" onclick="event.stopPropagation();">
     </div>
+
+    <div id="smurf-popover" class="glass-popover hidden"></div>
 
     <script>
         const socket = io();
@@ -1000,12 +1005,11 @@
             }
         });
 
-        // HIDE POPOVERS ON CLICK OUTSIDE
+        // SMURF INDICATOR LOGIC (Popovers specific fix)
         function hideAllPopovers() {
-            document.querySelectorAll('.glass-popover').forEach(p => p.classList.add('hidden'));
+            document.getElementById('smurf-popover').classList.add('hidden');
         }
 
-        // SMURF INDICATOR LOGIC
         function showSmurfPop(event, ip) {
             let p = document.getElementById('smurf-popover');
             let smurfs = gUsers.filter(u => u.ipAddress === ip).map(u => u.username);
@@ -1024,10 +1028,6 @@
             let rFilt = document.getElementById('filter-role').value;
             let sFilt = document.getElementById('filter-status').value;
             let sortDir = document.getElementById('filter-sort').value;
-
-            // IP Tracking for Smurfs
-            let ipCounts = {};
-            gUsers.forEach(u => { if(u.ipAddress && u.ipAddress !== 'Unknown') { ipCounts[u.ipAddress] = (ipCounts[u.ipAddress] || 0) + 1; } });
 
             let filtered = gUsers.filter(u => {
                 if (sTerm && !u.username.toLowerCase().includes(sTerm)) return false;
@@ -1049,7 +1049,8 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No players found.</td></tr>`; return; }
 
             paginated.forEach((u, i) => {
-                let rowNum = (pgUsers - 1) * limit + i + 1;
+                // Reverse absolute numbering (Highest at top)
+                let rowNum = filtered.length - ((pgUsers - 1) * limit) - i;
                 
                 // Determine Status Dot Color
                 let statColor = u.status === 'Active' ? 'var(--success)' : (u.status === 'Banned' ? 'var(--danger)' : 'var(--text-muted)');
@@ -1061,9 +1062,9 @@
                 tbody.innerHTML += `
                     <tr class="clickable-row" onclick="openPlayerDetails('${u._id}')">
                         <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
-                        <td class="left-col" style="padding-left: 0;">
-                            <div style="display:flex; align-items:center; gap:12px;">
-                                <div style="width:10px; height:10px; border-radius:50%; background:${statColor}; box-shadow:0 0 8px ${statColor}; flex-shrink: 0;"></div>
+                        <td class="left-col" style="padding-left: 20px;">
+                            <div style="display:flex; align-items:center; gap:20px;">
+                                <div style="width:12px; height:12px; border-radius:50%; background:${statColor}; box-shadow:0 0 8px ${statColor}; flex-shrink: 0;"></div>
                                 <span style="font-weight:900; font-size:1.1rem; color: white;">${u.username}</span>
                             </div>
                         </td>
@@ -1083,7 +1084,10 @@
 
             document.getElementById('pd-id').value = u._id;
             document.getElementById('pd-username').innerText = u.username;
+            
+            // SMURF ALERT LOGIC ADDED SECURELY TO MODAL ONLY
             document.getElementById('pd-ip').innerHTML = `${u.ipAddress} ${isSmurf ? `<i class="fas fa-exclamation-triangle smurf-icon" onmouseover="showSmurfPop(event, '${u.ipAddress}')" onmouseout="hideSmurfPop()"></i>` : ''}`;
+            
             document.getElementById('pd-joined').innerText = new Date(u.joinDate).toLocaleString('en-US', {dateStyle: 'medium', timeStyle: 'short'});
             document.getElementById('pd-credits').innerText = fmtTC(u.credits) + ' TC';
             document.getElementById('pd-playable').innerText = fmtTC(u.playableCredits) + ' P';
@@ -1166,7 +1170,7 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No audit logs available.</td></tr>`; return; }
 
             paginated.forEach((l, i) => {
-                let rowNum = (pgAudit - 1) * limit + i + 1;
+                let rowNum = gAdminLogs.length - ((pgAudit - 1) * limit) - i;
                 let dStr = new Date(l.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 tbody.innerHTML += `
                     <tr>
@@ -1201,7 +1205,7 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No logs found for this user.</td></tr>`; return; }
 
             paginated.forEach((l, i) => {
-                let rowNum = (pgPL - 1) * limit + i + 1;
+                let rowNum = activePlayerLogs.length - ((pgPL - 1) * limit) - i;
                 let dStr = new Date(l.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let amtColor = l.amount > 0 ? 'var(--success)' : (l.amount < 0 ? 'var(--danger)' : 'white');
                 let amtSign = l.amount > 0 ? '+' : '';
@@ -1253,7 +1257,7 @@
 
             if(pagPend.length === 0) pBody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">Queue is empty.</td></tr>`;
             pagPend.forEach((t, i) => {
-                let rowNum = (pgPend - 1) * limit + i + 1;
+                let rowNum = pendings.length - ((pgPend - 1) * limit) - i;
                 let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
                 let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 pBody.innerHTML += `
@@ -1268,7 +1272,7 @@
 
             if(pagHist.length === 0) hBody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No history found.</td></tr>`;
             pagHist.forEach((t, i) => {
-                let rowNum = (pgHist - 1) * limit + i + 1;
+                let rowNum = histories.length - ((pgHist - 1) * limit) - i;
                 let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
                 let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let statClass = t.status === 'Approved' ? 'approved' : 'rejected';
@@ -1321,7 +1325,7 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No batches found.</td></tr>`; return; }
 
             paginated.forEach((b, i) => {
-                let rowNum = (pgPromos - 1) * limit + i + 1;
+                let rowNum = gBatchesArr.length - ((pgPromos - 1) * limit) - i;
                 let tColor = b.type === 'playable' ? 'var(--playable)' : 'var(--credits)';
                 let tName = b.type === 'playable' ? 'Playable' : 'Regular';
                 tbody.innerHTML += `
@@ -1357,7 +1361,7 @@
             renderPagination(activeBatchCodes.length, pgVB, 'pag-vb', 'pgVB', 'renderBatchViewPage');
             
             paginated.forEach((c, i) => {
-                let rowNum = (pgVB - 1) * limit + i + 1;
+                let rowNum = activeBatchCodes.length - ((pgVB - 1) * limit) - i;
                 let statHtml = c.redeemedBy ? `<span class="badge offline">Claimed by ${c.redeemedBy}</span>` : `<span class="badge active">Available</span>`;
                 tbody.innerHTML += `
                     <tr>
