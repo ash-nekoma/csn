@@ -1066,9 +1066,16 @@
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    // Custom Formatter to completely hide .0
+    // STRICT MATH FORMATTER - Returns pure number
     const formatTC = (amount) => {
-        let num = Math.round(amount * 10) / 10;
+        let num = parseFloat(amount);
+        if(isNaN(num)) return 0;
+        return Math.round(num * 10) / 10;
+    };
+
+    // VISUAL ONLY FORMATTER - Returns pretty string with commas
+    const fmtTC = (amount) => {
+        let num = formatTC(amount);
         return num % 1 === 0 ? num.toLocaleString() : num.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
     };
 
@@ -1159,7 +1166,6 @@
         if(!f) { f = document.getElementById('flash-shared'); }
         if(!f) return;
         
-        // Force DOM reflow to restart animation on spam clicks
         f.classList.remove('show', 'error', 'success');
         void f.offsetWidth; 
 
@@ -1198,9 +1204,9 @@
         } else {
             entries.forEach(([choice, amount]) => {
                 total += amount; let cColor = getBetColor(choice);
-                list.innerHTML += `<div style="background:rgba(0,0,0,0.4); padding:10px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:flex; justify-content:space-between; align-items:center; font-weight:800; margin-bottom:5px;"><span style="text-transform:uppercase; color:${cColor};">${choice}</span><span style="color:var(--credits); font-size: 1rem; white-space: nowrap;">${formatTC(amount)} TC</span></div>`;
+                list.innerHTML += `<div style="background:rgba(0,0,0,0.4); padding:10px 15px; border-radius:6px; border-left:4px solid ${cColor}; display:flex; justify-content:space-between; align-items:center; font-weight:800; margin-bottom:5px;"><span style="text-transform:uppercase; color:${cColor};">${choice}</span><span style="color:var(--credits); font-size: 1rem; white-space: nowrap;">${fmtTC(amount)} TC</span></div>`;
             });
-            list.innerHTML += `<div style="border-top:1px solid var(--glass-border); padding-top:10px; margin-top:5px; display:flex; justify-content:space-between; font-weight:900; font-size:1.1rem; color:white;"><span>TOTAL</span><span style="color:var(--credits); white-space: nowrap;">${formatTC(total)} TC</span></div>`;
+            list.innerHTML += `<div style="border-top:1px solid var(--glass-border); padding-top:10px; margin-top:5px; display:flex; justify-content:space-between; font-weight:900; font-size:1.1rem; color:white;"><span>TOTAL</span><span style="color:var(--credits); white-space: nowrap;">${fmtTC(total)} TC</span></div>`;
         }
     }
 
@@ -1257,9 +1263,9 @@
             
             if (h.didBet) {
                 if (net > 0) {
-                    winVal = `<span style="color:var(--success)">+${net}</span>`;
+                    winVal = `<span style="color:var(--success)">+${fmtTC(net)}</span>`;
                 } else if (net < 0) {
-                    lossVal = `<span style="color:var(--danger)">-${Math.abs(net)}</span>`;
+                    lossVal = `<span style="color:var(--danger)">-${fmtTC(Math.abs(net))}</span>`;
                 } else {
                     winVal = '<span style="color:white; font-weight: 900;">PUSH</span>';
                 }
@@ -1432,10 +1438,9 @@
         }
 
         myUsername = data.username;
-        myCredits = data.credits;
-        myPlayable = data.playable || 0;
+        myCredits = formatTC(data.credits);
+        myPlayable = formatTC(data.playable || 0);
         
-        // VIP Styling
         let nameHTML = data.role === 'VIP' ? `<span style="color:var(--playable); text-shadow:0 0 10px var(--playable);"><i class="fas fa-crown" style="margin-right:5px;"></i>${myUsername}</span>` : myUsername;
         document.getElementById('player-name-display').innerHTML = nameHTML;
         
@@ -1475,22 +1480,22 @@
         let tc = formatTC(data.credits);
         let ptc = formatTC(data.playable || 0);
         
-        if(didWin && parseFloat(tc) > myCredits) { triggerWinAnim(); }
-        myCredits = parseFloat(tc);
-        myPlayable = parseFloat(ptc);
+        if(didWin && tc > myCredits) { triggerWinAnim(); }
+        myCredits = tc;
+        myPlayable = ptc;
 
-        document.getElementById('nav-credits').innerText = tc; 
+        document.getElementById('nav-credits').innerText = fmtTC(tc); 
         
         const pillPlayable = document.getElementById('pill-playable');
         const navPlayable = document.getElementById('nav-playable');
         if (myPlayable > 0) { 
             pillPlayable.style.display = 'flex'; 
-            navPlayable.innerText = ptc; 
+            navPlayable.innerText = fmtTC(ptc); 
         } else { 
             pillPlayable.style.display = 'none'; 
         }
         
-        document.querySelectorAll('.cashier-balance-display').forEach(el => el.innerText = tc + ' TC');
+        document.querySelectorAll('.cashier-balance-display').forEach(el => el.innerText = fmtTC(tc) + ' TC');
     }
 
     socket.on('balanceUpdateData', (newBalance) => { updateMyBalance(newBalance, true); });
@@ -1521,7 +1526,7 @@
         updateMyBalance(data.newBalance, true);
         startDailyTimer(data.nextClaim);
         
-        showLocalFlash('shared', `+${formatTC(data.amt)} PLAYABLE`, 'success');
+        showLocalFlash('shared', `+${fmtTC(data.amt)} PLAYABLE`, 'success');
         setTimeout(() => { closeModal('daily-reward-modal'); }, 1500);
     });
 
@@ -1724,10 +1729,10 @@
         
         let h = `<div class="res-title" style="color:white;">${msg}</div>`; 
         if (net > 0) { 
-            h += `<div class="res-payout" style="color:var(--success)">WON +${formatTC(net)} TC</div>`; 
+            h += `<div class="res-payout" style="color:var(--success)">WON +${fmtTC(net)} TC</div>`; 
             box.className = "result-box win"; 
         } else if (net < 0) { 
-            h += `<div class="res-payout" style="color:var(--danger)">LOST -${formatTC(Math.abs(net))} TC</div>`; 
+            h += `<div class="res-payout" style="color:var(--danger)">LOST -${fmtTC(Math.abs(net))} TC</div>`; 
             box.className = "result-box lose"; 
         } else { 
             h += `<div class="res-payout" style="color:white">PUSH - BET RETURNED</div>`; 
@@ -1780,7 +1785,13 @@
       
       let totalBetAmt = betAmt * activeBets.length;
       if (totalBetAmt > 50000) { showLocalFlash('d20', "Max Total Bet is 50K TC", "error"); return; }
+      if (totalBetAmt > (myCredits + myPlayable)) { showLocalFlash('d20', "Insufficient TC", "error"); return; }
       
+      if(myPlayable >= totalBetAmt) { myPlayable -= totalBetAmt; } 
+      else { let rem = totalBetAmt - myPlayable; myPlayable = 0; myCredits -= rem; }
+      updateMyBalance({credits: myCredits, playable: myPlayable});
+      triggerBetAnim();
+
       const btn = document.getElementById('btn-d20'), icn = document.getElementById('d20-icon'), nd = document.getElementById('d20-num'), mb = document.getElementById('d20-msg');
       const toggleBtns = document.querySelectorAll('.d20-toggle');
       
@@ -1812,7 +1823,7 @@
           let net = formatTC(res.payout - res.bet);
           let wP = net > 0 ? net : 0;
           let lB = net < 0 ? Math.abs(net) : 0;
-          logHistory('d20', formatTC(betAmt) + ' TC/ea', res.resStr, wP, lB, true);
+          logHistory('d20', fmtTC(betAmt) + ' TC/ea', res.resStr, wP, lB, true);
           
           await delay(800); 
           icn.className = 'fas fa-dice-d20 dice-icon';
@@ -1831,7 +1842,13 @@
       let betEl = document.getElementById('coin-bet');
       let bet = parseFloat(betEl.value);
       if (isNaN(bet) || bet < 10) { showLocalFlash('coinflip', "Min Bet is 10 TC", "error"); return; }
+      if (bet > (myCredits + myPlayable)) { showLocalFlash('coinflip', "Insufficient TC", "error"); return; }
       
+      if(myPlayable >= bet) { myPlayable -= bet; } 
+      else { let rem = bet - myPlayable; myPlayable = 0; myCredits -= rem; }
+      updateMyBalance({credits: myCredits, playable: myPlayable});
+      triggerBetAnim();
+
       const cw = document.getElementById('coin-wrapper'), co = document.getElementById('coin-obj'), mb = document.getElementById('coin-msg');
       document.getElementById('btn-heads').disabled = true; document.getElementById('btn-tails').disabled = true;
       mb.style.display = 'none'; mb.classList.remove('show');
@@ -1869,6 +1886,12 @@
       let betEl = document.getElementById('bj-bet');
       let bet = parseFloat(betEl.value);
       if (isNaN(bet) || bet < 10) { showLocalFlash('blackjack', "Min Bet is 10 TC", "error"); return; }
+      if (bet > (myCredits + myPlayable)) { showLocalFlash('blackjack', "Insufficient TC", "error"); return; }
+      
+      if(myPlayable >= bet) { myPlayable -= bet; } 
+      else { let rem = bet - myPlayable; myPlayable = 0; myCredits -= rem; }
+      updateMyBalance({credits: myCredits, playable: myPlayable});
+      triggerBetAnim();
 
       bjSt.bet = bet; bjSt.active = true; 
       document.getElementById('btn-bj-deal').disabled = true;
@@ -1927,7 +1950,7 @@
 
                 showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, histStr, data.newBalance);
                 let net = formatTC(data.payout - bjSt.bet);
-                logHistory('blackjack', formatTC(bjSt.bet) + ' TC', histStr, net > 0 ? net : 0, net < 0 ? Math.abs(net) : 0, true);
+                logHistory('blackjack', fmtTC(bjSt.bet) + ' TC', histStr, net > 0 ? net : 0, net < 0 ? Math.abs(net) : 0, true);
                 
                 setTimeout(() => { 
                     document.getElementById('btn-bj-deal').disabled = false; 
@@ -1973,7 +1996,7 @@
             await delay(300); 
             showEndBox(document.getElementById('bj-msg'), bjSt.bet, data.payout, data.resStr, data.newBalance);
             let net2 = formatTC(data.payout - bjSt.bet);
-            logHistory('blackjack', formatTC(bjSt.bet) + ' TC', data.resStr, net2 > 0 ? net2 : 0, net2 < 0 ? Math.abs(net2) : 0, true);
+            logHistory('blackjack', fmtTC(bjSt.bet) + ' TC', data.resStr, net2 > 0 ? net2 : 0, net2 < 0 ? Math.abs(net2) : 0, true);
             
             setTimeout(() => { document.getElementById('btn-bj-deal').disabled = false; }, 1500);
         }
@@ -2031,7 +2054,7 @@
             
             let badge = document.getElementById('badge-' + data.choice);
             if (mySBets[data.choice] > 0) {
-                if(badge) badge.innerText = formatTC(mySBets[data.choice]);
+                if(badge) badge.innerText = fmtTC(mySBets[data.choice]);
             }
             
             if(mySBets[data.choice] <= 0) {
@@ -2046,7 +2069,7 @@
         }
         let tot = Object.values(mySBets).reduce((sum, val) => sum + val, 0);
         let mb = document.getElementById('sg-my-bet');
-        if(mb) mb.innerHTML = `${formatTC(tot)} TC`;
+        if(mb) mb.innerHTML = `${fmtTC(tot)} TC`;
         
         updateCurrentBetsPopover();
         sfx.tick();
@@ -2298,7 +2321,7 @@
               } 
               let msg = w === 'Tie' ? `TIE` : `${w.toUpperCase()}`;
               processSharedPayout('dt', tp, tba, msg, wonProfit, lostBet, Object.keys(mySBets).join(', '), data.resStr); 
-            }, 1500); 
+            }, 1000); 
           }, 500); 
         }
       },
@@ -2404,13 +2427,13 @@
         
         let tot = Object.values(mySBets).reduce((sum, val) => sum + val, 0);
         let mb = document.getElementById('sg-my-bet'); 
-        if (mb) { mb.innerHTML = `${formatTC(tot)} TC`; } 
+        if (mb) { mb.innerHTML = `${fmtTC(tot)} TC`; } 
         
         updateCurrentBetsPopover();
 
         let badge = document.getElementById('badge-' + c);
         if (badge) {
-            badge.innerText = formatTC(mySBets[c]);
+            badge.innerText = fmtTC(mySBets[c]);
             badge.style.display = 'block';
         }
 
@@ -2454,8 +2477,8 @@
           if (t) t.innerHTML = msg; 
           if (tba > 0 && b) { 
             b.style.display = 'block'; 
-            if (net > 0) { b.innerHTML = `WON <span style="color:var(--success)">+${formatTC(net)} TC</span>`; b.style.color = "white"; } 
-            else if (net < 0) { b.innerHTML = `LOST <span style="color:var(--danger)">-${formatTC(Math.abs(net))} TC</span>`; b.style.color = "white"; } 
+            if (net > 0) { b.innerHTML = `WON <span style="color:var(--success)">+${fmtTC(net)} TC</span>`; b.style.color = "white"; } 
+            else if (net < 0) { b.innerHTML = `LOST <span style="color:var(--danger)">-${fmtTC(Math.abs(net))} TC</span>`; b.style.color = "white"; } 
             else { b.innerHTML = `PUSH <span style="color:var(--text-muted)">RETURNED</span>`; b.style.color = "white"; } 
           } else if (b) {
               b.style.display = 'none'; 
@@ -2548,7 +2571,7 @@
     function openCashier() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
       sfx.click();
-      document.querySelectorAll('.cashier-balance-display').forEach(el => el.innerText = formatTC(myCredits) + ' TC');
+      document.querySelectorAll('.cashier-balance-display').forEach(el => el.innerText = fmtTC(myCredits) + ' TC');
       switchSupportCenterTab('deposit', document.querySelectorAll('#cashier-tabs-nav .bank-tab')[0]);
       openModal('support-center-modal');
     }
@@ -2668,7 +2691,7 @@
         txs.forEach(t => {
             let statClass = t.status === 'Approved' ? 'approved' : (t.status === 'Rejected' ? 'rejected' : 'pending');
             let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)'; let sign = t.type === 'Deposit' ? '+' : '-';
-            container.innerHTML += `<div class="ticket-log-item"><div class="ticket-log-header"><span class="ticket-log-id">${t._id.substring(0,8)}... - ${new Date(t.date).toLocaleDateString()}</span><span class="ticket-log-status ${statClass}">${t.status}</span></div><div style="display:flex; justify-content:space-between; align-items:center;"><div style="font-weight:900; font-size:1.1rem; text-transform:uppercase;">${t.type}</div><div style="color:${color}; font-weight:900; font-size:1.2rem;">${sign}${formatTC(t.amount)} TC</div></div></div>`;
+            container.innerHTML += `<div class="ticket-log-item"><div class="ticket-log-header"><span class="ticket-log-id">${t._id.substring(0,8)}... - ${new Date(t.date).toLocaleDateString()}</span><span class="ticket-log-status ${statClass}">${t.status}</span></div><div style="display:flex; justify-content:space-between; align-items:center;"><div style="font-weight:900; font-size:1.1rem; text-transform:uppercase;">${t.type}</div><div style="color:${color}; font-weight:900; font-size:1.2rem;">${sign}${fmtTC(t.amount)} TC</div></div></div>`;
         });
     });
 
@@ -2685,7 +2708,7 @@
         if(pHud) {
             let pColor = data.dailyProfit > 0 ? 'var(--success)' : (data.dailyProfit < 0 ? 'var(--danger)' : 'white');
             let pSign = data.dailyProfit > 0 ? '+' : '';
-            pHud.innerHTML = `<span style="color:${pColor}">${pSign}${formatTC(data.dailyProfit)} TC</span>`;
+            pHud.innerHTML = `<span style="color:${pColor}">${pSign}${fmtTC(data.dailyProfit)} TC</span>`;
         }
 
         if(data.logs.length === 0) return container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; grid-column: span 4;">No ledger history found.</div>';
@@ -2696,7 +2719,7 @@
             container.innerHTML += `
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; padding:10px; border-bottom:1px solid rgba(255,255,255,0.05); align-items:center; text-align:center; font-size:0.9rem; white-space:nowrap;">
                 <div style="color:white; font-weight:900; text-transform:uppercase;">${l.action}</div>
-                <div style="color:${color}; font-weight:900;">${sign}${formatTC(l.amount)}</div>
+                <div style="color:${color}; font-weight:900;">${sign}${fmtTC(l.amount)}</div>
                 <div style="color:var(--text-muted); font-weight:600; text-transform:uppercase;">${l.details}</div>
                 <div style="color:var(--text-muted); font-weight:600; font-size:0.8rem;">${new Date(l.date).toLocaleDateString([], {month:'short', day:'numeric'})}</div>
             </div>`;
@@ -2715,7 +2738,7 @@
     socket.on('promoResult', (res) => {
         let respDiv = document.getElementById('promo-response');
         if(res.success) { 
-            respDiv.innerHTML = `<span style="color:var(--success)">Valid: +${formatTC(res.amt)} ${res.type === 'playable' ? 'P TC' : 'TC'}</span>`;
+            respDiv.innerHTML = `<span style="color:var(--success)">Valid: +${fmtTC(res.amt)} ${res.type === 'playable' ? 'P TC' : 'TC'}</span>`;
             document.getElementById('promo-code').value = ''; 
             socket.emit('requestBalanceRefresh');
         } else { 
