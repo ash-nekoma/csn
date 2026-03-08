@@ -166,18 +166,18 @@
         /* BOTTOM RIGHT RESULTS UI */
         .result-box, .result-overlay-shared { 
             position: absolute; bottom: 20px; right: 20px; 
-            opacity: 0; text-align: right; padding: 20px 30px; border-radius: 12px; display: none; 
+            opacity: 0; padding: 20px 30px; border-radius: 12px; display: none; 
             z-index: 2000; min-width: 250px; text-transform: uppercase; backdrop-filter: blur(20px); 
             box-shadow: 0 15px 40px rgba(0,0,0,0.8); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             flex-direction: column; align-items: flex-end; justify-content: center; pointer-events: none;
-            transform: translateX(50px);
+            transform: translateX(50px); text-align: right;
         }
         .result-box.win, .result-overlay-shared.win { background: rgba(0, 230, 118, 0.15); border-right: 4px solid var(--success); color: var(--success); } 
         .result-box.lose, .result-overlay-shared.lose { background: rgba(255, 51, 102, 0.15); border-right: 4px solid var(--danger); color: var(--danger); } 
         .result-box.push, .result-overlay-shared.push { background: rgba(255, 255, 255, 0.1); border-right: 4px solid var(--text-muted); color: white; }
         .result-box.show, .result-overlay-shared.show { opacity: 1; transform: translateX(0); pointer-events: all; display: flex !important; }
         
-        .res-title { font-size: 1.2rem; font-weight: 900; color: white; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; text-align: right; width: 100%; } 
+        .res-title { font-size: 1.2rem; font-weight: 900; color: white; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; text-align: right; width: 100%; white-space: normal; line-height: 1.2; } 
         .res-payout { font-size: 1.8rem; font-weight: 900; text-align: right; width: 100%; }
 
         /* SUBTLE ARCADE FLASH - BOTTOM RIGHT */
@@ -187,7 +187,7 @@
             right: 25px; 
             z-index: 2500; 
             color: var(--danger); 
-            font-size: 1.2rem; 
+            font-size: 1.1rem; 
             font-weight: 900; 
             text-transform: uppercase; 
             text-align: right; 
@@ -195,7 +195,9 @@
             opacity: 0; 
             transition: all 0.3s; 
             display: none; 
-            white-space: nowrap;
+            white-space: normal;
+            max-width: 300px;
+            line-height: 1.2;
             text-shadow: 0 2px 10px rgba(0,0,0,0.8), 0 0 15px var(--danger);
             transform: translateY(20px);
         }
@@ -423,16 +425,14 @@
             .chat-panel.show { transform: translateY(0); }
             #chat-floating-btn { display: flex; align-items: center; justify-content: center; position: fixed; bottom: 80px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--ps-glow); color: black; font-size: 1.5rem; z-index: 1001; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5); cursor: pointer; }
             
-            /* Game Board Scaling for Mobile (Blackjack/Dragon Tiger Fix) */
+            /* Game Board Scaling for Mobile */
             .blackjack-scores, .dt-arena { flex-direction: column !important; gap: 15px !important; align-items: center;}
             .card-area { min-height: auto; padding: 10px; width: 100%; min-width: unset; }
             .play-card { transform: scale(0.85); margin: -5px; } 
 
-            /* Popovers alignment adjustment */
             .custom-dropdown { right: -50px; width: 300px; }
             #history-popover { width: 340px; right: -50px; }
 
-            /* NATIVE APP BOTTOM SHEET MODALS */
             .modal-content {
                 position: absolute;
                 bottom: 0;
@@ -513,7 +513,7 @@
             <div class="wallet-pill" id="pill-playable" onclick="openModal('playable-info-modal')" style="display: none; border-color: rgba(179, 102, 255, 0.4); box-shadow: inset 0 0 10px rgba(179, 102, 255, 0.1); margin-right: 4px;">
                 <div class="wallet-main">
                     <i class="fas fa-star" style="color: var(--playable);"></i>
-                    <span id="nav-playable" style="color: var(--playable); font-weight: 900; font-size: 1.1rem;">0.0</span>
+                    <span id="nav-playable" style="color: var(--playable); font-weight: 900; font-size: 1.1rem;">0</span>
                     <span class="wallet-unit" style="color: var(--playable); opacity: 0.8;">P</span>
                 </div>
             </div>
@@ -521,7 +521,7 @@
             <div class="wallet-pill" id="pill-credits" onclick="openCashier()" title="Open Cashier">
                 <div class="wallet-main">
                     <i class="fas fa-coins"></i>
-                    <span id="nav-credits">0.0</span>
+                    <span id="nav-credits">0</span>
                     <span class="wallet-unit">TC</span>
                 </div>
             </div>
@@ -943,7 +943,7 @@
 
       <div class="current-balance-section" id="cashier-balance-header" style="text-align: center; margin-bottom: 20px;">
           <div style="font-size: 0.8rem; color: var(--text-muted);">CURRENT BALANCE</div>
-          <div style="font-size: 2.5rem; color: var(--credits); font-weight: 900;" class="cashier-balance-display">0.0 TC</div>
+          <div style="font-size: 2.5rem; color: var(--credits); font-weight: 900;" class="cashier-balance-display">0 TC</div>
       </div>
 
       <div class="bank-tabs" id="cashier-tabs-nav">
@@ -1017,7 +1017,7 @@
         
         <div style="background: rgba(255,180,0,0.1); border: 1px solid rgba(255,180,0,0.4); border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0;">
             <div style="color: var(--text-muted); font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">Today's Net Profit</div>
-            <div id="ledger-daily-profit" style="color: white; font-weight: 900; font-size: 1.2rem;">0.0 TC</div>
+            <div id="ledger-daily-profit" style="color: white; font-weight: 900; font-size: 1.2rem;">0 TC</div>
         </div>
         
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; padding:10px; border-bottom:1px solid var(--glass-border); font-size:0.8rem; font-weight:900; color:var(--text-muted); text-align:center; text-transform:uppercase; white-space:nowrap;">
@@ -1066,9 +1066,10 @@
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
+    // Custom Formatter to completely hide .0
     const formatTC = (amount) => {
         let num = Math.round(amount * 10) / 10;
-        return num % 1 === 0 ? num.toString() : num.toFixed(1);
+        return num % 1 === 0 ? num.toLocaleString() : num.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
     };
 
     function getBetColor(betWord) {
@@ -1157,11 +1158,18 @@
         let f = document.getElementById('flash-' + game);
         if(!f) { f = document.getElementById('flash-shared'); }
         if(!f) return;
+        
+        // Force DOM reflow to restart animation on spam clicks
+        f.classList.remove('show', 'error', 'success');
+        void f.offsetWidth; 
+
         f.innerText = msg;
-        f.className = `local-flash show ${type}`;
-        if(type === 'error') sfx.lose(); else sfx.win();
+        f.classList.add('show');
+        if(type === 'error') { f.classList.add('error'); sfx.lose(); } 
+        else { f.classList.add('success'); sfx.win(); }
+        
         clearTimeout(flashTimeout);
-        flashTimeout = setTimeout(() => f.classList.remove('show'), 2000);
+        flashTimeout = setTimeout(() => f.classList.remove('show'), 2500);
     }
 
     function toggleCustomDropdown(id, e) {
@@ -1426,10 +1434,14 @@
         myUsername = data.username;
         myCredits = data.credits;
         myPlayable = data.playable || 0;
-        document.getElementById('player-name-display').innerText = myUsername;
+        
+        // VIP Styling
+        let nameHTML = data.role === 'VIP' ? `<span style="color:var(--playable); text-shadow:0 0 10px var(--playable);"><i class="fas fa-crown" style="margin-right:5px;"></i>${myUsername}</span>` : myUsername;
+        document.getElementById('player-name-display').innerHTML = nameHTML;
+        
         updateMyBalance({credits: myCredits, playable: myPlayable});
         
-        if(data.role === 'Admin') { document.querySelector('.admin-btn').classList.remove('hidden'); }
+        if(data.role === 'Admin' || data.role === 'Moderator') { document.querySelector('.admin-btn').classList.remove('hidden'); }
         setupDailyRewardUI(data.daily);
 
         document.getElementById('auth-container').style.display = 'none';
@@ -1530,7 +1542,7 @@
         }, 1000);
     }
 
-   const gameInfoMap = {
+    const gameInfoMap = {
       'd20': { title: "D20", body: "<ul><li>Select multiple bets to increase your coverage.</li><li><strong>High/Low:</strong> Low (1-10) or High (11-20). Pays <strong>1.95x</strong>.</li><li><strong>Odd/Even:</strong> Pays <strong>1.95x</strong>.</li></ul>" },
       'coinflip': { title: "Coin Flip", body: "<ul><li>Enter your bet and choose <strong>Heads</strong> or <strong>Tails</strong>.</li><li>Winning pays <strong>1.95x</strong> your bet.</li><li>Playable Bonus is used before Main TC.</li></ul>" },
       'baccarat': { title: "Baccarat", body: "<ul><li>Bet on Player, Banker, or Tie. Closest to <strong>9</strong> wins.</li><li>Player pays <strong>2x</strong>. Banker pays <strong>1.95x</strong>.</li><li>Tie pays <strong>9x</strong>. Player/Banker bets push.</li></ul>" },
@@ -1735,7 +1747,7 @@
             soloResultTimeout = setTimeout(() => {
                 box.classList.remove('show');
                 setTimeout(() => { box.style.display = 'none'; }, 400);
-            }, 2500);
+            }, 3000);
         });
     }
 
@@ -1825,7 +1837,6 @@
       let betEl = document.getElementById('coin-bet');
       let bet = parseFloat(betEl.value);
       if (isNaN(bet) || bet < 10) { showLocalFlash('coinflip', "Min Bet is 10 TC", "error"); return; }
-      if (bet > 50000) { showLocalFlash('coinflip', "Max Bet is 50K TC", "error"); return; }
       if (bet > (myCredits + myPlayable)) { showLocalFlash('coinflip', "Insufficient TC", "error"); return; }
       
       if(myPlayable >= bet) { myPlayable -= bet; } 
@@ -1870,7 +1881,6 @@
       let betEl = document.getElementById('bj-bet');
       let bet = parseFloat(betEl.value);
       if (isNaN(bet) || bet < 10) { showLocalFlash('blackjack', "Min Bet is 10 TC", "error"); return; }
-      if (bet > 50000) { showLocalFlash('blackjack', "Max Bet is 50K TC", "error"); return; }
       if (bet > (myCredits + myPlayable)) { showLocalFlash('blackjack', "Insufficient TC", "error"); return; }
       
       if(myPlayable >= bet) { myPlayable -= bet; } 
@@ -2221,13 +2231,15 @@
             }
             if(acText) acText.innerText = ""; 
 
-            await delay(1000); 
+            // Boosted Suspense Delay
+            await delay(2000); 
+
             let w = data.winner;
             let tp = 0, tba = 0; 
             let wonProfit = 0, lostBet = 0;
             
             for (let b in mySBets) { 
-                let a = mySBets[b]; tba += a; 
+              let a = mySBets[b]; tba += a; 
                 if (w === 'Tie') {
                     if (b === 'Tie') { tp += a * 9; wonProfit += (a * 8); }
                     else { tp += a; } 
@@ -2372,8 +2384,12 @@
       }
     };
     
+    let isBettingTimeout = false;
+
     function placeSharedBet(c) { 
       if (sState.status !== 'BETTING') { showLocalFlash('shared', "Bets are closed!", "error"); return; } 
+      if (isBettingTimeout) return;
+
       let i = document.getElementById('sg-bet-input'); 
       if (!i) return; 
       let a = parseFloat(i.value); 
@@ -2384,38 +2400,48 @@
       let currentTileBet = mySBets[c] || 0;
       if (currentTileBet + a > 50000) { showLocalFlash('shared', "Max 50K TC Per Tile", "error"); return; }
       
+      // Debounce to prevent visual glitches from spam clicking
+      isBettingTimeout = true;
+      setTimeout(() => { isBettingTimeout = false; }, 250);
+
+      // ONLY emit to server. We wait for `sharedBetConfirmed` before updating UI.
       socket.emit('placeSharedBet', { room: window.activeSharedGame, choice: c, amount: a });
-      
-      if(myPlayable >= a) { myPlayable -= a; } 
-      else { let rem = a - myPlayable; myPlayable = 0; myCredits -= rem; }
-      updateMyBalance({credits: myCredits, playable: myPlayable});
-
-      triggerBetAnim();
-
-      if (!mySBets[c]) mySBets[c] = 0; mySBets[c] += a; 
-      mySBetsStack.push({ choice: c, amount: a });
-      
-      let tot = Object.values(mySBets).reduce((sum, val) => sum + val, 0);
-      let mb = document.getElementById('sg-my-bet'); 
-      if (mb) { mb.innerHTML = `${formatTC(tot)} TC`; } 
-      
-      updateCurrentBetsPopover();
-
-      let badge = document.getElementById('badge-' + c);
-      if (badge) {
-          badge.innerText = formatTC(mySBets[c]);
-          badge.style.display = 'block';
-      }
-
-      document.querySelectorAll('#sg-bet-grid .bet-btn').forEach(b => { 
-        if (b.getAttribute('data-choice') === c) { 
-            b.classList.add('has-bet');
-            let t = b.style.getPropertyValue('--tile-color') || b.style.borderBottomColor; 
-            if (t) { b.style.setProperty('--tile-color', t); }
-        } 
-      }); 
-      sfx.tick(); 
     }
+
+    // SERVER-AUTHORITATIVE BET CONFIRMATION
+    socket.on('sharedBetConfirmed', (data) => {
+        if (data.room !== window.activeSharedGame) return;
+
+        let a = data.amount;
+        let c = data.choice;
+
+        updateMyBalance(data.newBalance, false);
+        triggerBetAnim();
+
+        if (!mySBets[c]) mySBets[c] = 0; mySBets[c] += a; 
+        mySBetsStack.push({ choice: c, amount: a });
+        
+        let tot = Object.values(mySBets).reduce((sum, val) => sum + val, 0);
+        let mb = document.getElementById('sg-my-bet'); 
+        if (mb) { mb.innerHTML = `${formatTC(tot)} TC`; } 
+        
+        updateCurrentBetsPopover();
+
+        let badge = document.getElementById('badge-' + c);
+        if (badge) {
+            badge.innerText = formatTC(mySBets[c]);
+            badge.style.display = 'block';
+        }
+
+        document.querySelectorAll('#sg-bet-grid .bet-btn').forEach(b => { 
+            if (b.getAttribute('data-choice') === c) { 
+                b.classList.add('has-bet');
+                let t = b.style.getPropertyValue('--tile-color') || b.style.borderBottomColor; 
+                if (t) { b.style.setProperty('--tile-color', t); }
+            } 
+        }); 
+        sfx.tick(); 
+    });
 
     let sharedResultTimeout;
     function processSharedPayout(gid, pa, tba, msg, wonProfit = 0, lostBet = 0, betsPlacedStr = "", resStr = "") { 
