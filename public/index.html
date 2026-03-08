@@ -987,7 +987,7 @@
         <div class="quick-chips" style="margin-bottom:15px;">
             <button class="chip-btn" style="border-radius: 50px;" onclick="addAmount('wit-amount', 10000)">+ 10,000</button>
             <button class="chip-btn" style="border-radius: 50px;" onclick="addAmount('wit-amount', 25000)">+ 25,000</button>
-            <button class="chip-btn" style="border-radius: 50px;" onclick="document.getElementById('wit-amount').value = myCredits">MAX</button>
+            <button class="chip-btn" style="border-radius: 50px;" onclick="document.getElementById('wit-amount').value = Math.min(myCredits, 100000)">MAX</button>
         </div>
         <div class="input-group" style="margin-bottom:10px;">
             <input type="text" id="wit-snt" class="input-control" placeholder="SNT Username">
@@ -1132,7 +1132,12 @@
         if (cBtn) cBtn.style.display = document.getElementById('sg-chat-panel').classList.contains('show') ? 'block' : 'none';
     }
 
-    function addAmount(inputId, val) { let i = document.getElementById(inputId); i.value = (parseInt(i.value) || 0) + val; }
+    function addAmount(inputId, val) { 
+        let i = document.getElementById(inputId); 
+        let newVal = (parseInt(i.value) || 0) + val;
+        if (newVal > 100000) newVal = 100000;
+        i.value = newVal; 
+    }
 
     let flashTimeout;
     function showLocalFlash(game, msg, type='error') {
@@ -2565,6 +2570,12 @@
             return; 
         }
         
+        // NEW: Maximum Deposit Check
+        if(parseFloat(amt) > 100000) {
+            msgBox.innerHTML = '<span style="color:var(--danger)">Maximum deposit is 100,000 TC.</span>';
+            return;
+        }
+
         let combinedRef = `SNT: ${snt} | Discord: ${discord}`; 
         socket.emit('submitTransaction', { type: 'Deposit', amount: parseFloat(amt), ref: combinedRef });
         
@@ -2591,6 +2602,13 @@
             msgBox.innerHTML = '<span style="color:var(--danger)">Minimum withdrawal is 10,000 TC.</span>';
             return; 
         }
+
+        // NEW: Maximum Withdrawal Check
+        if(amt > 100000) { 
+            msgBox.innerHTML = '<span style="color:var(--danger)">Maximum withdrawal is 100,000 TC.</span>';
+            return; 
+        }
+
         if(amt > myCredits) { 
             msgBox.innerHTML = '<span style="color:var(--danger)">Insufficient Withdrawable TC.</span>';
             return; 
