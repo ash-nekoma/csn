@@ -890,7 +890,7 @@
                         <div class="chat-msg chat-sys">Connected to server.</div>
                     </div>
                     <div style="padding:15px; border-top:1px solid var(--glass-border); flex-shrink: 0;">
-                        <input type="text" id="chat-input" class="input-control" placeholder="Say something... (/play URL)" onkeypress="if(event.key==='Enter'){sendChat();}">
+                        <input type="text" id="chat-input" class="input-control" placeholder="Say something..." onkeypress="if(event.key==='Enter'){sendChat();}">
                     </div>
                   </div>
                   
@@ -1122,16 +1122,25 @@
             return; 
         }
 
-        audio.src = data.url;
-        let offset = (Date.now() - data.startTime) / 1000;
-        audio.currentTime = offset;
-        audio.volume = document.getElementById('master-volume').value / 100;
-        
+        // Show HUD immediately
         djText.innerText = data.requestedBy;
         hud.classList.add('show');
         
-        // Play only if user has interacted with document
-        audio.play().catch(e => console.log('Autoplay blocked until user clicks anywhere.'));
+        audio.src = data.url;
+        audio.volume = document.getElementById('master-volume').value / 100;
+        
+        // Wait for the browser to load the audio length before fast-forwarding
+        audio.onloadedmetadata = () => {
+            let offset = (Date.now() - data.startTime) / 1000;
+            // Only seek if offset is a positive safe number to prevent fatal crashes
+            if (offset > 0) {
+                try { audio.currentTime = offset; } catch(e) {}
+            }
+            audio.play().catch(e => console.log('Autoplay blocked until user clicks:', e));
+        };
+        
+        // Backup play command in case metadata is already cached
+        audio.play().catch(e => console.log('Autoplay blocked until user clicks:', e));
     }
 
     
@@ -1371,6 +1380,12 @@
             list.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap:10px; align-items:center; font-size:0.95rem; text-transform:uppercase; text-align:center; white-space:nowrap;"><div>${rHtml}</div><div>${bHtml}</div><div>${winVal}</div><div>${lossVal}</div></div>`;
         });
     }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown-wrapper')) {
+            document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.add('hidden'));
+        }
+    });
 
     function renderNotifs() {
         const list = document.getElementById('notif-list-popover');
@@ -2183,7 +2198,7 @@
             <div class="bet-grid perya-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) { 
-    const choices = [ {id: 'Yellow', c: '#ffcc00'}, {id: 'White', c: '#ffffff'}, {id: 'Pink', c: '#ff66b2'}, {id: 'Blue', c: '#00a2ff'}, {id: 'Red', c: '#ff3366'}, {id: 'Green', c: '#00e676'} ];
+            const choices = [ {id: 'Yellow', c: '#ffcc00'}, {id: 'White', c: '#ffffff'}, {id: 'Pink', c: '#ff66b2'}, {id: 'Blue', c: '#00a2ff'}, {id: 'Red', c: '#ff3366'}, {id: 'Green', c: '#00e676'} ];
             choices.forEach(c => { 
               bg.innerHTML += `<button class="bet-btn perya-tile" data-choice="${c.id}" style="border-bottom-color:${c.c};" onclick="placeSharedBet('${c.id}')">${c.id}<div class="tile-bet-badge" id="badge-${c.id}">0</div></button>`; 
             }); 
