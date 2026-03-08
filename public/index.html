@@ -551,7 +551,7 @@
                             <i class="fas fa-bell"></i>
                             <div class="notif-badge" id="notif-badge-display">0</div>
                         </button>
-                        <div id="notif-dropdown" class="custom-dropdown hidden">
+                        <div id="notif-dropdown" class="custom-dropdown hidden" onclick="event.stopPropagation()">
                             <div class="notif-header">
                                 <span>NOTIFICATIONS</span>
                                 <div class="notif-actions">
@@ -569,11 +569,11 @@
                         <button class="top-icon-btn" onclick="toggleCustomDropdown('gift-dropdown', event)" title="Gift Code" style="color:var(--ps-glow);">
                             <i class="fas fa-gift"></i>
                         </button>
-                        <div id="gift-dropdown" class="custom-dropdown hidden" style="padding: 20px;">
+                        <div id="gift-dropdown" class="custom-dropdown hidden" style="padding: 20px;" onclick="event.stopPropagation()">
                             <div style="font-weight:900; color:white; text-transform:uppercase; margin-bottom:15px; font-size:1.1rem; text-align:center;">Redeem Code</div>
                             <p style="color:var(--text-muted); text-align:center; font-size:0.85rem; margin-bottom: 15px;">Enter your gift code below.</p>
                             <div class="input-group" style="margin-bottom:10px;">
-                                <input type="text" id="promo-code" class="input-control bet-input" placeholder="XXXX-XXXX-XXXX">
+                                <input type="text" id="promo-code" class="input-control bet-input" placeholder="XXXX-XXXX-XXXX" onkeypress="if(event.key==='Enter'){submitPromo();}">
                             </div>
                             <button class="btn-play" style="width:100%; margin-top: 10px;" onclick="submitPromo()">REDEEM</button>
                             <div id="promo-response" style="text-align:center; font-weight:800; min-height:25px; margin-top:15px; font-size: 1rem; line-height:1.4;"></div>
@@ -890,7 +890,7 @@
                         <div class="chat-msg chat-sys">Connected to server.</div>
                     </div>
                     <div style="padding:15px; border-top:1px solid var(--glass-border); flex-shrink: 0;">
-                        <input type="text" id="chat-input" class="input-control" placeholder="Say something..." onkeypress="if(event.key==='Enter'){sendChat();}">
+                        <input type="text" id="chat-input" class="input-control" placeholder="Say something... (/play URL)" onkeypress="if(event.key==='Enter'){sendChat();}">
                     </div>
                   </div>
                   
