@@ -88,11 +88,13 @@
         .bento-container { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 10px; width: 100%; }
         .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; align-content: start; }
         
-        .bento-item { background: rgba(0, 15, 35, 0.6); border: 1px solid var(--glass-border); padding: 30px 25px; border-radius: 12px; display: flex; align-items: center; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); backdrop-filter: blur(5px); transition: all 0.3s ease; cursor: pointer; position: relative;}
+        .bento-item { background: rgba(0, 15, 35, 0.6); border: 1px solid var(--glass-border); padding: 35px 30px; border-radius: 12px; display: flex; align-items: center; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); backdrop-filter: blur(5px); transition: all 0.3s ease; cursor: pointer; position: relative;}
         .bento-item:hover { transform: translateY(-5px); border-color: transparent; box-shadow: inset 0 0 25px rgba(0,162,255,0.3), 0 10px 30px rgba(0,0,0,0.8); }
         .bento-item::after { content: '\f08e'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; top: 15px; right: 15px; font-size: 1rem; color: var(--text-muted); opacity: 0; transition: 0.3s; }
         .bento-item:hover::after { opacity: 1; color: white; }
 
+        .bento-span-2 { grid-column: span 2; }
+        
         .stat-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; background: rgba(255,255,255,0.05); box-shadow: inset 0 0 15px rgba(255,255,255,0.02); flex-shrink:0;}
         .stat-info { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
         .stat-info h3 { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
@@ -116,6 +118,9 @@
         .pagination button { background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 15px; border-radius: 6px; font-weight:800; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
         .pagination button:hover:not(:disabled) { background: var(--ps-glow); color: black; }
         .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .center-col { text-align: center; justify-content: center; }
+        .left-col { text-align: left; justify-content: flex-start; }
 
         /* Muted Numbering */
         .num-col { width: 5%; color: var(--text-muted); opacity: 0.6; font-size: 0.8rem; font-weight: normal; }
@@ -168,7 +173,7 @@
         .smurf-icon { color: var(--danger); margin-left: 8px; cursor: help; font-size: 1.1rem; animation: pulseRed 2s infinite; }
     </style>
 </head>
-<body onclick="hideAllPopovers()">
+<body>
 
     <div id="toast-container"></div>
 
@@ -224,19 +229,14 @@
                 <div id="view-dashboard" class="tab-view">
                     <div class="bento-container">
                         <div class="bento-grid">
-                            <div class="bento-item" onclick="openBentoModal('economy')">
-                                <div class="stat-icon" style="color: var(--credits);"><i class="fas fa-coins"></i></div>
-                                <div class="stat-info"><h3>Total Economy (TC)</h3><div class="value glow-neon" id="stat-economy">0</div></div>
-                            </div>
-
-                            <div class="bento-item" onclick="openBentoModal('deposits')">
-                                <div class="stat-icon" style="color: var(--success);"><i class="fas fa-arrow-down"></i></div>
-                                <div class="stat-info"><h3>Total Deposits</h3><div class="value glow-success" id="stat-deposits">0</div></div>
-                            </div>
-
-                            <div class="bento-item" onclick="openBentoModal('withdrawals')">
-                                <div class="stat-icon" style="color: var(--danger);"><i class="fas fa-arrow-up"></i></div>
-                                <div class="stat-info"><h3>Total Withdrawals</h3><div class="value" style="color: var(--danger);" id="stat-withdrawals">0</div></div>
+                            <div class="bento-item bento-span-2" onclick="openBentoModal('economy')">
+                                <div style="display:flex; align-items:center; gap:20px; width:100%;">
+                                    <div class="stat-icon" style="color: var(--credits); font-size:3rem; width:80px; height:80px;"><i class="fas fa-coins"></i></div>
+                                    <div class="stat-info">
+                                        <h3 style="font-size:1.1rem;">Total Economy (Main TC)</h3>
+                                        <div class="value glow-neon" id="stat-economy" style="font-size:3rem;">0</div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="bento-item restricted-mod" onclick="openBentoModal('profit')">
@@ -244,19 +244,29 @@
                                 <div class="stat-info"><h3>House Profit (24H)</h3><div class="value" id="stat-profit" style="color:var(--success);">0</div></div>
                             </div>
 
+                            <div class="bento-item" onclick="openBentoModal('deposits')">
+                                <div class="stat-icon" style="color: var(--success);"><i class="fas fa-arrow-down"></i></div>
+                                <div class="stat-info"><h3>Approved Deposits</h3><div class="value glow-success" id="stat-deposits">0</div></div>
+                            </div>
+
+                            <div class="bento-item" onclick="openBentoModal('withdrawals')">
+                                <div class="stat-icon" style="color: var(--danger);"><i class="fas fa-arrow-up"></i></div>
+                                <div class="stat-info"><h3>Approved Withdrawals</h3><div class="value" style="color: var(--danger);" id="stat-withdrawals">0</div></div>
+                            </div>
+
                             <div class="bento-item restricted-mod" onclick="openBentoModal('vault')">
                                 <div class="stat-icon" style="color: var(--text-muted);"><i class="fas fa-university"></i></div>
                                 <div class="stat-info"><h3>Bank Vault Limit</h3><div class="value" id="stat-limit">2,000,000</div></div>
                             </div>
 
-                            <div class="bento-item" onclick="openBentoModal('pending')">
-                                <div class="stat-icon" style="color: var(--danger);"><i class="fas fa-clock"></i></div>
-                                <div class="stat-info"><h3>Pending Requests</h3><div class="value" id="stat-pending">0</div></div>
-                            </div>
-                            
                             <div class="bento-item" onclick="openBentoModal('players')">
                                 <div class="stat-icon" style="color: var(--ps-glow);"><i class="fas fa-users"></i></div>
                                 <div class="stat-info"><h3>Registered Players</h3><div class="value" id="stat-users">0</div></div>
+                            </div>
+
+                            <div class="bento-item bento-span-2" onclick="openBentoModal('pending')">
+                                <div class="stat-icon" style="color: var(--credits);"><i class="fas fa-clock"></i></div>
+                                <div class="stat-info"><h3>Pending Cashier Requests</h3><div class="value" id="stat-pending">0</div></div>
                             </div>
                         </div>
                     </div>
@@ -296,9 +306,9 @@
                                 <thead>
                                     <tr>
                                         <th class="num-col">#</th>
-                                        <th style="width: 40%;">PLAYER</th>
-                                        <th style="width: 30%;">CREDITS (TC)</th>
-                                        <th style="width: 25%;">ROLE</th>
+                                        <th style="width: 5%;"></th> <th class="left-col" style="width: 35%; padding-left: 10px;">PLAYER</th>
+                                        <th class="center-col" style="width: 30%;">CREDITS (TC)</th>
+                                        <th class="center-col" style="width: 25%;">ROLE</th>
                                     </tr>
                                 </thead>
                                 <tbody id="users-tbody"></tbody>
@@ -838,45 +848,45 @@
             if (type === 'economy') {
                 document.getElementById('bento-title').innerText = "TOP 10 RICHEST PLAYERS";
                 let sorted = [...gUsers].sort((a,b) => (b.credits||0) - (a.credits||0)).slice(0, 10);
-                thead.innerHTML = `<tr><th>RANK</th><th>PLAYER</th><th>MAIN TC</th><th>PLAYABLE P</th></tr>`;
+                thead.innerHTML = `<tr><th class="num-col">RANK</th><th class="left-col">PLAYER</th><th>MAIN TC</th><th>PLAYABLE P</th></tr>`;
                 sorted.forEach((u, i) => {
-                    tbody.innerHTML += `<tr><td style="color:var(--text-muted);font-weight:900;">#${i+1}</td><td style="font-weight:900;color:white;">${u.username}</td><td style="color:var(--credits);font-weight:800;">${fmtTC(u.credits)} TC</td><td style="color:var(--playable);font-weight:800;">${fmtTC(u.playableCredits)} P</td></tr>`;
+                    tbody.innerHTML += `<tr><td class="num-col">#${i+1}</td><td class="left-col" style="font-weight:900;color:white;">${u.username}</td><td style="color:var(--credits);font-weight:800;">${fmtTC(u.credits)} TC</td><td style="color:var(--playable);font-weight:800;">${fmtTC(u.playableCredits)} P</td></tr>`;
                 });
             } 
             else if (type === 'deposits') {
                 document.getElementById('bento-title').innerText = "LAST 10 APPROVED DEPOSITS";
                 let deps = gTxs.filter(t => t.type === 'Deposit' && t.status === 'Approved').sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
-                thead.innerHTML = `<tr><th>DATE</th><th>PLAYER</th><th>AMOUNT</th></tr>`;
+                thead.innerHTML = `<tr><th>DATE</th><th class="left-col">PLAYER</th><th>AMOUNT</th></tr>`;
                 if(deps.length === 0) tbody.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted); font-style:italic;">No deposits found.</td></tr>`;
                 deps.forEach(t => {
-                    tbody.innerHTML += `<tr><td style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td style="font-weight:900;color:white;">${t.username}</td><td style="color:var(--success);font-weight:900;">+${fmtTC(t.amount)} TC</td></tr>`;
+                    tbody.innerHTML += `<tr><td style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${t.username}</td><td style="color:var(--success);font-weight:900;">+${fmtTC(t.amount)} TC</td></tr>`;
                 });
             }
             else if (type === 'withdrawals') {
                 document.getElementById('bento-title').innerText = "LAST 10 APPROVED WITHDRAWALS";
                 let wits = gTxs.filter(t => t.type === 'Withdrawal' && t.status === 'Approved').sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
-                thead.innerHTML = `<tr><th>DATE</th><th>PLAYER</th><th>AMOUNT</th></tr>`;
+                thead.innerHTML = `<tr><th>DATE</th><th class="left-col">PLAYER</th><th>AMOUNT</th></tr>`;
                 if(wits.length === 0) tbody.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted); font-style:italic;">No withdrawals found.</td></tr>`;
                 wits.forEach(t => {
-                    tbody.innerHTML += `<tr><td style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td style="font-weight:900;color:white;">${t.username}</td><td style="color:var(--danger);font-weight:900;">-${fmtTC(t.amount)} TC</td></tr>`;
+                    tbody.innerHTML += `<tr><td style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${t.username}</td><td style="color:var(--danger);font-weight:900;">-${fmtTC(t.amount)} TC</td></tr>`;
                 });
             }
             else if (type === 'players') {
                 document.getElementById('bento-title').innerText = "10 NEWEST SIGNUPS";
                 let sorted = [...gUsers].sort((a,b) => new Date(b.joinDate) - new Date(a.joinDate)).slice(0, 10);
-                thead.innerHTML = `<tr><th>JOINED</th><th>PLAYER</th><th>ROLE</th></tr>`;
+                thead.innerHTML = `<tr><th>JOINED</th><th class="left-col">PLAYER</th><th>ROLE</th></tr>`;
                 sorted.forEach(u => {
-                    tbody.innerHTML += `<tr><td style="color:var(--text-muted); font-size:0.9rem;">${new Date(u.joinDate).toLocaleDateString()}</td><td style="font-weight:900;color:white;">${u.username}</td><td style="color:var(--text-muted);font-weight:800;text-transform:uppercase;">${u.role}</td></tr>`;
+                    tbody.innerHTML += `<tr><td style="color:var(--text-muted); font-size:0.9rem;">${new Date(u.joinDate).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${u.username}</td><td style="color:var(--text-muted);font-weight:800;text-transform:uppercase;">${u.role}</td></tr>`;
                 });
             }
             else if (type === 'pending') {
                 document.getElementById('bento-title').innerText = "PENDING REQUESTS";
                 let pends = gTxs.filter(t => t.status === 'Pending').sort((a,b) => new Date(a.date) - new Date(b.date));
-                thead.innerHTML = `<tr><th>DATE</th><th>PLAYER</th><th>TYPE</th><th>AMOUNT</th></tr>`;
+                thead.innerHTML = `<tr><th>DATE</th><th class="left-col">PLAYER</th><th>TYPE</th><th>AMOUNT</th></tr>`;
                 if(pends.length === 0) tbody.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted); font-style:italic;">No pending requests.</td></tr>`;
                 pends.forEach(t => {
                     let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
-                    tbody.innerHTML += `<tr><td style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td style="font-weight:900;color:white;">${t.username}</td><td style="font-weight:800; text-transform:uppercase;">${t.type}</td><td style="color:${color};font-weight:900;">${fmtTC(t.amount)} TC</td></tr>`;
+                    tbody.innerHTML += `<tr><td style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${t.username}</td><td style="font-weight:800; text-transform:uppercase;">${t.type}</td><td style="color:${color};font-weight:900;">${fmtTC(t.amount)} TC</td></tr>`;
                 });
             }
             else if (type === 'vault') {
@@ -1014,7 +1024,7 @@
             let paginated = filtered.slice((pgUsers - 1) * globalTableLimit, pgUsers * globalTableLimit);
             renderPagination(filtered.length, pgUsers, 'pag-users', 'pgUsers', 'renderUsers');
 
-            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted); font-style:italic; padding:30px;">No players found.</td></tr>`; return; }
+            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted); font-style:italic; padding:30px; text-align:center;">No players found.</td></tr>`; return; }
 
             paginated.forEach((u, i) => {
                 let rowNum = filtered.length - ((pgUsers - 1) * globalTableLimit) - i;
@@ -1025,18 +1035,17 @@
                 tbody.innerHTML += `
                     <tr class="clickable-row" onclick="openPlayerDetails('${u._id}')">
                         <td class="num-col">${rowNum}</td>
-                        <td>
-                            <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
-                                <div style="width:8px; height:8px; border-radius:50%; background:${statColor}; box-shadow:0 0 5px ${statColor}; flex-shrink: 0;"></div>
-                                <span style="font-weight:900; font-size:1.1rem; color: white;">${u.username}</span>
-                            </div>
+                        <td class="center-col" style="padding-right: 0;">
+                            <div style="width:10px; height:10px; border-radius:50%; background:${statColor}; box-shadow:0 0 8px ${statColor}; margin: 0 auto;"></div>
                         </td>
-                        <td>${displayCredits}</td>
-                        <td style="font-weight:900; color:${roleColor}; text-transform:uppercase;">${u.role}</td>
+                        <td class="left-col" style="font-weight:900; font-size:1.1rem; color: white; padding-left: 10px;">${u.username}</td>
+                        <td class="center-col">${displayCredits}</td>
+                        <td class="center-col" style="font-weight:900; color:${roleColor}; text-transform:uppercase;">${u.role}</td>
                     </tr>`;
             });
         }
 
+        // PLAYER DETAILS MODAL LOGIC
         function openPlayerDetails(id) {
             hideAllPopovers();
             const u = gUsers.find(x => x._id === id); if(!u) return;
@@ -1046,7 +1055,10 @@
 
             document.getElementById('pd-id').value = u._id;
             document.getElementById('pd-username').innerText = u.username;
+            
+            // SMURF ALERT LOGIC ADDED SECURELY TO MODAL ONLY
             document.getElementById('pd-ip').innerHTML = `${u.ipAddress} ${isSmurf ? `<i class="fas fa-exclamation-triangle smurf-icon" onmouseover="showSmurfPop(event, '${u.ipAddress}')" onmouseout="hideSmurfPop()"></i>` : ''}`;
+            
             document.getElementById('pd-joined').innerText = new Date(u.joinDate).toLocaleString('en-US', {dateStyle: 'medium', timeStyle: 'short'});
             document.getElementById('pd-credits').innerText = fmtTC(u.credits) + ' TC';
             document.getElementById('pd-playable').innerText = fmtTC(u.playableCredits) + ' P';
@@ -1091,6 +1103,7 @@
             let u = gUsers.find(x => x._id === id);
             
             if(u && u.role !== newRole) {
+                // Submit role update but pass back the same exact credits to keep them untouched
                 socket.emit('adminAction', { type: 'editUser', id: id, credits: u.credits, playableCredits: u.playableCredits, role: newRole });
                 showToast(`Player role successfully updated to ${newRole}`, 'success');
             } else {
@@ -1125,7 +1138,7 @@
             let paginated = gAdminLogs.slice((pgAudit - 1) * globalTableLimit, pgAudit * globalTableLimit);
             renderPagination(gAdminLogs.length, pgAudit, 'pag-audit', 'pgAudit', 'renderAuditLogs');
 
-            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted); font-style: italic; padding: 30px;">No audit logs available.</td></tr>`; return; }
+            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No audit logs available.</td></tr>`; return; }
 
             paginated.forEach((l, i) => {
                 let rowNum = gAdminLogs.length - ((pgAudit - 1) * globalTableLimit) - i;
@@ -1160,7 +1173,7 @@
             let paginated = activePlayerLogs.slice((pgPL - 1) * globalTableLimit, pgPL * globalTableLimit);
             renderPagination(activePlayerLogs.length, pgPL, 'pag-pl', 'pgPL', 'renderPlayerLogsPage');
 
-            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted); font-style: italic; padding: 30px;">No logs found for this user.</td></tr>`; return; }
+            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No logs found for this user.</td></tr>`; return; }
 
             paginated.forEach((l, i) => {
                 let rowNum = activePlayerLogs.length - ((pgPL - 1) * globalTableLimit) - i;
@@ -1213,7 +1226,7 @@
             let pagHist = histories.slice((pgHist - 1) * globalTableLimit, pgHist * globalTableLimit);
             renderPagination(histories.length, pgHist, 'pag-hist', 'pgHist', 'renderTransactions');
 
-            if(pagPend.length === 0) pBody.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted); font-style:italic; padding:30px;">Queue is empty.</td></tr>`;
+            if(pagPend.length === 0) pBody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">Queue is empty.</td></tr>`;
             pagPend.forEach((t, i) => {
                 let rowNum = pendings.length - ((pgPend - 1) * globalTableLimit) - i;
                 let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
@@ -1228,7 +1241,7 @@
                     </tr>`;
             });
 
-            if(pagHist.length === 0) hBody.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted); font-style:italic; padding:30px;">No history found.</td></tr>`;
+            if(pagHist.length === 0) hBody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No history found.</td></tr>`;
             pagHist.forEach((t, i) => {
                 let rowNum = histories.length - ((pgHist - 1) * globalTableLimit) - i;
                 let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
@@ -1280,7 +1293,7 @@
             renderPagination(gBatchesArr.length, pgPromos, 'pag-promos', 'pgPromos', 'renderPromos');
 
             const tbody = document.getElementById('promos-tbody'); tbody.innerHTML = '';
-            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--text-muted); font-style:italic; padding:30px;">No batches found.</td></tr>`; return; }
+            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No batches found.</td></tr>`; return; }
 
             paginated.forEach((b, i) => {
                 let rowNum = gBatchesArr.length - ((pgPromos - 1) * globalTableLimit) - i;
