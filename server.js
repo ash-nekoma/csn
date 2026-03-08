@@ -13,6 +13,9 @@ const io = new Server(server, { cors: { origin: "*" } });
 let isMaintenanceMode = false;
 let globalBankVault = 2000000;
 
+// GLOBAL RADIO STATE
+let currentRadio = { url: null, startTime: 0, requestedBy: null };
+
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     next();
@@ -261,11 +264,10 @@ async function pushAdminData(targetSocket = null) {
         const txs = await Transaction.find().sort({ date: -1 }); 
         const gcs = await GiftCode.find().sort({ date: -1 });
         
-        let totalMainCredits = formatTC(users.reduce((a, b) => a + (b.credits || 0), 0)); // STRICTLY MAIN TC
+        let totalMainCredits = formatTC(users.reduce((a, b) => a + (b.credits || 0), 0)); 
         let approvedDeposits = txs.filter(t => t.type === 'Deposit' && t.status === 'Approved').reduce((a, b) => a + b.amount, 0);
         let approvedWithdrawals = txs.filter(t => t.type === 'Withdrawal' && t.status === 'Approved').reduce((a, b) => a + b.amount, 0);
 
-        // BANK VAULT MATH
         globalBankVault = formatTC(2000000 + approvedDeposits - approvedWithdrawals - totalMainCredits);
 
         const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -292,7 +294,8 @@ async function pushAdminData(targetSocket = null) {
 
 io.on('connection', (socket) => {
     socket.emit('timerUpdate', sharedTables.time);
-    socket.emit('maintenanceToggle', isMaintenanceMode); // Send status immediately
+    socket.emit('maintenanceToggle', isMaintenanceMode); 
+    socket.emit('radioSync', currentRadio); // Sync radio immediately upon connection
 
     socket.isBetting = false;
     socket.isSharedBetting = false;
@@ -364,14 +367,11 @@ io.on('connection', (socket) => {
                 
                 if (amt > 50000) { socket.emit('localGameError', { msg: 'MAX TOTAL BET IS 50K TC', game: data.game }); return; }
 
-                // --- ANTI-MARTINGALE DYNAMIC SPREAD LIMITER ---
                 if (!socket.soloBaseline) socket.soloBaseline = { game: null, amount: 0, active: false };
 
                 if (!socket.soloBaseline.active || socket.soloBaseline.game !== data.game) {
-                    // New sequence
                     socket.soloBaseline = { game: data.game, amount: amt, active: true };
                 } else {
-                    // Continuing a loss streak, cap next bet at 8x their initial baseline (3 Martingale steps)
                     let spreadLimit = socket.soloBaseline.amount * 8; 
                     if (amt > spreadLimit && amt > 500) { 
                         socket.emit('localGameError', { msg: `MARTINGALE CAP: MAX ${formatTC(spreadLimit)} TC ON THIS STREAK`, game: data.game });
@@ -379,7 +379,6 @@ io.on('connection', (socket) => {
                     }
                 }
                 
-                // VAULT SECURITY CHECK
                 if ((amt * maxPotentialMultiplier) > globalBankVault) {
                     socket.emit('localGameError', { msg: 'VAULT LIMIT REACHED. CANNOT COVER BET.', game: data.game }); return;
                 }
@@ -424,7 +423,7 @@ io.on('connection', (socket) => {
                 }
                 payout = formatTC(payout);
                 
-                if (payout > 0 && socket.soloBaseline) socket.soloBaseline.active = false; // Reset streak if win
+                if (payout > 0 && socket.soloBaseline) socket.soloBaseline.active = false;
 
                 user.credits = formatTC(user.credits + payout); await user.save();
                 let net = formatTC(payout - data.bet);
@@ -443,7 +442,7 @@ io.on('connection', (socket) => {
                 let result = crypto.randomInt(2) === 0 ? 'Heads' : 'Tails';
                 if (data.choice === result) {
                     payout = formatTC(data.bet * 1.95);
-                    if (socket.soloBaseline) socket.soloBaseline.active = false; // Reset streak if win
+                    if (socket.soloBaseline) socket.soloBaseline.active = false;
                 }
                 
                 user.credits = formatTC(user.credits + payout); await user.save();
@@ -462,7 +461,7 @@ io.on('connection', (socket) => {
                     let pS = getBJScore(socket.bjState.pHand); let dS = getBJScore(socket.bjState.dHand);
                     
                     if (pS === 21) {
-                        if (socket.soloBaseline) socket.soloBaseline.active = false; // Reset streak if win/push
+                        if (socket.soloBaseline) socket.soloBaseline.active = false;
 
                         let msg = dS === 21 ? 'Push' : 'Blackjack!';
                         payout = formatTC(dS === 21 ? socket.bjState.bet : socket.bjState.bet * 2.5);
@@ -517,7 +516,7 @@ io.on('connection', (socket) => {
                     else { msg = 'Dealer Wins'; }
                     
                     if (msg === 'You Win!' || msg === 'Push') {
-                        if (socket.soloBaseline) socket.soloBaseline.active = false; // Reset streak if win/push
+                        if (socket.soloBaseline) socket.soloBaseline.active = false;
                     }
 
                     if (msg === 'Push') {
@@ -561,7 +560,31 @@ io.on('connection', (socket) => {
     });
     
     socket.on('sendChat', (data) => { 
-        if (socket.user && socket.currentRoom) { 
+        if (!socket.user) return;
+        
+        // GLOBAL RADIO COMMANDS
+        if (data.msg.startsWith('/play ')) {
+            if (socket.user.role !== 'Admin' && socket.user.role !== 'VIP') {
+                if (socket.currentRoom) io.to(socket.id).emit('chatMessage', { user: 'System', text: 'Only VIPs and Admins can use the DJ Radio.', sys: true });
+                return;
+            }
+            let url = data.msg.replace('/play ', '').trim();
+            currentRadio = { url, startTime: Date.now(), requestedBy: socket.user.username };
+            io.emit('radioPlay', currentRadio);
+            io.emit('globalChatMessage', { sys: true, text: `🎵 [RADIO] ${socket.user.username} started playing a track!` });
+            return;
+        }
+        
+        if (data.msg === '/stop') {
+            if (socket.user.role !== 'Admin' && socket.user.role !== 'VIP') return;
+            currentRadio = { url: null, startTime: 0, requestedBy: null };
+            io.emit('radioStop');
+            io.emit('globalChatMessage', { sys: true, text: `🎵 [RADIO] DJ turned off by ${socket.user.username}.` });
+            return;
+        }
+
+        // NORMAL CHAT
+        if (socket.currentRoom) { 
             io.to(socket.currentRoom).emit('chatMessage', { user: socket.user.username, text: data.msg, sys: false }); 
         } 
     });
@@ -616,7 +639,6 @@ io.on('connection', (socket) => {
                 userId: user._id, socketId: socket.id, username: user.username, room: data.room, choice: data.choice, amount: amt, fromPlayable: deduction.fromPlayable, fromMain: deduction.fromMain 
             });
 
-            // SERVER AUTHORITATIVE CONFIRMATION - Sent back to specific user
             socket.emit('sharedBetConfirmed', { 
                 choice: data.choice, 
                 amount: amt, 
