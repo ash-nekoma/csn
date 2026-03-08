@@ -142,6 +142,12 @@
         .mobile-menu-btn { display: none; }
         .desktop-actions { display: flex; gap: 15px; align-items: center; }
 
+        /* RADIO HUD */
+        .radio-hud { flex: 1; overflow: hidden; position: relative; margin: 0 20px; height: 20px; display: none; align-items: center; }
+        .radio-hud.show { display: flex; }
+        .radio-marquee { display: inline-block; white-space: nowrap; animation: marquee 15s linear infinite; color: var(--ps-glow); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
         /* DROPDOWN POPOVERS */
         .dropdown-wrapper { position: relative; display: inline-block; }
         .custom-dropdown { position: absolute; top: 45px; right: -10px; width: 350px; background: rgba(0,5,15,0.95); border: 1px solid var(--glass-border); border-top: 3px solid var(--ps-glow); border-radius: 8px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; z-index: 100000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); cursor: default;}
@@ -448,8 +454,10 @@
         .rules-text { text-align: left; padding-left: 20px; }
     </style>
 </head>
-<body>
-  
+<body onclick="document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.add('hidden'));">
+
+  <audio id="global-radio" crossorigin="anonymous" style="display:none;"></audio>
+
   <div id="auth-container">
       <div class="auth-box">
           <div class="auth-title">STICK N' TRADE</div>
@@ -501,6 +509,10 @@
             <div class="brand-title">STICK N' TRADE</div>
             <div class="brand-sub">CASINO</div>
           </div>
+        </div>
+
+        <div id="radio-hud" class="radio-hud">
+            <div class="radio-marquee">🎵 NOW PLAYING: <span id="radio-dj"></span>'s TRACK</div>
         </div>
 
         <div class="topbar-right">
@@ -572,9 +584,19 @@
                         <i class="fas fa-calendar-check"></i>
                     </button>
                     
-                    <button class="top-icon-btn" id="mute-btn" onclick="toggleAudio()" title="Toggle Audio">
-                        <i class="fas fa-volume-up"></i>
-                    </button>
+                    <div class="dropdown-wrapper">
+                        <button class="top-icon-btn" onclick="toggleCustomDropdown('volume-dropdown', event)" title="Volume Control">
+                            <i class="fas fa-volume-up" id="volume-icon"></i>
+                        </button>
+                        <div id="volume-dropdown" class="custom-dropdown hidden" style="padding: 20px; width: 250px;" onclick="event.stopPropagation()">
+                            <div style="font-weight:900; color:white; text-transform:uppercase; margin-bottom:15px; font-size:1.1rem; text-align:center;">Master Volume</div>
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <i class="fas fa-volume-mute" style="color: var(--text-muted);"></i>
+                                <input type="range" id="master-volume" min="0" max="50" step="5" value="50" oninput="updateVolume(this.value)" style="flex: 1; accent-color: var(--ps-glow); cursor: pointer;">
+                                <span id="vol-display" style="font-weight: 800; color: var(--ps-glow); width: 35px; text-align:right;">50%</span>
+                            </div>
+                        </div>
+                    </div>
                     
                     <button class="top-icon-btn" onclick="confirmLogout()" title="Logout" style="color:var(--danger);">
                         <i class="fas fa-sign-out-alt"></i>
@@ -868,7 +890,7 @@
                         <div class="chat-msg chat-sys">Connected to server.</div>
                     </div>
                     <div style="padding:15px; border-top:1px solid var(--glass-border); flex-shrink: 0;">
-                        <input type="text" id="chat-input" class="input-control" placeholder="Say something..." onkeypress="if(event.key==='Enter'){sendChat();}">
+                        <input type="text" id="chat-input" class="input-control" placeholder="Say something... (/play URL)" onkeypress="if(event.key==='Enter'){sendChat();}">
                     </div>
                   </div>
                   
@@ -1031,6 +1053,18 @@
   <script>
     const socket = io(); 
 
+    // Audio Context (Auto resumes on first user click)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let audioMuted = false;
+    let sfxGainVal = 0.5;
+
+    // First Interaction unlocks AudioContext and Radio Autoplay
+    document.body.addEventListener('click', () => {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        let radio = document.getElementById('global-radio');
+        if (radio && radio.src && radio.paused) radio.play().catch(e => {});
+    }, { once: true });
+
     // Auto-Login when successfully connected to the server
     socket.on('connect', () => {
         const savedUser = localStorage.getItem('snt_user');
@@ -1043,9 +1077,63 @@
         }
     });
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    let audioMuted = false;
-    let sfxGainVal = 0.8;
+    // MASTER VOLUME CONTROL LOGIC
+    function updateVolume(val) {
+        let vol = val / 100; // 0.0 to 0.50
+        sfxGainVal = vol;
+        
+        const audio = document.getElementById('global-radio');
+        if(audio) audio.volume = vol;
+        
+        document.getElementById('vol-display').innerText = val + '%';
+        
+        let icon = document.querySelector('#volume-icon');
+        if (val == 0) icon.className = 'fas fa-volume-mute';
+        else if (val <= 25) icon.className = 'fas fa-volume-down';
+        else icon.className = 'fas fa-volume-up';
+    }
+
+    // SERVER-SYNCED RADIO LISTENERS
+    socket.on('radioSync', (data) => { syncRadio(data); });
+    socket.on('radioPlay', (data) => { syncRadio(data); });
+    
+    socket.on('radioStop', () => {
+        const audio = document.getElementById('global-radio');
+        audio.pause(); audio.src = '';
+        document.getElementById('radio-hud').classList.remove('show');
+    });
+
+    socket.on('globalChatMessage', (data) => {
+        let cb = document.getElementById('sg-chat'); 
+        if (cb && window.activeSharedGame) { 
+            cb.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-sys">${data.text}</div>`);
+            cb.scrollTop = cb.scrollHeight;
+        }
+    });
+
+    function syncRadio(data) {
+        const audio = document.getElementById('global-radio');
+        const hud = document.getElementById('radio-hud');
+        const djText = document.getElementById('radio-dj');
+
+        if (!data.url) { 
+            audio.pause(); audio.src = ''; 
+            hud.classList.remove('show');
+            return; 
+        }
+
+        audio.src = data.url;
+        let offset = (Date.now() - data.startTime) / 1000;
+        audio.currentTime = offset;
+        audio.volume = document.getElementById('master-volume').value / 100;
+        
+        djText.innerText = data.requestedBy;
+        hud.classList.add('show');
+        
+        // Play only if user has interacted with document
+        audio.play().catch(e => console.log('Autoplay blocked until user clicks anywhere.'));
+    }
+
     
     let myUsername = '';
     let myCredits = 0;
@@ -1284,12 +1372,6 @@
         });
     }
 
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown-wrapper')) {
-            document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.add('hidden'));
-        }
-    });
-
     function renderNotifs() {
         const list = document.getElementById('notif-list-popover');
         const badge = document.getElementById('notif-badge-display');
@@ -1338,16 +1420,8 @@
         renderNotifs(); 
     });
 
-    function toggleAudio() {
-        audioMuted = !audioMuted;
-        sfxGainVal = audioMuted ? 0 : 0.8;
-        let icon = document.querySelector('#mute-btn i');
-        if (icon) { icon.className = audioMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up'; icon.parentElement.style.color = audioMuted ? 'var(--danger)' : 'white'; }
-        if (!audioMuted && audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
     function playTone(f, t, d, v = 0.1) { 
-      if (audioMuted || audioCtx.state === 'suspended') return; 
+      if (audioCtx.state === 'suspended') return; 
       let o = audioCtx.createOscillator(); let g = audioCtx.createGain(); 
       o.type = t; o.frequency.setValueAtTime(f, audioCtx.currentTime); 
       g.gain.setValueAtTime(v * sfxGainVal, audioCtx.currentTime); 
@@ -1358,14 +1432,14 @@
 
     const sfx = { 
       click: () => {
-          if (audioMuted || audioCtx.state === 'suspended') return;
+          if (audioCtx.state === 'suspended') return;
           let o = audioCtx.createOscillator(), g = audioCtx.createGain();
           o.type = 'triangle'; o.frequency.setValueAtTime(600, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.03);
           g.gain.setValueAtTime(0.15 * sfxGainVal, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
           o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + 0.03);
       },
       tick: () => {
-          if (audioMuted || audioCtx.state === 'suspended') return;
+          if (audioCtx.state === 'suspended') return;
           let o = audioCtx.createOscillator(), g = audioCtx.createGain();
           o.type = 'square'; o.frequency.setValueAtTime(1200, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.02);
           g.gain.setValueAtTime(0.05 * sfxGainVal, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02);
@@ -2109,7 +2183,7 @@
             <div class="bet-grid perya-grid controls-full" id="sg-bet-grid" style="width:100%; max-width: 600px; margin: 0 auto;"></div>`; 
           let bg = document.getElementById('sg-bet-grid'); 
           if (bg) { 
-            const choices = [ {id: 'Yellow', c: '#ffcc00'}, {id: 'White', c: '#ffffff'}, {id: 'Pink', c: '#ff66b2'}, {id: 'Blue', c: '#00a2ff'}, {id: 'Red', c: '#ff3366'}, {id: 'Green', c: '#00e676'} ];
+    const choices = [ {id: 'Yellow', c: '#ffcc00'}, {id: 'White', c: '#ffffff'}, {id: 'Pink', c: '#ff66b2'}, {id: 'Blue', c: '#00a2ff'}, {id: 'Red', c: '#ff3366'}, {id: 'Green', c: '#00e676'} ];
             choices.forEach(c => { 
               bg.innerHTML += `<button class="bet-btn perya-tile" data-choice="${c.id}" style="border-bottom-color:${c.c};" onclick="placeSharedBet('${c.id}')">${c.id}<div class="tile-bet-badge" id="badge-${c.id}">0</div></button>`; 
             }); 
