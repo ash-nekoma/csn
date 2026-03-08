@@ -490,6 +490,11 @@
                 </div>
 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                    <span style="color:var(--text-muted); font-weight:800; font-size:0.9rem;">REFERRED BY</span>
+                    <span id="pd-referred" style="font-weight:800; color:var(--success);"></span>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
                     <span style="color:var(--text-muted); font-weight:800; font-size:0.9rem;">BALANCES (Read-Only)</span>
                     <div style="text-align:right;">
                         <div style="color:var(--credits); font-weight:900; font-size:1.1rem;" id="pd-credits">0 TC</div>
@@ -1065,6 +1070,12 @@
             document.getElementById('pd-ip').innerHTML = `${u.ipAddress} ${isSmurf ? `<i class="fas fa-exclamation-triangle smurf-icon" onmouseover="showSmurfPop(event, '${u.ipAddress}')" onmouseout="hideSmurfPop()"></i>` : ''}`;
             
             document.getElementById('pd-joined').innerText = new Date(u.joinDate).toLocaleString('en-US', {dateStyle: 'medium', timeStyle: 'short'});
+            
+            // REFERRED BY LOGIC (Shows who invited them, AND how many they've invited)
+            let refCount = gUsers.filter(x => x.referredBy && x.referredBy.toLowerCase() === u.username.toLowerCase()).length;
+            let refStr = u.referredBy ? u.referredBy : 'None';
+            document.getElementById('pd-referred').innerHTML = `${refStr} <span style="color:var(--text-muted); font-size:0.8rem; margin-left: 8px;">(Invited: ${refCount})</span>`;
+
             document.getElementById('pd-credits').innerText = fmtTC(u.credits) + ' TC';
             document.getElementById('pd-playable').innerText = fmtTC(u.playableCredits) + ' P';
 
