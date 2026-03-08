@@ -123,6 +123,7 @@
         .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .center-col { text-align: center; justify-content: center; }
+        .left-col { text-align: left; justify-content: flex-start; }
 
         .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: inline-block; }
         .badge.pending { background: rgba(255, 180, 0, 0.15); color: var(--credits); border: 1px solid rgba(255, 180, 0, 0.3); }
@@ -166,11 +167,8 @@
         @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
-        /* QUICK ACTION POPOVER */
+        /* POPOVERS */
         .glass-popover { position: fixed; background: rgba(0, 15, 35, 0.95); border: 1px solid var(--ps-glow); border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); z-index: 50000; padding: 10px; display: flex; flex-direction: column; gap: 5px; backdrop-filter: blur(20px); }
-        .qa-btn { background: transparent; border: none; color: white; padding: 10px 15px; text-align: left; font-weight: 800; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-size: 0.95rem; text-transform: uppercase;}
-        .qa-btn:hover { background: rgba(255,255,255,0.1); }
-
         .smurf-icon { color: var(--danger); margin-left: 8px; cursor: help; font-size: 1.1rem; animation: pulseRed 2s infinite; }
     </style>
 </head>
@@ -303,12 +301,10 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th class="center-col">JOINED</th>
-                                        <th class="center-col">USERNAME</th>
+                                        <th class="center-col" style="width: 50px;">#</th>
+                                        <th class="left-col">PLAYER</th>
                                         <th class="center-col">CREDITS (TC)</th>
                                         <th class="center-col">ROLE</th>
-                                        <th class="center-col">STATUS</th>
-                                        <th class="center-col">ACTIONS</th>
                                     </tr>
                                 </thead>
                                 <tbody id="users-tbody"></tbody>
@@ -332,7 +328,7 @@
                             </div>
                             <div class="table-wrapper">
                                 <table>
-                                    <thead><tr><th class="center-col">DATE</th><th class="center-col">TYPE</th><th class="center-col">AMOUNT</th><th class="center-col">USER</th></tr></thead>
+                                    <thead><tr><th class="center-col" style="width:50px;">#</th><th class="center-col">DATE</th><th class="center-col">TYPE</th><th class="center-col">AMOUNT</th><th class="center-col">USER</th></tr></thead>
                                     <tbody id="tx-pending-tbody"></tbody>
                                 </table>
                             </div>
@@ -357,7 +353,7 @@
                             </div>
                             <div class="table-wrapper">
                                 <table>
-                                    <thead><tr><th class="center-col">DATE</th><th class="center-col">TYPE</th><th class="center-col">AMOUNT</th><th class="center-col">STATUS</th></tr></thead>
+                                    <thead><tr><th class="center-col" style="width:50px;">#</th><th class="center-col">DATE</th><th class="center-col">TYPE</th><th class="center-col">AMOUNT</th><th class="center-col">STATUS</th></tr></thead>
                                     <tbody id="tx-history-tbody"></tbody>
                                 </table>
                             </div>
@@ -385,6 +381,7 @@
                             <table>
                                 <thead>
                                     <tr>
+                                        <th class="center-col" style="width: 50px;">#</th>
                                         <th class="center-col">BATCH ID</th>
                                         <th class="center-col">VALUE PER CODE</th>
                                         <th class="center-col">CREDIT TYPE</th>
@@ -431,6 +428,7 @@
                             <table>
                                 <thead>
                                     <tr>
+                                        <th class="center-col" style="width: 50px;">#</th>
                                         <th class="center-col">DATE / TIME</th>
                                         <th class="center-col">ADMIN NAME</th>
                                         <th class="center-col">ACTION</th>
@@ -450,35 +448,61 @@
 
     <div id="smurf-popover" class="glass-popover hidden" style="min-width: 200px;"></div>
     
-    <div id="quick-action-popover" class="glass-popover hidden" style="width: 220px;" onclick="event.stopPropagation()"></div>
-
-    <div id="edit-user-modal" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('edit-user-modal')">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('edit-user-modal')"><i class="fas fa-times"></i></button>
-            <h3 class="modal-title">Edit Player</h3>
-            <div id="edit-user-err" class="modal-error-text"></div>
-            <input type="hidden" id="edit-u-id">
+    <div id="player-details-modal" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('player-details-modal')">
+        <div class="modal-content" style="width: 500px;">
+            <button class="modal-close" onclick="closeModal('player-details-modal')"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title" style="border:none; margin-bottom: 10px;">Player Details</h3>
             
-            <div class="input-group">
-                <label>Username (Read Only)</label>
-                <input type="text" id="edit-u-name" class="input-control" disabled style="opacity: 0.5;">
+            <input type="hidden" id="pd-id">
+            
+            <div style="background: rgba(0,0,0,0.4); border-radius: 12px; padding: 20px; border: 1px solid var(--glass-border); margin-bottom: 20px;">
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                    <span style="color:var(--text-muted); font-weight:800; font-size:0.9rem;">USERNAME</span>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span id="pd-username" style="font-weight:900; font-size:1.2rem; color:white;"></span>
+                        <button onclick="copyUsername()" style="background:transparent; border:none; color:var(--ps-glow); cursor:pointer; font-size:1.1rem; transition:0.2s;" title="Copy Username"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                    <span style="color:var(--text-muted); font-weight:800; font-size:0.9rem;">IP ADDRESS</span>
+                    <span id="pd-ip" style="font-weight:800; color:white;"></span>
+                </div>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                    <span style="color:var(--text-muted); font-weight:800; font-size:0.9rem;">JOINED DATE</span>
+                    <span id="pd-joined" style="font-weight:800; color:white;"></span>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                    <span style="color:var(--text-muted); font-weight:800; font-size:0.9rem;">BALANCES (Read-Only)</span>
+                    <div style="text-align:right;">
+                        <div style="color:var(--credits); font-weight:900; font-size:1.1rem;" id="pd-credits">0 TC</div>
+                        <div style="color:var(--playable); font-weight:800; font-size:0.9rem;" id="pd-playable">0 P</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted); font-weight:800; font-size:0.9rem;">ROLE</span>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <select id="pd-role" class="input-control" style="padding: 8px 12px; font-size: 0.9rem; width: auto;">
+                            <option value="Player">Player</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                        <button onclick="updatePlayerRole()" class="btn-sm btn-edit" style="padding: 8px 15px;"><i class="fas fa-save"></i> Save</button>
+                    </div>
+                </div>
             </div>
-            <div class="input-group">
-                <label>Main Balance (Withdrawable TC)</label>
-                <input type="number" id="edit-u-credits" class="input-control" step="0.1">
+
+            <div style="display:flex; gap: 15px;">
+                <button class="btn-primary" id="pd-btn-logs" style="flex:1; background:rgba(0,162,255,0.15); color:var(--ps-glow); border-color:var(--ps-glow);"><i class="fas fa-list"></i> View Logs</button>
+                <button class="btn-primary" id="pd-btn-ban" style="flex:1;"></button>
             </div>
-            <div class="input-group">
-                <label>Playable Bonus (TC)</label>
-                <input type="number" id="edit-u-playable" class="input-control" step="0.1">
-            </div>
-            <div class="input-group" style="margin-bottom: 25px;">
-                <label>Account Role</label>
-                <select id="edit-u-role" class="input-control">
-                    <option value="Player">Player</option>
-                    <option value="Admin">Admin</option>
-                </select>
-            </div>
-            <button class="btn-primary" onclick="saveUserEdit()">SAVE CHANGES</button>
+            
+            <button class="btn-primary" onclick="quickGiftShortcut()" style="margin-top:15px; background: rgba(255,180,0,0.15); color:var(--credits); border-color:var(--credits);">
+                <i class="fas fa-gift"></i> DIRECT GIFT CREDITS
+            </button>
         </div>
     </div>
 
@@ -492,7 +516,7 @@
             <div class="table-wrapper" style="max-height: 400px;">
                 <table>
                     <thead>
-                        <tr><th class="center-col">Date</th><th class="center-col">Action</th><th class="center-col">Amount</th><th class="center-col">Details</th></tr>
+                        <tr><th class="center-col" style="width: 50px;">#</th><th class="center-col">Date</th><th class="center-col">Action</th><th class="center-col">Amount</th><th class="center-col">Details</th></tr>
                     </thead>
                     <tbody id="pl-tbody"></tbody>
                 </table>
@@ -537,8 +561,9 @@
                 </select>
             </div>
             <div class="input-group" id="gift-user-group">
-                <label>Username</label>
-                <input type="text" id="tool-target-user" class="input-control" placeholder="PlayerName">
+                <label>Username (Search active players)</label>
+                <input type="text" id="tool-target-user" list="active-users-list" class="input-control" placeholder="Type username..." autocomplete="off">
+                <datalist id="active-users-list"></datalist>
             </div>
             <div class="input-group">
                 <label>Amount (Max 500,000)</label>
@@ -589,7 +614,7 @@
             <div class="table-wrapper" style="max-height: 400px;">
                 <table>
                     <thead>
-                        <tr><th class="center-col">Code</th><th class="center-col">Status</th><th class="center-col">Copy</th></tr>
+                        <tr><th class="center-col" style="width: 50px;">#</th><th class="center-col">Code</th><th class="center-col">Status</th><th class="center-col">Copy</th></tr>
                     </thead>
                     <tbody id="vb-tbody"></tbody>
                 </table>
@@ -691,7 +716,7 @@
         
         const limit = 10;
 
-        // FIXED PAGINATION RENDERER: Explicitly accepts the render function string
+        // FIXED PAGINATION RENDERER
         function renderPagination(totalItems, currentPage, elementId, updateVarStr, renderFuncName) {
             const totalPages = Math.max(1, Math.ceil(totalItems / limit));
             const c = document.getElementById(elementId);
@@ -819,12 +844,14 @@
 
             renderUsers(); renderTransactions(); renderPromos(); renderAuditLogs();
             
-            // Update dropdown dynamic target
-            let d = document.getElementById('tool-target-user');
-            let v = d.value;
-            d.innerHTML = `<option value="all_registered">All Registered Users</option><option value="all_active">All Currently Online</option>`;
-            gUsers.forEach(u => d.innerHTML += `<option value="${u.username}">Specific: ${u.username}</option>`);
-            if(d.querySelector(`option[value="${v}"]`)) d.value = v;
+            // Update autocomplete datalist for active users ONLY
+            let dl = document.getElementById('active-users-list');
+            if(dl) {
+                dl.innerHTML = '';
+                gUsers.filter(u => u.status === 'Active').forEach(u => {
+                    dl.innerHTML += `<option value="${u.username}">`;
+                });
+            }
         });
 
         // HIDE POPOVERS ON CLICK OUTSIDE
@@ -843,30 +870,7 @@
         }
         function hideSmurfPop() { document.getElementById('smurf-popover').classList.add('hidden'); }
 
-        // QUICK ACTION LOGIC
-        function toggleQuickActions(event, id, username, status) {
-            event.stopPropagation();
-            hideAllPopovers();
-            
-            let p = document.getElementById('quick-action-popover');
-            if (!p.classList.contains('hidden') && p.dataset.uid === id) { p.classList.add('hidden'); return; }
-            
-            let banText = status === 'Banned' ? 'Unban Player' : 'Ban Player';
-            let banAction = status === 'Banned' ? 'unban' : 'ban';
-            let banIcon = status === 'Banned' ? 'fa-unlock' : 'fa-ban';
-            let banColor = status === 'Banned' ? 'var(--success)' : 'var(--danger)';
-
-            p.innerHTML = `
-                <div style="padding:10px; border-bottom:1px solid var(--glass-border); font-weight:900; color:white; font-size:1.1rem; text-align:center;">${username}</div>
-                <button class="qa-btn" onclick="openEditUser('${id}')"><i class="fas fa-pen" style="color:var(--ps-glow)"></i> Edit Balances</button>
-                <button class="qa-btn" onclick="viewPlayerLogs('${username}')"><i class="fas fa-list" style="color:white"></i> View Logs</button>
-                <button class="qa-btn" onclick="actionUser('${banAction}', '${id}', '${username}')"><i class="fas ${banIcon}" style="color:${banColor}"></i> ${banText}</button>
-            `;
-            p.style.top = (event.clientY) + 'px';
-            p.style.left = (event.clientX - 230) + 'px';
-            p.dataset.uid = id;
-            p.classList.remove('hidden');
-        }
+        // --- PLAYER DATABASE ---
 
         function renderUsers() {
             const tbody = document.getElementById('users-tbody'); tbody.innerHTML = '';
@@ -896,39 +900,122 @@
             let paginated = filtered.slice((pgUsers - 1) * limit, pgUsers * limit);
             renderPagination(filtered.length, pgUsers, 'pag-users', 'pgUsers', 'renderUsers');
 
-            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No players found.</td></tr>`; return; }
+            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No players found.</td></tr>`; return; }
 
-            paginated.forEach(u => {
-                let statClass = u.status === 'Active' ? 'active' : (u.status === 'Banned' ? 'banned' : 'offline');
+            paginated.forEach((u, i) => {
+                let rowNum = (pgUsers - 1) * limit + i + 1;
+                
+                // Determine Status Dot Color
+                let statColor = u.status === 'Active' ? 'var(--success)' : (u.status === 'Banned' ? 'var(--danger)' : 'var(--text-muted)');
+                
                 let displayCredits = `<div style="font-weight: 900; color: var(--credits); font-size:1.1rem;">${(u.credits || 0).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})}</div><div style="font-size: 0.8rem; color: var(--playable); font-weight:800;">+ ${(u.playableCredits || 0).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} P</div>`;
                 
-                let smurfWarning = (u.ipAddress && u.ipAddress !== 'Unknown' && ipCounts[u.ipAddress] > 1) ? `<i class="fas fa-exclamation-circle smurf-icon" onmouseover="showSmurfPop(event, '${u.ipAddress}')" onmouseout="hideSmurfPop()"></i>` : '';
+                let smurfWarning = (u.ipAddress && u.ipAddress !== 'Unknown' && ipCounts[u.ipAddress] > 1) ? `<i class="fas fa-exclamation-triangle smurf-icon" onmouseover="showSmurfPop(event, '${u.ipAddress}')" onmouseout="hideSmurfPop()" onclick="event.stopPropagation();"></i>` : '';
 
                 tbody.innerHTML += `
-                    <tr class="clickable-row">
-                        <td class="center-col" style="color:var(--text-muted);">${new Date(u.joinDate).toLocaleDateString()}</td>
-                        <td class="center-col"><div style="font-weight:900; font-size:1.1rem; color: white; display:flex; align-items:center; justify-content:center;">${u.username} ${smurfWarning}</div></td>
-                        <td class="center-col">${displayCredits}</td>
-                        <td class="center-col">${u.role}</td>
-                        <td class="center-col"><span class="badge ${statClass}">${u.status}</span></td>
-                        <td class="center-col">
-                            <button class="btn-sm btn-edit" onclick="toggleQuickActions(event, '${u._id}', '${u.username}', '${u.status}')" style="background:transparent; border-color:var(--glass-border); color:white; font-size:1.2rem; padding:4px 15px;"><i class="fas fa-ellipsis-h"></i></button>
+                    <tr class="clickable-row" onclick="openPlayerDetails('${u._id}')">
+                        <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
+                        <td class="left-col">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="width:10px; height:10px; border-radius:50%; background:${statColor}; box-shadow:0 0 8px ${statColor}; flex-shrink: 0;"></div>
+                                <span style="font-weight:900; font-size:1.1rem; color: white;">${u.username}</span>
+                                ${smurfWarning}
+                            </div>
                         </td>
+                        <td class="center-col">${displayCredits}</td>
+                        <td class="center-col" style="font-weight:800; color:var(--text-muted);">${u.role}</td>
                     </tr>`;
             });
         }
+
+        // PLAYER DETAILS MODAL LOGIC
+        function openPlayerDetails(id) {
+            hideAllPopovers();
+            const u = gUsers.find(x => x._id === id); if(!u) return;
+
+            let ipCounts = {}; gUsers.forEach(x => { if(x.ipAddress && x.ipAddress !== 'Unknown') ipCounts[x.ipAddress] = (ipCounts[x.ipAddress] || 0) + 1; });
+            let isSmurf = u.ipAddress !== 'Unknown' && ipCounts[u.ipAddress] > 1;
+
+            document.getElementById('pd-id').value = u._id;
+            document.getElementById('pd-username').innerText = u.username;
+            document.getElementById('pd-ip').innerHTML = `${u.ipAddress} ${isSmurf ? `<i class="fas fa-exclamation-triangle smurf-icon" title="Multiple accounts detected on this IP"></i>` : ''}`;
+            document.getElementById('pd-joined').innerText = new Date(u.joinDate).toLocaleString('en-US', {dateStyle: 'medium', timeStyle: 'short'});
+            document.getElementById('pd-credits').innerText = (u.credits || 0).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1}) + ' TC';
+            document.getElementById('pd-playable').innerText = (u.playableCredits || 0).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1}) + ' P';
+
+            document.getElementById('pd-role').value = u.role;
+
+            let banBtn = document.getElementById('pd-btn-ban');
+            if(u.status === 'Banned') {
+                banBtn.innerHTML = '<i class="fas fa-unlock"></i> Unban Player';
+                banBtn.style.background = 'rgba(0, 230, 118, 0.15)'; banBtn.style.color = 'var(--success)'; banBtn.style.borderColor = 'var(--success)';
+                banBtn.onclick = () => actionUser('unban', u._id, u.username);
+            } else {
+                banBtn.innerHTML = '<i class="fas fa-ban"></i> Ban Player';
+                banBtn.style.background = 'rgba(255, 51, 102, 0.15)'; banBtn.style.color = 'var(--danger)'; banBtn.style.borderColor = 'var(--danger)';
+                banBtn.onclick = () => actionUser('ban', u._id, u.username);
+            }
+
+            document.getElementById('pd-btn-logs').onclick = () => { closeModal('player-details-modal'); viewPlayerLogs(u.username); };
+
+            openModal('player-details-modal');
+        }
+
+        function copyUsername() {
+            let un = document.getElementById('pd-username').innerText;
+            navigator.clipboard.writeText(un);
+            showToast(`Copied ${un} to clipboard!`, 'success');
+        }
+
+        function updatePlayerRole() {
+            let id = document.getElementById('pd-id').value;
+            let newRole = document.getElementById('pd-role').value;
+            let u = gUsers.find(x => x._id === id);
+            
+            if(u && u.role !== newRole) {
+                // Submit role update but pass back the same exact credits to keep them untouched
+                socket.emit('adminAction', { type: 'editUser', id: id, credits: u.credits, playableCredits: u.playableCredits, role: newRole });
+                showToast(`Player role successfully updated to ${newRole}`, 'success');
+            } else {
+                showToast(`Role is already set to ${newRole}`, 'error');
+            }
+        }
+
+        function quickGiftShortcut() {
+            let username = document.getElementById('pd-username').innerText;
+            closeModal('player-details-modal');
+            
+            document.getElementById('tool-target-type').value = 'specific';
+            toggleGiftTarget();
+            document.getElementById('tool-target-user').value = username;
+            
+            switchTab('promos'); 
+            openModal('direct-gift-modal');
+        }
+
+        function actionUser(type, id, username) {
+            let msg = type === 'ban' ? `Are you sure you want to BAN ${username}?` : `Are you sure you want to UNBAN ${username}?`;
+            showSNTConfirm("MODIFY ACCOUNT", msg, () => { 
+                socket.emit('adminAction', { type: type, id: id }); 
+                closeModal('player-details-modal');
+            });
+        }
+
+        // --- END PLAYER DB LOGIC ---
 
         function renderAuditLogs() {
             const tbody = document.getElementById('audit-tbody'); tbody.innerHTML = '';
             let paginated = gAdminLogs.slice((pgAudit - 1) * limit, pgAudit * limit);
             renderPagination(gAdminLogs.length, pgAudit, 'pag-audit', 'pgAudit', 'renderAuditLogs');
 
-            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No audit logs available.</td></tr>`; return; }
+            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No audit logs available.</td></tr>`; return; }
 
-            paginated.forEach(l => {
+            paginated.forEach((l, i) => {
+                let rowNum = (pgAudit - 1) * limit + i + 1;
                 let dStr = new Date(l.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 tbody.innerHTML += `
                     <tr>
+                        <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
                         <td class="center-col" style="color:var(--text-muted); font-size:0.85rem;">${dStr}</td>
                         <td class="center-col" style="font-weight: 800; color:white;">${l.adminName}</td>
                         <td class="center-col" style="color:var(--ps-glow); font-weight:900; text-transform:uppercase;">${l.action}</td>
@@ -938,7 +1025,6 @@
         }
 
         function viewPlayerLogs(username) {
-            hideAllPopovers();
             currentLogUsername = username;
             document.getElementById('pl-title').innerText = `${username} LOGS`;
             pgPL = 1;
@@ -957,14 +1043,16 @@
             let paginated = activePlayerLogs.slice((pgPL - 1) * limit, pgPL * limit);
             renderPagination(activePlayerLogs.length, pgPL, 'pag-pl', 'pgPL', 'renderPlayerLogsPage');
 
-            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No logs found for this user.</td></tr>`; return; }
+            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No logs found for this user.</td></tr>`; return; }
 
-            paginated.forEach(l => {
+            paginated.forEach((l, i) => {
+                let rowNum = (pgPL - 1) * limit + i + 1;
                 let dStr = new Date(l.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let amtColor = l.amount > 0 ? 'var(--success)' : (l.amount < 0 ? 'var(--danger)' : 'white');
                 let amtSign = l.amount > 0 ? '+' : '';
                 tbody.innerHTML += `
                     <tr>
+                        <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
                         <td class="center-col" style="color:var(--text-muted); font-size:0.85rem;">${dStr}</td>
                         <td class="center-col" style="font-weight: 800; text-transform: uppercase;">${l.action}</td>
                         <td class="center-col" style="color:${amtColor}; font-weight:900;">${amtSign}${l.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
@@ -1008,12 +1096,14 @@
             let pagHist = histories.slice((pgHist - 1) * limit, pgHist * limit);
             renderPagination(histories.length, pgHist, 'pag-hist', 'pgHist', 'renderTransactions');
 
-            if(pagPend.length === 0) pBody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">Queue is empty.</td></tr>`;
-            pagPend.forEach(t => {
+            if(pagPend.length === 0) pBody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">Queue is empty.</td></tr>`;
+            pagPend.forEach((t, i) => {
+                let rowNum = (pgPend - 1) * limit + i + 1;
                 let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
                 let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 pBody.innerHTML += `
                     <tr class="clickable-row" onclick="openInspector('${t._id}', '${t.type}', ${t.amount}, '${t.username}', '${t.ref}')">
+                        <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
                         <td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${dStr}</td>
                         <td class="center-col" style="text-transform:uppercase; font-weight:800; font-size: 0.8rem;">${t.type}</td>
                         <td class="center-col" style="color:${color}; font-weight: 800; font-size: 1.1rem;">${t.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
@@ -1021,13 +1111,15 @@
                     </tr>`;
             });
 
-            if(pagHist.length === 0) hBody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No history found.</td></tr>`;
-            pagHist.forEach(t => {
+            if(pagHist.length === 0) hBody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No history found.</td></tr>`;
+            pagHist.forEach((t, i) => {
+                let rowNum = (pgHist - 1) * limit + i + 1;
                 let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
                 let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let statClass = t.status === 'Approved' ? 'approved' : 'rejected';
                 hBody.innerHTML += `
                     <tr>
+                        <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
                         <td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${dStr}</td>
                         <td class="center-col" style="text-transform:uppercase; font-weight: 800; font-size: 0.8rem;">${t.type}</td>
                         <td class="center-col" style="color:${color}; font-weight: 800;">${t.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
@@ -1071,13 +1163,15 @@
             renderPagination(gBatchesArr.length, pgPromos, 'pag-promos', 'pgPromos', 'renderPromos');
 
             const tbody = document.getElementById('promos-tbody'); tbody.innerHTML = '';
-            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No batches found.</td></tr>`; return; }
+            if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No batches found.</td></tr>`; return; }
 
-            paginated.forEach(b => {
+            paginated.forEach((b, i) => {
+                let rowNum = (pgPromos - 1) * limit + i + 1;
                 let tColor = b.type === 'playable' ? 'var(--playable)' : 'var(--credits)';
                 let tName = b.type === 'playable' ? 'Playable' : 'Regular';
                 tbody.innerHTML += `
                     <tr>
+                        <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
                         <td class="center-col" style="font-weight:900; color:white; font-size:1.1rem;">${b.id}</td>
                         <td class="center-col" style="color:var(--ps-glow); font-weight: 800;">${b.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
                         <td class="center-col" style="font-weight:800; color:${tColor};">${tName}</td>
@@ -1107,10 +1201,12 @@
             let paginated = activeBatchCodes.slice((pgVB - 1) * limit, pgVB * limit);
             renderPagination(activeBatchCodes.length, pgVB, 'pag-vb', 'pgVB', 'renderBatchViewPage');
             
-            paginated.forEach(c => {
+            paginated.forEach((c, i) => {
+                let rowNum = (pgVB - 1) * limit + i + 1;
                 let statHtml = c.redeemedBy ? `<span class="badge offline">Claimed by ${c.redeemedBy}</span>` : `<span class="badge active">Available</span>`;
                 tbody.innerHTML += `
                     <tr>
+                        <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
                         <td class="center-col" style="font-family:monospace; font-size:1.2rem; font-weight:900; letter-spacing:1px;">${c.code}</td>
                         <td class="center-col">${statHtml}</td>
                         <td class="center-col"><button class="btn-sm btn-edit" style="margin:0 auto; padding: 10px;" onclick="copySingle('${c.code}', this)"><i class="fas fa-copy"></i></button></td>
@@ -1131,32 +1227,6 @@
             let codes = activeBatchCodes.map(c => c.code);
             navigator.clipboard.writeText(codes.join('\n'));
             showSNTAlert("SUCCESS", `Copied ${codes.length} codes to your clipboard!`);
-        }
-
-        function actionUser(type, id, username) {
-            hideAllPopovers();
-            let msg = type === 'ban' ? `Are you sure you want to BAN ${username}?` : `Are you sure you want to UNBAN ${username}?`;
-            showSNTConfirm("MODIFY ACCOUNT", msg, () => { socket.emit('adminAction', { type: type, id: id }); });
-        }
-
-        function openEditUser(id) {
-            hideAllPopovers();
-            const u = gUsers.find(x => x._id === id); if(!u) return;
-            document.getElementById('edit-u-id').value = u._id;
-            document.getElementById('edit-u-name').value = u.username;
-            document.getElementById('edit-u-credits').value = u.credits || 0;
-            document.getElementById('edit-u-playable').value = u.playableCredits || 0;
-            document.getElementById('edit-u-role').value = u.role;
-            openModal('edit-user-modal');
-        }
-
-        function saveUserEdit() {
-            let cr = parseFloat(document.getElementById('edit-u-credits').value);
-            let pcr = parseFloat(document.getElementById('edit-u-playable').value);
-            if(isNaN(cr) || isNaN(pcr)) return document.getElementById('edit-user-err').innerText = 'Please enter valid numbers.';
-            
-            socket.emit('adminAction', { type: 'editUser', id: document.getElementById('edit-u-id').value, credits: cr, playableCredits: pcr, role: document.getElementById('edit-u-role').value });
-            closeModal('edit-user-modal');
         }
 
         function generatePromo() {
