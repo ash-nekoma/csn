@@ -119,9 +119,6 @@
         .pagination button:hover:not(:disabled) { background: var(--ps-glow); color: black; }
         .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .center-col { text-align: center; justify-content: center; }
-        .left-col { text-align: left; justify-content: flex-start; }
-
         /* Muted Numbering */
         .num-col { width: 5%; color: var(--text-muted); opacity: 0.6; font-size: 0.8rem; font-weight: normal; }
 
@@ -173,7 +170,7 @@
         .smurf-icon { color: var(--danger); margin-left: 8px; cursor: help; font-size: 1.1rem; animation: pulseRed 2s infinite; }
     </style>
 </head>
-<body>
+<body onclick="hideAllPopovers()">
 
     <div id="toast-container"></div>
 
@@ -305,10 +302,11 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th class="num-col">#</th>
-                                        <th style="width: 5%;"></th> <th class="left-col" style="width: 35%; padding-left: 10px;">PLAYER</th>
-                                        <th class="center-col" style="width: 30%;">CREDITS (TC)</th>
-                                        <th class="center-col" style="width: 25%;">ROLE</th>
+                                        <th class="num-col" style="width: 5%; text-align: center;">#</th>
+                                        <th style="width: 5%; text-align: center;"></th>
+                                        <th style="width: 40%; text-align: left; padding-left: 0;">PLAYER</th>
+                                        <th style="width: 25%; text-align: center;">CREDITS (TC)</th>
+                                        <th style="width: 25%; text-align: center;">ROLE</th>
                                     </tr>
                                 </thead>
                                 <tbody id="users-tbody"></tbody>
@@ -829,6 +827,7 @@
             openModal('snt-confirm-modal');
         }
 
+        // LIGHTBOX TRIGGER
         function openLightbox(url) {
             document.getElementById('lightbox-img').src = url;
             openModal('lightbox-modal');
@@ -1029,18 +1028,24 @@
             paginated.forEach((u, i) => {
                 let rowNum = filtered.length - ((pgUsers - 1) * globalTableLimit) - i;
                 let statColor = u.status === 'Active' ? 'var(--success)' : (u.status === 'Banned' ? 'var(--danger)' : 'var(--text-muted)');
-                let displayCredits = `<div style="font-weight: 900; color: var(--credits); font-size:1.1rem;">${fmtTC(u.credits)}</div><div style="font-size: 0.8rem; color: var(--playable); font-weight:800;">+ ${fmtTC(u.playableCredits)} P</div>`;
+                
+                let displayCredits = `
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                        <span style="font-weight: 900; color: var(--credits); font-size:1.1rem;">${fmtTC(u.credits)}</span>
+                        <span style="font-size: 0.8rem; color: var(--playable); font-weight:800;">+ ${fmtTC(u.playableCredits)} P</span>
+                    </div>`;
+                
                 let roleColor = u.role === 'Admin' ? 'var(--danger)' : (u.role === 'Moderator' ? 'var(--ps-glow)' : (u.role === 'VIP' ? 'var(--playable)' : 'var(--text-muted)'));
 
                 tbody.innerHTML += `
                     <tr class="clickable-row" onclick="openPlayerDetails('${u._id}')">
-                        <td class="num-col">${rowNum}</td>
-                        <td class="center-col" style="padding-right: 0;">
-                            <div style="width:10px; height:10px; border-radius:50%; background:${statColor}; box-shadow:0 0 8px ${statColor}; margin: 0 auto;"></div>
+                        <td class="num-col" style="text-align: center;">${rowNum}</td>
+                        <td style="text-align: center; padding: 0;">
+                            <div style="width:8px; height:8px; border-radius:50%; background:${statColor}; box-shadow:0 0 5px ${statColor}; margin: 0 auto;"></div>
                         </td>
-                        <td class="left-col" style="font-weight:900; font-size:1.1rem; color: white; padding-left: 10px;">${u.username}</td>
-                        <td class="center-col">${displayCredits}</td>
-                        <td class="center-col" style="font-weight:900; color:${roleColor}; text-transform:uppercase;">${u.role}</td>
+                        <td style="font-weight:900; font-size:1.1rem; color: white; text-align: left; padding-left: 0;">${u.username}</td>
+                        <td style="text-align: center;">${displayCredits}</td>
+                        <td style="font-weight:900; color:${roleColor}; text-transform:uppercase; text-align: center;">${u.role}</td>
                     </tr>`;
             });
         }
