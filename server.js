@@ -371,8 +371,8 @@ io.on('connection', (socket) => {
                     // New sequence
                     socket.soloBaseline = { game: data.game, amount: amt, active: true };
                 } else {
-                    // Continuing a loss streak, cap next bet at 20x their initial baseline
-                    let spreadLimit = socket.soloBaseline.amount * 20; 
+                    // Continuing a loss streak, cap next bet at 8x their initial baseline (3 Martingale steps)
+                    let spreadLimit = socket.soloBaseline.amount * 8; 
                     if (amt > spreadLimit && amt > 500) { 
                         socket.emit('localGameError', { msg: `MARTINGALE CAP: MAX ${formatTC(spreadLimit)} TC ON THIS STREAK`, game: data.game });
                         return;
@@ -615,6 +615,15 @@ io.on('connection', (socket) => {
             sharedTables.bets.push({ 
                 userId: user._id, socketId: socket.id, username: user.username, room: data.room, choice: data.choice, amount: amt, fromPlayable: deduction.fromPlayable, fromMain: deduction.fromMain 
             });
+
+            // SERVER AUTHORITATIVE CONFIRMATION - Sent back to specific user
+            socket.emit('sharedBetConfirmed', { 
+                choice: data.choice, 
+                amount: amt, 
+                room: data.room, 
+                newBalance: { credits: user.credits, playable: user.playableCredits } 
+            });
+
         } finally {
             socket.isSharedBetting = false;
         }
@@ -687,7 +696,7 @@ io.on('connection', (socket) => {
         try {
             if (mongoose.connection.readyState !== 1) { return socket.emit('authError', 'Database Offline. Try again later.'); }
             const user = await User.findOne({ username: data.username, password: data.password });
-            if (user && user.role === 'Admin') {
+            if (user && (user.role === 'Admin' || user.role === 'Moderator')) {
                 socket.join('admin_room'); 
                 let ip = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
                 user.ipAddress = ip; await user.save();
