@@ -50,7 +50,8 @@
         }
 
         .btn-primary { background: rgba(0, 162, 255, 0.15); color: var(--ps-glow); border: 1px solid var(--ps-glow); padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; pointer-events: auto; }
-        .btn-primary:hover { background: var(--ps-glow); color: black; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 162, 255, 0.4); }
+        .btn-primary:hover:not(:disabled) { background: var(--ps-glow); color: black; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 162, 255, 0.4); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; border-color: var(--glass-border); color: var(--text-muted); background: transparent; }
         .auth-msg { font-size: 0.95rem; font-weight: 800; min-height: 20px; margin-bottom: 15px; text-align: center; color: var(--danger); }
 
         #admin-app { display: none; width: 100%; height: 100vh; position: relative; z-index: 1;}
@@ -62,11 +63,13 @@
         .sidebar-header span { color: var(--danger); font-weight: 800; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; }
         
         .nav-menu { padding: 20px 0; display: flex; flex-direction: column; gap: 5px; flex: 1; }
-        .nav-item { padding: 18px 25px; color: var(--text-muted); font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 15px; border-left: 4px solid transparent; }
+        .nav-item { position: relative; padding: 18px 25px; color: var(--text-muted); font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 15px; border-left: 4px solid transparent; }
         .nav-item i { width: 25px; text-align: center; font-size: 1.2rem; }
         .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
         .nav-item.active { background: rgba(0, 162, 255, 0.1); color: var(--ps-glow); border-left-color: var(--ps-glow); }
         
+        .nav-badge { background: var(--danger); color: white; padding: 2px 8px; border-radius: 50px; font-size: 0.75rem; position: absolute; right: 20px; box-shadow: 0 0 10px var(--danger); }
+
         .logout-btn { padding: 20px; text-align: center; border-top: 1px solid var(--glass-border); cursor: pointer; color: white; font-weight: 800; transition: 0.2s; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.05);}
         .logout-btn:hover { background: rgba(255,255,255,0.15); color: var(--danger); }
 
@@ -78,13 +81,15 @@
         .content-area { padding: 40px; flex: 1; width: 100%; display: flex; flex-direction: column; overflow: hidden; }
         .tab-view { flex: 1; display: flex; flex-direction: row; overflow: hidden; gap: 20px;}
 
-        /* BENTO GRID (Fixed Cut-offs) */
+        /* BENTO GRID */
         .bento-container { flex: 3; display: flex; flex-direction: column; overflow-y: auto; padding: 10px; }
         .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; }
         
-        .bento-item { background: rgba(0, 15, 35, 0.6); border: 1px solid var(--glass-border); padding: 30px; border-radius: 12px; display: flex; align-items: center; gap: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); backdrop-filter: blur(5px); transition: all 0.3s ease; cursor: pointer; }
+        .bento-item { background: rgba(0, 15, 35, 0.6); border: 1px solid var(--glass-border); padding: 30px; border-radius: 12px; display: flex; align-items: center; gap: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); backdrop-filter: blur(5px); transition: all 0.3s ease; cursor: pointer; position: relative;}
         .bento-item:hover { transform: translateY(-5px); border-color: transparent; box-shadow: inset 0 0 25px rgba(0,162,255,0.3), 0 10px 30px rgba(0,0,0,0.8); }
-        
+        .bento-item::after { content: '\f08e'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; top: 15px; right: 15px; font-size: 1rem; color: var(--text-muted); opacity: 0; transition: 0.3s; }
+        .bento-item:hover::after { opacity: 1; color: white; }
+
         .bento-span-2 { grid-column: span 2; }
         .bento-span-row-2 { grid-row: span 2; flex-direction: column; align-items: flex-start; justify-content: center; }
         
@@ -130,6 +135,7 @@
         .badge.approved, .badge.active { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.3); }
         .badge.rejected, .badge.banned { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid rgba(255, 51, 102, 0.3); }
         .badge.offline { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .badge.vip { background: rgba(179, 102, 255, 0.15); color: var(--playable); border: 1px solid rgba(179, 102, 255, 0.3); }
 
         .action-btns { display: flex; gap: 8px; justify-content: center;}
         .btn-sm { padding: 6px 12px; border: none; border-radius: 6px; font-weight: 800; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; transition: 0.2s; color: white; letter-spacing: 1px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;}
@@ -146,7 +152,7 @@
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-content { background: var(--glass-bg); width: 450px; padding: 40px 30px 30px; border-radius: 12px; border: 1px solid var(--glass-border); position: relative; box-shadow: 0 25px 80px rgba(0,0,0,0.9); pointer-events: auto; display: flex; flex-direction: column;}
-        .modal-content.wide { width: 700px; max-width: 95vw; max-height: 90vh;}
+        .modal-content.wide { width: 750px; max-width: 95vw; max-height: 90vh;}
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; color: var(--text-muted); cursor: pointer; background: none; border: none; transition: 0.2s; outline: none; z-index: 10;}
         .modal-close:hover { color: var(--danger); transform: scale(1.1); }
         .modal-title { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; text-align: center; flex-shrink:0;}
@@ -167,12 +173,10 @@
         @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
-        /* POPOVERS */
-        .glass-popover { position: fixed; background: rgba(0, 15, 35, 0.95); border: 1px solid var(--ps-glow); border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); z-index: 50000; padding: 10px; display: flex; flex-direction: column; gap: 5px; backdrop-filter: blur(20px); }
         .smurf-icon { color: var(--danger); margin-left: 8px; cursor: help; font-size: 1.1rem; animation: pulseRed 2s infinite; }
     </style>
 </head>
-<body onclick="hideAllPopovers()">
+<body>
 
     <div id="toast-container"></div>
 
@@ -202,10 +206,13 @@
             <div class="nav-menu">
                 <div class="nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard Overview</div>
                 <div class="nav-item" onclick="switchTab('users')"><i class="fas fa-users"></i> Player Management</div>
-                <div class="nav-item" onclick="switchTab('cashier')"><i class="fas fa-money-bill-transfer"></i> Economy & Cashier</div>
-                <div class="nav-item" onclick="switchTab('promos')"><i class="fas fa-gift"></i> Promos & Rewards</div>
-                <div class="nav-item" onclick="switchTab('tools')"><i class="fas fa-wrench"></i> System Tools</div>
-                <div class="nav-item" onclick="switchTab('audit')"><i class="fas fa-shield-alt"></i> Security & Audit Logs</div>
+                <div class="nav-item" onclick="switchTab('cashier')">
+                    <i class="fas fa-money-bill-transfer"></i> Economy & Cashier
+                    <span id="sidebar-badge-cashier" class="nav-badge" style="display:none;">0</span>
+                </div>
+                <div class="nav-item restricted-mod" onclick="switchTab('promos')"><i class="fas fa-gift"></i> Promos & Rewards</div>
+                <div class="nav-item restricted-mod" onclick="switchTab('tools')"><i class="fas fa-wrench"></i> System Tools</div>
+                <div class="nav-item restricted-mod" onclick="switchTab('audit')"><i class="fas fa-shield-alt"></i> Security & Audit Logs</div>
             </div>
             <div class="logout-btn" onclick="confirmLogout()">
                 <i class="fas fa-arrow-left"></i> Back to Casino
@@ -216,7 +223,7 @@
             <div class="topbar">
                 <h1 id="page-title">Dashboard Overview</h1>
                 <div style="font-weight: 800; color: var(--ps-glow); display: flex; align-items: center; gap: 10px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">
-                    <i class="fas fa-shield-alt"></i> Terminal Connected
+                    <i class="fas fa-shield-alt"></i> <span id="logged-admin-role">Terminal Connected</span>
                 </div>
             </div>
 
@@ -225,39 +232,39 @@
                 <div id="view-dashboard" class="tab-view">
                     <div class="bento-container">
                         <div class="bento-grid">
-                            <div class="bento-item bento-span-2 bento-span-row-2" onclick="switchTab('users')">
+                            <div class="bento-item bento-span-2 bento-span-row-2" onclick="openBentoModal('economy')">
                                 <div style="display:flex; align-items:center; gap:20px;">
                                     <div class="stat-icon" style="color: var(--credits); font-size:3rem; width:80px; height:80px;"><i class="fas fa-coins"></i></div>
                                     <div class="stat-info">
                                         <h3 style="font-size:1.1rem;">Total Economy (Main TC)</h3>
-                                        <div class="value glow-neon" id="stat-economy" style="font-size:3.5rem;">0.0</div>
+                                        <div class="value glow-neon" id="stat-economy" style="font-size:3.5rem;">0</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bento-item bento-span-2" onclick="switchTab('cashier')">
+                            <div class="bento-item" onclick="openBentoModal('deposits')">
                                 <div class="stat-icon" style="color: var(--success);"><i class="fas fa-arrow-down"></i></div>
-                                <div class="stat-info"><h3>Total Deposits (Approved)</h3><div class="value glow-success" id="stat-deposits">0.0</div></div>
+                                <div class="stat-info"><h3>Approved Deposits</h3><div class="value glow-success" id="stat-deposits">0</div></div>
                             </div>
 
-                            <div class="bento-item" onclick="switchTab('users')">
+                            <div class="bento-item" onclick="openBentoModal('withdrawals')">
+                                <div class="stat-icon" style="color: var(--danger);"><i class="fas fa-arrow-up"></i></div>
+                                <div class="stat-info"><h3>Approved Withdrawals</h3><div class="value" style="color: var(--danger);" id="stat-withdrawals">0</div></div>
+                            </div>
+
+                            <div class="bento-item" onclick="openBentoModal('players')">
                                 <div class="stat-icon" style="color: var(--ps-glow);"><i class="fas fa-users"></i></div>
                                 <div class="stat-info"><h3>Registered Players</h3><div class="value" id="stat-users">0</div></div>
                             </div>
 
-                            <div class="bento-item" onclick="switchTab('cashier')">
-                                <div class="stat-icon" style="color: var(--danger);"><i class="fas fa-clock"></i></div>
-                                <div class="stat-info"><h3>Pending Requests</h3><div class="value" id="stat-pending">0</div></div>
-                            </div>
-
-                            <div class="bento-item bento-span-2">
+                            <div class="bento-item restricted-mod" onclick="openBentoModal('vault')">
                                 <div class="stat-icon" style="color: var(--text-muted);"><i class="fas fa-university"></i></div>
                                 <div class="stat-info"><h3>Bank Vault Limit</h3><div class="value" id="stat-limit">2,000,000</div></div>
                             </div>
-                            
-                            <div class="bento-item bento-span-2">
+
+                            <div class="bento-item bento-span-2 restricted-mod" onclick="openBentoModal('profit')">
                                 <div class="stat-icon" style="color: var(--success);"><i class="fas fa-chart-line"></i></div>
-                                <div class="stat-info"><h3>House Profit (24H)</h3><div class="value" id="stat-profit" style="color:var(--success);">0.0</div></div>
+                                <div class="stat-info"><h3>House Profit (24H)</h3><div class="value" id="stat-profit" style="color:var(--success);">0</div></div>
                             </div>
                         </div>
                     </div>
@@ -274,7 +281,7 @@
                     <div class="panel">
                         <div class="panel-header">
                             <h3>Player Database Hierarchy</h3>
-                            <button class="btn-sm" style="background: rgba(255,180,0,0.15); color: var(--credits); border: 1px solid rgba(255,180,0,0.3); padding: 10px 20px; font-size: 0.95rem;" onclick="openModal('direct-gift-modal')">
+                            <button class="btn-sm restricted-mod" id="btn-direct-gift" style="background: rgba(255,180,0,0.15); color: var(--credits); border: 1px solid rgba(255,180,0,0.3); padding: 10px 20px; font-size: 0.95rem;" onclick="openModal('direct-gift-modal')">
                                 <i class="fas fa-gift"></i> Direct Gift Credits
                             </button>
                         </div>
@@ -284,6 +291,8 @@
                             <select id="filter-role" onchange="pgUsers=1; renderUsers()">
                                 <option value="All">All Roles</option>
                                 <option value="Player">Player</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Moderator">Moderator</option>
                                 <option value="Admin">Admin</option>
                             </select>
                             <select id="filter-status" onchange="pgUsers=1; renderUsers()">
@@ -301,8 +310,8 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th class="center-col" style="width: 50px;">#</th>
-                                        <th class="left-col">PLAYER</th>
+                                        <th style="width: 50px; text-align:center;">#</th>
+                                        <th class="left-col" style="padding-left: 0;">PLAYER</th>
                                         <th class="center-col">CREDITS (TC)</th>
                                         <th class="center-col">ROLE</th>
                                     </tr>
@@ -446,8 +455,20 @@
         </div>
     </div>
 
-    <div id="smurf-popover" class="glass-popover hidden" style="min-width: 200px;"></div>
-    
+    <div id="bento-modal" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('bento-modal')">
+        <div class="modal-content wide" style="max-width: 800px;">
+            <button class="modal-close" onclick="closeModal('bento-modal')"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title" id="bento-title">Details</h3>
+            <div id="bento-custom-html" style="display:none; text-align:center; padding: 20px; font-size:1.1rem; line-height: 1.5; color:var(--text-muted);"></div>
+            <div class="table-wrapper" id="bento-table-wrapper" style="max-height: 400px;">
+                <table>
+                    <thead id="bento-thead"></thead>
+                    <tbody id="bento-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <div id="player-details-modal" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('player-details-modal')">
         <div class="modal-content" style="width: 500px;">
             <button class="modal-close" onclick="closeModal('player-details-modal')"><i class="fas fa-times"></i></button>
@@ -488,9 +509,11 @@
                     <div style="display:flex; align-items:center; gap:10px;">
                         <select id="pd-role" class="input-control" style="padding: 8px 12px; font-size: 0.9rem; width: auto;">
                             <option value="Player">Player</option>
+                            <option value="VIP">VIP</option>
+                            <option value="Moderator">Moderator</option>
                             <option value="Admin">Admin</option>
                         </select>
-                        <button onclick="updatePlayerRole()" class="btn-sm btn-edit" style="padding: 8px 15px;"><i class="fas fa-save"></i> Save</button>
+                        <button id="pd-btn-role-save" onclick="updatePlayerRole()" class="btn-sm btn-edit" style="padding: 8px 15px;"><i class="fas fa-save"></i> Save</button>
                     </div>
                 </div>
             </div>
@@ -500,7 +523,7 @@
                 <button class="btn-primary" id="pd-btn-ban" style="flex:1;"></button>
             </div>
             
-            <button class="btn-primary" onclick="quickGiftShortcut()" style="margin-top:15px; background: rgba(255,180,0,0.15); color:var(--credits); border-color:var(--credits);">
+            <button class="btn-primary restricted-mod" id="pd-btn-quick-gift" onclick="quickGiftShortcut()" style="margin-top:15px; background: rgba(255,180,0,0.15); color:var(--credits); border-color:var(--credits);">
                 <i class="fas fa-gift"></i> DIRECT GIFT CREDITS
             </button>
         </div>
@@ -511,7 +534,7 @@
             <button class="modal-close" onclick="closeModal('player-logs-modal')"><i class="fas fa-times"></i></button>
             <h3 class="modal-title" id="pl-title">PLAYER LOGS</h3>
             <div style="text-align:right; margin-bottom:15px;">
-                <button class="btn-sm btn-reject" onclick="clearPlayerLogs()" style="display:inline-flex; font-size: 1rem; padding: 10px 20px;"><i class="fas fa-trash"></i> Clear Logs</button>
+                <button class="btn-sm btn-reject restricted-mod" onclick="clearPlayerLogs()" style="display:inline-flex; font-size: 1rem; padding: 10px 20px;"><i class="fas fa-trash"></i> Clear Logs</button>
             </div>
             <div class="table-wrapper" style="max-height: 400px;">
                 <table>
@@ -685,6 +708,12 @@
             setTimeout(() => { if(t.parentElement) t.remove(); }, 3500);
         }
 
+        // Custom TC Formatter to remove `.0`
+        function fmtTC(num) {
+            let n = Number(num) || 0;
+            return n % 1 === 0 ? n.toLocaleString() : n.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+        }
+
         socket.on('adminSuccess', msg => showToast(msg, 'success'));
         socket.on('adminError', msg => showToast(msg, 'error'));
 
@@ -703,6 +732,7 @@
             fc.scrollTop = fc.scrollHeight;
         });
 
+        let myAdminRole = 'Admin';
         let gUsers = []; let pgUsers = 1;
         let gTxs = []; let pgPend = 1; let pgHist = 1;
         let gPromos = []; let pgPromos = 1;
@@ -749,6 +779,15 @@
         socket.on('adminLoginSuccess', data => {
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('admin-app').style.display = 'flex';
+            
+            myAdminRole = data.role;
+            document.getElementById('logged-admin-role').innerText = `Terminal Connected (${myAdminRole})`;
+
+            if (myAdminRole === 'Moderator') {
+                document.querySelectorAll('.restricted-mod').forEach(el => el.style.display = 'none');
+            } else {
+                document.querySelectorAll('.restricted-mod').forEach(el => el.style.display = '');
+            }
         });
 
         function confirmLogout() {
@@ -807,25 +846,112 @@
             openModal('lightbox-modal');
         }
 
+        // DASHBOARD BENTO MODALS
+        function openBentoModal(type) {
+            let thead = document.getElementById('bento-thead');
+            let tbody = document.getElementById('bento-tbody');
+            let customHtml = document.getElementById('bento-custom-html');
+            let tableWrapper = document.getElementById('bento-table-wrapper');
+            
+            thead.innerHTML = ''; tbody.innerHTML = '';
+            customHtml.style.display = 'none';
+            tableWrapper.style.display = 'block';
+            
+            if (type === 'economy') {
+                document.getElementById('bento-title').innerText = "TOP 10 RICHEST PLAYERS";
+                let sorted = [...gUsers].sort((a,b) => (b.credits||0) - (a.credits||0)).slice(0, 10);
+                thead.innerHTML = `<tr><th class="center-col">RANK</th><th class="left-col">PLAYER</th><th class="center-col">MAIN TC</th><th class="center-col">PLAYABLE P</th></tr>`;
+                sorted.forEach((u, i) => {
+                    tbody.innerHTML += `<tr><td class="center-col" style="color:var(--text-muted);font-weight:900;">#${i+1}</td><td class="left-col" style="font-weight:900;color:white;">${u.username}</td><td class="center-col" style="color:var(--credits);font-weight:800;">${fmtTC(u.credits)} TC</td><td class="center-col" style="color:var(--playable);font-weight:800;">${fmtTC(u.playableCredits)} P</td></tr>`;
+                });
+            } 
+            else if (type === 'deposits') {
+                document.getElementById('bento-title').innerText = "LAST 10 APPROVED DEPOSITS";
+                let deps = gTxs.filter(t => t.type === 'Deposit' && t.status === 'Approved').sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
+                thead.innerHTML = `<tr><th class="center-col">DATE</th><th class="left-col">PLAYER</th><th class="center-col">AMOUNT</th></tr>`;
+                if(deps.length === 0) tbody.innerHTML = `<tr><td colspan="3" class="center-col" style="color:var(--text-muted); font-style:italic;">No deposits found.</td></tr>`;
+                deps.forEach(t => {
+                    tbody.innerHTML += `<tr><td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${t.username}</td><td class="center-col" style="color:var(--success);font-weight:900;">+${fmtTC(t.amount)} TC</td></tr>`;
+                });
+            }
+            else if (type === 'withdrawals') {
+                document.getElementById('bento-title').innerText = "LAST 10 APPROVED WITHDRAWALS";
+                let wits = gTxs.filter(t => t.type === 'Withdrawal' && t.status === 'Approved').sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
+                thead.innerHTML = `<tr><th class="center-col">DATE</th><th class="left-col">PLAYER</th><th class="center-col">AMOUNT</th></tr>`;
+                if(wits.length === 0) tbody.innerHTML = `<tr><td colspan="3" class="center-col" style="color:var(--text-muted); font-style:italic;">No withdrawals found.</td></tr>`;
+                wits.forEach(t => {
+                    tbody.innerHTML += `<tr><td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${t.username}</td><td class="center-col" style="color:var(--danger);font-weight:900;">-${fmtTC(t.amount)} TC</td></tr>`;
+                });
+            }
+            else if (type === 'players') {
+                document.getElementById('bento-title').innerText = "10 NEWEST SIGNUPS";
+                let sorted = [...gUsers].sort((a,b) => new Date(b.joinDate) - new Date(a.joinDate)).slice(0, 10);
+                thead.innerHTML = `<tr><th class="center-col">JOINED</th><th class="left-col">PLAYER</th><th class="center-col">ROLE</th></tr>`;
+                sorted.forEach(u => {
+                    tbody.innerHTML += `<tr><td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${new Date(u.joinDate).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${u.username}</td><td class="center-col" style="color:var(--text-muted);font-weight:800;">${u.role}</td></tr>`;
+                });
+            }
+            else if (type === 'vault') {
+                document.getElementById('bento-title').innerText = "VAULT LIMIT CALCULATION";
+                tableWrapper.style.display = 'none';
+                customHtml.style.display = 'block';
+                let totalEcon = gUsers.reduce((a, b) => a + (b.credits || 0), 0);
+                let appDep = gTxs.filter(t => t.type === 'Deposit' && t.status === 'Approved').reduce((a, b) => a + b.amount, 0);
+                let appWit = gTxs.filter(t => t.type === 'Withdrawal' && t.status === 'Approved').reduce((a, b) => a + b.amount, 0);
+                let vault = 2000000 + appDep - appWit - totalEcon;
+                
+                customHtml.innerHTML = `
+                    <div style="margin-bottom:10px;"><strong>Base Initial Vault:</strong> <span style="color:white;">2,000,000 TC</span></div>
+                    <div style="margin-bottom:10px;"><strong>+ Total Approved Deposits:</strong> <span style="color:var(--success);">+${fmtTC(appDep)}</span></div>
+                    <div style="margin-bottom:10px;"><strong>- Total Approved Withdrawals:</strong> <span style="color:var(--danger);">-${fmtTC(appWit)}</span></div>
+                    <div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--glass-border);"><strong>- Active Player Economy:</strong> <span style="color:var(--credits);">-${fmtTC(totalEcon)}</span></div>
+                    <div style="font-size:1.5rem; font-weight:900; color:white;">CURRENT VAULT LIMIT: <span style="color:var(--text-muted);">${fmtTC(vault)} TC</span></div>
+                `;
+            }
+            else if (type === 'profit') {
+                document.getElementById('bento-title').innerText = "HOUSE PROFIT (24H)";
+                tableWrapper.style.display = 'none';
+                customHtml.style.display = 'block';
+                let hp = document.getElementById('stat-profit').innerText;
+                customHtml.innerHTML = `
+                    <div style="margin-bottom:20px;">This metric shows the net win/loss of the Casino system across all players in the last 24 hours.</div>
+                    <div style="font-size:2rem; font-weight:900; color:${parseFloat(hp.replace(/,/g, '')) >= 0 ? 'var(--success)' : 'var(--danger)'};">${hp} TC</div>
+                `;
+            }
+            openModal('bento-modal');
+        }
+
         socket.on('adminDataSync', data => {
             gUsers = data.users;
             gTxs = data.transactions;
             gPromos = data.giftBatches;
             gAdminLogs = data.adminLogs || [];
             
-            document.getElementById('stat-economy').innerText = data.stats.economy.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+            document.getElementById('stat-economy').innerText = fmtTC(data.stats.economy);
             document.getElementById('stat-users').innerText = gUsers.length;
-            document.getElementById('stat-deposits').innerText = data.stats.approvedDeposits.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
-            document.getElementById('stat-limit').innerText = data.stats.limit.toLocaleString();
+            
+            let appWits = gTxs.filter(t => t.type === 'Withdrawal' && t.status === 'Approved').reduce((a, b) => a + b.amount, 0);
+            document.getElementById('stat-withdrawals').innerText = fmtTC(appWits);
+            document.getElementById('stat-deposits').innerText = fmtTC(data.stats.approvedDeposits);
+            document.getElementById('stat-limit').innerText = fmtTC(data.stats.limit);
             
             // House Profit Styling
             let hp = document.getElementById('stat-profit');
-            hp.innerText = data.stats.houseProfit.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+            hp.innerText = fmtTC(data.stats.houseProfit);
             hp.style.color = data.stats.houseProfit >= 0 ? "var(--success)" : "var(--danger)";
             
-            // Audio Sonar Logic
+            // Audio Sonar Logic & Badge Logic
             let currentPending = gTxs.filter(t => t.status === 'Pending').length;
             document.getElementById('stat-pending').innerText = currentPending;
+            let sidebarBadge = document.getElementById('sidebar-badge-cashier');
+            
+            if(currentPending > 0) {
+                sidebarBadge.innerText = currentPending;
+                sidebarBadge.style.display = 'inline-block';
+            } else {
+                sidebarBadge.style.display = 'none';
+            }
+
             if(currentPending > lastPendingCount) { playSonarPing(); }
             lastPendingCount = currentPending;
 
@@ -903,27 +1029,26 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No players found.</td></tr>`; return; }
 
             paginated.forEach((u, i) => {
-                let rowNum = (pgUsers - 1) * limit + i + 1;
+                let rowNum = filtered.length - ((pgUsers - 1) * limit) - i;
                 
                 // Determine Status Dot Color
                 let statColor = u.status === 'Active' ? 'var(--success)' : (u.status === 'Banned' ? 'var(--danger)' : 'var(--text-muted)');
                 
-                let displayCredits = `<div style="font-weight: 900; color: var(--credits); font-size:1.1rem;">${(u.credits || 0).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})}</div><div style="font-size: 0.8rem; color: var(--playable); font-weight:800;">+ ${(u.playableCredits || 0).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} P</div>`;
+                let displayCredits = `<div style="font-weight: 900; color: var(--credits); font-size:1.1rem;">${fmtTC(u.credits)}</div><div style="font-size: 0.8rem; color: var(--playable); font-weight:800;">+ ${fmtTC(u.playableCredits)} P</div>`;
                 
-                let smurfWarning = (u.ipAddress && u.ipAddress !== 'Unknown' && ipCounts[u.ipAddress] > 1) ? `<i class="fas fa-exclamation-triangle smurf-icon" onmouseover="showSmurfPop(event, '${u.ipAddress}')" onmouseout="hideSmurfPop()" onclick="event.stopPropagation();"></i>` : '';
+                let roleColor = u.role === 'Admin' ? 'var(--danger)' : (u.role === 'Moderator' ? 'var(--ps-glow)' : (u.role === 'VIP' ? 'var(--playable)' : 'var(--text-muted)'));
 
                 tbody.innerHTML += `
                     <tr class="clickable-row" onclick="openPlayerDetails('${u._id}')">
                         <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
-                        <td class="left-col">
+                        <td class="left-col" style="padding-left: 0;">
                             <div style="display:flex; align-items:center; gap:12px;">
                                 <div style="width:10px; height:10px; border-radius:50%; background:${statColor}; box-shadow:0 0 8px ${statColor}; flex-shrink: 0;"></div>
                                 <span style="font-weight:900; font-size:1.1rem; color: white;">${u.username}</span>
-                                ${smurfWarning}
                             </div>
                         </td>
                         <td class="center-col">${displayCredits}</td>
-                        <td class="center-col" style="font-weight:800; color:var(--text-muted);">${u.role}</td>
+                        <td class="center-col" style="font-weight:900; color:${roleColor}; text-transform:uppercase;">${u.role}</td>
                     </tr>`;
             });
         }
@@ -940,10 +1065,20 @@
             document.getElementById('pd-username').innerText = u.username;
             document.getElementById('pd-ip').innerHTML = `${u.ipAddress} ${isSmurf ? `<i class="fas fa-exclamation-triangle smurf-icon" title="Multiple accounts detected on this IP"></i>` : ''}`;
             document.getElementById('pd-joined').innerText = new Date(u.joinDate).toLocaleString('en-US', {dateStyle: 'medium', timeStyle: 'short'});
-            document.getElementById('pd-credits').innerText = (u.credits || 0).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1}) + ' TC';
-            document.getElementById('pd-playable').innerText = (u.playableCredits || 0).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1}) + ' P';
+            document.getElementById('pd-credits').innerText = fmtTC(u.credits) + ' TC';
+            document.getElementById('pd-playable').innerText = fmtTC(u.playableCredits) + ' P';
 
-            document.getElementById('pd-role').value = u.role;
+            let roleSelect = document.getElementById('pd-role');
+            let roleSaveBtn = document.getElementById('pd-btn-role-save');
+            roleSelect.value = u.role;
+
+            if(myAdminRole === 'Moderator') {
+                roleSelect.disabled = true;
+                roleSaveBtn.style.display = 'none';
+            } else {
+                roleSelect.disabled = false;
+                roleSaveBtn.style.display = 'inline-flex';
+            }
 
             let banBtn = document.getElementById('pd-btn-ban');
             if(u.status === 'Banned') {
@@ -1011,7 +1146,7 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No audit logs available.</td></tr>`; return; }
 
             paginated.forEach((l, i) => {
-                let rowNum = (pgAudit - 1) * limit + i + 1;
+                let rowNum = gAdminLogs.length - ((pgAudit - 1) * limit) - i;
                 let dStr = new Date(l.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 tbody.innerHTML += `
                     <tr>
@@ -1046,7 +1181,7 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No logs found for this user.</td></tr>`; return; }
 
             paginated.forEach((l, i) => {
-                let rowNum = (pgPL - 1) * limit + i + 1;
+                let rowNum = activePlayerLogs.length - ((pgPL - 1) * limit) - i;
                 let dStr = new Date(l.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let amtColor = l.amount > 0 ? 'var(--success)' : (l.amount < 0 ? 'var(--danger)' : 'white');
                 let amtSign = l.amount > 0 ? '+' : '';
@@ -1055,7 +1190,7 @@
                         <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
                         <td class="center-col" style="color:var(--text-muted); font-size:0.85rem;">${dStr}</td>
                         <td class="center-col" style="font-weight: 800; text-transform: uppercase;">${l.action}</td>
-                        <td class="center-col" style="color:${amtColor}; font-weight:900;">${amtSign}${l.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        <td class="center-col" style="color:${amtColor}; font-weight:900;">${amtSign}${fmtTC(l.amount)}</td>
                         <td class="center-col" style="color:var(--text-muted); font-size:0.9rem; text-transform:uppercase;">${l.details}</td>
                     </tr>`;
             });
@@ -1098,7 +1233,7 @@
 
             if(pagPend.length === 0) pBody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">Queue is empty.</td></tr>`;
             pagPend.forEach((t, i) => {
-                let rowNum = (pgPend - 1) * limit + i + 1;
+                let rowNum = pendings.length - ((pgPend - 1) * limit) - i;
                 let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
                 let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 pBody.innerHTML += `
@@ -1106,14 +1241,14 @@
                         <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
                         <td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${dStr}</td>
                         <td class="center-col" style="text-transform:uppercase; font-weight:800; font-size: 0.8rem;">${t.type}</td>
-                        <td class="center-col" style="color:${color}; font-weight: 800; font-size: 1.1rem;">${t.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        <td class="center-col" style="color:${color}; font-weight: 800; font-size: 1.1rem;">${fmtTC(t.amount)}</td>
                         <td class="center-col" style="font-weight:900; color:white;">${t.username}</td>
                     </tr>`;
             });
 
             if(pagHist.length === 0) hBody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No history found.</td></tr>`;
             pagHist.forEach((t, i) => {
-                let rowNum = (pgHist - 1) * limit + i + 1;
+                let rowNum = histories.length - ((pgHist - 1) * limit) - i;
                 let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
                 let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let statClass = t.status === 'Approved' ? 'approved' : 'rejected';
@@ -1122,7 +1257,7 @@
                         <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
                         <td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${dStr}</td>
                         <td class="center-col" style="text-transform:uppercase; font-weight: 800; font-size: 0.8rem;">${t.type}</td>
-                        <td class="center-col" style="color:${color}; font-weight: 800;">${t.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        <td class="center-col" style="color:${color}; font-weight: 800;">${fmtTC(t.amount)}</td>
                         <td class="center-col"><span class="badge ${statClass}">${t.status}</span></td>
                     </tr>`;
             });
@@ -1130,7 +1265,7 @@
 
         function openInspector(id, type, amount, username, proofRef) {
             document.getElementById('inspector-type').innerText = type.toUpperCase();
-            document.getElementById('inspector-amt').innerText = amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) + " TC";
+            document.getElementById('inspector-amt').innerText = fmtTC(amount) + " TC";
             document.getElementById('inspector-user').innerText = username;
             
             const proofContainer = document.getElementById('inspector-proof-container');
@@ -1166,14 +1301,14 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No batches found.</td></tr>`; return; }
 
             paginated.forEach((b, i) => {
-                let rowNum = (pgPromos - 1) * limit + i + 1;
+                let rowNum = gBatchesArr.length - ((pgPromos - 1) * limit) - i;
                 let tColor = b.type === 'playable' ? 'var(--playable)' : 'var(--credits)';
                 let tName = b.type === 'playable' ? 'Playable' : 'Regular';
                 tbody.innerHTML += `
                     <tr>
                         <td class="center-col" style="color:var(--text-muted); font-weight:800;">${rowNum}</td>
                         <td class="center-col" style="font-weight:900; color:white; font-size:1.1rem;">${b.id}</td>
-                        <td class="center-col" style="color:var(--ps-glow); font-weight: 800;">${b.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        <td class="center-col" style="color:var(--ps-glow); font-weight: 800;">${fmtTC(b.amount)}</td>
                         <td class="center-col" style="font-weight:800; color:${tColor};">${tName}</td>
                         <td class="center-col" style="font-weight:800; font-size:1.1rem;">${b.codes.length}</td>
                         <td class="center-col">
@@ -1202,7 +1337,7 @@
             renderPagination(activeBatchCodes.length, pgVB, 'pag-vb', 'pgVB', 'renderBatchViewPage');
             
             paginated.forEach((c, i) => {
-                let rowNum = (pgVB - 1) * limit + i + 1;
+                let rowNum = activeBatchCodes.length - ((pgVB - 1) * limit) - i;
                 let statHtml = c.redeemedBy ? `<span class="badge offline">Claimed by ${c.redeemedBy}</span>` : `<span class="badge active">Available</span>`;
                 tbody.innerHTML += `
                     <tr>
@@ -1280,7 +1415,7 @@
             let target = type === 'specific' ? targetUser : type; 
             let tName = cType === 'playable' ? 'Playable TC' : 'Regular TC';
 
-            let confirmMsg = type === 'specific' ? `Gift ${amt} ${tName} to ${target}?` : `Gift ${amt} ${tName} to ${target.replace('_', ' ').toUpperCase()}?`;
+            let confirmMsg = type === 'specific' ? `Gift ${fmtTC(amt)} ${tName} to ${target}?` : `Gift ${fmtTC(amt)} ${tName} to ${target.replace('_', ' ').toUpperCase()}?`;
 
             closeModal('direct-gift-modal');
             showSNTConfirm("AUTHORIZE GIFT", confirmMsg, () => {
