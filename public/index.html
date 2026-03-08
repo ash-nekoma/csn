@@ -1724,10 +1724,10 @@
         
         let h = `<div class="res-title" style="color:white;">${msg}</div>`; 
         if (net > 0) { 
-            h += `<div class="res-payout" style="color:var(--success)">WON +${net} TC</div>`; 
+            h += `<div class="res-payout" style="color:var(--success)">WON +${formatTC(net)} TC</div>`; 
             box.className = "result-box win"; 
         } else if (net < 0) { 
-            h += `<div class="res-payout" style="color:var(--danger)">LOST -${Math.abs(net)} TC</div>`; 
+            h += `<div class="res-payout" style="color:var(--danger)">LOST -${formatTC(Math.abs(net))} TC</div>`; 
             box.className = "result-box lose"; 
         } else { 
             h += `<div class="res-payout" style="color:white">PUSH - BET RETURNED</div>`; 
@@ -1780,13 +1780,7 @@
       
       let totalBetAmt = betAmt * activeBets.length;
       if (totalBetAmt > 50000) { showLocalFlash('d20', "Max Total Bet is 50K TC", "error"); return; }
-      if (totalBetAmt > (myCredits + myPlayable)) { showLocalFlash('d20', "Insufficient TC", "error"); return; }
       
-      if(myPlayable >= totalBetAmt) { myPlayable -= totalBetAmt; } 
-      else { let rem = totalBetAmt - myPlayable; myPlayable = 0; myCredits -= rem; }
-      updateMyBalance({credits: myCredits, playable: myPlayable});
-      triggerBetAnim();
-
       const btn = document.getElementById('btn-d20'), icn = document.getElementById('d20-icon'), nd = document.getElementById('d20-num'), mb = document.getElementById('d20-msg');
       const toggleBtns = document.querySelectorAll('.d20-toggle');
       
@@ -1837,13 +1831,7 @@
       let betEl = document.getElementById('coin-bet');
       let bet = parseFloat(betEl.value);
       if (isNaN(bet) || bet < 10) { showLocalFlash('coinflip', "Min Bet is 10 TC", "error"); return; }
-      if (bet > (myCredits + myPlayable)) { showLocalFlash('coinflip', "Insufficient TC", "error"); return; }
       
-      if(myPlayable >= bet) { myPlayable -= bet; } 
-      else { let rem = bet - myPlayable; myPlayable = 0; myCredits -= rem; }
-      updateMyBalance({credits: myCredits, playable: myPlayable});
-      triggerBetAnim();
-
       const cw = document.getElementById('coin-wrapper'), co = document.getElementById('coin-obj'), mb = document.getElementById('coin-msg');
       document.getElementById('btn-heads').disabled = true; document.getElementById('btn-tails').disabled = true;
       mb.style.display = 'none'; mb.classList.remove('show');
@@ -1881,12 +1869,6 @@
       let betEl = document.getElementById('bj-bet');
       let bet = parseFloat(betEl.value);
       if (isNaN(bet) || bet < 10) { showLocalFlash('blackjack', "Min Bet is 10 TC", "error"); return; }
-      if (bet > (myCredits + myPlayable)) { showLocalFlash('blackjack', "Insufficient TC", "error"); return; }
-      
-      if(myPlayable >= bet) { myPlayable -= bet; } 
-      else { let rem = bet - myPlayable; myPlayable = 0; myCredits -= rem; }
-      updateMyBalance({credits: myCredits, playable: myPlayable});
-      triggerBetAnim();
 
       bjSt.bet = bet; bjSt.active = true; 
       document.getElementById('btn-bj-deal').disabled = true;
@@ -2239,7 +2221,7 @@
             let wonProfit = 0, lostBet = 0;
             
             for (let b in mySBets) { 
-              let a = mySBets[b]; tba += a; 
+                let a = mySBets[b]; tba += a; 
                 if (w === 'Tie') {
                     if (b === 'Tie') { tp += a * 9; wonProfit += (a * 8); }
                     else { tp += a; } 
@@ -2316,7 +2298,7 @@
               } 
               let msg = w === 'Tie' ? `TIE` : `${w.toUpperCase()}`;
               processSharedPayout('dt', tp, tba, msg, wonProfit, lostBet, Object.keys(mySBets).join(', '), data.resStr); 
-            }, 1000); 
+            }, 1500); 
           }, 500); 
         }
       },
@@ -2395,7 +2377,6 @@
       let a = parseFloat(i.value); 
       
       if (isNaN(a) || a < 10) { showLocalFlash('shared', "Min Bet is 10 TC", "error"); return; } 
-      if (a > (myCredits + myPlayable)) { showLocalFlash('shared', "Insufficient TC", "error"); return; } 
       
       let currentTileBet = mySBets[c] || 0;
       if (currentTileBet + a > 50000) { showLocalFlash('shared', "Max 50K TC Per Tile", "error"); return; }
@@ -2473,8 +2454,8 @@
           if (t) t.innerHTML = msg; 
           if (tba > 0 && b) { 
             b.style.display = 'block'; 
-            if (net > 0) { b.innerHTML = `WON <span style="color:var(--success)">+${net} TC</span>`; b.style.color = "white"; } 
-            else if (net < 0) { b.innerHTML = `LOST <span style="color:var(--danger)">-${Math.abs(net)} TC</span>`; b.style.color = "white"; } 
+            if (net > 0) { b.innerHTML = `WON <span style="color:var(--success)">+${formatTC(net)} TC</span>`; b.style.color = "white"; } 
+            else if (net < 0) { b.innerHTML = `LOST <span style="color:var(--danger)">-${formatTC(Math.abs(net))} TC</span>`; b.style.color = "white"; } 
             else { b.innerHTML = `PUSH <span style="color:var(--text-muted)">RETURNED</span>`; b.style.color = "white"; } 
           } else if (b) {
               b.style.display = 'none'; 
