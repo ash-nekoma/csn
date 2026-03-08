@@ -576,7 +576,7 @@
                         <i class="fas fa-volume-up"></i>
                     </button>
                     
-                    <button class="top-icon-btn" onclick="location.reload()" title="Logout" style="color:var(--danger);">
+                    <button class="top-icon-btn" onclick="confirmLogout()" title="Logout" style="color:var(--danger);">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
@@ -987,7 +987,7 @@
         <div class="quick-chips" style="margin-bottom:15px;">
             <button class="chip-btn" style="border-radius: 50px;" onclick="addAmount('wit-amount', 10000)">+ 10,000</button>
             <button class="chip-btn" style="border-radius: 50px;" onclick="addAmount('wit-amount', 25000)">+ 25,000</button>
-            <button class="chip-btn" style="border-radius: 50px;" onclick="document.getElementById('wit-amount').value = Math.min(myCredits, 100000)">MAX</button>
+            <button class="chip-btn" style="border-radius: 50px;" onclick="document.getElementById('wit-amount').value = myCredits">MAX</button>
         </div>
         <div class="input-group" style="margin-bottom:10px;">
             <input type="text" id="wit-snt" class="input-control" placeholder="SNT Username">
@@ -1030,6 +1030,16 @@
 
   <script>
     const socket = io(); 
+
+    // Auto-Login Setup on Page Load
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedUser = localStorage.getItem('snt_user');
+        const savedPass = localStorage.getItem('snt_pass');
+        if(savedUser && savedPass) {
+            socket.emit('login', { username: savedUser, password: savedPass });
+        }
+    });
+
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let audioMuted = false;
     let sfxGainVal = 0.8;
@@ -1132,12 +1142,7 @@
         if (cBtn) cBtn.style.display = document.getElementById('sg-chat-panel').classList.contains('show') ? 'block' : 'none';
     }
 
-    function addAmount(inputId, val) { 
-        let i = document.getElementById(inputId); 
-        let newVal = (parseInt(i.value) || 0) + val;
-        if (newVal > 100000) newVal = 100000;
-        i.value = newVal; 
-    }
+    function addAmount(inputId, val) { let i = document.getElementById(inputId); i.value = (parseInt(i.value) || 0) + val; }
 
     let flashTimeout;
     function showLocalFlash(game, msg, type='error') {
@@ -1384,6 +1389,13 @@
         const user = document.getElementById(uId).value.trim();
         const pass = document.getElementById(pId).value;
         if(!user || !pass) return document.getElementById(mode === 'login' ? 'auth-error-login' : 'auth-error-register').innerText = "Please fill all fields.";
+        
+        // Save to temporary memory before server confirms
+        if (mode === 'login') {
+            window.tempLoginUser = user;
+            window.tempLoginPass = pass;
+        }
+        
         socket.emit(mode, { username: user, password: pass });
     }
 
@@ -1399,6 +1411,12 @@
     });
 
     socket.on('loginSuccess', (data) => {
+        // Save to local storage for page reload persistence
+        if (window.tempLoginUser && window.tempLoginPass) {
+            localStorage.setItem('snt_user', window.tempLoginUser);
+            localStorage.setItem('snt_pass', window.tempLoginPass);
+        }
+
         myUsername = data.username;
         myCredits = data.credits;
         myPlayable = data.playable || 0;
@@ -1414,6 +1432,14 @@
         if (audioCtx.state === 'suspended') audioCtx.resume();
         switchView('casino');
     });
+
+    function confirmLogout() {
+        if(confirm("Are you sure you want to log out?")) {
+            localStorage.removeItem('snt_user');
+            localStorage.removeItem('snt_pass');
+            location.reload();
+        }
+    }
 
     function triggerWinAnim() { 
       let p1 = document.getElementById('pill-credits'); 
