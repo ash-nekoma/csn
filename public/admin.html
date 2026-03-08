@@ -25,7 +25,7 @@
         body { background: linear-gradient(135deg, #000a1f 0%, #00122e 100%); color: var(--text-main); min-height: 100vh; width: 100vw; display: flex; overflow: hidden; }
 
         /* Custom Glass Scrollbars */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0, 162, 255, 0.2); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0, 162, 255, 0.5); box-shadow: 0 0 10px var(--ps-glow); }
@@ -111,11 +111,10 @@
         .panel-header { padding: 20px 30px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); flex-shrink: 0;}
         .panel-header h3 { font-weight: 900; font-size: 1.3rem; text-transform: uppercase; margin: 0; letter-spacing: 1px;}
         
-        .table-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .table-wrapper { flex: 1; display: block; overflow-y: auto; overflow-x: auto; width: 100%; position: relative; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
         th, td { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        thead { background: #000a1f; position: sticky; top: 0; z-index: 10; }
-        thead th { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); padding: 15px 20px;}
+        thead th { background: #000a1f; position: sticky; top: 0; z-index: 10; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); padding: 15px 20px;}
         td { font-weight: 600; font-size: 1rem; color: white; }
 
         .pagination { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; border-top: 1px solid var(--glass-border); background: rgba(0,0,0,0.5); flex-shrink: 0; }
@@ -689,16 +688,18 @@
         let activeBatchCodes = []; let pgVB = 1;
         let currentLogUsername = '';
         let sysMaintenance = false;
+        
         const limit = 10;
 
-        function renderPagination(totalItems, currentPage, elementId, updateVarStr) {
+        // FIXED PAGINATION RENDERER: Explicitly accepts the render function string
+        function renderPagination(totalItems, currentPage, elementId, updateVarStr, renderFuncName) {
             const totalPages = Math.max(1, Math.ceil(totalItems / limit));
             const c = document.getElementById(elementId);
             if(!c) return;
             c.innerHTML = `
-                <button onclick="${updateVarStr}=Math.max(1, ${updateVarStr}-1); window[arguments.callee.caller.name]();" ${currentPage === 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> Prev</button>
+                <button onclick="${updateVarStr}=Math.max(1, ${updateVarStr}-1); ${renderFuncName}();" ${currentPage === 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> Prev</button>
                 <span style="font-weight: 800; color: var(--text-muted); font-size:0.9rem;">Page ${currentPage} of ${totalPages}</span>
-                <button onclick="${updateVarStr}=Math.min(${totalPages}, ${updateVarStr}+1); window[arguments.callee.caller.name]();" ${currentPage === totalPages ? 'disabled' : ''}>Next <i class="fas fa-chevron-right"></i></button>
+                <button onclick="${updateVarStr}=Math.min(${totalPages}, ${updateVarStr}+1); ${renderFuncName}();" ${currentPage === totalPages ? 'disabled' : ''}>Next <i class="fas fa-chevron-right"></i></button>
             `;
         }
 
@@ -893,7 +894,7 @@
             });
 
             let paginated = filtered.slice((pgUsers - 1) * limit, pgUsers * limit);
-            renderPagination(filtered.length, pgUsers, 'pag-users', 'pgUsers');
+            renderPagination(filtered.length, pgUsers, 'pag-users', 'pgUsers', 'renderUsers');
 
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No players found.</td></tr>`; return; }
 
@@ -920,7 +921,7 @@
         function renderAuditLogs() {
             const tbody = document.getElementById('audit-tbody'); tbody.innerHTML = '';
             let paginated = gAdminLogs.slice((pgAudit - 1) * limit, pgAudit * limit);
-            renderPagination(gAdminLogs.length, pgAudit, 'pag-audit', 'pgAudit');
+            renderPagination(gAdminLogs.length, pgAudit, 'pag-audit', 'pgAudit', 'renderAuditLogs');
 
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No audit logs available.</td></tr>`; return; }
 
@@ -954,7 +955,7 @@
         function renderPlayerLogsPage() {
             const tbody = document.getElementById('pl-tbody'); tbody.innerHTML = '';
             let paginated = activePlayerLogs.slice((pgPL - 1) * limit, pgPL * limit);
-            renderPagination(activePlayerLogs.length, pgPL, 'pag-pl', 'pgPL');
+            renderPagination(activePlayerLogs.length, pgPL, 'pag-pl', 'pgPL', 'renderPlayerLogsPage');
 
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No logs found for this user.</td></tr>`; return; }
 
@@ -1002,10 +1003,10 @@
             histories.sort((a,b) => hSort === 'newest' ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date));
 
             let pagPend = pendings.slice((pgPend - 1) * limit, pgPend * limit);
-            renderPagination(pendings.length, pgPend, 'pag-pend', 'pgPend');
+            renderPagination(pendings.length, pgPend, 'pag-pend', 'pgPend', 'renderTransactions');
             
             let pagHist = histories.slice((pgHist - 1) * limit, pgHist * limit);
-            renderPagination(histories.length, pgHist, 'pag-hist', 'pgHist');
+            renderPagination(histories.length, pgHist, 'pag-hist', 'pgHist', 'renderTransactions');
 
             if(pagPend.length === 0) pBody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">Queue is empty.</td></tr>`;
             pagPend.forEach(t => {
@@ -1067,7 +1068,7 @@
 
             gBatchesArr = Object.values(gBatches);
             let paginated = gBatchesArr.slice((pgPromos - 1) * limit, pgPromos * limit);
-            renderPagination(gBatchesArr.length, pgPromos, 'pag-promos', 'pgPromos');
+            renderPagination(gBatchesArr.length, pgPromos, 'pag-promos', 'pgPromos', 'renderPromos');
 
             const tbody = document.getElementById('promos-tbody'); tbody.innerHTML = '';
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No batches found.</td></tr>`; return; }
@@ -1104,7 +1105,7 @@
         function renderBatchViewPage() {
             const tbody = document.getElementById('vb-tbody'); tbody.innerHTML = '';
             let paginated = activeBatchCodes.slice((pgVB - 1) * limit, pgVB * limit);
-            renderPagination(activeBatchCodes.length, pgVB, 'pag-vb', 'pgVB');
+            renderPagination(activeBatchCodes.length, pgVB, 'pag-vb', 'pgVB', 'renderBatchViewPage');
             
             paginated.forEach(c => {
                 let statHtml = c.redeemedBy ? `<span class="badge offline">Claimed by ${c.redeemedBy}</span>` : `<span class="badge active">Available</span>`;
