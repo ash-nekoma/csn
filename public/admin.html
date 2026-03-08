@@ -32,6 +32,8 @@
 
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
+
         /* AUTHENTICATION */
         #auth-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 999999; background: #00050d; }
         .auth-box { width: 420px; background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.8); position: relative; z-index: 10; }
@@ -68,12 +70,13 @@
         .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
         .nav-item.active { background: rgba(0, 162, 255, 0.1); color: var(--ps-glow); border-left-color: var(--ps-glow); }
         
-        .nav-badge { background: var(--danger); color: white; padding: 2px 8px; border-radius: 50px; font-size: 0.75rem; position: absolute; right: 20px; box-shadow: 0 0 10px var(--danger); }
+        .nav-badge { background: var(--danger); color: white; padding: 2px 8px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; position: absolute; right: 20px; display: none; }
+        .nav-badge.pulse { animation: pulseRed 1.5s infinite; }
 
         .logout-btn { padding: 20px; text-align: center; border-top: 1px solid var(--glass-border); cursor: pointer; color: white; font-weight: 800; transition: 0.2s; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.05);}
         .logout-btn:hover { background: rgba(255,255,255,0.15); color: var(--danger); }
 
-        /* MAIN CONTENT & BENTO */
+        /* MAIN CONTENT */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: transparent; }
         .topbar { padding: 25px 40px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); flex-shrink: 0;}
         .topbar h1 { font-weight: 900; font-size: 2rem; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
@@ -257,7 +260,12 @@
                                 <div class="stat-info"><h3>Registered Players</h3><div class="value" id="stat-users">0</div></div>
                             </div>
 
-                            <div class="bento-item restricted-mod" onclick="openBentoModal('vault')">
+                            <div class="bento-item" onclick="openBentoModal('pending')">
+                                <div class="stat-icon" style="color: var(--credits);"><i class="fas fa-clock"></i></div>
+                                <div class="stat-info"><h3>Pending Requests</h3><div class="value" id="stat-pending">0</div></div>
+                            </div>
+
+                            <div class="bento-item bento-span-2 restricted-mod" onclick="openBentoModal('vault')">
                                 <div class="stat-icon" style="color: var(--text-muted);"><i class="fas fa-university"></i></div>
                                 <div class="stat-info"><h3>Bank Vault Limit</h3><div class="value" id="stat-limit">2,000,000</div></div>
                             </div>
@@ -310,10 +318,10 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th style="width: 50px; text-align:center;">#</th>
-                                        <th class="left-col" style="padding-left: 0;">PLAYER</th>
-                                        <th class="center-col">CREDITS (TC)</th>
-                                        <th class="center-col">ROLE</th>
+                                        <th class="center-col" style="width: 10%;">#</th>
+                                        <th class="left-col" style="width: 40%; padding-left: 0;">PLAYER</th>
+                                        <th class="center-col" style="width: 25%;">CREDITS (TC)</th>
+                                        <th class="center-col" style="width: 25%;">ROLE</th>
                                     </tr>
                                 </thead>
                                 <tbody id="users-tbody"></tbody>
@@ -337,7 +345,7 @@
                             </div>
                             <div class="table-wrapper">
                                 <table>
-                                    <thead><tr><th class="center-col" style="width:50px;">#</th><th class="center-col">DATE</th><th class="center-col">TYPE</th><th class="center-col">AMOUNT</th><th class="center-col">USER</th></tr></thead>
+                                    <thead><tr><th class="center-col" style="width:10%;">#</th><th class="center-col" style="width:25%;">DATE</th><th class="center-col" style="width:20%;">TYPE</th><th class="center-col" style="width:25%;">AMOUNT</th><th class="center-col" style="width:20%;">USER</th></tr></thead>
                                     <tbody id="tx-pending-tbody"></tbody>
                                 </table>
                             </div>
@@ -362,7 +370,7 @@
                             </div>
                             <div class="table-wrapper">
                                 <table>
-                                    <thead><tr><th class="center-col" style="width:50px;">#</th><th class="center-col">DATE</th><th class="center-col">TYPE</th><th class="center-col">AMOUNT</th><th class="center-col">STATUS</th></tr></thead>
+                                    <thead><tr><th class="center-col" style="width:10%;">#</th><th class="center-col" style="width:25%;">DATE</th><th class="center-col" style="width:20%;">TYPE</th><th class="center-col" style="width:25%;">AMOUNT</th><th class="center-col" style="width:20%;">STATUS</th></tr></thead>
                                     <tbody id="tx-history-tbody"></tbody>
                                 </table>
                             </div>
@@ -390,7 +398,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th class="center-col" style="width: 50px;">#</th>
+                                        <th class="center-col" style="width: 10%;">#</th>
                                         <th class="center-col">BATCH ID</th>
                                         <th class="center-col">VALUE PER CODE</th>
                                         <th class="center-col">CREDIT TYPE</th>
@@ -437,7 +445,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th class="center-col" style="width: 50px;">#</th>
+                                        <th class="center-col" style="width: 10%;">#</th>
                                         <th class="center-col">DATE / TIME</th>
                                         <th class="center-col">ADMIN NAME</th>
                                         <th class="center-col">ACTION</th>
@@ -539,7 +547,7 @@
             <div class="table-wrapper" style="max-height: 400px;">
                 <table>
                     <thead>
-                        <tr><th class="center-col" style="width: 50px;">#</th><th class="center-col">Date</th><th class="center-col">Action</th><th class="center-col">Amount</th><th class="center-col">Details</th></tr>
+                        <tr><th class="center-col" style="width: 10%;">#</th><th class="center-col">Date</th><th class="center-col">Action</th><th class="center-col">Amount</th><th class="center-col">Details</th></tr>
                     </thead>
                     <tbody id="pl-tbody"></tbody>
                 </table>
@@ -637,7 +645,7 @@
             <div class="table-wrapper" style="max-height: 400px;">
                 <table>
                     <thead>
-                        <tr><th class="center-col" style="width: 50px;">#</th><th class="center-col">Code</th><th class="center-col">Status</th><th class="center-col">Copy</th></tr>
+                        <tr><th class="center-col" style="width: 10%;">#</th><th class="center-col">Code</th><th class="center-col">Status</th><th class="center-col">Copy</th></tr>
                     </thead>
                     <tbody id="vb-tbody"></tbody>
                 </table>
@@ -860,7 +868,7 @@
             if (type === 'economy') {
                 document.getElementById('bento-title').innerText = "TOP 10 RICHEST PLAYERS";
                 let sorted = [...gUsers].sort((a,b) => (b.credits||0) - (a.credits||0)).slice(0, 10);
-                thead.innerHTML = `<tr><th class="center-col">RANK</th><th class="left-col">PLAYER</th><th class="center-col">MAIN TC</th><th class="center-col">PLAYABLE P</th></tr>`;
+                thead.innerHTML = `<tr><th class="center-col" style="width:10%;">RANK</th><th class="left-col" style="width:40%;">PLAYER</th><th class="center-col" style="width:25%;">MAIN TC</th><th class="center-col" style="width:25%;">PLAYABLE P</th></tr>`;
                 sorted.forEach((u, i) => {
                     tbody.innerHTML += `<tr><td class="center-col" style="color:var(--text-muted);font-weight:900;">#${i+1}</td><td class="left-col" style="font-weight:900;color:white;">${u.username}</td><td class="center-col" style="color:var(--credits);font-weight:800;">${fmtTC(u.credits)} TC</td><td class="center-col" style="color:var(--playable);font-weight:800;">${fmtTC(u.playableCredits)} P</td></tr>`;
                 });
@@ -868,7 +876,7 @@
             else if (type === 'deposits') {
                 document.getElementById('bento-title').innerText = "LAST 10 APPROVED DEPOSITS";
                 let deps = gTxs.filter(t => t.type === 'Deposit' && t.status === 'Approved').sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
-                thead.innerHTML = `<tr><th class="center-col">DATE</th><th class="left-col">PLAYER</th><th class="center-col">AMOUNT</th></tr>`;
+                thead.innerHTML = `<tr><th class="center-col" style="width:30%;">DATE</th><th class="left-col" style="width:40%;">PLAYER</th><th class="center-col" style="width:30%;">AMOUNT</th></tr>`;
                 if(deps.length === 0) tbody.innerHTML = `<tr><td colspan="3" class="center-col" style="color:var(--text-muted); font-style:italic;">No deposits found.</td></tr>`;
                 deps.forEach(t => {
                     tbody.innerHTML += `<tr><td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${t.username}</td><td class="center-col" style="color:var(--success);font-weight:900;">+${fmtTC(t.amount)} TC</td></tr>`;
@@ -877,7 +885,7 @@
             else if (type === 'withdrawals') {
                 document.getElementById('bento-title').innerText = "LAST 10 APPROVED WITHDRAWALS";
                 let wits = gTxs.filter(t => t.type === 'Withdrawal' && t.status === 'Approved').sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
-                thead.innerHTML = `<tr><th class="center-col">DATE</th><th class="left-col">PLAYER</th><th class="center-col">AMOUNT</th></tr>`;
+                thead.innerHTML = `<tr><th class="center-col" style="width:30%;">DATE</th><th class="left-col" style="width:40%;">PLAYER</th><th class="center-col" style="width:30%;">AMOUNT</th></tr>`;
                 if(wits.length === 0) tbody.innerHTML = `<tr><td colspan="3" class="center-col" style="color:var(--text-muted); font-style:italic;">No withdrawals found.</td></tr>`;
                 wits.forEach(t => {
                     tbody.innerHTML += `<tr><td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${t.username}</td><td class="center-col" style="color:var(--danger);font-weight:900;">-${fmtTC(t.amount)} TC</td></tr>`;
@@ -886,9 +894,19 @@
             else if (type === 'players') {
                 document.getElementById('bento-title').innerText = "10 NEWEST SIGNUPS";
                 let sorted = [...gUsers].sort((a,b) => new Date(b.joinDate) - new Date(a.joinDate)).slice(0, 10);
-                thead.innerHTML = `<tr><th class="center-col">JOINED</th><th class="left-col">PLAYER</th><th class="center-col">ROLE</th></tr>`;
+                thead.innerHTML = `<tr><th class="center-col" style="width:30%;">JOINED</th><th class="left-col" style="width:40%;">PLAYER</th><th class="center-col" style="width:30%;">ROLE</th></tr>`;
                 sorted.forEach(u => {
-                    tbody.innerHTML += `<tr><td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${new Date(u.joinDate).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${u.username}</td><td class="center-col" style="color:var(--text-muted);font-weight:800;">${u.role}</td></tr>`;
+                    tbody.innerHTML += `<tr><td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${new Date(u.joinDate).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${u.username}</td><td class="center-col" style="color:var(--text-muted);font-weight:800;text-transform:uppercase;">${u.role}</td></tr>`;
+                });
+            }
+            else if (type === 'pending') {
+                document.getElementById('bento-title').innerText = "PENDING REQUESTS";
+                let pends = gTxs.filter(t => t.status === 'Pending').sort((a,b) => new Date(a.date) - new Date(b.date));
+                thead.innerHTML = `<tr><th class="center-col" style="width:25%;">DATE</th><th class="left-col" style="width:35%;">PLAYER</th><th class="center-col" style="width:20%;">TYPE</th><th class="center-col" style="width:20%;">AMOUNT</th></tr>`;
+                if(pends.length === 0) tbody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style:italic;">No pending requests.</td></tr>`;
+                pends.forEach(t => {
+                    let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
+                    tbody.innerHTML += `<tr><td class="center-col" style="color:var(--text-muted); font-size:0.9rem;">${new Date(t.date).toLocaleDateString()}</td><td class="left-col" style="font-weight:900;color:white;">${t.username}</td><td class="center-col" style="font-weight:800; text-transform:uppercase;">${t.type}</td><td class="center-col" style="color:${color};font-weight:900;">${fmtTC(t.amount)} TC</td></tr>`;
                 });
             }
             else if (type === 'vault') {
@@ -905,7 +923,7 @@
                     <div style="margin-bottom:10px;"><strong>+ Total Approved Deposits:</strong> <span style="color:var(--success);">+${fmtTC(appDep)}</span></div>
                     <div style="margin-bottom:10px;"><strong>- Total Approved Withdrawals:</strong> <span style="color:var(--danger);">-${fmtTC(appWit)}</span></div>
                     <div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--glass-border);"><strong>- Active Player Economy:</strong> <span style="color:var(--credits);">-${fmtTC(totalEcon)}</span></div>
-                    <div style="font-size:1.5rem; font-weight:900; color:white;">CURRENT VAULT LIMIT: <span style="color:var(--text-muted);">${fmtTC(vault)} TC</span></div>
+                    <div style="font-size:1.5rem; font-weight:900; color:white; margin-top:20px;">CURRENT VAULT LIMIT:<br><span style="color:var(--ps-glow); font-size:2.5rem;">${fmtTC(vault)} TC</span></div>
                 `;
             }
             else if (type === 'profit') {
@@ -915,7 +933,7 @@
                 let hp = document.getElementById('stat-profit').innerText;
                 customHtml.innerHTML = `
                     <div style="margin-bottom:20px;">This metric shows the net win/loss of the Casino system across all players in the last 24 hours.</div>
-                    <div style="font-size:2rem; font-weight:900; color:${parseFloat(hp.replace(/,/g, '')) >= 0 ? 'var(--success)' : 'var(--danger)'};">${hp} TC</div>
+                    <div style="font-size:3rem; font-weight:900; color:${parseFloat(hp.replace(/,/g, '')) >= 0 ? 'var(--success)' : 'var(--danger)'};">${hp} TC</div>
                 `;
             }
             openModal('bento-modal');
@@ -948,8 +966,10 @@
             if(currentPending > 0) {
                 sidebarBadge.innerText = currentPending;
                 sidebarBadge.style.display = 'inline-block';
+                if(currentPending > lastPendingCount) sidebarBadge.classList.add('pulse');
             } else {
                 sidebarBadge.style.display = 'none';
+                sidebarBadge.classList.remove('pulse');
             }
 
             if(currentPending > lastPendingCount) { playSonarPing(); }
@@ -1029,7 +1049,7 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No players found.</td></tr>`; return; }
 
             paginated.forEach((u, i) => {
-                let rowNum = filtered.length - ((pgUsers - 1) * limit) - i;
+                let rowNum = (pgUsers - 1) * limit + i + 1;
                 
                 // Determine Status Dot Color
                 let statColor = u.status === 'Active' ? 'var(--success)' : (u.status === 'Banned' ? 'var(--danger)' : 'var(--text-muted)');
@@ -1063,7 +1083,7 @@
 
             document.getElementById('pd-id').value = u._id;
             document.getElementById('pd-username').innerText = u.username;
-            document.getElementById('pd-ip').innerHTML = `${u.ipAddress} ${isSmurf ? `<i class="fas fa-exclamation-triangle smurf-icon" title="Multiple accounts detected on this IP"></i>` : ''}`;
+            document.getElementById('pd-ip').innerHTML = `${u.ipAddress} ${isSmurf ? `<i class="fas fa-exclamation-triangle smurf-icon" onmouseover="showSmurfPop(event, '${u.ipAddress}')" onmouseout="hideSmurfPop()"></i>` : ''}`;
             document.getElementById('pd-joined').innerText = new Date(u.joinDate).toLocaleString('en-US', {dateStyle: 'medium', timeStyle: 'short'});
             document.getElementById('pd-credits').innerText = fmtTC(u.credits) + ' TC';
             document.getElementById('pd-playable').innerText = fmtTC(u.playableCredits) + ' P';
@@ -1146,7 +1166,7 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No audit logs available.</td></tr>`; return; }
 
             paginated.forEach((l, i) => {
-                let rowNum = gAdminLogs.length - ((pgAudit - 1) * limit) - i;
+                let rowNum = (pgAudit - 1) * limit + i + 1;
                 let dStr = new Date(l.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 tbody.innerHTML += `
                     <tr>
@@ -1181,7 +1201,7 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style: italic; padding: 30px;">No logs found for this user.</td></tr>`; return; }
 
             paginated.forEach((l, i) => {
-                let rowNum = activePlayerLogs.length - ((pgPL - 1) * limit) - i;
+                let rowNum = (pgPL - 1) * limit + i + 1;
                 let dStr = new Date(l.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let amtColor = l.amount > 0 ? 'var(--success)' : (l.amount < 0 ? 'var(--danger)' : 'white');
                 let amtSign = l.amount > 0 ? '+' : '';
@@ -1233,7 +1253,7 @@
 
             if(pagPend.length === 0) pBody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">Queue is empty.</td></tr>`;
             pagPend.forEach((t, i) => {
-                let rowNum = pendings.length - ((pgPend - 1) * limit) - i;
+                let rowNum = (pgPend - 1) * limit + i + 1;
                 let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
                 let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 pBody.innerHTML += `
@@ -1248,7 +1268,7 @@
 
             if(pagHist.length === 0) hBody.innerHTML = `<tr><td colspan="5" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No history found.</td></tr>`;
             pagHist.forEach((t, i) => {
-                let rowNum = histories.length - ((pgHist - 1) * limit) - i;
+                let rowNum = (pgHist - 1) * limit + i + 1;
                 let color = t.type === 'Deposit' ? 'var(--success)' : 'var(--danger)';
                 let dStr = new Date(t.date).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                 let statClass = t.status === 'Approved' ? 'approved' : 'rejected';
@@ -1301,7 +1321,7 @@
             if(paginated.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="center-col" style="color:var(--text-muted); font-style:italic; padding:30px;">No batches found.</td></tr>`; return; }
 
             paginated.forEach((b, i) => {
-                let rowNum = gBatchesArr.length - ((pgPromos - 1) * limit) - i;
+                let rowNum = (pgPromos - 1) * limit + i + 1;
                 let tColor = b.type === 'playable' ? 'var(--playable)' : 'var(--credits)';
                 let tName = b.type === 'playable' ? 'Playable' : 'Regular';
                 tbody.innerHTML += `
@@ -1314,7 +1334,7 @@
                         <td class="center-col">
                             <div class="action-btns" style="justify-content:center;">
                                 <button class="btn-sm btn-edit" onclick="openBatchView('${b.id}')"><i class="fas fa-eye"></i> View</button>
-                                <button class="btn-sm btn-reject" onclick="deleteBatch('${b.id}')"><i class="fas fa-trash"></i> Delete</button>
+                                <button class="btn-sm btn-reject restricted-mod" onclick="deleteBatch('${b.id}')"><i class="fas fa-trash"></i> Delete</button>
                             </div>
                         </td>
                     </tr>`;
@@ -1337,7 +1357,7 @@
             renderPagination(activeBatchCodes.length, pgVB, 'pag-vb', 'pgVB', 'renderBatchViewPage');
             
             paginated.forEach((c, i) => {
-                let rowNum = activeBatchCodes.length - ((pgVB - 1) * limit) - i;
+                let rowNum = (pgVB - 1) * limit + i + 1;
                 let statHtml = c.redeemedBy ? `<span class="badge offline">Claimed by ${c.redeemedBy}</span>` : `<span class="badge active">Available</span>`;
                 tbody.innerHTML += `
                     <tr>
