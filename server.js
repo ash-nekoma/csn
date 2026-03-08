@@ -58,6 +58,27 @@ function sendPulse(msg, type='info') {
     io.to('admin_room').emit('adminPulse', { msg, type, time: Date.now() });
 }
 
+// 1% Referral Commission Engine
+async function processReferralBetCommission(user, betAmount) {
+    if (!user.referredBy) return;
+    let comm = formatTC(betAmount * 0.01);
+    if (comm <= 0) return;
+    
+    try {
+        let referrer = await User.findOne({ username: user.referredBy });
+        if (referrer) {
+            referrer.playableCredits = formatTC((referrer.playableCredits || 0) + comm);
+            await referrer.save();
+            
+            // Silently update their balance if they are online
+            let refSock = connectedUsers[referrer.username];
+            if (refSock) {
+                io.to(refSock).emit('balanceUpdateData', { credits: referrer.credits, playable: referrer.playableCredits });
+            }
+        }
+    } catch(e) { console.error("Commission Error:", e); }
+}
+
 const MONGO_URI = process.env.MONGO_URL || 'mongodb://localhost:27017/stickntrade';
 mongoose.connect(MONGO_URI)
     .then(async () => {
@@ -79,6 +100,7 @@ const userSchema = new mongoose.Schema({
     status: { type: String, default: 'Offline' },
     ipAddress: { type: String, default: 'Unknown' },
     joinDate: { type: Date, default: Date.now },
+    referredBy: { type: String, default: null }, 
     dailyReward: { lastClaim: { type: Date, default: null }, streak: { type: Number, default: 0 } }
 });
 const User = mongoose.model('User', userSchema);
@@ -295,7 +317,7 @@ async function pushAdminData(targetSocket = null) {
 io.on('connection', (socket) => {
     socket.emit('timerUpdate', sharedTables.time);
     socket.emit('maintenanceToggle', isMaintenanceMode); 
-    socket.emit('radioSync', currentRadio); // Sync radio immediately upon connection
+    socket.emit('radioSync', currentRadio); 
 
     socket.isBetting = false;
     socket.isSharedBetting = false;
@@ -393,6 +415,9 @@ io.on('connection', (socket) => {
                 }
                 await user.save();
                 sendPulse(`${user.username} bet ${amt} TC on ${data.game.toUpperCase()}`, 'bet');
+
+                // Process 1% Referral Commission (fire and forget)
+                processReferralBetCommission(user, amt);
 
                 if (data.game === 'blackjack') {
                     socket.bjState = { 
@@ -562,7 +587,6 @@ io.on('connection', (socket) => {
     socket.on('sendChat', (data) => { 
         if (!socket.user) return;
         
-        // GLOBAL RADIO COMMANDS
         if (data.msg.startsWith('/play ')) {
             if (socket.user.role !== 'Admin' && socket.user.role !== 'VIP') {
                 if (socket.currentRoom) io.to(socket.id).emit('chatMessage', { user: 'System', text: 'Only VIPs and Admins can use the DJ Radio.', sys: true });
@@ -583,7 +607,6 @@ io.on('connection', (socket) => {
             return;
         }
 
-        // NORMAL CHAT
         if (socket.currentRoom) { 
             io.to(socket.currentRoom).emit('chatMessage', { user: socket.user.username, text: data.msg, sys: false }); 
         } 
@@ -622,7 +645,6 @@ io.on('connection', (socket) => {
                 socket.emit('localGameError', { msg: 'MAX 50K TC PER TILE', game: data.room }); return;
             }
 
-            // VAULT SECURITY CHECK
             let maxMultiplier = { 'baccarat': 9, 'dt': 9, 'sicbo': 2, 'perya': 4 }[data.room] || 2;
             if ((amt * maxMultiplier) > globalBankVault) {
                 socket.emit('localGameError', { msg: 'VAULT LIMIT REACHED. CANNOT COVER BET.', game: data.room }); return;
@@ -634,6 +656,9 @@ io.on('connection', (socket) => {
             }
             await user.save();
             sendPulse(`${user.username} placed ${amt} TC on ${data.room.toUpperCase()}`, 'bet');
+
+            // Process 1% Referral Commission
+            processReferralBetCommission(user, amt);
             
             sharedTables.bets.push({ 
                 userId: user._id, socketId: socket.id, username: user.username, room: data.room, choice: data.choice, amount: amt, fromPlayable: deduction.fromPlayable, fromMain: deduction.fromMain 
@@ -768,8 +793,40 @@ io.on('connection', (socket) => {
             const exists = await User.findOne({ username: data.username });
             if (exists) return socket.emit('authError', 'Username is already taken.');
             
+            let refUser = null;
+            if (data.referral) {
+                refUser = await User.findOne({ username: new RegExp('^' + data.referral + '$', 'i') });
+                if (!refUser) return socket.emit('authError', 'Invalid Referral Code.');
+                if (refUser.username.toLowerCase() === data.username.toLowerCase()) return socket.emit('authError', 'Cannot refer yourself.');
+            }
+            
             let ip = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
-            await new User({ username: data.username, password: data.password, ipAddress: ip }).save();
+            let newUser = new User({ 
+                username: data.username, 
+                password: data.password, 
+                ipAddress: ip,
+                referredBy: refUser ? refUser.username : null 
+            });
+
+            // Grant 500 Playable Credits to both
+            if (refUser) {
+                newUser.playableCredits = 500;
+                refUser.playableCredits = formatTC((refUser.playableCredits || 0) + 500);
+                await refUser.save();
+                
+                await new CreditLog({ username: refUser.username, action: 'REFERRAL', amount: 500, details: `Signup Bonus (${newUser.username})` }).save();
+                
+                let refSock = connectedUsers[refUser.username];
+                if (refSock) {
+                    io.to(refSock).emit('balanceUpdateData', { credits: refUser.credits, playable: refUser.playableCredits });
+                    io.to(refSock).emit('silentNotification', { id: Date.now(), title: 'Referral Bonus!', msg: `${newUser.username} used your code! +500 P`, date: new Date() });
+                }
+            }
+            
+            await newUser.save();
+            if (refUser) {
+                await new CreditLog({ username: newUser.username, action: 'REFERRAL', amount: 500, details: `Used code ${refUser.username}` }).save();
+            }
             
             sendPulse(`New account created: ${data.username}`, 'success');
             pushAdminData();
@@ -921,6 +978,25 @@ io.on('connection', (socket) => {
                         if (u) {
                             u.credits = formatTC((u.credits || 0) + tx.amount); await u.save();
                             await new CreditLog({ username: u.username, action: 'DEPOSIT', amount: tx.amount, details: `Approved` }).save();
+                            
+                            // 10% First Deposit Referral Bonus
+                            let depCount = await Transaction.countDocuments({ username: tx.username, type: 'Deposit', status: 'Approved' });
+                            if (depCount === 1 && u.referredBy) { 
+                                let referrer = await User.findOne({ username: u.referredBy });
+                                if (referrer) {
+                                    let bonus = formatTC(tx.amount * 0.10);
+                                    referrer.playableCredits = formatTC((referrer.playableCredits || 0) + bonus);
+                                    await referrer.save();
+                                    await new CreditLog({ username: referrer.username, action: 'REFERRAL', amount: bonus, details: `10% Dep Bonus (${u.username})` }).save();
+                                    
+                                    let refSock = connectedUsers[referrer.username];
+                                    if (refSock) {
+                                        io.to(refSock).emit('balanceUpdateData', { credits: referrer.credits, playable: referrer.playableCredits });
+                                        io.to(refSock).emit('silentNotification', { id: Date.now(), title: 'Referral Deposit Bonus!', msg: `${u.username} made their first deposit! +${bonus} P`, date: new Date() });
+                                    }
+                                }
+                            }
+
                             if (targetSocketId) {
                                 io.to(targetSocketId).emit('silentNotification', { id: Date.now(), title: 'Deposit Approved', msg: `Your deposit of ${tx.amount} TC has been added to your balance.`, date: new Date() });
                                 io.to(targetSocketId).emit('balanceUpdateData', { credits: u.credits, playable: u.playableCredits });
